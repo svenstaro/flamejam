@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Jam {{ jam.short_name }}{% endblock %}
+
+{% block content %}
+<h2>View Jam {{ jam.short_name }}</h2>
+<h3>Title: {{ jam.long_name }}</h3>
+<h3>Entries:</h3>
+<ul>
+{% for entry in jam.entries %}
+    <li>
+        <a href="/entries/{{ entry.name }}">{{ entry.name }}</a> by 
+        <a href="/participants/{{ entry.participant.username }}">{{ entry.participant.username }}</a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

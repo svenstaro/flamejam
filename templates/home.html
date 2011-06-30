@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h2>Previous Jams</h2>
+<ul>
+{% for jam in jams %}
+    <li>
+        <a href="/jams/{{ jam.short_name }}">{{ jam.short_name }}</a>
+        ({{ jam.entries.all()|length }} entries)
+    </li>
+{% endfor %}
+</ul>
+
+<h2>Stuff to do</h2>
+<ul>
+    <li><a href="login">Login</a></li>
+    <li><a href="new_jam">New Jam</a></li>
+</ul>
+{% endblock %}
