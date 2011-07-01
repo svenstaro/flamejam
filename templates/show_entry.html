@@ -4,6 +4,8 @@
 
 {% block content %}
 <h2>View Entry {{ entry.name }}</h2>
+    <h3>Description:</h3>
+<p>{{ entry.description }}</p>
 <ul>
     <li>Author: <a href="/participants/{{ entry.participant.username }}">
         {{ entry.participant.username }}</a>

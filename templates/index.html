@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h2>Active Jams</h2>
+<ul>
+{# Jams that haven't started yet #}
+{% for jam in jams if jam.start_time > current_datetime %}
+    <li>
+        Jam <a href="/jams/{{ jam.short_name }}">{{ jam.short_name }}</a>
+        announced for {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }}
+        (in {{ jam.start_time - current_datetime }})
+    </li>
+{% endfor %}
+
+{# Jams that are in progress #}
+{% for jam in jams if jam.start_time < current_datetime < jam.end_time %}
+    <li>
+        Jam <a href="/jams/{{ jam.short_name }}">{{ jam.short_name }}</a>
+        is currently in progress! (ends in {{ jam.end_time - current_datetime }})
+    </li>
+{% endfor %}
+
+{# Jams that have finished but are still in packaging period #}
+{% for jam in jams if jam.end_time < current_datetime < jam.packaging_deadline %}
+    <li>
+        Jam <a href="/jams/{{ jam.short_name }}">{{ jam.short_name }}</a>
+        has finished and is in packaging phase (deadline: 
+        {{ jam.packaging_deadline - current_datetime }})
+    </li>
+{% endfor %}
+
+{# Jams that are in voting period #}
+{% for jam in jams if jam.packaging_deadline < current_datetime < jam.voting_end%}
+    <li>
+        Jam <a href="/jams/{{ jam.short_name }}">{{ jam.short_name }}</a>
+        is in voting period for another {{ jam.voting_end - current_datetime }}
+    </li>
+{% endfor %}
+</ul>
+<h2>Previous Jams</h2>
+<ul>
+{% for jam in jams if jam.voting_end < current_datetime %}
+    <li>
+        <a href="/jams/{{ jam.short_name }}">{{ jam.short_name }}</a>
+        from {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }} to {{
+        jam.end_time.strftime("%Y-%m-%d %H:%M:%S") }} 
+        (length: {{ jam.end_time - jam.start_time }})
+        ({{ jam.entries.all()|length }} entries)
+    </li>
+{% endfor %}
+</ul>
+
+<h2>Stuff to do</h2>
+<ul>
+    <li><a href="login">Login</a></li>
+    <li><a href="new_jam">New Jam</a></li>
+</ul>
+{% endblock %}

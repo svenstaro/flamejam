@@ -3,7 +3,7 @@ from flask import Flask, session, redirect, url_for, escape, request, \
 
 from flaskext.sqlalchemy import SQLAlchemy
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from hashlib import sha512
 
 app = Flask(__name__)
@@ -34,14 +34,34 @@ class Jam(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     short_name = db.Column(db.String(16), unique=True)
     long_name = db.Column(db.String(128), unique=True)
-    announced = db.Column(db.DateTime)
-    jamtime = db.Column(db.DateTime)
+    announced = db.Column(db.DateTime) # Date on which the jam was announced
+    start_time = db.Column(db.DateTime) # The jam starts at this moment
+    end_time = db.Column(db.DateTime) # The jamming phase ends at this moment
+    packaging_deadline = db.Column(db.DateTime) # Packaging ends at this moment
+    voting_end = db.Column(db.DateTime) # Voting period ends and jam is over
     entries = db.relationship('Entry', backref='jam', lazy='dynamic')
 
-    def __init__(self, short_name, long_name, jamtime):
+    def __init__(self, short_name, long_name, start_time, end_time=None,
+            packaging_deadline=None, voting_end=None):
         self.short_name = short_name
         self.long_name = long_name
-        self.jamtime = jamtime
+        self.start_time = start_time
+
+        if end_time is None:
+            self.end_time = start_time + timedelta(days=2)
+        else:
+            self.end_time = end_time
+
+        if packaging_deadline is None:
+            self.packaging_deadline = start_time + timedelta(days=3)
+        else:
+            self.packaging_deadline = packaging_deadline
+
+        if voting_end is None:
+            self.voting_end = start_time + timedelta(days=7)
+        else:
+            self.voting_end = voting_end
+
         self.announced = datetime.utcnow()
 
     def __repr__(self):
@@ -60,13 +80,14 @@ class Entry(db.Model):
         self.jam = jam
         self.participant = participant
 
-    def __repr__(self):
-        return '<Entry %r>' % self.name
+        def __repr__(self):
+            return '<Entry %r>' % self.name
 
 @app.route('/')
-def home():
+def index():
     jams = Jam.query.all()
-    return render_template('home.html', jams=jams)
+    return render_template('index.html', jams=jams,
+            current_datetime=datetime.utcnow())
 
 @app.route('/login')
 def login():

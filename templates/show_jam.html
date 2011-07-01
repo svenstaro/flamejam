@@ -5,6 +5,9 @@
 {% block content %}
 <h2>View Jam {{ jam.short_name }}</h2>
 <h3>Title: {{ jam.long_name }}</h3>
+<h3>Date:</h3>
+<p>Announced: {{ jam.announced }}</p>
+<p>Time of Jam: {{ jam.jamtime }}</p>
 <h3>Entries:</h3>
 <ul>
 {% for entry in jam.entries %}
