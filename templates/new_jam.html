@@ -1,7 +1,23 @@
 {% extends "base.html" %}
-
-{% block title %}Jam{% endblock %}
-
 {% block content %}
 <h2>New Jam</h2>
+{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+<form action="{{ url_for('new_jam') }}" method=post>
+<dl>
+<!-- use wtforms -->
+  <dt>Short name:
+  <dd><input type=text name=short_name>
+  <dt>Long name:
+  <dd><input type=text name=long_name>
+  <dt>Start time (format: 2012-11-24T15:00Z):
+  <dd><input type=datetime step=3600 name=start_time>
+  <dt>Jam length (hours):
+  <dd><input type=number step=6 value=48 name=jam_length>
+  <dt>Packaging length (hours):
+  <dd><input type=number step=6 value=24 name=packaging_length>
+  <dt>Voting length (days):
+  <dd><input type=number step=1 value=5 name=voting_length>
+  <dd><input type=submit value=Newjam>
+</dl>
+</form>
 {% endblock %}

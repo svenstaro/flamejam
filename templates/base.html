@@ -13,6 +13,15 @@
     </div>
 
     <div id="content">
+        {% if not session.logged_in %}
+            <span><a href="{{ url_for('login') }}">Login</a></span>
+            <span><a href="{{ url_for('register') }}">Register</a></span>
+        {% else %}
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        {% endif %}
+        {% for message in get_flashed_messages() %}
+            <div class=flash>{{ message }}</div>
+        {% endfor %}
         {% block content %}
         {% endblock %}
     </div>

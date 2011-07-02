@@ -54,7 +54,9 @@
 
 <h2>Stuff to do</h2>
 <ul>
-    <li><a href="login">Login</a></li>
-    <li><a href="new_jam">New Jam</a></li>
+    {% if session.logged_in and session.is_admin %}
+        <li><a href="new_jam">New Jam</a></li>
+    {% endif %}
+    <li><a href="contact">Contact</a></li>
 </ul>
 {% endblock %}

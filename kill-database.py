@@ -3,7 +3,7 @@
 # It should be run from a virtualenv.
 #
 
-from flamejam import db, Participant, Jam, Entry
+from flamejam import db, Participant, Jam, Entry, Rating, Comment
 from datetime import datetime, timedelta
 
 # Kill everything and recreate tables
@@ -12,7 +12,8 @@ db.create_all()
 
 # Make users
 peter = Participant("peter", "omgdlaad21", "peter@rofl.com")
-paul = Participant("paul", "dadadf", "paul@rofl.com")
+paul = Participant("paul", "lol", "paul@rofl.com", is_admin=True,
+        is_verified=True)
 per = Participant("per", "lpdla", "per@rofl.com")
 pablo = Participant("pablo", "lad112", "pablo@rofl.com")
 paddy = Participant("paddy", "rqtjio4j1", "paddy@rofl.com")
@@ -59,6 +60,34 @@ db.session.add(derp)
 db.session.add(lorem)
 db.session.add(rtype)
 db.session.add(tetris)
+
+# Make ratings
+rating1 = Rating(3, 5, 1, 7, 3, 1, "cool stuff", best_game, peter)
+rating2 = Rating(10, 6, 1, 7, 6, 10, "adasdff", best_game, paul)
+rating3 = Rating(3, 5, 1, 5, 2, 2, "cadkak", space_game, paul)
+rating4 = Rating(9, 5, 6, 7, 3, 1, "fakpdak1", clone, paul)
+rating5 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", clone, paddy)
+
+# Add ratings
+db.session.add(rating1)
+db.session.add(rating2)
+db.session.add(rating3)
+db.session.add(rating4)
+db.session.add(rating5)
+
+# Make comments
+comment1 = Comment("lol so bad", best_game, peter)
+comment2 = Comment("the worst", best_game, paul)
+comment3 = Comment("pew pew pew", space_game, paul)
+comment4 = Comment("omg clone", clone, paul)
+comment5 = Comment("pong is better", clone, paddy)
+
+# Add comments
+db.session.add(comment1)
+db.session.add(comment2)
+db.session.add(comment3)
+db.session.add(comment4)
+db.session.add(comment5)
 
 # Commmit it all
 db.session.commit()
