@@ -2,13 +2,12 @@
 {% from "_formhelpers.html" import render_field %}
 
 {% block content %}
-<h2>New Jam</h2>
+<h2>New Entry</h2>
 {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-<form action="{{ url_for('new_jam') }}" method=post>
+<form action="{{ url_for('new_entry', jam_name=jam.short_name) }}" method=post>
     {{ form.hidden_tag() }}
-    {{ render_field(form.short_name) }}
-    {{ render_field(form.long_name) }}
-    {{ render_field(form.start_time) }}
+    {{ render_field(form.name) }}
+    {{ render_field(form.description) }}
     <input type=submit value=Go>
 </form>
 {% endblock %}

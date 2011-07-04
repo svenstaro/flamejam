@@ -1,13 +1,13 @@
 {% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
 {% block content %}
 <h2>Login</h2>
 {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 <form action="{{ url_for('login') }}" method=post>
     {{ form.hidden_tag() }}
-    {% for error in form.username.errors %}{{ error }}{% endfor %}
-    {{ form.username.label }}: {{ form.username() }}
-    {% for error in form.password.errors %}{{ error }}{% endfor %}
-    {{ form.password.label }}: {{ form.password() }}
+    {{ render_field(form.username) }}
+    {{ render_field(form.password) }}
     <input type=submit value=Go>
 </form>
 {% endblock %}

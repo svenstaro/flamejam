@@ -8,8 +8,8 @@
 <ul>
 {% for entry in participant.entries %}
     <li>
-        <a href="/entries/{{ entry.name }}">{{ entry.name }}</a> for 
-        <a href="/jams/{{ entry.jam.short_name }}">{{ entry.jam.short_name }}</a>
+        <a href="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> for 
+        <a href="{{ url_for('show_jam', jam_name=entry.jam.short_name) }}">{{ entry.jam.short_name }}</a>
     </li>
 {% endfor %}
 </ul>

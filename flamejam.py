@@ -80,7 +80,7 @@ class Jam(db.Model):
 
 class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), unique=True)
+    name = db.Column(db.String(128))
     description = db.Column(db.Text)
     posted = db.Column(db.DateTime)
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
@@ -157,7 +157,8 @@ class ParticipantRegistration(Form):
 class NewJam(Form):
     short_name = TextField("Short name", validators=[Required(), Length(max=16)])
     long_name = TextField("Long name", validators=[Required(), Length(max=128)])
-    start_time = DateTimeField("Start time", validators=[Required()])
+    start_time = DateTimeField("Start time (format: 2012-11-25 22:00",
+            format="%Y-%m-%d %H:%M", validators=[Required()])
     # Add remaining fields
 
 class SubmitEntry(Form):
@@ -165,18 +166,16 @@ class SubmitEntry(Form):
     description = TextAreaField("Description", validators=[Required()])
 
 class RateEntry(Form):
-    field = IntegerField("Graphics rating (1 - worst to 9 - best)",
-        validators=[Required(), NumberRange(min=1, max=9)])
-    score_graphics = field
-    score_audio = field
-    score_innovation = field
-    score_humor = field
-    score_fun = field
-    score_overall = field
-    text = TextAreaField("Additional notes", validators=[Optional])
+    score_graphics = IntegerField("Graphics rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    score_audio = IntegerField("Audio rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    score_innovation = IntegerField("Innovation rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    score_humor = IntegerField("Humor rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    score_fun = IntegerField("Fun rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    score_overall = IntegerField("Overall rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    note = TextAreaField("Additional notes", validators=[Optional()])
 
 class WriteComment(Form):
-    text = TextAreaField("Comment", validators=[Required()])
+    text = TextAreaField("Comment", validators=[Required(), Length(max=65535)])
 
 @app.route('/')
 def index():
@@ -235,23 +234,94 @@ def logout():
 
 @app.route('/new_jam', methods=("GET", "POST"))
 def new_jam():
-    # use decorator
+    error = None
+    form = NewJam()
+    # use decorator to check whether user is logged in and is admin
     #if not session['logged_in'] or not session['is_admin']:
     #    flash('Not an admin')
     #    return redirect(url_for('index'))
-    return render_template('new_jam.html')
+    if form.validate_on_submit():
+        short_name = form.short_name.data
+        long_name = form.long_name.data
+        start_time = form.start_time.data
+        if Jam.query.filter_by(short_name=short_name).first():
+            error = 'A jam with this Short name already exists'
+        elif Jam.query.filter_by(long_name=long_name).first():
+            error = 'A jam with this Long name already exists'
+        else:
+            new_jam = Jam(short_name, long_name, start_time)
+            db.session.add(new_jam)
+            db.session.commit()
+            flash('New jam added')
+            return redirect(url_for('index'))
+    return render_template('new_jam.html', form=form, error=error)
 
-@app.route('/jams/<short_name>')
-def show_jam(short_name):
-    jam = Jam.query.filter_by(short_name=short_name).first_or_404()
+@app.route('/jams/<jam_name>/', methods=("GET", "POST"))
+def show_jam(jam_name):
+    jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
     return render_template('show_jam.html', jam=jam)
 
-@app.route('/entries/<name>')
-def show_entry(name):
-    entry = Entry.query.filter_by(name=name).first_or_404()
-    return render_template('show_entry.html', entry=entry)
+@app.route('/jams/<jam_name>/new_entry', methods=("GET", "POST"))
+def new_entry(jam_name):
+    error = None
+    form = SubmitEntry()
+    jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
+    if form.validate_on_submit():
+        name = form.name.data
+        description = form.description.data
+        participant_username = session['username']
+        participant = Participant.query.filter_by(username=participant_username).first()
+        if Entry.query.filter_by(name=name).filter_by(jam=jam).first():
+            error = 'An entry with this name already exists for this jam'
+        else:
+            new_entry = Entry(name, description, jam, participant)
+            db.session.add(new_entry)
+            db.session.commit()
+            flash('Entry submitted')
+            return redirect(url_for('show_entry', jam_name=jam_name, entry_name=name))
+    return render_template('new_entry.html', jam=jam, form=form, error=error)
 
-@app.route('/participants/<username>')
+@app.route('/jams/<jam_name>/<entry_name>/')
+@app.route('/jams/<jam_name>/<entry_name>/<action>', methods=("GET", "POST"))
+def show_entry(jam_name, entry_name, action=None):
+    form_rating = RateEntry()
+    form_comment = WriteComment()
+    jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
+    entry = Entry.query.filter_by(name=entry_name).filter_by(jam=jam).first_or_404()
+
+    if action == "new_rating" and form_rating.validate_on_submit():
+        score_graphics = form_rating.score_graphics.data
+        score_audio = form_rating.score_audio.data
+        score_innovation = form_rating.score_innovation.data
+        score_humor = form_rating.score_humor.data
+        score_fun = form_rating.score_fun.data
+        score_overall = form_rating.score_overall.data
+        note = form_rating.note.data
+        participant_username = session['username']
+        participant = Participant.query.filter_by(username=participant_username).first()
+        new_rating = Rating(score_graphics, score_audio, score_innovation,
+                score_humor, score_fun, score_overall, note, entry, participant)
+        db.session.add(new_rating)
+        db.session.commit()
+        flash('Rating added')
+        return redirect(url_for('show_entry', jam_name=jam_name,
+            entry_name=entry_name))
+
+    if action == "new_comment" and form_comment.validate_on_submit():
+        text = form_comment.text.data
+        participant_username = session['username']
+        participant = Participant.query.filter_by(username=participant_username).first()
+        new_comment = Comment(text, entry, participant)
+        db.session.add(new_comment)
+        db.session.commit()
+        flash('Comment added')
+        return redirect(url_for('show_entry', jam_name=jam_name,
+            entry_name=entry_name))
+
+    return render_template('show_entry.html', entry=entry,
+            form_rating=form_rating, form_comment=form_comment)
+
+@app.route('/participants/<username>/')
 def show_participant(username):
     participant = Participant.query.filter_by(username=username).first_or_404()
     return render_template('show_participant.html', participant=participant)

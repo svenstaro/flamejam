@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
 
 {% block title %}Entry {{ entry.name }}{% endblock %}
 
@@ -7,11 +8,61 @@
     <h3>Description:</h3>
 <p>{{ entry.description }}</p>
 <ul>
-    <li>Author: <a href="/participants/{{ entry.participant.username }}">
+    <li>Author: <a href="{{ url_for('show_participant',
+            username=entry.participant.username) }}">
         {{ entry.participant.username }}</a>
     </li>
-    <li>Jam: <a href="/jams/{{ entry.jam.short_name }}">
+    <li>Jam: <a href="{{ url_for('show_jam', jam_name=entry.jam.short_name) }}">
         {{ entry.jam.short_name }}</a>
     </li>
 </ul>
+
+<h3>Ratings</h3>
+    {% for rating in entry.ratings %}
+    <ul>
+        <li>Rating id: {{ rating.id }}</li>
+        <li>Posted: {{ rating.posted }}</li>
+        <li>By: {{ rating.participant.username }}</li>
+        <li>Graphics score: {{ rating.score_graphics }}</li>
+        <li>Audio score: {{ rating.score_audio }}</li>
+        <li>Innovation score: {{ rating.score_innovation }}</li>
+        <li>Humor score: {{ rating.score_humor }}</li>
+        <li>Fun score: {{ rating.score_fun }}</li>
+        <li>Overall score: {{ rating.score_overall }}</li>
+        <li>Additional notes: {{ rating.text }}</li>
+    </ul>
+    {% endfor %}
+
+    {% if session.logged_in %}
+        {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+        <form action="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name, action='new_rating' ) }}" method=post>
+            {{ form_rating.hidden_tag() }}
+            {{ render_field(form_rating.score_graphics) }}
+            {{ render_field(form_rating.score_audio) }}
+            {{ render_field(form_rating.score_innovation) }}
+            {{ render_field(form_rating.score_humor) }}
+            {{ render_field(form_rating.score_fun) }}
+            {{ render_field(form_rating.score_overall) }}
+            {{ render_field(form_rating.note) }}
+            <input type=submit value=Go>
+        </form>
+    {% endif %}
+
+<h3>Comments</h3>
+    {% for comment in entry.comments %}
+    <ul>
+        <li>Comment id: {{ comment.id }}</li>
+        <li>Posted: {{ comment.posted }}</li>
+        <li>By: {{ comment.participant.username }}</li>
+        <li>Text: {{ comment.text }}</li>
+    </ul>
+    {% endfor %}
+        
+    {% if session.logged_in %}
+        <form action="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name, action='new_comment') }}" method=post>
+            {{ form_comment.hidden_tag() }}
+            {{ render_field(form_comment.text) }}
+            <input type=submit value=Go>
+        </form>
+    {% endif %}
 {% endblock %}

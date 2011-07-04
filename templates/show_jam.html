@@ -7,14 +7,18 @@
 <h3>Title: {{ jam.long_name }}</h3>
 <h3>Date:</h3>
 <p>Announced: {{ jam.announced }}</p>
-<p>Time of Jam: {{ jam.jamtime }}</p>
+<p>Time of Jam: {{ jam.start_time }}</p>
+{% if session.logged_in %}
+    <a href="{{ url_for('new_entry', jam_name=jam.short_name) }}">New entry</a>
+{% endif %}
 <h3>Entries:</h3>
 <ul>
-{% for entry in jam.entries %}
-    <li>
-        <a href="/entries/{{ entry.name }}">{{ entry.name }}</a> by 
-        <a href="/participants/{{ entry.participant.username }}">{{ entry.participant.username }}</a>
-    </li>
-{% endfor %}
+    {% for entry in jam.entries %}
+        <li>
+            <a href="{{ url_for('show_entry', jam_name=jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> by 
+            <a href="{{ url_for('show_participant',
+                username=entry.participant.username) }}">{{ entry.participant.username }}</a>
+        </li>
+    {% endfor %}
 </ul>
 {% endblock %}
