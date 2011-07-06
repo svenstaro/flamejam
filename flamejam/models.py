@@ -14,6 +14,7 @@ class Participant(db.Model):
     entries = db.relationship('Entry', backref='participant', lazy='dynamic')
     ratings = db.relationship('Rating', backref='participant', lazy='dynamic')
     comments = db.relationship('Comment', backref='participant', lazy='dynamic')
+    jams = db.relationship('Jam', backref='author', lazy='dynamic')
 
     def __init__(self, username, password, email, is_admin=False,
             is_verified=False):
@@ -26,12 +27,15 @@ class Participant(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+        
+    def url(self):
+        return url_for('show_participant', username = self.username)
 
 class JamStatusCode(object):
     ANNOUNCED   = 0
     RUNNING     = 1
     PACKAGING   = 2
-    VOTING      = 3
+    RATING      = 3
     FINISHED    = 4
 
 class JamStatus(object):
@@ -48,8 +52,8 @@ class JamStatus(object):
             return "Running until {0} ({1} left)".format(t, d)
         elif self.code == JamStatusCode.PACKAGING:
             return "Packaging until {0} ({1} left)".format(t, d)
-        elif self.code == JamStatusCode.VOTING:
-            return "Voting until {0} ({1} left)".format(t, d)
+        elif self.code == JamStatusCode.RATING:
+            return "Rating until {0} ({1} left)".format(t, d)
         elif self.code == JamStatusCode.PACKAGING:
             return "Finished since {0}".format(t)
 
@@ -64,13 +68,15 @@ class Jam(db.Model):
     packaging_deadline = db.Column(db.DateTime) # Packaging ends at this moment
     rating_end = db.Column(db.DateTime) # Rating period ends and jam is over
     entries = db.relationship('Entry', backref='jam', lazy='dynamic')
+    author_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
 
-    def __init__(self, short_name, long_name, start_time, end_time=None,
+    def __init__(self, short_name, long_name, author, start_time, end_time=None,
             packaging_deadline=None, voting_end=None, theme = ''):
         self.short_name = short_name
         self.long_name = long_name
         self.start_time = start_time
         self.theme = theme
+        author.jams.append(self)
 
         if end_time is None:
             self.end_time = start_time + timedelta(days=2)
@@ -100,8 +106,8 @@ class Jam(db.Model):
             return JamStatus(JamStatusCode.RUNNING, self.end_time)
         elif self.packaging_deadline > now:
             return JamStatus(JamStatusCode.PACKAGING, self.packaging_deadline)
-        elif self.voting_end > now:
-            return JamStatus(JamStatusCode.VOTING, self.voting_end)
+        elif self.rating_end > now:
+            return JamStatus(JamStatusCode.RATING, self.rating_end)
         else:
             return JamStatus(JamStatusCode.FINISHED, self.end_time)
             

@@ -18,15 +18,20 @@
         <table class="details">
             <tr><th>Title</th><td>{{ jam.long_name }}</td></tr>
             <tr><th>Theme</th><td>{% if jam.theme %}{{ jam.theme }}{% else %}Not yet selected{% endif %}</td></tr>
-            <tr><th>Announced</th><td>{{ jam.announced | humantime }} by &lt;author&gt;</td></tr>
+            <tr><th>Announced</th><td>{{ jam.announced | humantime }} by <a href="{{ jam.author.url() }}">{{ jam.author.username }}</a></td></tr>
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.start_time | humandelta(jam.end_time) }}</td></tr>
         </table>
     </div>
     {% if session.logged_in %}
-    <p class="form-buttons">
-        <a href="{{ url_for('new_entry', jam_name=jam.short_name) }}">New entry</a>
-    </p>
+        {% set status = jam.getStatus() %}
+        <p class="form-buttons">
+            {% if status.code == 3 %}
+            <a href="{{ url_for('rate_entries', jam_name = jam.short_name) }}">Rate the entries</a>
+            {% else %}
+            <a href="{{ url_for('new_entry', jam_name=jam.short_name) }}">New entry</a>
+            {% endif %}
+        </p>
     {% endif %}
 
 </div>
