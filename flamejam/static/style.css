@@ -259,22 +259,21 @@ dl dt {
 }
 
 .announcements li {
-    background: #888;
-    margin-bottom: 2px;
+    background: #DDD;
+    margin-bottom: 3px;
     padding: 2px 10px;
 }
 
 .announcements li .time {
-    color: #333;
-    display: inline-block;
-    width: 100px;
-    text-align: right;
-    margin-right: 10px;
+    display: block;
+    font-size: 7pt;
+    color: #FF4500;
+    color: #666;
 }
 
 .announcements li .text {
-    color: #FFF;
     font-weight: bold;
+    color: #444;
 }
 
 table.details {
