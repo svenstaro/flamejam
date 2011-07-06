@@ -34,7 +34,7 @@ def timedelta(starttime, endtime):
 def humandelta(s, other = None):
 	if other:
 		# we got 2 datetimes
-		return _delta(timedelta(s, other))
+		return _delta(timedelta(other, s))
 		 
 	if s.seconds < 0: # in past
 		return "%s ago" % _delta(-s)
