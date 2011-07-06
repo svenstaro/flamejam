@@ -1,0 +1,236 @@
+:focus {
+    outline: none;
+}
+
+body {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 9pt;
+    background: #333;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none none;
+}
+
+a {
+    font-weight: bold;
+    color: #369;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #FF4500;
+}
+
+a.external:after {
+    background: url("/static/img/external.png") right center no-repeat;
+    background-position:0px 0px;
+    margin-left:2px;
+    width:9px;
+    height:9px;
+    display: inline-block;
+    content: " ";
+}
+a.external:hover:after {
+    background-position:-9px 0px;
+}
+
+h1 {
+    font-weight: normal;
+    margin-top:25px;
+    border-bottom: 1px solid #aaa;
+}
+
+h6 {
+    font-size:7pt;
+    color: #666;
+    margin: 0;
+}
+
+p {
+    line-height: 1.7em;  
+}
+
+hr {
+    border:0;
+    border-top: 1px solid #aaa;
+}
+
+/* ------------------------------------------------------ */
+
+._announcement {
+    font-weight:bold;
+    font-size: 8pt;
+    color: #333;
+}
+
+._jam {
+    margin: 1em 0;
+    padding: 1em 1em 2em 1em;
+    -moz-box-shadow: inset 0 0 5px #666;
+    -webkit-box-shadow: inset 0 0 5px#666;
+    box-shadow: inner 0 0 5px #666;
+}
+
+/* ------------------------------------------------------ */
+
+
+div#WRAPPER {
+    text-align:justify;
+    width: 900px;
+    margin: 20px auto;
+}
+
+div#HEADER {
+    height: 74px;
+    border-bottom: 2px solid #FFF;
+}
+
+div#HEADER div#ICON {
+    background: url("/static/img/alien.png");
+    width: 46px;
+    height: 72px;
+    display: block;
+    float: left;
+}
+
+div#HEADER div#MINI_SEARCH {
+   float: right; 
+}
+
+div#HEADER div#MINI_SEARCH form input#MINI_SEARCH_Q {
+    border: 1px solid #999;
+    border-right: 0;
+    background: #666;
+    border-radius: 5px 0 0 5px;
+    -moz-border-radius: 5px 0 0 5px;
+    color: #ccc;
+    padding: 4px 6px;
+    margin:0;
+    height:26px;
+    vertical-align: top;
+}
+
+div#HEADER div#MINI_SEARCH form input#MINI_SEARCH_S {
+    border: 1px solid #999;
+    background: #ccc url("/static/img/find.png") center center no-repeat;
+    background-position:0px 0px;
+    border-radius: 0 5px 5px 0; 
+    -moz-border-radius: 0 5px 5px 0; 
+    padding: 4px 6px;
+    margin:0;
+    width:32px;
+    height:26px;
+    vertical-align: top;
+}
+
+
+div#HEADER div#MINI_SEARCH form input#MINI_SEARCH_S:hover {
+    background-position:-30px 0px;
+}
+
+div#HEADER div#MINI_SEARCH form input#MINI_SEARCH_S:active {
+    background-position:-60px 0px;
+}
+
+div#HEADER div#HEADLINE {
+    color: #FFF;
+    margin-left: 70px;
+    height: 58px;
+}
+
+div#HEADER div#HEADLINE h2 {
+    font-size: 8pt;
+    margin: 0;
+    padding: 0;
+}
+
+div#HEADER div#HEADLINE h1 {
+    font-size: 13pt;
+    margin: 4px 0 0 40px;
+    padding: 0;
+    font-weight: bold;
+    border: 0;
+}
+
+div#HEADER div#MENU {
+    color: #FFF;
+    margin-left: 70px;
+}
+
+div#HEADER div#MENU a,
+div#FOOTER div#FOOTER_NAVBAR ul a {
+    color: #FFF;
+}
+
+div#HEADER div#MENU a.current,
+div#FOOTER div#FOOTER_NAVBAR ul a.current {
+    color: #FF4500;
+}
+
+div#HEADER div#MENU a:hover,
+div#FOOTER div#FOOTER_NAVBAR ul a:hover { 
+    color: #FF4500;
+}
+
+div#HEADER div#MENU div#NAVBAR ul li {
+    font-size:8pt;
+    display: inline-block;
+    margin-right: 1em;
+}
+
+div#HEADER div#MENU div#LOGIN {
+    float: right;
+}
+
+div#HEADER div#MENU div#LOGIN ul li {
+    font-size:7pt;
+    display: inline-block;
+    margin-left: 1em;
+}
+
+
+
+
+div#CONTENT {
+    background: #FFF;
+    margin-top: 3px;
+    padding: 20px 30px;
+    min-height: 300px;
+    font-size: 8pt;
+}
+
+
+div#FOOTER {
+    margin-top: 3px;
+    border-top: 2px solid #FFF;
+}
+
+div#FOOTER div#FOOTER_NAVBAR {
+    text-align: right;
+}
+
+div#FOOTER div#FOOTER_NAVBAR ul li {
+    font-size:7pt;
+    display: inline-block;
+    margin-left: 1em;
+}
+
+div#FOOTER div#FOOTER_NAVBAR ul li a {
+    color: #FFF;
+}
+
+div#FOOTER div#COPYRIGHT_NOTE {
+    margin-top: 10px;
+    color:#666;
+    text-align: center;
+    font-size:8pt;
+    font-weight: normal;
+}
+
+dl dt {
+    clear: left;
+}
+

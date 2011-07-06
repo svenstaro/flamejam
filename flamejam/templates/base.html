@@ -1,34 +1,68 @@
 <!doctype html>
 <html>
-
 <head>
-    <title>Reddit Game Jam - {% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>RGJ{% block title %} - You were eaten hardly!{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
 </head>
-
 <body>
-    <div id="header">
-        <h1>Reddit Game Jam </h1>
-    </div>
-
-    <div id="content">
-        {% if not session.logged_in %}
-            <span><a href="{{ url_for('login') }}">Login</a></span>
-            <span><a href="{{ url_for('register') }}">Register</a></span>
-        {% else %}
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
-        {% endif %}
-        {% for message in get_flashed_messages() %}
-            <div class=flash>{{ message }}</div>
-        {% endfor %}
-        {% block content %}
-        {% endblock %}
-    </div>
-
-    <div id="footer">
-        <span>Copyright 2011 by Sven-Hendrik Haase | Flamejam 0.1</span>
+    <div id="WRAPPER">
+        <div id="HEADER">
+            <div id="ICON">
+            </div>
+            <div id="MINI_SEARCH">
+                <form>
+                    <input type="text" id="MINI_SEARCH_Q" name="q" placeholder="Search..."><input type="submit" value="" id="MINI_SEARCH_S">
+                </form>
+            </div>
+            <div id="HEADLINE">
+                <h2>You were eaten by a</h2>
+                <h1>Reddit Game Jam</h1>
+            </div>
+            <div id="MENU">
+                <div id="LOGIN">
+                    <ul>
+                        {% if session.logged_in %}
+                            <li>Logged in as <a href="{{ url_for('show_participant', username = session.username) }}">{{ session.username }}</a></li>
+                            <li><a href="{{ url_for('logout') }}">log out</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('login') }}">log in</a></li>
+                            <li><a href="{{ url_for('register') }}">sign up</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div id="NAVBAR">
+                    <ul>
+                        <li><a href="/" class="current">home</a></li>
+                        <li><a href="#">announcements</a></li>
+                        <li><a href="#">rulez</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="CONTENT">
+            <div class="_announcement">
+                Annoucement: <a href="#">Reddit Game Jam 06 annouced</a> :: 2010-05-14
+                22:00 UTC to 2010-05-16 22:00 UTC :: <a href="#" >Rulez here</a>
+            </div>
+            
+            {% block content %}
+                lolfail
+            {% endblock %}
+        </div>
+        <div id="FOOTER">
+            <div id="FOOTER_NAVBAR">
+                <ul>
+                    <li><a href="/faq">faq</a></li>
+                    <li><a href="/about">about</a></li>
+                    <li><a href="{{ url_for('contact') }}">contact</a></li>
+                </ul>
+            </div>
+            <div id="COPYRIGHT_NOTE">
+                This site is not owned or operated by Cond&eacute; Nast
+                Publications or Reddit.com
+            </div>
+        </div>
     </div>
 </body>
-
 </html>
