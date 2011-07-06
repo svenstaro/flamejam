@@ -7,16 +7,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flamejam.db'
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = 'lolsecret'
 db = SQLAlchemy(app)
-    
+
 #define filters
 @app.template_filter()
 def formattime(s):
 	return s.strftime("%Y-%m-%d %H:%M:%S")
-	
+
 #@app.template_filter()
 #def startwith(s, start):
 #	return s.startswith(start)
-	
+
 @app.template_filter()
 def humantime(s):
 	diff = datetime.utcnow() - s
@@ -42,5 +42,5 @@ import flamejam.models
 
 @app.context_processor
 def inject_announcement():
-	a = flamejam.models.Announcement.query.order_by(flamejam.models.Announcement.posted.desc()).first()	
+	a = flamejam.models.Announcement.query.order_by(flamejam.models.Announcement.posted.desc()).first()
 	return dict(last_announcement = a)
