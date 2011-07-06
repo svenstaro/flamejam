@@ -40,8 +40,16 @@ a.external:hover:after {
 
 h1 {
     font-weight: normal;
-    margin-top:25px;
-    border-bottom: 1px solid #aaa;
+    margin-top: 25px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #AAA;
+    color: #666;
+}
+
+h2 {
+    color: #369;
+    font-size: 15pt;
+    font-weight: normal;
 }
 
 h6 {
@@ -87,6 +95,11 @@ div#WRAPPER {
 div#HEADER {
     height: 74px;
     border-bottom: 2px solid #FFF;
+}
+
+div#HEADER h1,
+div#HEADER h2 {
+    color: #FFF;
 }
 
 div#HEADER div#ICON {

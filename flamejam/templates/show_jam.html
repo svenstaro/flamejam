@@ -3,7 +3,7 @@
 {% block title %}Jam {{ jam.short_name }}{% endblock %}
 
 {% block content %}
-<h2>View Jam {{ jam.short_name }}</h2>
+<h1>{{ jam.short_name }}</h1>
 
 <div class="box">
     <h4>Status</h4>
@@ -31,25 +31,25 @@
 
 </div>
 
-<h3>Entries:</h3>
-<ul>
-    {% for entry in jam.entries %}
-        <li class="box floatingbox">
-            <h4><a href="{{ url_for('show_entry', jam_name=jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> by 
-            <a href="{{ url_for('show_participant',
-                username=entry.participant.username) }}">{{ entry.participant.username }}</a></h4>
-            
-            <div class="box-content">
-                lol screenshot here
-            </div>
-        </li>
-    {% endfor %}
-</ul>
+<h2>Entries</h2>
 
 {% if jam.entries.all() | length == 0 %}
     <p>There are no entries yet.</p>
+{% else %}
+    <ul>
+        {% for entry in jam.entries %}
+            <li class="box floatingbox">
+                <h4><a href="{{ url_for('show_entry', jam_name=jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> by 
+                <a href="{{ url_for('show_participant',
+                    username=entry.participant.username) }}">{{ entry.participant.username }}</a></h4>
+                
+                <div class="box-content">
+                    lol screenshot here
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="clear"></div>
 {% endif %}
 
-
-<div class="clear"></div>
 {% endblock %}
