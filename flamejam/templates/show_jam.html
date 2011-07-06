@@ -4,21 +4,52 @@
 
 {% block content %}
 <h2>View Jam {{ jam.short_name }}</h2>
-<h3>Title: {{ jam.long_name }}</h3>
-<h3>Date:</h3>
-<p>Announced: {{ jam.announced }}</p>
-<p>Time of Jam: {{ jam.start_time }}</p>
-{% if session.logged_in %}
-    <a href="{{ url_for('new_entry', jam_name=jam.short_name) }}">New entry</a>
-{% endif %}
+
+<div class="box">
+    <h4>Status</h4>
+    <div class="box-content">
+        {{ jam.getStatus() }}
+    </div>
+</div>
+
+<div class="box">
+    <h4>Details</h4>
+    <div class="box-content">
+        <table class="details">
+            <tr><th>Title</th><td>{{ jam.long_name }}</td></tr>
+            <tr><th>Theme</th><td>{% if jam.theme %}{{ jam.theme }}{% else %}Not yet selected{% endif %}</td></tr>
+            <tr><th>Announced</th><td>{{ jam.announced | humantime }} by &lt;author&gt;</td></tr>
+            <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
+            <tr><th>Duration</th><td>{{ jam.start_time | humandelta(jam.end_time) }}</td></tr>
+        </table>
+    </div>
+    {% if session.logged_in %}
+    <p class="form-buttons">
+        <a href="{{ url_for('new_entry', jam_name=jam.short_name) }}">New entry</a>
+    </p>
+    {% endif %}
+
+</div>
+
 <h3>Entries:</h3>
 <ul>
     {% for entry in jam.entries %}
-        <li>
-            <a href="{{ url_for('show_entry', jam_name=jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> by 
+        <li class="box floatingbox">
+            <h4><a href="{{ url_for('show_entry', jam_name=jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> by 
             <a href="{{ url_for('show_participant',
-                username=entry.participant.username) }}">{{ entry.participant.username }}</a>
+                username=entry.participant.username) }}">{{ entry.participant.username }}</a></h4>
+            
+            <div class="box-content">
+                lol screenshot here
+            </div>
         </li>
     {% endfor %}
 </ul>
+
+{% if jam.entries.all() | length == 0 %}
+    <p>There are no entries yet.</p>
+{% endif %}
+
+
+<div class="clear"></div>
 {% endblock %}

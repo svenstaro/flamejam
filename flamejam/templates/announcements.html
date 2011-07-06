@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}History of Announcements{% endblock %}
+{% block title %}Announcement History{% endblock %}
 
 {% block content %}
-<h2>All Announcements</h2>
-<ul>
+<h2>Announcement History</h2>
+<p>Recent announcements are displayed first.</p>
+<ul class="announcements">
 {% for announcement in announcements %}
 	<li>
-		{{ announcement.posted | humantime }}:
-		{{ announcement.text }}
+		<span class="time">{{ announcement.posted | humantime }}</span>
+		<span class="text">{{ announcement.text }}</span>
 	</li>
 {% endfor %}
 </ul>
