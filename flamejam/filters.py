@@ -14,9 +14,6 @@ def _s(n, s):
 	return str(n) + " " + s + ("s" if n > 1 else "")
 
 def _delta(delta):
-	if delta < 0:
-		delta = -delta
-		
 	if delta.years > 0:
 		return _s(delta.years, "year") + " " + _s(delta.months, "month")
 	if delta.months > 0:
@@ -39,10 +36,9 @@ def humandelta(s, other = None):
 		# we got 2 datetimes
 		return _delta(timedelta(s, other))
 		 
-	
-	if s < 0: # in past
-		return "%s ago" % _delta(s)
-	elif s > 0:
+	if s.seconds < 0: # in past
+		return "%s ago" % _delta(-s)
+	elif s.seconds > 0:
 		return "in %s" % _delta(s)
 	else:
 		return s
