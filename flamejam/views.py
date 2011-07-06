@@ -160,3 +160,13 @@ def show_participant(username):
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@app.route('/rules')
+@app.route('/rulez')
+def rules():
+    return render_template('rules.html')
+    
+@app.route('/announcements')
+def announcements():
+    announcements = Announcement.query.order_by(Announcement.posted.desc())
+    return render_template('announcements.html', announcements = announcements)

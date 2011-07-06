@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}History of Announcements{% endblock %}
+
+{% block content %}
+<h2>All Announcements</h2>
+<ul>
+{% for announcement in announcements %}
+	<li>
+		{{ announcement.posted | humantime }}:
+		{{ announcement.text }}
+	</li>
+{% endfor %}
+</ul>
+{% endblock %}

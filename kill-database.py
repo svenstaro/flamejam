@@ -3,7 +3,8 @@
 # It should be run from a virtualenv.
 #
 
-from flamejam import db, Participant, Jam, Entry, Rating, Comment
+from flamejam import db
+from flamejam.models import Announcement, Participant, Jam, Entry, Rating, Comment
 from datetime import datetime, timedelta
 
 # Kill everything and recreate tables
@@ -88,6 +89,21 @@ db.session.add(comment2)
 db.session.add(comment3)
 db.session.add(comment4)
 db.session.add(comment5)
+
+# Make announcements
+ann1 = Announcement("New game jam now.")
+ann2 = Announcement("Game jam is over.")
+ann3 = Announcement("Voting is over.")
+ann4 = Announcement("New game jam announced.")
+ann5 = Announcement("Game jam started.")
+
+# Add announcements
+
+db.session.add(ann1)
+db.session.add(ann2)
+db.session.add(ann3)
+db.session.add(ann4)
+db.session.add(ann5)
 
 # Commmit it all
 db.session.commit()

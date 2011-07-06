@@ -33,17 +33,18 @@
                 </div>
                 <div id="NAVBAR">
                     <ul>
-                        <li><a href="/" class="current">home</a></li>
-                        <li><a href="#">announcements</a></li>
-                        <li><a href="#">rulez</a></li>
+                        {% for key, caption in [("index","home"),("announcements","announcements"),("rules","rulez")] %}
+                            {% set current = request.endpoint.startswith(key) %}
+                            <li><a {% if current %}class="current"{% endif %} href="{{ url_for( key ) }}">{{caption}}</a></li>
+                        {% endfor %}
+                        
                     </ul>
                 </div>
             </div>
         </div>
         <div id="CONTENT">
             <div class="_announcement">
-                Annoucement: <a href="#">Reddit Game Jam 06 annouced</a> :: 2010-05-14
-                22:00 UTC to 2010-05-16 22:00 UTC :: <a href="#" >Rulez here</a>
+                Annoucement: {{ last_announcement.text }} [{{ last_announcement.posted | humantime }}]
             </div>
             
             {% block content %}

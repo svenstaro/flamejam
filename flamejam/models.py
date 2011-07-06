@@ -1,5 +1,5 @@
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from hashlib import sha512
 from flamejam import db
 
 class Participant(db.Model):
@@ -127,3 +127,16 @@ class Comment(db.Model):
 
     def __repr__(self):
         return '<Comment %r>' % self.id
+
+
+class Announcement(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    text = db.Column(db.Text)
+    posted = db.Column(db.DateTime)
+    
+    def __init__(self, text):
+        self.text = text
+        self.posted = datetime.utcnow()
+        
+    def __repr__(self):
+        return '<Announcement %r>' % self.id
