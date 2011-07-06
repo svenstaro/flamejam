@@ -10,11 +10,9 @@
     <h4>Details</h4>
     <div class="box-content">
         <table class="details">
-            <tr><th>Author</th>
-                <td><a href="{{ url_for('show_participant', username=entry.participant.username) }}">{{ entry.participant.username }}</a></td></tr>
+            <tr><th>Author</th><td>{{ entry.participant.getLink() }}</td></tr>
             
-            <tr><th>Jam</th>
-                <td><a href="{{ entry.jam.url() }}">{{ entry.jam.getFullName() }}</a></td></tr>
+            <tr><th>Jam</th><td><a href="{{ entry.jam.url() }}">{{ entry.jam.getFullName() }}</a></td></tr>
                 
             <tr><th>Submitted</th>
                 <td>{{ entry.posted | humantime }}</td></tr>

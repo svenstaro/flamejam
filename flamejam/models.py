@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-from hashlib import sha512
+from hashlib import sha512, md5
 from flamejam import db, filters
-from flask import url_for
+from flask import url_for, Markup
 
 class Participant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,6 +30,15 @@ class Participant(db.Model):
         
     def url(self):
         return url_for('show_participant', username = self.username)
+        
+    def getAvatar(self, size = 32):
+        return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
+
+    def getLink(self):
+        s = 12
+        return Markup('<a class="user" href="{0}"><img width="{2}" height="{2}" src="{3}" class="icon"/> {1}</a>'.format(
+            self.url(), self.username, s, self.getAvatar(s)))
+
 
 class JamStatusCode(object):
     ANNOUNCED   = 0

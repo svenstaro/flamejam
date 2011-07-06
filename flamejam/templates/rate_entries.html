@@ -8,10 +8,7 @@
     <h3>Description:</h3>
 <p>{{ entry.description }}</p>
 <ul>
-    <li>Author: <a href="{{ url_for('show_participant',
-            username=entry.participant.username) }}">
-        {{ entry.participant.username }}</a>
-    </li>
+    <li>Author: {{ entry.participant.getLink() }}</li>
     <li>Jam: <a href="{{ url_for('show_jam', jam_name=entry.jam.short_name) }}">
         {{ entry.jam.short_name }}</a>
     </li>

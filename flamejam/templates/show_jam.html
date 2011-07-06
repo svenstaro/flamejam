@@ -18,7 +18,7 @@
         <table class="details">
             <tr><th>Title</th><td>{{ jam.long_name }}</td></tr>
             <tr><th>Theme</th><td>{% if jam.theme %}{{ jam.theme }}{% else %}Not yet selected{% endif %}</td></tr>
-            <tr><th>Announced</th><td>{{ jam.announced | humantime }} by <a href="{{ jam.author.url() }}">{{ jam.author.username }}</a></td></tr>
+            <tr><th>Announced</th><td>{{ jam.announced | humantime }} by {{ jam.author.getLink() }}</a></td></tr>
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.start_time | humandelta(jam.end_time) }}</td></tr>
         </table>
@@ -45,8 +45,7 @@
         {% for entry in jam.entries %}
             <li class="box floatingbox">
                 <h4><a href="{{ url_for('show_entry', jam_name=jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> by 
-                <a href="{{ url_for('show_participant',
-                    username=entry.participant.username) }}">{{ entry.participant.username }}</a></h4>
+                {{ entry.participant.getLink() }}</h4>
                 
                 <div class="box-content">
                     lol screenshot here

@@ -1,16 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Participant {{ participant.username }}{% endblock %}
+{% block title %}Participants » {{ participant.username }}{% endblock %}
 
 {% block content %}
-<h2>View Participant {{ participant.username }}</h2>
-<h3>Entries:</h3>
-<ul>
-{% for entry in participant.entries %}
-    <li>
-        <a href="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> for 
-        <a href="{{ url_for('show_jam', jam_name=entry.jam.short_name) }}">{{ entry.jam.short_name }}</a>
-    </li>
-{% endfor %}
-</ul>
+<h1>{{ participant.username }}</h1>
+
+<div style="float: left;">
+    <img class="icon big" width="64" height="64" src="{{ participant.getAvatar(64) }}" />
+</div>
+<div style="margin-left: 80px">
+    <div class="box">
+        <h4>Entries</h4>
+        <div class="box-content">
+            <table class="details">
+                {% for entry in participant.entries %}
+                <tr><th>
+                    <a href="{{ url_for('show_jam', jam_name=entry.jam.short_name) }}">{{ entry.jam.short_name }}</a>
+                </th><td>
+                    <a href="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a>
+                </td></tr>
+                {% endfor %}    
+            </table>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

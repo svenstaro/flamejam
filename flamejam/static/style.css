@@ -281,10 +281,14 @@ table.details {
 	font-size: 8pt;
 }
 
-table.details th {
+table.details th, 
+table.details th a {
 	text-align: left;
 	font-weight: normal;
 	color: #888;
+}
+table.details th a:hover {
+    text-decoration: underline;
 }
 
 table.details td,
@@ -329,4 +333,15 @@ table.details th {
 
 .clear {
     clear: both;
+}
+
+
+img.icon {
+    border: 1px solid #666;
+    background: #FFF;
+    vertical-align: top;
+}
+
+img.icon.big {
+    padding: 2px;
 }
