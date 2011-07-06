@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %}Rate {{ entry.name }}{% endblock %}
+
+{% block content %}
+<h2>Rate {{ entry.name }}</h2>
+    <h3>Description:</h3>
+<p>{{ entry.description }}</p>
+<ul>
+    <li>Author: <a href="{{ url_for('show_participant',
+            username=entry.participant.username) }}">
+        {{ entry.participant.username }}</a>
+    </li>
+    <li>Jam: <a href="{{ url_for('show_jam', jam_name=entry.jam.short_name) }}">
+        {{ entry.jam.short_name }}</a>
+    </li>
+</ul>
+
+<h3>Ratings</h3>
+{% if session.logged_in %}
+    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+    <form action="{{ url_for('rate_entries', jam_name=entry.jam.short_name) }}" method=post>
+        {{ form.hidden_tag() }}
+        {{ render_field(form.score_graphics) }}
+        {{ render_field(form.score_audio) }}
+        {{ render_field(form.score_innovation) }}
+        {{ render_field(form.score_humor) }}
+        {{ render_field(form.score_fun) }}
+        {{ render_field(form.score_overall) }}
+        {{ render_field(form.note) }}
+        {{ render_field(form.skip) }}
+        <input type=submit value=Go>
+    </form>
+{% endif %}
+
+<h3>Skipped entries</h3>
+{% for skipped_entry in skipped_entries %}
+    <a href="#">{{ skipped_entry }}a</a>
+{% endfor %}
+<p>Click to unskip</p>
+
+{% endblock %}

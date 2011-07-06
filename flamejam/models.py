@@ -38,7 +38,7 @@ class JamStatus(object):
     def __init__(self, code, time):
         self.code = code
         self.time = time
-    
+
     def __repr__(self):
         t = filters.formattime(self.time)
         d = filters.humandelta(datetime.utcnow(), self.time)
@@ -62,7 +62,7 @@ class Jam(db.Model):
     start_time = db.Column(db.DateTime) # The jam starts at this moment
     end_time = db.Column(db.DateTime) # The jamming phase ends at this moment
     packaging_deadline = db.Column(db.DateTime) # Packaging ends at this moment
-    voting_end = db.Column(db.DateTime) # Voting period ends and jam is over
+    rating_end = db.Column(db.DateTime) # Rating period ends and jam is over
     entries = db.relationship('Entry', backref='jam', lazy='dynamic')
 
     def __init__(self, short_name, long_name, start_time, end_time=None,
@@ -82,10 +82,10 @@ class Jam(db.Model):
         else:
             self.packaging_deadline = packaging_deadline
 
-        if voting_end is None:
-            self.voting_end = start_time + timedelta(days=7)
+        if self.rating_end is None:
+            self.rating_end = start_time + timedelta(days=7)
         else:
-            self.voting_end = voting_end
+            self.rating_end = rating_end
 
         self.announced = datetime.utcnow()
 
@@ -181,10 +181,10 @@ class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     text = db.Column(db.Text)
     posted = db.Column(db.DateTime)
-    
+
     def __init__(self, text):
         self.text = text
         self.posted = datetime.utcnow()
-        
+
     def __repr__(self):
         return '<Announcement %r>' % self.id

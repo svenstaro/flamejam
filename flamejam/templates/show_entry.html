@@ -46,22 +46,6 @@
     </ul>
 {% endfor %}
 
-{% if session.logged_in %}
-    <h3>Rate this post</h3>
-    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-    <form action="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name, action='new_rating' ) }}" method=post>
-        {{ form_rating.hidden_tag() }}
-        {{ render_field(form_rating.score_graphics) }}
-        {{ render_field(form_rating.score_audio) }}
-        {{ render_field(form_rating.score_innovation) }}
-        {{ render_field(form_rating.score_humor) }}
-        {{ render_field(form_rating.score_fun) }}
-        {{ render_field(form_rating.score_overall) }}
-        {{ render_field(form_rating.note) }}
-        <input type=submit value=Go>
-    </form>
-{% endif %}
-
 <h3>Comments</h3>
     {% for comment in entry.comments %}
     <ul>
@@ -74,8 +58,8 @@
         
     {% if session.logged_in %}
         <form action="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name, action='new_comment') }}" method=post>
-            {{ form_comment.hidden_tag() }}
-            {{ render_field(form_comment.text) }}
+            {{ form.hidden_tag() }}
+            {{ render_field(form.text) }}
             <input type=submit value=Go>
         </form>
     {% endif %}
