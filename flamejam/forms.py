@@ -1,6 +1,7 @@
 from flaskext.wtf import Form, TextField, TextAreaField, PasswordField,\
-        DateTimeField
-from flaskext.wtf import Required, Length, Optional, NumberRange, Email
+        DateTimeField, SubmitField
+from flaskext.wtf import Required, Length, Optional, NumberRange, Email,\
+        ValidationError
 from flaskext.wtf.html5 import IntegerField, EmailField
 
 from flamejam import app
@@ -27,6 +28,10 @@ class SubmitEntry(Form):
     name = TextField("Entry name", validators=[Required(), Length(max=128)])
     description = TextAreaField("Description", validators=[Required()])
 
+    def validate_name(form, field):
+        if "|" in form.name.data:
+            raise ValidationError("Name can not contain '|'")
+
 class RateEntry(Form):
     score_graphics = IntegerField("Graphics rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     score_audio = IntegerField("Audio rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
@@ -35,6 +40,7 @@ class RateEntry(Form):
     score_fun = IntegerField("Fun rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     score_overall = IntegerField("Overall rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     note = TextAreaField("Additional notes", validators=[Optional()])
+    skip = SubmitField("Skip", validators=[Optional()])
 
 class WriteComment(Form):
     text = TextAreaField("Comment", validators=[Required(), Length(max=65535)])

@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 from hashlib import sha512
+from random import randint
 
 from flask import session, redirect, url_for, escape, request, \
-        render_template, flash
+        render_template, flash, abort
 from flamejam import app
 
 from flamejam.models import *
@@ -112,34 +113,105 @@ def new_entry(jam_name):
             return redirect(url_for('show_entry', jam_name=jam_name, entry_name=name))
     return render_template('new_entry.html', jam=jam, form=form, error=error)
 
+@app.route('/jams/<jam_name>/rate', methods=("GET", "POST"))
+def rate_entries(jam_name):
+   jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
+
+   # # Check whether jam is in rating period
+   # if not (jam.packaging_deadline < datetime.utcnow() < jam.rating_end):
+   #     abort(404)
+
+   # # Figure out next entry (that which has fewest ratings of all entries) and
+   # # present it to the user who is looking for the next entry to rate.
+   # entries = jam.entries
+   # entries_ordered = []
+   # for entry in entries:
+   #     entries_ordered.append((entry.ratings.count(), entry))
+   # entries_ordered.sort()
+
+   # # Eliminate skipped entries.
+   # skipped_entries_list = []
+   # if "skipped" in session:
+   #     skipped_entries = session["skipped"].split("|")
+   #     remaining_entries = []
+   #     for entry in entries_ordered:
+   #         if jam.short_name+entry[1].name in skipped_entries:
+   #             skipped_entries_list.append(entry)
+   #         else:
+   #             remaining_entries.append(entry)
+
+   # # Add skipped entries to end of preferred entries.
+   # entries_ordered = remaining_entries + skipped_entries_list
+   # flash(remaining_entries)
+   # flash(entries_ordered)
+
+   # # Figure out whether the lowest count number is unique. For instance, if
+   # # the 3 first items in the list are all 2, we should assign a random one of
+   # # those to all new rating requests so that ratings are more evenly
+   # # distributed.
+   # unique_test_list = []
+   # for list_item in remaining_entries:
+   #     unique_test_list.append(list_item[0]) # [0] is always ratings.count().
+
+   # # Now test how often the lowest number appears.
+   # count = unique_test_list.count(unique_test_list[0])
+   # flash(count)
+
+   # # Use one of the entries with the lowest ratings counts and provide it as
+   # # this request's entry to vote on.
+   # entry_number = randint(0, count - 1)
+   # entry = entries_ordered[entry_number][1]
+
+   # error = None
+   # form = RateEntry()
+   # # TODO: Filter for jams that match the the criteria to enable rating
+   # # (needs to happen during rating period only)
+   # # TODO: Keep track of who already rated
+
+   # skip = form.skip.data
+   # if skip:
+   #     if "skipped" in session:
+   #         session["skipped"] += jam.short_name+entry.name+"|"
+   #     else:
+   #         session["skipped"] = jam.short_name+entry.name+"|"
+   #     return redirect(url_for('rate_entries', jam_name=jam_name))
+
+   # if form.validate_on_submit():
+   #     entry_name = session["rating_next"].replace(jam_name, "")
+   #     entry_query = Entry.query.filter_by(name=entry_name).first()
+   #     score_graphics = form.score_graphics.data
+   #     score_audio = form.score_audio.data
+   #     score_innovation = form.score_innovation.data
+   #     score_humor = form.score_humor.data
+   #     score_fun = form.score_fun.data
+   #     score_overall = form.score_overall.data
+   #     note = form.note.data
+   #     participant_username = session['username']
+   #     participant = Participant.query.filter_by(username=participant_username).first()
+   #     new_rating = Rating(score_graphics, score_audio, score_innovation,
+   #             score_humor, score_fun, score_overall, note, entry_query, participant)
+   #     db.session.add(new_rating)
+   #     db.session.commit()
+   #     flash('Rating added')
+   #     return redirect(url_for('rate_entries', jam_name=jam_name))
+
+   # # Set next vote to the session cookie because we don't trust the user.
+   # session["rating_next"] = jam.short_name+"|"+entry.name
+
+   # entry = Entry.query.filter_by(name=entry.name).first()
+   # return render_template('rate_entries.html', jam=jam,
+   #         form=form, error=error, skipped_entries=skipped_entries_list)
+
 @app.route('/jams/<jam_name>/<entry_name>/')
 @app.route('/jams/<jam_name>/<entry_name>/<action>', methods=("GET", "POST"))
 def show_entry(jam_name, entry_name, action=None):
-    form_rating = RateEntry()
-    form_comment = WriteComment()
+    form = WriteComment()
     jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
     entry = Entry.query.filter_by(name=entry_name).filter_by(jam=jam).first_or_404()
 
-    if action == "new_rating" and form_rating.validate_on_submit():
-        score_graphics = form_rating.score_graphics.data
-        score_audio = form_rating.score_audio.data
-        score_innovation = form_rating.score_innovation.data
-        score_humor = form_rating.score_humor.data
-        score_fun = form_rating.score_fun.data
-        score_overall = form_rating.score_overall.data
-        note = form_rating.note.data
-        participant_username = session['username']
-        participant = Participant.query.filter_by(username=participant_username).first()
-        new_rating = Rating(score_graphics, score_audio, score_innovation,
-                score_humor, score_fun, score_overall, note, entry, participant)
-        db.session.add(new_rating)
-        db.session.commit()
-        flash('Rating added')
-        return redirect(url_for('show_entry', jam_name=jam_name,
-            entry_name=entry_name))
-
-    if action == "new_comment" and form_comment.validate_on_submit():
-        text = form_comment.text.data
+    # TODO: Remove this action stuff
+    if action == "new_comment" and form.validate_on_submit():
+        text = form.text.data
         participant_username = session['username']
         participant = Participant.query.filter_by(username=participant_username).first()
         new_comment = Comment(text, entry, participant)
@@ -149,8 +221,7 @@ def show_entry(jam_name, entry_name, action=None):
         return redirect(url_for('show_entry', jam_name=jam_name,
             entry_name=entry_name))
 
-    return render_template('show_entry.html', entry=entry,
-            form_rating=form_rating, form_comment=form_comment)
+    return render_template('show_entry.html', entry=entry, form=form)
 
 @app.route('/participants/<username>/')
 def show_participant(username):

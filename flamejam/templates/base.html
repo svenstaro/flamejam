@@ -46,6 +46,9 @@
             <div class="_announcement">
                 Annoucement: {{ last_announcement.text }} [{{ last_announcement.posted | humantime }}]
             </div>
+            {% for message in get_flashed_messages() %}
+                <div class="_flash">{{ message }}</div>
+            {% endfor %}
             
             {% block content %}
                 lolfail

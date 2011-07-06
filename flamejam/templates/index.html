@@ -31,17 +31,19 @@
     </li>
 {% endfor %}
 
-{# Jams that are in voting period #}
-{% for jam in jams if jam.packaging_deadline < current_datetime < jam.voting_end%}
+{# Jams that are in rating period #}
+{% for jam in jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
     <li>
         Jam <a href="{{ url_for('show_jam', jam_name=jam.short_name) }}">{{ jam.short_name }}</a>
-        is in voting period for another {{ jam.voting_end - current_datetime }}
+        is in rating period for another {{ jam.rating_end - current_datetime }}
+        <!-- TODO: Check this is possible in view -->
+        <a href="{{ url_for('rate_entries', jam_name=jam.short_name) }}">Rate entries now</a>
     </li>
 {% endfor %}
 </ul>
 <h2>Previous Jams</h2>
 <ul>
-{% for jam in jams if jam.voting_end < current_datetime %}
+{% for jam in jams if jam.rating_end < current_datetime %}
     <li>
         <a href="{{ url_for('show_jam', jam_name=jam.short_name) }}">{{ jam.short_name }}</a>
         from {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }} to {{
