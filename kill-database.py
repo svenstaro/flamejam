@@ -50,6 +50,10 @@ derp = Entry("derp", "herp herp", rgj3, paul)
 lorem = Entry("lorem", "ipsum dolor?", rgj3, pablo)
 rtype = Entry("rtype", "some schmup game", rgj4, paddy)
 tetris = Entry("tetris", "original concept", rgj4, paul)
+game1 = Entry("game1", "game1", loljam, paul)
+game2 = Entry("game2", "game2", loljam, paddy)
+game3 = Entry("game3", "game3", loljam, pablo)
+game4 = Entry("game4", "game4", loljam, peter)
 
 # Add entries
 db.session.add(best_game)
@@ -61,6 +65,10 @@ db.session.add(derp)
 db.session.add(lorem)
 db.session.add(rtype)
 db.session.add(tetris)
+db.session.add(game1)
+db.session.add(game2)
+db.session.add(game3)
+db.session.add(game4)
 
 # Make ratings
 rating1 = Rating(3, 5, 1, 7, 3, 1, "cool stuff", best_game, peter)
@@ -68,6 +76,9 @@ rating2 = Rating(10, 6, 1, 7, 6, 10, "adasdff", best_game, paul)
 rating3 = Rating(3, 5, 1, 5, 2, 2, "cadkak", space_game, paul)
 rating4 = Rating(9, 5, 6, 7, 3, 1, "fakpdak1", clone, paul)
 rating5 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", clone, paddy)
+rating6 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", game1, paddy)
+rating7 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", game2, paddy)
+rating8 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", game2, peter)
 
 # Add ratings
 db.session.add(rating1)
@@ -75,6 +86,9 @@ db.session.add(rating2)
 db.session.add(rating3)
 db.session.add(rating4)
 db.session.add(rating5)
+db.session.add(rating6)
+db.session.add(rating7)
+db.session.add(rating8)
 
 # Make comments
 comment1 = Comment("lol so bad", best_game, peter)
