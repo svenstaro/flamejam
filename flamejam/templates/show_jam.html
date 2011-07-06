@@ -28,6 +28,8 @@
         <p class="form-buttons">
             {% if status.code == 3 %}
             <a href="{{ url_for('rate_entries', jam_name = jam.short_name) }}">Rate the entries</a>
+            {% elif status.code == 5 %}
+            <a href="{{ url_for('rate_entries', jam_name = jam.short_name) }}">Show the winner</a>
             {% else %}
             <a href="{{ url_for('new_entry', jam_name=jam.short_name) }}">New entry</a>
             {% endif %}

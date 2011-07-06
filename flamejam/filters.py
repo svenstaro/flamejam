@@ -29,17 +29,22 @@ def _delta(delta):
 def timedelta(starttime, endtime):
 	return relativedelta.relativedelta(starttime, endtime)
 
+def _absdelta(d):
+	if d.seconds < 0 or d.minutes < 0 or d.hours < 0 or d.days < 0 or d.months < 0 or d.years < 0:
+		return -d
+	return d
+	
 # format a timedelta in human-readable format (e.g. "in 20 minutes" or "3 weeks ago")
 @app.template_filter()
 def humandelta(s, other = None):
 	if other:
 		# we got 2 datetimes
-		return _delta(timedelta(other, s))
+		return _delta(_absdelta(timedelta(other, s))).strip()
 		 
 	if s.seconds < 0: # in past
-		return "%s ago" % _delta(-s)
+		return "%s ago" % _delta(-s).strip()
 	elif s.seconds > 0:
-		return "in %s" % _delta(s)
+		return "in %s" % _delta(s).strip()
 	else:
 		return s
 	
