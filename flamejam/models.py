@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from hashlib import sha512
 from flamejam import db, filters
+from flask import url_for
 
 class Participant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -103,6 +104,12 @@ class Jam(db.Model):
             return JamStatus(JamStatusCode.VOTING, self.voting_end)
         else:
             return JamStatus(JamStatusCode.FINISHED, self.end_time)
+            
+    def getFullName(self):
+        return "{0} [{1}]".format(self.long_name, self.short_name)
+    
+    def url(self):
+        return url_for('show_jam', jam_name = self.short_name) 
 
 class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
