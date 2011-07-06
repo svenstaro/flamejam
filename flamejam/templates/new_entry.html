@@ -1,13 +1,15 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block content %}
 <h2>New Entry</h2>
 {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-<form action="{{ url_for('new_entry', jam_name=jam.short_name) }}" method=post>
+    <form method="post" action="{{ url_for('new_entry', jam_name = jam.short_name) }}">
+    {{ form_errors(form) }}
     {{ form.hidden_tag() }}
-    {{ render_field(form.name) }}
-    {{ render_field(form.description) }}
-    <input type=submit value=Go>
+    {{ form.name() }}
+    {{ form.description() }}
+    <input type="submit">
+    </form>
 </form>
 {% endblock %}

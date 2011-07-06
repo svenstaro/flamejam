@@ -1,14 +1,49 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block content %}
 <h2>Register</h2>
-{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-<form action="{{ url_for('register') }}" method=post>
-    {{ form.hidden_tag() }}
-    {{ render_field(form.username) }}
-    {{ render_field(form.password) }}
-    {{ render_field(form.email) }}
-    <input type=submit value=Go>
+    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+    
+    <form action="{{ url_for('register') }}" method="post">
+        {{ form.hidden_tag() }}
+        <div class="box" style="width: 320px; margin: 0 auto;">
+            <h4>Register</h4>
+            <div class="box-content">
+                <p>{{ form_errors(form) }}</p>
+                <table class="details">
+                    <tr>
+                        <th width="1000">{{ form.username.label }}</th>
+                        <td>
+                            {{ form.username(class="text-input") }}
+                            <span class="input-info" title="Allowed characters: letters, numbers, dashes, underscores">min 6 characters</span></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{{ form.password.label }}</th>
+                        <td>{{ form.password(class="password-input") }}
+                        <span class="input-info" title="all characters allowed">min 8 characters</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{{ form.password2.label }}</th>
+                        <td>{{ form.password2(class="password-input") }}
+                        <span class="input-info">repeat for verification</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{{ form.email.label }}</th>
+                        <td>{{ form.email(class="text-input") }}
+                            <span class="input-info">(will be used for <a href="http://gravatar.com" target="_blank">Gravatar</a>)</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <p class="form-buttons">
+                <input type="reset" class="button" value="Reset">
+                <input type="submit" class="button default" value="Register">
+            </p>
+        </div>
+    </form>
 </form>
 {% endblock %}

@@ -1,11 +1,10 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block title %}{{ entry.jam.short_name}} » {{ entry.name }}{% endblock %}
 
 {% block content %}
 <h1>{{ entry.jam.long_name }} &raquo; {{ entry.name }}</h1>
-
 <div class="box">
     <h4>Details</h4>
     <div class="box-content">
@@ -56,8 +55,9 @@
         
     {% if session.logged_in %}
         <form action="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name, action='new_comment') }}" method=post>
+            {{ form_errors(form) }}
             {{ form.hidden_tag() }}
-            {{ render_field(form.text) }}
+            {{ form.text() }}
             <input type=submit value=Go>
         </form>
     {% endif %}

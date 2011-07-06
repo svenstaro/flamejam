@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block title %}Rate {{ entry.name }}{% endblock %}
 
@@ -18,7 +18,7 @@
 {% if session.logged_in %}
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
     <form action="{{ url_for('rate_entries', jam_name=entry.jam.short_name) }}" method=post>
-        {{ form.hidden_tag() }}
+        {#{ form.hidden_tag() }}
         {{ render_field(form.score_graphics) }}
         {{ render_field(form.score_audio) }}
         {{ render_field(form.score_innovation) }}
@@ -26,7 +26,7 @@
         {{ render_field(form.score_fun) }}
         {{ render_field(form.score_overall) }}
         {{ render_field(form.note) }}
-        {{ render_field(form.skip) }}
+        {{ render_field(form.skip) }#}
         <input type=submit value=Go>
     </form>
 {% endif %}

@@ -290,9 +290,22 @@ table.details th a:hover {
     text-decoration: underline;
 }
 
-table.details td,
+table.details th,
+table.details td {
+    vertical-align: top;
+}
+
 table.details th {
 	padding-right: 20px;
+}
+
+form table.details th {
+    padding-top: 6px;
+}
+
+form .input-info {
+    font-size: 8pt; 
+    color: #AAA;
 }
 
 
@@ -343,4 +356,57 @@ img.icon {
 
 img.icon.big {
     padding: 2px;
+}
+
+
+label {
+    color: #888;
+}
+
+input.text-input,
+input.password-input,
+textarea {
+    background: #FFF;
+    border: 1px solid #E5E5E5;
+    padding: 3px 6px;
+    color: #AAA;
+}
+
+textarea {
+    height: 100px;
+    width: 500px;
+}
+
+.button {
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFF), to(#DDD));
+	color: #666;
+	text-decoration: none;
+	font-weight: normal;
+	padding: 2px 8px;
+	border: 1px solid #d4d4d4;
+	text-shadow: 1px 1px 1px #FFF;
+	cursor: pointer;
+}
+
+.button:hover {
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFF), color-stop(0.8, #EEE), to(#DDD));
+}
+
+.button.default {
+	font-weight: bold;
+}
+
+
+
+.form-errors {
+    list-style: none;
+}
+
+.form-errors li {
+    color: #F00;
+    background: #FED;
+    margin-bottom: 2px;
+    border: 1px solid #F00;
+    padding: 2px 5px;
+    text-align: left;
 }

@@ -44,15 +44,11 @@ def register():
         username = form.username.data
         password = form.password.data
         email = form.email.data
-        participant = Participant.query.filter_by(username=username).first()
-        if participant:
-            error = 'Username already in use'
-        else:
-            new_participant = Participant(username, password, email)
-            db.session.add(new_participant)
-            db.session.commit()
-            flash('Registration successful')
-            return redirect(url_for('index'))
+        new_participant = Participant(username, password, email)
+        db.session.add(new_participant)
+        db.session.commit()
+        flash('Registration successful')
+        return redirect(url_for('index'))
     return render_template('register.html', form=form, error=error)
 
 @app.route('/logout')
