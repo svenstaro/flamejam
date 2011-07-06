@@ -32,6 +32,7 @@ rgj2 = Jam("rgj2", "Reddit Game Jam 2", datetime.utcnow() - timedelta(days=2))
 rgj3 = Jam("rgj3", "Reddit Game Jam 3", datetime.utcnow())
 loljam = Jam("loljam", "Loljam", datetime.utcnow() - timedelta(days=3))
 rgj4 = Jam("rgj4", "Reddit Game Jam 4", datetime.utcnow() + timedelta(days=14))
+rgj3.theme = "Zombies"
 
 # Add jams
 db.session.add(rgj1)

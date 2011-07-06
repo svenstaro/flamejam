@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from hashlib import sha512
-from flamejam import db
+from flamejam import db, filters
 
 class Participant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,10 +26,37 @@ class Participant(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+class JamStatusCode(object):
+    ANNOUNCED   = 0
+    RUNNING     = 1
+    PACKAGING   = 2
+    VOTING      = 3
+    FINISHED    = 4
+
+class JamStatus(object):
+    def __init__(self, code, time):
+        self.code = code
+        self.time = time
+    
+    def __repr__(self):
+        t = filters.formattime(self.time)
+        d = filters.humandelta(datetime.utcnow(), self.time)
+        if self.code == JamStatusCode.ANNOUNCED:
+            return "Announced for {0}".format(t)
+        elif self.code == JamStatusCode.RUNNING:
+            return "Running until {0} ({1} left)".format(t, d)
+        elif self.code == JamStatusCode.PACKAGING:
+            return "Packaging until {0} ({1} left)".format(t, d)
+        elif self.code == JamStatusCode.VOTING:
+            return "Voting until {0} ({1} left)".format(t, d)
+        elif self.code == JamStatusCode.PACKAGING:
+            return "Finished since {0}".format(t)
+
 class Jam(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     short_name = db.Column(db.String(16), unique=True)
     long_name = db.Column(db.String(128), unique=True)
+    theme = db.Column(db.String(128))
     announced = db.Column(db.DateTime) # Date on which the jam was announced
     start_time = db.Column(db.DateTime) # The jam starts at this moment
     end_time = db.Column(db.DateTime) # The jamming phase ends at this moment
@@ -38,10 +65,11 @@ class Jam(db.Model):
     entries = db.relationship('Entry', backref='jam', lazy='dynamic')
 
     def __init__(self, short_name, long_name, start_time, end_time=None,
-            packaging_deadline=None, voting_end=None):
+            packaging_deadline=None, voting_end=None, theme = ''):
         self.short_name = short_name
         self.long_name = long_name
         self.start_time = start_time
+        self.theme = theme
 
         if end_time is None:
             self.end_time = start_time + timedelta(days=2)
@@ -62,6 +90,19 @@ class Jam(db.Model):
 
     def __repr__(self):
         return '<Jam %r>' % self.short_name
+
+    def getStatus(self):
+        now = datetime.utcnow()
+        if self.start_time > now:
+            return JamStatus(JamStatusCode.ANNOUNCED, self.start_time)
+        elif self.end_time > now:
+            return JamStatus(JamStatusCode.RUNNING, self.end_time)
+        elif self.packaging_deadline > now:
+            return JamStatus(JamStatusCode.PACKAGING, self.packaging_deadline)
+        elif self.voting_end > now:
+            return JamStatus(JamStatusCode.VOTING, self.voting_end)
+        else:
+            return JamStatus(JamStatusCode.FINISHED, self.end_time)
 
 class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
