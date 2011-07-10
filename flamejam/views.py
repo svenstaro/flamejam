@@ -210,7 +210,7 @@ def show_entry(jam_slug, entry_slug, action=None):
     if action == "new_comment" and comment_form.validate_on_submit():
         text = comment_form.text.data
         participant_username = session['username']
-        participant = Participant.query.filter_by(username=participant_username).first()
+        participant = Participant.query.filter_by(username = participant_username).first_or_404()
         new_comment = Comment(text, entry, participant)
         db.session.add(new_comment)
         db.session.commit()

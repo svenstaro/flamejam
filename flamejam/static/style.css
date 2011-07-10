@@ -513,3 +513,50 @@ table.ratings th.score {
 table.ratings td.time {
     font-size: 7pt;
 }
+
+
+ul.comments {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.comments li {
+    background: #EEE;
+    margin: 5px;
+    padding: 5px;
+}
+
+ul.comments li:nth-child(2n) {
+    background: #F6F6F6;
+}
+
+ul.comments li .icon {
+    float: left;
+}
+
+ul.comments li .icon img {
+    padding: 2px;
+    border: 1px solid #CCC;
+    background: #FFF;
+}
+
+ul.comments li .meta {
+    color: #888;
+    font-size: 7pt;
+    border-bottom: 1px solid #CCC;
+    margin-bottom: 5px;
+}
+
+ul.comments li .text {
+    color: #666;
+}
+
+ul.comments li .meta,
+ul.comments li .text {
+    margin-left: 50px;
+}
+
+ul.comments li .text p {
+    margin: 0;
+}

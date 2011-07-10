@@ -105,16 +105,29 @@
 {% endif %}
 
 <h2>Comments</h2>
+    {% if entry.comments.all() %}
+    <p>
+    <ul class="comments">
     {% for comment in entry.comments %}
-    <ul>
-        <li>Comment id: {{ comment.id }}</li>
-        <li>Posted: {{ comment.posted }}</li>
-        <li>By: {{ comment.participant.username }}</li>
-        <li>Text: {{ comment.text }}</li>
-    </ul>
+        <li>
+            <div class="icon">
+                <a href="{{ comment.participant.url() }}">
+                    <img src="{{ comment.participant.getAvatar(32) }}" width="32" height="32"/>
+                </a>
+            </div>
+            <div class="meta">
+                <a class="author" href="{{ comment.participant.url() }}">{{ comment.participant.username }}</a>
+                said <span class="posted" title="{{ comment.posted | formattime }}">{{ comment.posted | humantime }}</span>:
+            </div>
+            <div class="text">
+                {{ comment.text | markdown }}
+            </div>
+            <div style="clear: left;"></div>
+        </li>
     {% endfor %}
-
-    {% if not entry.comments.all() %}
+    </ul>
+    </p>
+    {% else %}
     <p>No comments yet.</p>
     {% endif %}
 
@@ -126,6 +139,7 @@
             {{ form_errors(form) }}
             {{ form.hidden_tag() }}
             {{ form.text() }}
+            <div class="input-info">Parsed with markdown</div>
         </div>
         <p class="form-buttons">
             <input type="submit" value="Post comment" class="button">
