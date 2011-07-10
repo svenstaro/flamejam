@@ -76,6 +76,8 @@ class JamStatus(object):
         elif self.code == JamStatusCode.PACKAGING:
             return "Finished since {0}".format(t)
 
+        return "Database error."
+
 class Jam(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(128), unique=True)
@@ -159,6 +161,22 @@ class Entry(db.Model):
 
     def url(self, action = ""):
         return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action)
+
+    def getAverageRating(self):
+        categories = ["graphics","audio","innovation","humor","fun","overall"]
+        r = {}
+
+        for c in categories:
+            r[c] = 0
+
+        for rating in self.ratings:
+            for c in categories:
+                r[c] += getattr(rating, "score_" + c)
+
+        for c in categories:
+            r[c] *= 1.0 / len(self.ratings.all())
+
+        return r
 
 def entry_package_type_string(type):
     if type == "web":       return "Web link (Flash etc.)"

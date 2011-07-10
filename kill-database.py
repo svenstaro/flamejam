@@ -80,6 +80,7 @@ rating5 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", clone, paddy)
 rating6 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", game1, paddy)
 rating7 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", game2, paddy)
 rating8 = Rating(3, 5, 8, 5, 3, 6, "madkm1njn", game2, peter)
+rating9 = Rating(2, 1, 3, 9, 8, 4, "cool stuff 2", game2, paul)
 
 # Add ratings
 db.session.add(rating1)

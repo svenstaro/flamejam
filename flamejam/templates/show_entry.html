@@ -65,16 +65,28 @@
 <table class="ratings">
     <tr>
         <th>Participant</th>
-        <th><span class="icon-16 icon-16-graphics"      title="graphics"></span></th>
-        <th><span class="icon-16 icon-16-audio"         title="audio"></span></th>
-        <th><span class="icon-16 icon-16-innovation"    title="innovation"></span></th>
-        <th><span class="icon-16 icon-16-fun"           title="humor"></span></th>
-        <th><span class="icon-16 icon-16-fun"           title="fun"></span></th>
-        <th><span class="icon-16 icon-16-rating"        title="overall"></span></th>
+        <th class="score"><span class="icon-16 icon-16-graphics"      title="graphics"></span></th>
+        <th class="score"><span class="icon-16 icon-16-audio"         title="audio"></span></th>
+        <th class="score"><span class="icon-16 icon-16-innovation"    title="innovation"></span></th>
+        <th class="score"><span class="icon-16 icon-16-fun"           title="humor"></span></th>
+        <th class="score"><span class="icon-16 icon-16-fun"           title="fun"></span></th>
+        <th class="score"><span class="icon-16 icon-16-rating"        title="overall"></span></th>
         <th>posted</th>
         <th>Notes</th>
     </tr>
-{% for rating in entry.ratings %}
+    {% set a = entry.getAverageRating() %}
+    <tr class="average">
+        <td>Average</td>
+        <td class="score">{{ "%.2f" % a["graphics"]  }}</td>
+        <td class="score">{{ "%.2f" % a["audio"]     }}</td>
+        <td class="score">{{ "%.2f" % a["innovation"]}}</td>
+        <td class="score">{{ "%.2f" % a["humor"]     }}</td>
+        <td class="score">{{ "%.2f" % a["fun"]       }}</td>
+        <td class="score">{{ "%.2f" % a["overall"]   }}</td>
+        <td></td>
+        <td></td>
+    </tr>
+    {% for rating in entry.ratings %}
     <tr>
         <td>{{ rating.participant.getLink() }}</td>
         <td class="score">{{ rating.score_graphics }}</td>
@@ -86,7 +98,7 @@
         <td class="time">{{ rating.posted | humantime }}</td>
         <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
     </tr>
-{% endfor %}
+    {% endfor %}
 </table>
 {% else %}
     <p>There are no ratings yet.</p>

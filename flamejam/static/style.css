@@ -296,9 +296,12 @@ table.details {
     font-size: 8pt;
 }
 
-table.details th,
-table.details th a {
+table.details th {
     text-align: left;
+    padding-right: 20px;
+}
+
+table.details th a {
     font-weight: normal;
     color: #888;
 }
@@ -313,10 +316,6 @@ table.details td {
 
 table.details p {
     margin: 0;
-}
-
-table.details th {
-    padding-right: 20px;
 }
 
 form table.details th {
@@ -497,12 +496,17 @@ table.ratings tr td {
     background: #EEE;
 }
 
-table.ratings tr:nth-child(2n) td {
+table.ratings tr:nth-child(2n+1) td {
     background: #F6F6F6;
 }
 
-table.ratings td.score {
+table.ratings tr.average td {
+    background: #DDD;
     font-weight: bold;
+}
+
+table.ratings td.score,
+table.ratings th.score {
     text-align: center;
 }
 
