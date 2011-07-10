@@ -61,22 +61,38 @@
 
 <h2>Ratings</h2>
 
+{% if entry.ratings.all() %}
+<table class="ratings">
+    <tr>
+        <th>Participant</th>
+        <th><span class="icon-16 icon-16-graphics"      title="graphics"></span></th>
+        <th><span class="icon-16 icon-16-audio"         title="audio"></span></th>
+        <th><span class="icon-16 icon-16-innovation"    title="innovation"></span></th>
+        <th><span class="icon-16 icon-16-fun"           title="humor"></span></th>
+        <th><span class="icon-16 icon-16-fun"           title="fun"></span></th>
+        <th><span class="icon-16 icon-16-rating"        title="overall"></span></th>
+        <th>posted</th>
+        <th>Notes</th>
+    </tr>
 {% for rating in entry.ratings %}
-    <ul>
-        <li>Rating id: {{ rating.id }}</li>
-        <li>Posted: {{ rating.posted }}</li>
-        <li>By: {{ rating.participant.username }}</li>
-        <li>Graphics score: {{ rating.score_graphics }}</li>
-        <li>Audio score: {{ rating.score_audio }}</li>
-        <li>Innovation score: {{ rating.score_innovation }}</li>
-        <li>Humor score: {{ rating.score_humor }}</li>
-        <li>Fun score: {{ rating.score_fun }}</li>
-        <li>Overall score: {{ rating.score_overall }}</li>
-        <li>Additional notes: {{ rating.text }}</li>
-    </ul>
+    <tr>
+        <td>{{ rating.participant.getLink() }}</td>
+        <td class="score">{{ rating.score_graphics }}</td>
+        <td class="score">{{ rating.score_audio }}</td>
+        <td class="score">{{ rating.score_innovation }}</td>
+        <td class="score">{{ rating.score_humor }}</td>
+        <td class="score">{{ rating.score_fun }}</td>
+        <td class="score">{{ rating.score_overall }}</td>
+        <td class="time">{{ rating.posted | humantime }}</td>
+        <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
+    </tr>
 {% endfor %}
+</table>
+{% else %}
+    <p>There are no ratings yet.</p>
+{% endif %}
 
-<h3>Comments</h3>
+<h2>Comments</h2>
     {% for comment in entry.comments %}
     <ul>
         <li>Comment id: {{ comment.id }}</li>
