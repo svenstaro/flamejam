@@ -12,7 +12,7 @@
             </div>
             <div id="MINI_SEARCH">
                 <form>
-                    <input type="text" id="MINI_SEARCH_Q" name="q" placeholder="Search..."><input type="submit" value="" id="MINI_SEARCH_S">
+                    <input type="text" id="MINI_SEARCH_Q" name="q" placeholder="Search..." autocomplete="off"><input type="submit" value="" id="MINI_SEARCH_S">
                 </form>
             </div>
             <div id="HEADLINE">
@@ -37,7 +37,7 @@
                             {% set current = request.endpoint.startswith(key) %}
                             <li><a {% if current %}class="current"{% endif %} href="{{ url_for( key ) }}">{{caption}}</a></li>
                         {% endfor %}
-                        
+
                     </ul>
                 </div>
             </div>
@@ -49,13 +49,16 @@
             {% for message in get_flashed_messages() %}
                 <div class="_flash">{{ message }}</div>
             {% endfor %}
-            
+
             {% block content %}
                 lolfail
             {% endblock %}
         </div>
         <div id="FOOTER">
             <div id="FOOTER_NAVBAR">
+                <div id="FOOTER_NAVBAR_LEFT">
+                    Design &copy; by Paul 'opatut' Bienkowski
+                </div>
                 <ul>
                     <li><a href="/faq">faq</a></li>
                     <li><a href="/about">about</a></li>
@@ -64,7 +67,7 @@
             </div>
             <div id="COPYRIGHT_NOTE">
                 This site is not owned or operated by Cond&eacute; Nast
-                Publications or Reddit.com
+                Publications or <a href="http://reddit.com" target="_blank">reddit.com</a>
             </div>
         </div>
     </div>

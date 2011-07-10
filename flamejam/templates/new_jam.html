@@ -2,14 +2,24 @@
 {% from "_formhelpers.html" import form_errors %}
 
 {% block content %}
-<h1>New Jam</h1>
+<h1>Create a Jam</h1>
 {{ form_errors(form) }}
 
 <form action="{{ url_for('new_jam') }}" method=post>
     {{ form.hidden_tag() }}
-    {{ form.short_name() }}
-    {{ form.long_name() }}
-    {{ form.start_time() }}
-    <input type=submit value=Go>
+    <div class="box" style="width: 300px">
+        <h4>Announce a new jam</h4>
+        <div class="box-content">
+            <table class="details">
+                <tr><th>{{ form.title.label }}</th><td>{{ form.title(class="text-input") }}</td></tr>
+                <tr><th>{{ form.start_time.label }}</th><td>{{ form.start_time(class="text-input") }}
+                <div class="input-info">format: 2012-11-25 22:00</div>
+                </td></tr>
+            </table>
+        </div>
+        <p class="form-buttons">
+            <input type="submit" value="Announce jam" class="button">
+        </p>
+    </div>
 </form>
 {% endblock %}

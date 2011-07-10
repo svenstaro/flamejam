@@ -1,7 +1,17 @@
+# -*- coding: utf-8 -*-
+
 from datetime import datetime, timedelta
 from hashlib import sha512, md5
 from flamejam import db, filters
 from flask import url_for, Markup
+import re
+
+def get_slug(s):
+    s = s.lower()
+    s = re.sub(r"[\s_+]+", "-", s)
+    s = re.sub("[^a-z0-9\-]", "", s)
+    return s
+
 
 class Participant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,10 +37,10 @@ class Participant(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
-        
+
     def url(self):
         return url_for('show_participant', username = self.username)
-        
+
     def getAvatar(self, size = 32):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
 
@@ -68,8 +78,8 @@ class JamStatus(object):
 
 class Jam(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    short_name = db.Column(db.String(16), unique=True)
-    long_name = db.Column(db.String(128), unique=True)
+    slug = db.Column(db.String(128), unique=True)
+    title = db.Column(db.String(128), unique=True)
     theme = db.Column(db.String(128))
     announced = db.Column(db.DateTime) # Date on which the jam was announced
     start_time = db.Column(db.DateTime) # The jam starts at this moment
@@ -79,13 +89,13 @@ class Jam(db.Model):
     entries = db.relationship('Entry', backref='jam', lazy='dynamic')
     author_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
 
-    def __init__(self, short_name, long_name, author, start_time, end_time=None,
+    def __init__(self, title, author, start_time, end_time=None,
             packaging_deadline=None, voting_end=None, theme = ''):
-        self.short_name = short_name
-        self.long_name = long_name
+        self.title = title
+        self.slug = get_slug(title)
         self.start_time = start_time
         self.theme = theme
-        author.jams.append(self)
+        self.author = author
 
         if end_time is None:
             self.end_time = start_time + timedelta(days=2)
@@ -105,7 +115,7 @@ class Jam(db.Model):
         self.announced = datetime.utcnow()
 
     def __repr__(self):
-        return '<Jam %r>' % self.short_name
+        return '<Jam %r>' % self.slug
 
     def getStatus(self):
         now = datetime.utcnow()
@@ -119,25 +129,26 @@ class Jam(db.Model):
             return JamStatus(JamStatusCode.RATING, self.rating_end)
         else:
             return JamStatus(JamStatusCode.FINISHED, self.end_time)
-            
-    def getFullName(self):
-        return "{0} [{1}]".format(self.long_name, self.short_name)
-    
+
     def url(self):
-        return url_for('show_jam', jam_name = self.short_name) 
+        return url_for('show_jam', jam_slug = self.slug)
 
 class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
+    title = db.Column(db.String(128))
+    slug = db.Column(db.String(128))
     description = db.Column(db.Text)
     posted = db.Column(db.DateTime)
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
     participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
     ratings = db.relationship('Rating', backref='entry', lazy='dynamic')
     comments = db.relationship('Comment', backref='entry', lazy='dynamic')
+    packages = db.relationship('EntryPackage', backref='entry', lazy='dynamic')
+    screenshots = db.relationship('EntryScreenshot', backref='entry', lazy='dynamic')
 
-    def __init__(self, name, description, jam, participant):
-        self.name = name
+    def __init__(self, title, description, jam, participant):
+        self.title = title
+        self.slug = get_slug(title)
         self.description = description
         self.jam = jam
         self.participant = participant
@@ -145,6 +156,76 @@ class Entry(db.Model):
 
     def __repr__(self):
         return '<Entry %r>' % self.name
+
+    def url(self, action = ""):
+        return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action)
+
+def entry_package_type_string(type):
+    if type == "web":       return "Web link (Flash etc.)"
+    if type == "linux":       return "Binaries: Linux general"
+    if type == "linux32":       return "Binaries: Linux 32-bit"
+    if type == "linux64":       return "Binaries: Linux 64-bit"
+    if type == "windows":       return "Binaries: Windows general"
+    if type == "windows32":       return "Binaries: Windows 32-bit"
+    if type == "windows64":       return "Binaries: Windows 64-bit"
+    if type == "mac":       return "Binaries: MacOS Application"
+    if type == "source":       return "Source: package"
+    if type == "git":       return "Source: Git repository"
+    if type == "svn":       return "Source: SVN repository"
+    if type == "hg":       return "Source: HG repository"
+    if type == "combi":       return "Combined package: Linux + Windows + Source (+ more, optional)"
+    if type == "love":       return "Love package"
+    if type == "blender":       return "Blender file"
+    if type == "unknown":       return "Other"
+
+    return "Unknown type"
+
+class EntryPackage(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    url = db.Column(db.String(256))
+    entry_id = db.Column(db.Integer, db.ForeignKey("entry.id"))
+    type = db.Column(db.Enum(
+        "web",      # Flash, html5, js...
+        "linux",    # Linux binaries (e.g. *.tar.gz)
+        "linux32",  # Linux32 binaries (e.g. *.tar.gz)
+        "linux64",  # Linux64 binaries (e.g. *.tar.gz)
+        "windows",  # Windows binaries (e.g. *.zip, *.exe)
+        "windows32",# Windows32 binaries (e.g. *.zip, *.exe)
+        "windows64",# Windows64 binaries (e.g. *.zip, *.exe)
+        "mac",      # MacOS application packages
+        "combi",    # Linux + Windows + Source (and more, optional)
+        "love",     # Löve packages
+        "blender",  # Blender save file (*.blend)
+        "source",   # Source package (e.g. *.zip or *.tar.gz)
+        "git",      # Version control repository: GIT
+        "svn",      # Version control repository: SVN
+        "hg",       # Version control repository: HG
+        "unknown"))
+
+    def __init__(self, entry, url, type = "unknown"):
+        self.url = url
+        self.type = type
+        self.entry = entry
+
+    def __repr__(self):
+        return "<EntryPackage %r>" % self.id
+
+    def typeString(self):
+        return entry_package_type_string(self.type)
+
+class EntryScreenshot(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    url = db.Column(db.String(256))
+    caption = db.Column(db.Text)
+    entry_id = db.Column(db.Integer, db.ForeignKey("entry.id"))
+
+    def __init__(self, url, caption, entry):
+        self.entry = entry
+        self.url = url
+        self.caption = caption
+
+    def __repr__(self):
+        return "<EntryScreenshot %r>" % self.id
 
 class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)

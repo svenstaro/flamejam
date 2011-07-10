@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Jam {{ jam.short_name }}{% endblock %}
+{% block title %}Jam {{ jam.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ jam.short_name }}</h1>
+<h1>{{ jam.title }}</h1>
 
 <div class="box">
     <h4>Status</h4>
@@ -16,7 +16,7 @@
     <h4>Details</h4>
     <div class="box-content">
         <table class="details">
-            <tr><th>Title</th><td>{{ jam.long_name }}</td></tr>
+            <tr><th>Title</th><td>{{ jam.title }}</td></tr>
             <tr><th>Theme</th><td>{% if jam.theme %}{{ jam.theme }}{% else %}Not yet selected{% endif %}</td></tr>
             <tr><th>Announced</th><td>{{ jam.announced | humantime }} by {{ jam.author.getLink() }}</a></td></tr>
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
@@ -27,11 +27,11 @@
         {% set status = jam.getStatus() %}
         <p class="form-buttons">
             {% if status.code == 3 %}
-            <a href="{{ url_for('rate_entries', jam_name = jam.short_name) }}">Rate the entries</a>
+            <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate the entries</a>
             {% elif status.code == 5 %}
-            <a href="{{ url_for('rate_entries', jam_name = jam.short_name) }}">Show the winner</a>
+            <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Show the winner</a>
             {% else %}
-            <a href="{{ url_for('new_entry', jam_name=jam.short_name) }}">New entry</a>
+            <a href="{{ url_for('new_entry', jam_slug = jam.slug) }}">New entry</a>
             {% endif %}
         </p>
     {% endif %}
@@ -46,9 +46,9 @@
     <ul>
         {% for entry in jam.entries %}
             <li class="box floatingbox">
-                <h4><a href="{{ url_for('show_entry', jam_name=jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a> by 
+                <h4><a href="{{ entry.url() }}">{{ entry.title }}</a> by
                 {{ entry.participant.getLink() }}</h4>
-                
+
                 <div class="box-content">
                     lol screenshot here
                 </div>

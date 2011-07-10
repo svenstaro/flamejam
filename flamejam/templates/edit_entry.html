@@ -1,16 +1,14 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-
-
 {% block content %}
-<h2>New Entry for Jam: {{ jam.title }}</h2>
+<h2>Edit Entry: {{ entry.title }}</h2>
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 
-    <form action="{{ url_for('new_entry', jam_slug = jam.slug) }}" method="post">
+    <form action="{{ entry.url('edit') }}" method="post">
         {{ form.hidden_tag() }}
         <div class="box" style="margin: 0 auto;">
-            <h4>Details</h4>
+            <h4>Register</h4>
             <div class="box-content">
                 <p>{{ form_errors(form) }}</p>
                 <table class="details">

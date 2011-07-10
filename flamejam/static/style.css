@@ -1,4 +1,5 @@
-:focus {
+.text-input:focus,
+textarea:focus {
     outline: none;
 }
 
@@ -6,7 +7,7 @@ body {
     font-family: Verdana, Arial, sans-serif;
     font-size: 9pt;
     background: #333;
-    line-height: 1.4em; 
+    line-height: 1.4em;
 }
 
 ul {
@@ -59,7 +60,7 @@ h6 {
 }
 
 p {
-    
+
 }
 
 hr {
@@ -93,7 +94,7 @@ hr {
 
 
 div#WRAPPER {
-    text-align:justify;
+    text-align:left;
     width: 900px;
     margin: 20px auto;
 }
@@ -117,7 +118,7 @@ div#HEADER div#ICON {
 }
 
 div#HEADER div#MINI_SEARCH {
-   float: right; 
+   float: right;
 }
 
 div#HEADER div#MINI_SEARCH form input#MINI_SEARCH_Q {
@@ -127,9 +128,11 @@ div#HEADER div#MINI_SEARCH form input#MINI_SEARCH_Q {
     border-radius: 5px 0 0 5px;
     -moz-border-radius: 5px 0 0 5px;
     color: #ccc;
-    padding: 4px 6px;
+    padding: 4px 10px;
     margin:0;
-    height:26px;
+    height:16px;
+    width: 200px;
+    font-size: 8pt;
     vertical-align: top;
 }
 
@@ -137,8 +140,8 @@ div#HEADER div#MINI_SEARCH form input#MINI_SEARCH_S {
     border: 1px solid #999;
     background: #ccc url("/static/img/find.png") center center no-repeat;
     background-position:0px 0px;
-    border-radius: 0 5px 5px 0; 
-    -moz-border-radius: 0 5px 5px 0; 
+    border-radius: 0 5px 5px 0;
+    -moz-border-radius: 0 5px 5px 0;
     padding: 4px 6px;
     margin:0;
     width:32px;
@@ -191,7 +194,7 @@ div#FOOTER div#FOOTER_NAVBAR ul a.current {
 }
 
 div#HEADER div#MENU a:hover,
-div#FOOTER div#FOOTER_NAVBAR ul a:hover { 
+div#FOOTER div#FOOTER_NAVBAR ul a:hover {
     color: #FF4500;
 }
 
@@ -232,10 +235,18 @@ div#FOOTER div#FOOTER_NAVBAR {
     text-align: right;
 }
 
-div#FOOTER div#FOOTER_NAVBAR ul li {
+div#FOOTER div#FOOTER_NAVBAR {
     font-size:7pt;
+}
+
+div#FOOTER div#FOOTER_NAVBAR ul li {
     display: inline-block;
     margin-left: 1em;
+}
+
+div#FOOTER div#FOOTER_NAVBAR div#FOOTER_NAVBAR_LEFT {
+    color: #555;
+    float: left;
 }
 
 div#FOOTER div#FOOTER_NAVBAR ul li a {
@@ -244,9 +255,14 @@ div#FOOTER div#FOOTER_NAVBAR ul li a {
 
 div#FOOTER div#COPYRIGHT_NOTE {
     margin-top: 10px;
-    color:#666;
     text-align: center;
     font-size:8pt;
+}
+
+
+div#FOOTER div#COPYRIGHT_NOTE,
+div#FOOTER div#COPYRIGHT_NOTE a {
+    color:#666;
     font-weight: normal;
 }
 
@@ -277,14 +293,14 @@ dl dt {
 }
 
 table.details {
-	font-size: 8pt;
+    font-size: 8pt;
 }
 
-table.details th, 
+table.details th,
 table.details th a {
-	text-align: left;
-	font-weight: normal;
-	color: #888;
+    text-align: left;
+    font-weight: normal;
+    color: #888;
 }
 table.details th a:hover {
     text-decoration: underline;
@@ -295,8 +311,12 @@ table.details td {
     vertical-align: top;
 }
 
+table.details p {
+    margin: 0;
+}
+
 table.details th {
-	padding-right: 20px;
+    padding-right: 20px;
 }
 
 form table.details th {
@@ -304,37 +324,37 @@ form table.details th {
 }
 
 form .input-info {
-    font-size: 8pt; 
+    font-size: 8pt;
     color: #AAA;
 }
 
 
 .box {
-	background: #F6F6F6;
-	border: 1px solid #CCC;
-	margin: 0;
-	margin-bottom: 10px;
+    background: #F6F6F6;
+    border: 1px solid #CCC;
+    margin: 0;
+    margin-bottom: 10px;
 }
 
 .box > h4 {
-	font-size: 1em;
-	border-bottom: 1px solid #CCC;
-	padding: 4px 10px;
+    font-size: 1em;
+    border-bottom: 1px solid #CCC;
+    padding: 4px 10px;
     margin: 0;
     background: #FFF;
 }
 
 .box > .box-content {
-	padding: 4px 10px;
+    padding: 4px 10px;
 }
 
 .box p.form-buttons {
-	padding: 4px 10px;
-	border-top: 1px solid #CCC;
-	background: #EEEEFF;
-	margin: 0;
-	text-align: right;
-	border-radius: 0px 0px 2px 2px;
+    padding: 4px 10px;
+    border-top: 1px solid #CCC;
+    background: #EEEEFF;
+    margin: 0;
+    text-align: right;
+    border-radius: 0px 0px 2px 2px;
 }
 
 .floatingbox {
@@ -374,26 +394,39 @@ textarea {
 
 textarea {
     height: 100px;
-    width: 500px;
+    min-width: 500px;
 }
 
-.button {
+ul.tabs {
+    list-style: none;
+}
+
+ul.tabs li {
+    display: inline-block;
+}
+
+.button,
+ul.tabs li a {
     background: -webkit-gradient(linear, left top, left bottom, from(#FFF), to(#DDD));
-	color: #666;
-	text-decoration: none;
-	font-weight: normal;
-	padding: 2px 8px;
-	border: 1px solid #d4d4d4;
-	text-shadow: 1px 1px 1px #FFF;
-	cursor: pointer;
+    color: #666;
+    text-decoration: none;
+    font-weight: normal;
+    padding: 2px 8px;
+    border: 1px solid #d4d4d4;
+    text-shadow: 1px 1px 1px #FFF;
+    cursor: pointer;
 }
 
-.button:hover {
+.button:hover,
+ul.tabs li a:hover {
     background: -webkit-gradient(linear, left top, left bottom, from(#FFF), color-stop(0.8, #EEE), to(#DDD));
+    color: #333;
+    box-shadow: 0 0 3px #DDD;
 }
 
-.button.default {
-	font-weight: bold;
+.button.default,
+ul.tabs li.default a {
+    font-weight: bold;
 }
 
 
@@ -409,4 +442,13 @@ textarea {
     border: 1px solid #F00;
     padding: 2px 5px;
     text-align: left;
+}
+
+
+span.repo-url {
+    background: #CCC;
+    padding: 1px 10px;
+    font-size: 7pt;
+    font-weight: bold;
+    color: #888;
 }

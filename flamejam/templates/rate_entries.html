@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% block title %}Rate {{ entry.name }}{% endblock %}
+{% block title %}Rate {{ entry.title }}{% endblock %}
 
 {% block content %}
-<h2>Rate {{ entry.name }}</h2>
+<h2>Rate {{ entry.title }}</h2>
     <h3>Description:</h3>
 <p>{{ entry.description }}</p>
 <ul>
     <li>Author: {{ entry.participant.getLink() }}</li>
-    <li>Jam: <a href="{{ url_for('show_jam', jam_name=entry.jam.short_name) }}">
-        {{ entry.jam.short_name }}</a>
+    <li>Jam: <a href="{{ entry.jam.url() }}">
+        {{ entry.jam.title }}</a>
     </li>
 </ul>
 
 <h3>Ratings</h3>
 {% if session.logged_in %}
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-    <form action="{{ url_for('rate_entries', jam_name=entry.jam.short_name) }}" method=post>
+    <form action="{{ url_for('rate_entries', jam_slug = entry.jam.slug) }}" method=post>
         {#{ form.hidden_tag() }}
         {{ render_field(form.score_graphics) }}
         {{ render_field(form.score_audio) }}

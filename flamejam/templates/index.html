@@ -9,7 +9,7 @@
 {# Jams that haven't started yet #}
 {% for jam in jams if jam.start_time > current_datetime %}
     <li>
-        Jam <a href="{{ url_for('show_jam', jam_name=jam.short_name) }}">{{ jam.short_name }}</a>
+        <a href="{{ jam.url() }}">{{ jam.title }}</a>
         announced for {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }}
         (in {{ current_datetime | humandelta(jam.start_time) }})
     </li>
@@ -18,7 +18,7 @@
 {# Jams that are in progress #}
 {% for jam in jams if jam.start_time < current_datetime < jam.end_time %}
     <li>
-        Jam <a href="{{ url_for('show_jam', jam_name=jam.short_name) }}">{{ jam.short_name }}</a>
+        <a href="{{ jam.url() }}">{{ jam.title }}</a>
         is currently in progress! (ends in {{ current_datetime | humandelta(jam.end_time) }})
     </li>
 {% endfor %}
@@ -26,8 +26,8 @@
 {# Jams that have finished but are still in packaging period #}
 {% for jam in jams if jam.end_time < current_datetime < jam.packaging_deadline %}
     <li>
-        Jam <a href="{{ url_for('show_jam', jam_name=jam.short_name) }}">{{ jam.short_name }}</a>
-        has finished and is in packaging phase (time left: 
+        <a href="{{ jam.url() }}">{{ jam.title }}</a>
+        has finished and is in packaging phase (time left:
         {{ current_datetime | humandelta(jam.packaging_deadline) }})
     </li>
 {% endfor %}
@@ -35,10 +35,10 @@
 {# Jams that are in rating period #}
 {% for jam in jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
     <li>
-        Jam <a href="{{ url_for('show_jam', jam_name=jam.short_name) }}">{{ jam.short_name }}</a>
+        <a href="{{ jam.url() }}">{{ jam.title }}</a>
         is in rating period for another {{ current_datetime | humandelta(jam.rating_end) }}
         <!-- TODO: Check this is possible in view -->
-        <a href="{{ url_for('rate_entries', jam_name=jam.short_name) }}">Rate entries now</a>
+        <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate entries now</a>
     </li>
 {% endfor %}
 </ul>
@@ -46,9 +46,9 @@
 <ul>
 {% for jam in jams if jam.rating_end < current_datetime %}
     <li>
-        <a href="{{ url_for('show_jam', jam_name=jam.short_name) }}">{{ jam.short_name }}</a>
+        <a href="{{ jam.url() }}">{{ jam.title }}</a>
         from {{ jam.start_time | formattime }} to {{
-        jam.end_time | formattime }} 
+        jam.end_time | formattime }}
         (length: {{ jam.end_time | humandelta(jam.start_time) }})
         show the {{ jam.entries.all() | length }} entries
     </li>

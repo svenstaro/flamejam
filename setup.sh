@@ -4,4 +4,5 @@ pip install flask
 pip install flask-sqlalchemy
 pip install flask-wtf
 pip install flask-login
+pip install flask-markdown
 pip install python-dateutil

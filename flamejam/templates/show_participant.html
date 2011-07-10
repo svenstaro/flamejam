@@ -15,11 +15,11 @@
             <table class="details">
                 {% for entry in participant.entries %}
                 <tr><th>
-                    <a href="{{ url_for('show_jam', jam_name=entry.jam.short_name) }}">{{ entry.jam.short_name }}</a>
+                    <a href="{{ entry.jam.url() }}">{{ entry.jam.title }}</a>
                 </th><td>
-                    <a href="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name) }}">{{ entry.name }}</a>
+                    <a href="{{ entry.url() }}">{{ entry.title }}</a>
                 </td></tr>
-                {% endfor %}    
+                {% endfor %}
             </table>
         </div>
     </div>

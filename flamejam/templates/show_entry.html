@@ -1,28 +1,61 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% block title %}{{ entry.jam.short_name}} » {{ entry.name }}{% endblock %}
+{% block title %}{{ entry.jam.title }} » {{ entry.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ entry.jam.long_name }} &raquo; {{ entry.name }}</h1>
+<h1>{{ entry.jam.title }} &raquo; {{ entry.title }}</h1>
+
+{% if entry.participant.username == session.username %}
+<p>
+    <ul class="tabs">
+        <li><a href="{{ entry.url('edit') }}">Edit entry</a></li>
+        <li><a href="{{ entry.url('add_screenshot') }}">Add screenshot</a></li>
+        <li><a href="{{ entry.url('add_package') }}">Add package</a></li>
+    </ul>
+</p>
+{% endif %}
+
 <div class="box">
     <h4>Details</h4>
     <div class="box-content">
         <table class="details">
             <tr><th>Author</th><td>{{ entry.participant.getLink() }}</td></tr>
-            
-            <tr><th>Jam</th><td><a href="{{ entry.jam.url() }}">{{ entry.jam.getFullName() }}</a></td></tr>
-                
+
+            <tr><th>Jam</th><td><a href="{{ entry.jam.url() }}">{{ entry.jam.title }}</a></td></tr>
+
             <tr><th>Submitted</th>
                 <td>{{ entry.posted | humantime }}</td></tr>
+
+            <tr><th>Description</th><td>
+                    {{ entry.description | markdown }}
+                </td></tr>
+
+            <tr><th>Packages{% if entry.packages.all() %} ({{ entry.packages.all() | length }}){% endif %}</th><td>
+                {% for package in entry.packages %}
+                    {% if package.type in ["hg", "svn", "git"] %}
+                    <p>{{ package.typeString() }}: <span class="repo-url">{{ package.url }}</span></p>
+                    {% else %}
+                    <p><a href="{{ package.url }}">{{ package.typeString() }}</a></p>
+                    {% endif %}
+                {% endfor %}
+                {% if not entry.packages.all() %}
+                No packages submitted yet.
+                {% endif %}
+                </td></tr>
         </table>
     </div>
 </div>
 
 <div class="box">
-    <h4>Details</h4>
+    <h4>Screenshots</h4>
     <div class="box-content">
-        <p>{{ entry.description }}</p>
+        {% for screenshot in entry.screenshots %}
+        {{ screenshot.url }}
+        {% endfor %}
+        {% if not entry.screenshots.all() %}
+        No screenshots yet.
+        {% endif %}
     </div>
 </div>
 
@@ -52,13 +85,24 @@
         <li>Text: {{ comment.text }}</li>
     </ul>
     {% endfor %}
-        
+
+    {% if not entry.comments.all() %}
+    <p>No comments yet.</p>
+    {% endif %}
+
     {% if session.logged_in %}
-        <form action="{{ url_for('show_entry', jam_name=entry.jam.short_name, entry_name=entry.name, action='new_comment') }}" method=post>
+    <form action="{{ entry.url('new_comment') }}" method=post>
+    <div class="box" style="width: 540px;">
+        <h4>Write a comment</h4>
+        <div class="box-content">
             {{ form_errors(form) }}
             {{ form.hidden_tag() }}
             {{ form.text() }}
-            <input type=submit value=Go>
-        </form>
+        </div>
+        <p class="form-buttons">
+            <input type="submit" value="Post comment" class="button">
+        </p>
+    </div>
+    </form>
     {% endif %}
 {% endblock %}

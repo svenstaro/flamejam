@@ -1,31 +1,30 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-
-
 {% block content %}
-<h2>New Entry for Jam: {{ jam.title }}</h2>
+<h2>New Screenshot for Entry: {{ entry.title }}</h2>
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 
-    <form action="{{ url_for('new_entry', jam_slug = jam.slug) }}" method="post">
+    <form action="{{ entry.url('add_screenshot') }}" method="post">
         {{ form.hidden_tag() }}
-        <div class="box" style="margin: 0 auto;">
-            <h4>Details</h4>
+        <div class="box">
+            <h4>Add a screenshot</h4>
             <div class="box-content">
                 <p>{{ form_errors(form) }}</p>
                 <table class="details">
                     <tr>
-                        <th width="130">{{ form.title.label }}</th>
+                        <th>{{ form.url.label }}</th>
                         <td>
-                            {{ form.title(class="text-input") }}
-                            <span class="input-info" title="Allowed characters: letters, numbers, dashes, underscores">min 6 characters</span></span>
+                            {{ form.url(class="text-input", size="80") }}
+                            <div class="input-info">remember the <b>http://</b></div>
+                            <div class="input-info">Please upload your screenshots somewhere, e.g. at
+                            <a href="http://imgur.com" target="_blank">imgur</a> and paste the link to the image here.</div>
                         </td>
                     </tr>
                     <tr>
-                        <th>{{ form.description.label }}</th>
+                        <th>{{ form.caption.label }}</th>
                         <td>
-                            {{ form.description(class="text-input") }}
-                            <div class="input-info">Parsed with Markdown</div>
+                            {{ form.caption(class="text-input", size="80") }}
                         </td>
                     </tr>
                 </table>

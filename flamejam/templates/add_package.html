@@ -1,31 +1,30 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-
-
 {% block content %}
-<h2>New Entry for Jam: {{ jam.title }}</h2>
+<h2>New package for entry: {{ entry.title }}</h2>
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 
-    <form action="{{ url_for('new_entry', jam_slug = jam.slug) }}" method="post">
+    <form action="{{ entry.url('add_package') }}" method="post">
         {{ form.hidden_tag() }}
-        <div class="box" style="margin: 0 auto;">
-            <h4>Details</h4>
+        <div class="box">
+            <h4>Add a package</h4>
             <div class="box-content">
                 <p>{{ form_errors(form) }}</p>
                 <table class="details">
                     <tr>
-                        <th width="130">{{ form.title.label }}</th>
+                        <th>{{ form.type.label }}</th>
                         <td>
-                            {{ form.title(class="text-input") }}
-                            <span class="input-info" title="Allowed characters: letters, numbers, dashes, underscores">min 6 characters</span></span>
+                            {{ form.type(size="1") }}
                         </td>
                     </tr>
                     <tr>
-                        <th>{{ form.description.label }}</th>
+                        <th>{{ form.url.label }}</th>
                         <td>
-                            {{ form.description(class="text-input") }}
-                            <div class="input-info">Parsed with Markdown</div>
+                            {{ form.url(class="text-input", size="80") }}
+                            <div class="input-info">Remember the <b>"http://"</b></div>
+                            <div class="input-info">When submitting a link to a <b>version control repository</b>, please prepare a checkout/clone-ready URL.</div>
+                            <div class="input-info">The type of a package of type "other" should probably be mentioned in the entry description.</div>
                         </td>
                     </tr>
                 </table>

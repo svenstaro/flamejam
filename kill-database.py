@@ -27,11 +27,11 @@ db.session.add(pablo)
 db.session.add(paddy)
 
 # Make jams
-rgj1 = Jam("rgj1", "Reddit Game Jam 1", paul, datetime.utcnow() - timedelta(days=30))
-rgj2 = Jam("rgj2", "Reddit Game Jam 2", pablo, datetime.utcnow() - timedelta(days=2))
-rgj3 = Jam("rgj3", "Reddit Game Jam 3", peter, datetime.utcnow())
-loljam = Jam("loljam", "Loljam", paul, datetime.utcnow() - timedelta(days=3))
-rgj4 = Jam("rgj4", "Reddit Game Jam 4", peter, datetime.utcnow() + timedelta(days=14))
+rgj1 = Jam("Reddit Game Jam 1", paul, datetime.utcnow() - timedelta(days=30))
+rgj2 = Jam("Reddit Game Jam 2", pablo, datetime.utcnow() - timedelta(days=2))
+rgj3 = Jam("Reddit Game Jam 3", peter, datetime.utcnow())
+loljam = Jam("Loljam", paul, datetime.utcnow() - timedelta(days=3))
+rgj4 = Jam("Reddit Game Jam 4", peter, datetime.utcnow() + timedelta(days=14))
 rgj3.theme = "Zombies"
 
 # Add jams

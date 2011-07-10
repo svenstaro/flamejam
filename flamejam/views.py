@@ -69,49 +69,49 @@ def new_jam():
     #    flash('Not an admin')
     #    return redirect(url_for('index'))
     if form.validate_on_submit():
-        short_name = form.short_name.data
-        long_name = form.long_name.data
+        title = form.title.data
         start_time = form.start_time.data
-        if Jam.query.filter_by(short_name=short_name).first():
-            error = 'A jam with this Short name already exists'
-        elif Jam.query.filter_by(long_name=long_name).first():
-            error = 'A jam with this Long name already exists'
+        new_slug = get_slug(title)
+        if Jam.query.filter_by(slug = new_slug).first():
+            error = 'A jam with a similar title already exists.'
         else:
-            new_jam = Jam(short_name, long_name, start_time)
+            current_user = Participant.query.filter_by(username = session["username"]).first_or_404()
+            new_jam = Jam(title, current_user, start_time)
             db.session.add(new_jam)
             db.session.commit()
             flash('New jam added')
-            return redirect(url_for('index'))
-    return render_template('new_jam.html', form=form, error=error)
+            return redirect(new_jam.url())
+    return render_template('new_jam.html', form = form, error = error)
 
-@app.route('/jams/<jam_name>/', methods=("GET", "POST"))
-def show_jam(jam_name):
-    jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
-    return render_template('show_jam.html', jam=jam)
+@app.route('/jams/<jam_slug>/', methods=("GET", "POST"))
+def show_jam(jam_slug):
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    return render_template('show_jam.html', jam = jam)
 
-@app.route('/jams/<jam_name>/new_entry', methods=("GET", "POST"))
-def new_entry(jam_name):
+@app.route('/jams/<jam_slug>/new_entry', methods=("GET", "POST"))
+def new_entry(jam_slug):
     error = None
-    form = SubmitEntry()
-    jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
+    form = SubmitEditEntry()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     if form.validate_on_submit():
-        name = form.name.data
+        title = form.title.data
+        new_slug = models.get_slug(title)
         description = form.description.data
         participant_username = session['username']
         participant = Participant.query.filter_by(username=participant_username).first()
-        if Entry.query.filter_by(name=name).filter_by(jam=jam).first():
-            error = 'An entry with this name already exists for this jam'
+        if Entry.query.filter_by(slug = new_slug, jam = jam).first():
+            error = 'An entry with a similar name already exists for this jam'
         else:
-            new_entry = Entry(name, description, jam, participant)
+            new_entry = Entry(title, description, jam, participant)
             db.session.add(new_entry)
             db.session.commit()
             flash('Entry submitted')
-            return redirect(url_for('show_entry', jam_name=jam_name, entry_name=name))
-    return render_template('new_entry.html', jam=jam, form=form, error=error)
+            return redirect(new_entry.url())
+    return render_template('new_entry.html', jam = jam, form = form, error = error)
 
-@app.route('/jams/<jam_name>/rate', methods=("GET", "POST"))
-def rate_entries(jam_name):
-   jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
+@app.route('/jams/<jam_slug>/rate', methods=("GET", "POST"))
+def rate_entries(jam_slug):
+   jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
    return "TODO"
 
    # # Check whether jam is in rating period
@@ -199,31 +199,85 @@ def rate_entries(jam_name):
    # return render_template('rate_entries.html', jam=jam,
    #         form=form, error=error, skipped_entries=skipped_entries_list)
 
-@app.route('/jams/<jam_name>/<entry_name>/')
-@app.route('/jams/<jam_name>/<entry_name>/<action>', methods=("GET", "POST"))
-def show_entry(jam_name, entry_name, action=None):
-    form = WriteComment()
-    jam = Jam.query.filter_by(short_name=jam_name).first_or_404()
-    entry = Entry.query.filter_by(name=entry_name).filter_by(jam=jam).first_or_404()
+@app.route('/jams/<jam_slug>/<entry_slug>/')
+@app.route('/jams/<jam_slug>/<entry_slug>/<action>', methods=("GET", "POST"))
+def show_entry(jam_slug, entry_slug, action=None):
+    comment_form = WriteComment()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    entry = Entry.query.filter_by(slug = entry_slug).filter_by(jam = jam).first_or_404()
 
     # TODO: Remove this action stuff
-    if action == "new_comment" and form.validate_on_submit():
-        text = form.text.data
+    if action == "new_comment" and comment_form.validate_on_submit():
+        text = comment_form.text.data
         participant_username = session['username']
         participant = Participant.query.filter_by(username=participant_username).first()
         new_comment = Comment(text, entry, participant)
         db.session.add(new_comment)
         db.session.commit()
         flash('Comment added')
-        return redirect(url_for('show_entry', jam_name=jam_name,
-            entry_name=entry_name))
+        return redirect(url_for('show_entry', jam_slug = jam_slug,
+            entry_slug = entry_slug))
 
-    return render_template('show_entry.html', entry=entry, form=form)
+
+    if action == "edit":
+        if entry.participant.username != session["username"]:
+            abort(403)
+
+        error = ""
+
+        edit_form = SubmitEditEntry()
+        if edit_form.validate_on_submit():
+            title = edit_form.title.data
+            new_slug = models.get_slug(title)
+            description = edit_form.description.data
+            participant_username = session['username']
+            participant = Participant.query.filter_by(username=participant_username).first()
+            old_entry = Entry.query.filter_by(slug = new_slug, jam = jam).first()
+            if old_entry and old_entry != entry:
+                error = 'An entry with a similar name already exists for this jam.'
+            else:
+                entry.title = title
+                entry.slug = new_slug
+                entry.description = description
+                db.session.commit()
+                flash("Your changes have been saved.")
+                return redirect(entry.url())
+        elif request.method != "POST":
+            edit_form.title.data = entry.title
+            edit_form.description.data = entry.description
+
+        return render_template('edit_entry.html', entry = entry, form = edit_form, error = error)
+
+    if action == "add_screenshot":
+        screen_form = EntryAddScreenshot()
+
+        if screen_form.validate_on_submit():
+            s = EntryScreenshot(screen_form.url.data, screen_form.caption.data, entry)
+            db.session.add(s)
+            db.session.commit()
+            flash("Your screenshot has been added.")
+            return redirect(entry.url())
+
+        return render_template("add_screenshot.html", entry = entry, form = screen_form)
+
+    if action == "add_package":
+        package_form = EntryAddPackage()
+
+        if package_form.validate_on_submit():
+            s = EntryPackage(entry, package_form.url.data, package_form.type.data)
+            db.session.add(s)
+            db.session.commit()
+            flash("Your package has been added.")
+            return redirect(entry.url())
+
+        return render_template("add_package.html", entry = entry, form = package_form)
+
+    return render_template('show_entry.html', entry=entry, form = comment_form)
 
 @app.route('/participants/<username>/')
 def show_participant(username):
-    participant = Participant.query.filter_by(username=username).first_or_404()
-    return render_template('show_participant.html', participant=participant)
+    participant = Participant.query.filter_by(username = username).first_or_404()
+    return render_template('show_participant.html', participant = participant)
 
 @app.route('/contact')
 def contact():
@@ -233,7 +287,7 @@ def contact():
 @app.route('/rulez')
 def rules():
     return render_template('rules.html')
-    
+
 @app.route('/announcements')
 def announcements():
     announcements = Announcement.query.order_by(Announcement.posted.desc())
