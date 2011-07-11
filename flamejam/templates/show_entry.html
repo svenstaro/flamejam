@@ -28,7 +28,7 @@
                 <td>{{ entry.posted | humantime }}</td></tr>
 
             <tr><th>Description</th><td>
-                    {{ entry.description | markdown }}
+                    <div class="markdown">{{ entry.description | markdown }}</div>
                 </td></tr>
 
             <tr><th>Packages{% if entry.packages.all() %} ({{ entry.packages.all() | length }}){% endif %}</th><td>
@@ -135,7 +135,7 @@
                 <a class="author" href="{{ comment.participant.url() }}">{{ comment.participant.username }}</a>
                 said <span class="posted" title="{{ comment.posted | formattime }}">{{ comment.posted | humantime }}</span>:
             </div>
-            <div class="text">
+            <div class="text markdown">
                 {{ comment.text | markdown }}
             </div>
             <div style="clear: left;"></div>
