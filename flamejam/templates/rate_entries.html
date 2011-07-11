@@ -63,18 +63,18 @@
             </p>
             <p>
                 <table class="details">
-                    {% macro renderScoreField(field) %}
-                    <tr><th>{{ field.label }}</th><td>{{ field(class="text-input slider", size=1, style="text-align: center;") }}
+                    {% macro renderScoreField(icon, field) %}
+                    <tr><th><span title="{{icon}}" class="icon-16 icon-16-{{icon}}"></span> {{ field.label }} </th><td>{{ field(class="text-input slider", size=1, style="text-align: center;") }}
                         </td></tr>
                     {% endmacro %}
-                    {{ renderScoreField(rate_form.score_gameplay) }}
-                    {{ renderScoreField(rate_form.score_graphics) }}
-                    {{ renderScoreField(rate_form.score_audio) }}
-                    {{ renderScoreField(rate_form.score_innovation) }}
-                    {{ renderScoreField(rate_form.score_story) }}
-                    {{ renderScoreField(rate_form.score_technical) }}
-                    {{ renderScoreField(rate_form.score_controls) }}
-                    {{ renderScoreField(rate_form.score_overall) }}
+                    {{ renderScoreField("gameplay",     rate_form.score_gameplay) }}
+                    {{ renderScoreField("graphics",     rate_form.score_graphics) }}
+                    {{ renderScoreField("audio",        rate_form.score_audio) }}
+                    {{ renderScoreField("innovation",   rate_form.score_innovation) }}
+                    {{ renderScoreField("story",        rate_form.score_story) }}
+                    {{ renderScoreField("technical",    rate_form.score_technical) }}
+                    {{ renderScoreField("controls",     rate_form.score_controls) }}
+                    {{ renderScoreField("rating",       rate_form.score_overall) }}
 
                     <tr><th>{{ rate_form.note.label }}</th><td>
                         {{ rate_form.note(class="text-input", size=44) }}
