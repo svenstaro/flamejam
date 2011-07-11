@@ -13,9 +13,25 @@
     <div class="box-content">
         <form action="{{ url_for('rate_entries', jam_slug=jam.slug,
             action='submit_rating')}}" method="post">
+            {{ rate_form.score_gameplay.label }}
+            {{ rate_form.score_gameplay() }}
             {{ rate_form.score_graphics.label }}
             {{ rate_form.score_graphics() }}
-            <input type="submit" value="skip &raquo;" class="button" />
+            {{ rate_form.score_audio.label }}
+            {{ rate_form.score_audio() }}
+            {{ rate_form.score_innovation.label }}
+            {{ rate_form.score_innovation() }}
+            {{ rate_form.score_story.label }}
+            {{ rate_form.score_story() }}
+            {{ rate_form.score_technical.label }}
+            {{ rate_form.score_technical() }}
+            {{ rate_form.score_controls.label }}
+            {{ rate_form.score_controls() }}
+            {{ rate_form.score_overall.label }}
+            {{ rate_form.score_overall() }}
+            {{ rate_form.note.label }}
+            {{ rate_form.note() }}
+            <input type="submit" value="submit &raquo;" class="button" />
         </form>
 
         <ul style="margin-top: 5px;" class="tabs">
@@ -47,7 +63,9 @@
 <h2>Overview: Entries of this jam</h2>
 <ul>
 {% for e in jam.entries %}
-    <li><a href="#">{{ e.title }}</a> &lt;Notice if skipped or already rated here&gt;</li>
+    <li><a href="{{ e.url() }}">{{ e.title }}</a> {% if participant.id in e.rated_by
+    %}rated{% endif %}{% if participant.id in e.skipped_by
+    %}skipped{% endif %}</li>
 {% endfor %}
 </ul>
 <p>Click to unskip</p>

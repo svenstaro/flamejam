@@ -110,10 +110,10 @@ def new_entry(jam_slug):
     return render_template('new_entry.html', jam = jam, form = form, error = error)
 
 @app.route('/jams/<jam_slug>/rate')
-def rate_entries(jam_slug):
+@app.route('/jams/<jam_slug>/rate/<action>', methods=("GET", "POST"))
+def rate_entries(jam_slug, action = None):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
-    action = None
     participant_username = session['username']
     participant = Participant.query.filter_by(username=participant_username).first()
 
@@ -170,7 +170,7 @@ def rate_entries(jam_slug):
 
     return render_template("rate_entries.html", jam = jam, error = error,
                            entry = jam.entries.first(), rate_form = rate_form,
-                           skip_form = skip_form)
+                           skip_form = skip_form, participant = participant)
 
 @app.route('/jams/<jam_slug>/<entry_slug>/')
 @app.route('/jams/<jam_slug>/<entry_slug>/<action>', methods=("GET", "POST"))

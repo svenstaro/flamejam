@@ -116,7 +116,6 @@ class RateEntry(Form):
     score_controls = IntegerField("Controls rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     score_overall = IntegerField("Overall rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     note = TextAreaField("Additional notes", validators=[Optional()])
-    skip = SubmitField("Skip", validators=[Optional()])
 
 class SkipRating(Form):
     reason = SelectField("Reason to skip", choices = [
