@@ -78,8 +78,11 @@
     </div>
 </div>
 
-<h2>Ratings</h2>
+<h2>Detailed Ratings</h2>
 
+{% if entry.jam.getStatus().code != 4 %}
+<p>The voting for this jam is not over, so ratings are hidden.</p>
+{% else %}
 {% if entry.ratings.all() %}
 <table class="ratings">
     <tr>
@@ -128,6 +131,7 @@
 {% else %}
     <p>There are no ratings yet.</p>
 {% endif %}
+{% endif %}
 
 <h2>Comments</h2>
     {% if entry.comments.all() %}
@@ -164,7 +168,8 @@
             {{ form_errors(form) }}
             {{ form.hidden_tag() }}
             {{ form.text() }}
-            <div class="input-info">Parsed with markdown</div>
+            <div class="input-info">Please don't use the comments to judge the work before the voting period is over. This shall allow everyone to rate this entry freely and unbiased.</div>
+            <div class="input-info"><b>Parsed with markdown.</b></div>
         </div>
         <p class="form-buttons">
             <input type="submit" value="Post comment" class="button">

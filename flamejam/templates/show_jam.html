@@ -40,30 +40,82 @@
 
 <h2>Entries</h2>
 
-{% if jam.entries.all() | length == 0 %}
-    <p>There are no entries yet.</p>
+{% if jam.getStatus().code != 4 %}
+
+    {% if jam.entries.all() | length == 0 %}
+        <p>There are no entries yet.</p>
+    {% else %}
+        <ul>
+            {% for entry in jam.entries %}
+                <li class="box floatingbox" style="width: 164px;">
+                    <h4><a href="{{ entry.url() }}">{{ entry.title }}</a></h4>
+
+                    <a href="{{ entry.url() }}" class="entry-list-image">
+                        {% set s = entry.screenshots.first() %}
+                        {% if s %}
+                        <img src="{{ s.url }}" title="{{ entry.title }}: {{ s.caption }}" style="max-height: 120px; max-width: 160px;"/>
+                        {% else %}
+                        <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." width="160" height="120" />
+                        {% endif %}
+                    </a>
+
+                    <div class="entry-list-author">
+                        {{ entry.participant.getLink() }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="clear"></div>
+    {% endif %}
 {% else %}
-    <ul>
-        {% for entry in jam.entries %}
-            <li class="box floatingbox" style="width: 164px;">
-                <h4><a href="{{ entry.url() }}">{{ entry.title }}</a></h4>
 
-                <a href="{{ entry.url() }}" class="entry-list-image">
-                    {% set s = entry.screenshots.first() %}
-                    {% if s %}
-                    <img src="{{ s.url }}" title="{{ entry.title }}: {{ s.caption }}" style="max-height: 120px; max-width: 160px;"/>
-                    {% else %}
-                    <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." width="160" height="120" />
-                    {% endif %}
-                </a>
 
-                <div class="entry-list-author">
-                    {{ entry.participant.getLink() }}
-                </div>
-            </li>
-        {% endfor %}
-    </ul>
-    <div class="clear"></div>
+    {% if jam.entries.all() | length == 0 %}
+        <p>Nobody participated in this jam. That's sad!</p>
+    {% else %}
+        <table class="ratings">
+             <tr>
+                <th>#</th>
+                <th>Author</th>
+                <th>Game title</th>
+                <th class="score"><span class="icon-16 icon-16-gameplay"      title="gameplay"></span></th>
+                <th class="score"><span class="icon-16 icon-16-graphics"      title="graphics"></span></th>
+                <th class="score"><span class="icon-16 icon-16-audio"         title="audio"></span></th>
+                <th class="score"><span class="icon-16 icon-16-innovation"    title="innovation"></span></th>
+                <th class="score"><span class="icon-16 icon-16-story"         title="story"></span></th>
+                <th class="score"><span class="icon-16 icon-16-technical"     title="technical"></span></th>
+                <th class="score"><span class="icon-16 icon-16-controls"      title="controls"></span></th>
+                <th class="score"><span class="icon-16 icon-16-rating"        title="overall"></span></th>
+                <th class="total">Total</th>
+            </tr>
+
+            {% set i = 0 %}
+            {% for entry in jam.getTopEntries() %}
+            {% set i = i + 1 %}
+            {% set a = entry.getAverageRating() %}
+            <tr>
+                <td class="rank">{{ i }}</td>
+                <td>{{ entry.participant.getLink() }}</td>
+                <td><a href="{{entry.url()}}">{{ entry.title }}</a></td>
+                <td class="score">{{ "%.2f" % a["gameplay"]  }}</td>
+                <td class="score">{{ "%.2f" % a["graphics"]  }}</td>
+                <td class="score">{{ "%.2f" % a["audio"]     }}</td>
+                <td class="score">{{ "%.2f" % a["innovation"]}}</td>
+                <td class="score">{{ "%.2f" % a["story"]     }}</td>
+                <td class="score">{{ "%.2f" % a["technical"] }}</td>
+                <td class="score">{{ "%.2f" % a["controls"]  }}</td>
+                <td class="score">{{ "%.2f" % a["overall"]   }}</td>
+
+                {% set c = "#666" if i > 3 else ["#FFD700","#C0C0C0","#CD7F32"][i - 1] %}
+                <td class="total">
+                    {{ "%.2f" % entry.getTotalScore() }}
+                    <span class="medal" style="background: {{c}}"></span>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
 {% endif %}
 
 {% endblock %}

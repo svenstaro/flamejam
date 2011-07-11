@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from operator import attrgetter
 from datetime import datetime, timedelta
 from hashlib import sha512, md5
 from flamejam import db, filters
@@ -168,6 +169,20 @@ class Jam(db.Model):
     def url(self):
         return url_for('show_jam', jam_slug = self.slug)
 
+    def getTopEntries(self):
+        e = list(self.entries.all())
+        e.sort(cmp = entryCompare)
+        return e
+
+def entryCompare(left, right):
+    x = right.getTotalScore() - left.getTotalScore()
+    if x > 0:
+        return 1
+    elif x < 0:
+        return -1
+    else:
+        return 0
+
 class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
@@ -203,14 +218,26 @@ class Entry(db.Model):
         for c in categories:
             r[c] = 0
 
-        for rating in self.ratings:
-            for c in categories:
-                r[c] += getattr(rating, "score_" + c)
+        ratings = len(self.ratings.all())
+        if ratings > 0:
+            for rating in self.ratings:
+                for c in categories:
+                    r[c] += getattr(rating, "score_" + c)
 
-        for c in categories:
-            r[c] *= 1.0 / len(self.ratings.all())
+            for c in categories:
+                r[c] *= 1.0 / ratings
 
         return r
+
+    def getTotalScore(self):
+        s = 0
+        c = 0
+        av = self.getAverageRating()
+        for x in av:
+            s += av[x]
+            c += 1
+        return s * 1.0/ c
+
 
 def entry_package_type_string(type):
     if type == "web":       return "Web link (Flash etc.)"

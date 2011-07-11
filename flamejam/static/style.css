@@ -583,8 +583,32 @@ table.ratings th.score {
     text-align: center;
 }
 
+table.ratings tr td.total,
+table.ratings td.rank {
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+    color: #AAA;
+}
+
+table.ratings tr td.total,
+table.ratings tr th.total {
+    background: #DDD;
+    border-left-width: 3px;
+    border-left-style: double;
+    color: #333;
+}
+
 table.ratings td.time {
     font-size: 7pt;
+}
+
+table.ratings td.total span.medal {
+    border: 1px solid #444;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
 }
 
 
