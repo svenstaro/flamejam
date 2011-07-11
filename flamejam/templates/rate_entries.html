@@ -9,11 +9,28 @@
 
 <h2>Please rate: {{ entry.title }} by {{ entry.participant.getLink() }}</h2>
 
-<p>&lt;Rate form here&gt;</p>
+<div class="box">
+    <div class="box-content">
+        <form action="{{ url_for('rate_entries', jam_slug=jam.slug,
+            action='submit_rating')}}" method="post">
+            {{ rate_form.score_graphics.label }}
+            {{ rate_form.score_graphics() }}
+            <input type="submit" value="skip &raquo;" class="button" />
+        </form>
+
+        <ul style="margin-top: 5px;" class="tabs">
+            <li><a href="{{ entry.jam.url() }}">&laquo; Back to the jam</a></li>
+        </ul>
+
+        <div style="clear: right;"></div>
+    </div>
+</div>
 
 <div class="box">
     <div class="box-content">
-        <form style="float: right;" action="" method="post">
+        <form style="float: right;" action="{{ url_for('rate_entries',
+            jam_slug=jam.slug,
+            action='skip_rating')}}" method="post">
             {{ skip_form.reason.label }}
             {{ skip_form.reason() }}
             <input type="submit" value="skip &raquo;" class="button" />

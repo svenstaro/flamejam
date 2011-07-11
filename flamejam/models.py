@@ -6,6 +6,17 @@ from flamejam import db, filters
 from flask import url_for, Markup
 import re
 
+skipped_entries = db.Table('skipped_entries',
+    db.Column('entry_id', db.Integer, db.ForeignKey('entry.id')),
+    db.Column('participant_id', db.Integer, db.ForeignKey('participant.id')),
+    db.Column('reason', db.Enum('platform', 'uninteresting', 'crash'))
+)
+
+rated_entries = db.Table('rated_entries',
+    db.Column('entry_id', db.Integer, db.ForeignKey('entry.id')),
+    db.Column('participant_id', db.Integer, db.ForeignKey('participant.id'))
+)
+
 def get_slug(s):
     s = s.lower()
     s = re.sub(r"[\s_+]+", "-", s)
@@ -25,6 +36,10 @@ class Participant(db.Model):
     ratings = db.relationship('Rating', backref='participant', lazy='dynamic')
     comments = db.relationship('Comment', backref='participant', lazy='dynamic')
     jams = db.relationship('Jam', backref='author', lazy='dynamic')
+    skipped_entries = db.relationship('Entry', secondary=skipped_entries,
+        backref=db.backref('skipped_by', lazy='dynamic'))
+    rated_entries = db.relationship('Entry', secondary=rated_entries,
+        backref=db.backref('rated_by', lazy='dynamic'))
 
     def __init__(self, username, password, email, is_admin=False,
             is_verified=False):
