@@ -112,7 +112,10 @@ def new_entry(jam_slug):
 @app.route('/jams/<jam_slug>/rate', methods=("GET", "POST"))
 def rate_entries(jam_slug):
    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-   return "TODO"
+
+   skip_form = SkipRating()
+
+   return render_template("rate_entries.html", jam = jam, entry = jam.entries.first(), skip_form = skip_form)
 
    # # Check whether jam is in rating period
    # if not (jam.packaging_deadline < datetime.utcnow() < jam.rating_end):

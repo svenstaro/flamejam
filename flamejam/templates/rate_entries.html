@@ -1,42 +1,38 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% block title %}Rate {{ entry.title }}{% endblock %}
+{% block title %}Rating on {{ entry.jam.title }}{% endblock %}
 
 {% block content %}
-<h2>Rate {{ entry.title }}</h2>
-    <h3>Description:</h3>
-<p>{{ entry.description }}</p>
+<h1>{{ entry.jam.title }} &raquo; Rating</h1>
+
+
+<h2>Please rate: {{ entry.title }} by {{ entry.participant.getLink() }}</h2>
+
+<p>&lt;Rate form here&gt;</p>
+
+<div class="box">
+    <div class="box-content">
+        <form style="float: right;" action="" method="post">
+            {{ skip_form.reason.label }}
+            {{ skip_form.reason() }}
+            <input type="submit" value="skip &raquo;" class="button" />
+        </form>
+
+        <ul style="margin-top: 5px;" class="tabs">
+            <li><a href="{{ entry.jam.url() }}">&laquo; Back to the jam</a></li>
+        </ul>
+
+        <div style="clear: right;"></div>
+    </div>
+</div>
+
+<h2>Overview: Entries of this jam</h2>
 <ul>
-    <li>Author: {{ entry.participant.getLink() }}</li>
-    <li>Jam: <a href="{{ entry.jam.url() }}">
-        {{ entry.jam.title }}</a>
-    </li>
-</ul>
-
-<h3>Ratings</h3>
-{% if session.logged_in %}
-    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-    <form action="{{ url_for('rate_entries', jam_slug = entry.jam.slug) }}" method=post>
-        {#{ form.hidden_tag() }}
-        {{ render_field(form.score_gameplay) }}
-        {{ render_field(form.score_graphics) }}
-        {{ render_field(form.score_audio) }}
-        {{ render_field(form.score_innovation) }}
-        {{ render_field(form.score_story) }}
-        {{ render_field(form.score_technical) }}
-        {{ render_field(form.score_controls) }}
-        {{ render_field(form.score_overall) }}
-        {{ render_field(form.note) }}
-        {{ render_field(form.skip) }#}
-        <input type=submit value=Go>
-    </form>
-{% endif %}
-
-<h3>Skipped entries</h3>
-{% for skipped_entry in skipped_entries %}
-    <a href="#">{{ skipped_entry }}a</a>
+{% for e in jam.entries %}
+    <li><a href="#">{{ e.title }}</a> &lt;Notice if skipped or already rated here&gt;</li>
 {% endfor %}
+</ul>
 <p>Click to unskip</p>
 
 {% endblock %}

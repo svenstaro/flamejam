@@ -119,5 +119,13 @@ class RateEntry(Form):
     note = TextAreaField("Additional notes", validators=[Optional()])
     skip = SubmitField("Skip", validators=[Optional()])
 
+class SkipRating(Form):
+    reason = SelectField("Reason to skip", choices = [
+        ("platform", "Platform not supported"),
+        ("uninteresting", "Not interested"),
+        ("error", "An error occured"),
+        ("unknown", "Dunno... something else")
+    ])
+
 class WriteComment(Form):
     text = TextAreaField("Comment", validators=[Required(), Length(max=65535)])

@@ -157,7 +157,7 @@ class Entry(db.Model):
         self.posted = datetime.utcnow()
 
     def __repr__(self):
-        return '<Entry %r>' % self.name
+        return '<Entry %r>' % self.title
 
     def url(self, action = ""):
         return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action)
