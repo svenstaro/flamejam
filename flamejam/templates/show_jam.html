@@ -45,12 +45,20 @@
 {% else %}
     <ul>
         {% for entry in jam.entries %}
-            <li class="box floatingbox">
-                <h4><a href="{{ entry.url() }}">{{ entry.title }}</a> by
-                {{ entry.participant.getLink() }}</h4>
+            <li class="box floatingbox" style="width: 164px;">
+                <h4><a href="{{ entry.url() }}">{{ entry.title }}</a></h4>
 
-                <div class="box-content">
-                    lol screenshot here
+                <a href="{{ entry.url() }}" class="entry-list-image">
+                    {% set s = entry.screenshots.first() %}
+                    {% if s %}
+                    <img src="{{ s.url }}" title="{{ entry.title }}: {{ s.caption }}" style="max-height: 120px; max-width: 160px;"/>
+                    {% else %}
+                    <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." width="160" height="120" />
+                    {% endif %}
+                </a>
+
+                <div class="entry-list-author">
+                    {{ entry.participant.getLink() }}
                 </div>
             </li>
         {% endfor %}

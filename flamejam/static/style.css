@@ -357,8 +357,7 @@ form .input-info {
 }
 
 .floatingbox {
-    float: left;
-    width: 200px;
+    display: inline-block;
     margin-right: 8px;
 }
 
@@ -601,4 +600,31 @@ ul.screenshots li div.image img {
 
 ul.screenshots li div.caption {
     width: 160px;
+}
+
+.entry-list-author {
+    background: #FFF;
+    border-top: 1px solid #CCC;
+    margin: 0;
+    padding: 3px 10px;
+    color: #666;
+}
+
+.entry-list-author,
+.entry-list-author a {
+    font-size: 7pt;
+}
+
+.entry-list-image {
+    display: block;
+    text-align: center;
+    background: #FFF;
+    height: 124px;
+    line-height: 124px;
+    overflow: hidden;
+}
+
+.entry-list-image img {
+    border: 2px solid #FFF;
+    vertical-align: middle;
 }
