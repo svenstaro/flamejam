@@ -108,11 +108,13 @@ class EntryAddPackage(Form):
         ("unknown",      entry_package_type_string("unknown"))])
 
 class RateEntry(Form):
+    score_gameplay = IntegerField("Gameplay rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     score_graphics = IntegerField("Graphics rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     score_audio = IntegerField("Audio rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     score_innovation = IntegerField("Innovation rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_humor = IntegerField("Humor rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_fun = IntegerField("Fun rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    score_story = IntegerField("Story rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    score_technical = IntegerField("Technical rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
+    score_controls = IntegerField("Controls rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     score_overall = IntegerField("Overall rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
     note = TextAreaField("Additional notes", validators=[Optional()])
     skip = SubmitField("Skip", validators=[Optional()])

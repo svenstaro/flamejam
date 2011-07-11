@@ -65,11 +65,13 @@
 <table class="ratings">
     <tr>
         <th>Participant</th>
+        <th class="score"><span class="icon-16 icon-16-gameplay"      title="gameplay"></span></th>
         <th class="score"><span class="icon-16 icon-16-graphics"      title="graphics"></span></th>
         <th class="score"><span class="icon-16 icon-16-audio"         title="audio"></span></th>
         <th class="score"><span class="icon-16 icon-16-innovation"    title="innovation"></span></th>
-        <th class="score"><span class="icon-16 icon-16-fun"           title="humor"></span></th>
-        <th class="score"><span class="icon-16 icon-16-fun"           title="fun"></span></th>
+        <th class="score"><span class="icon-16 icon-16-story"         title="story"></span></th>
+        <th class="score"><span class="icon-16 icon-16-technical"     title="technical"></span></th>
+        <th class="score"><span class="icon-16 icon-16-controls"      title="controls"></span></th>
         <th class="score"><span class="icon-16 icon-16-rating"        title="overall"></span></th>
         <th>posted</th>
         <th>Notes</th>
@@ -77,11 +79,13 @@
     {% set a = entry.getAverageRating() %}
     <tr class="average">
         <td>Average</td>
+        <td class="score">{{ "%.2f" % a["gameplay"]  }}</td>
         <td class="score">{{ "%.2f" % a["graphics"]  }}</td>
         <td class="score">{{ "%.2f" % a["audio"]     }}</td>
         <td class="score">{{ "%.2f" % a["innovation"]}}</td>
-        <td class="score">{{ "%.2f" % a["humor"]     }}</td>
-        <td class="score">{{ "%.2f" % a["fun"]       }}</td>
+        <td class="score">{{ "%.2f" % a["story"]     }}</td>
+        <td class="score">{{ "%.2f" % a["technical"] }}</td>
+        <td class="score">{{ "%.2f" % a["controls"]  }}</td>
         <td class="score">{{ "%.2f" % a["overall"]   }}</td>
         <td></td>
         <td></td>
@@ -89,11 +93,13 @@
     {% for rating in entry.ratings %}
     <tr>
         <td>{{ rating.participant.getLink() }}</td>
+        <td class="score">{{ rating.score_gameplay }}</td>
         <td class="score">{{ rating.score_graphics }}</td>
         <td class="score">{{ rating.score_audio }}</td>
         <td class="score">{{ rating.score_innovation }}</td>
-        <td class="score">{{ rating.score_humor }}</td>
-        <td class="score">{{ rating.score_fun }}</td>
+        <td class="score">{{ rating.score_story }}</td>
+        <td class="score">{{ rating.score_technical }}</td>
+        <td class="score">{{ rating.score_controls }}</td>
         <td class="score">{{ rating.score_overall }}</td>
         <td class="time">{{ rating.posted | humantime }}</td>
         <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>

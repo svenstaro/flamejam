@@ -19,11 +19,13 @@
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
     <form action="{{ url_for('rate_entries', jam_slug = entry.jam.slug) }}" method=post>
         {#{ form.hidden_tag() }}
+        {{ render_field(form.score_gameplay) }}
         {{ render_field(form.score_graphics) }}
         {{ render_field(form.score_audio) }}
         {{ render_field(form.score_innovation) }}
-        {{ render_field(form.score_humor) }}
-        {{ render_field(form.score_fun) }}
+        {{ render_field(form.score_story) }}
+        {{ render_field(form.score_technical) }}
+        {{ render_field(form.score_controls) }}
         {{ render_field(form.score_overall) }}
         {{ render_field(form.note) }}
         {{ render_field(form.skip) }#}

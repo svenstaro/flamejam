@@ -471,9 +471,13 @@ span.icon-16:hover {
 }
 
 span.icon-16-fun        { background-image: url("gfx/icons/fun.png"); }
-span.icon-16-innovation { background-image: url("gfx/icons/innovation.png"); }
+span.icon-16-gameplay   { background-image: url("gfx/icons/gameplay.png"); }
 span.icon-16-graphics   { background-image: url("gfx/icons/graphics.png"); }
 span.icon-16-audio      { background-image: url("gfx/icons/audio.png"); }
+span.icon-16-innovation { background-image: url("gfx/icons/innovation.png"); }
+span.icon-16-story      { background-image: url("gfx/icons/story.png"); }
+span.icon-16-technical  { background-image: url("gfx/icons/technical.png"); }
+span.icon-16-controls   { background-image: url("gfx/icons/controls.png"); }
 span.icon-16-rating     { background-image: url("gfx/icons/rating.png"); }
 
 
