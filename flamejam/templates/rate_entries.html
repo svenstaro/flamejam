@@ -67,8 +67,8 @@
 <h2>Overview: Entries of this jam</h2>
 <ul>
 {% for e in jam.entries %}
-    <li><a href="{{ e.url() }}">{{ e.title }}</a> {% if participant.id in e.rated_by
-    %}rated{% endif %}{% if participant.id in e.skipped_by
+    <li><a href="{{ e.url() }}">{{ e.title }}</a> {% if participant in e.rated_by
+    %}rated{% endif %}{% if participant in e.skipped_by
     %}skipped{% endif %}</li>
 {% endfor %}
 </ul>
