@@ -9,38 +9,41 @@
 
 <h2>Please rate: {{ entry.title }} by {{ entry.participant.getLink() }}</h2>
 
+<form action="{{ url_for('rate_entries', jam_slug=jam.slug, action='submit_rating')}}" method="post">
+{{ rate_form.hidden_tag() }}
 <div class="box">
     <div class="box-content">
-        <form action="{{ url_for('rate_entries', jam_slug=jam.slug,
-            action='submit_rating')}}" method="post">
-            {{ rate_form.score_gameplay.label }}
-            {{ rate_form.score_gameplay() }}
-            {{ rate_form.score_graphics.label }}
-            {{ rate_form.score_graphics() }}
-            {{ rate_form.score_audio.label }}
-            {{ rate_form.score_audio() }}
-            {{ rate_form.score_innovation.label }}
-            {{ rate_form.score_innovation() }}
-            {{ rate_form.score_story.label }}
-            {{ rate_form.score_story() }}
-            {{ rate_form.score_technical.label }}
-            {{ rate_form.score_technical() }}
-            {{ rate_form.score_controls.label }}
-            {{ rate_form.score_controls() }}
-            {{ rate_form.score_overall.label }}
-            {{ rate_form.score_overall() }}
-            {{ rate_form.note.label }}
-            {{ rate_form.note() }}
-            <input type="submit" value="submit &raquo;" class="button" />
-        </form>
+        <p>
+            Please give points from one to ten, <b>one point</b> being the worst and <b>ten points</b> the best you can give.
+        </p>
+        <p>
+            <table class="details">
+                {% macro renderScoreField(field) %}
+                <tr><th>{{ field.label }}</th><td>{{ field(class="text-input slider", size=1, style="text-align: center;") }}
+                    </td></tr>
+                {% endmacro %}
+                {{ renderScoreField(rate_form.score_gameplay) }}
+                {{ renderScoreField(rate_form.score_graphics) }}
+                {{ renderScoreField(rate_form.score_audio) }}
+                {{ renderScoreField(rate_form.score_innovation) }}
+                {{ renderScoreField(rate_form.score_story) }}
+                {{ renderScoreField(rate_form.score_technical) }}
+                {{ renderScoreField(rate_form.score_controls) }}
+                {{ renderScoreField(rate_form.score_overall) }}
 
-        <ul style="margin-top: 5px;" class="tabs">
-            <li><a href="{{ entry.jam.url() }}">&laquo; Back to the jam</a></li>
-        </ul>
-
-        <div style="clear: right;"></div>
+                <tr><th>{{ rate_form.note.label }}</th><td>
+                    {{ rate_form.note(class="text-input", size = 100) }}
+                    <div class="input-info">Optional, <b>not</b> parsed with markdown</div>
+                    </td></tr>
+            </table>
+        </p>
     </div>
+
+    <p class="form-buttons">
+        <input type="submit" value="submit &raquo;" class="button default" />
+    </p>
 </div>
+</form>
 
 <div class="box">
     <div class="box-content">

@@ -361,10 +361,10 @@ table.details {
 table.details th {
     text-align: left;
     padding-right: 20px;
+    font-weight: normal;
 }
 
 table.details th a {
-    font-weight: normal;
     color: #888;
 }
 table.details th a:hover {
@@ -690,3 +690,38 @@ ul.screenshots li div.caption {
     border: 2px solid #FFF;
     vertical-align: middle;
 }
+
+
+.step-slider {
+    display: inline-block;
+    margin: 0 20px;
+    padding: 2px;
+    height: 16px;
+    background: #CCC;
+    border-radius: 4px;
+    border: 1px solid #444;
+    vertical-align: middle;
+}
+
+.step-slider .step-slider-step {
+    display: inline-block;
+    background: #CCC;
+    width: 20px;
+    height: 16px;
+    cursor: pointer;
+    -webkit-transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
+    text-align: center;
+    font-size: 7pt;
+    color: #444;
+}
+
+.step-slider .step-slider-step-1.on  { background: #A00; color: #FFF; }
+.step-slider .step-slider-step-2.on  { background: #F00; color: #FFF; }
+.step-slider .step-slider-step-3.on  { background: #F40; color: #FFF; }
+.step-slider .step-slider-step-4.on  { background: #F80; color: #FFF; }
+.step-slider .step-slider-step-5.on  { background: #FC0; }
+.step-slider .step-slider-step-6.on  { background: #FF0; }
+.step-slider .step-slider-step-7.on  { background: #CD0; }
+.step-slider .step-slider-step-8.on  { background: #8B0; }
+.step-slider .step-slider-step-9.on  { background: #490; color: #FFF; }
+.step-slider .step-slider-step-10.on { background: #080; color: #FFF; }

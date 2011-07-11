@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flaskext.wtf import BaseForm, Form, TextField, TextAreaField, PasswordField,\
-        DateTimeField, SubmitField, SelectField
+        DateTimeField, SubmitField, SelectField, HiddenField
 from flaskext.wtf import Required, Length, EqualTo, Optional, NumberRange, Email,\
         ValidationError, URL
 from flaskext.wtf.html5 import IntegerField, EmailField
@@ -107,15 +107,16 @@ class EntryAddPackage(Form):
         ("unknown",      entry_package_type_string("unknown"))])
 
 class RateEntry(Form):
-    score_gameplay = IntegerField("Gameplay rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_graphics = IntegerField("Graphics rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_audio = IntegerField("Audio rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_innovation = IntegerField("Innovation rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_story = IntegerField("Story rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_technical = IntegerField("Technical rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_controls = IntegerField("Controls rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    score_overall = IntegerField("Overall rating (1 - worst to 10 - best)", validators=[Required(), NumberRange(min=1, max=10)])
-    note = TextAreaField("Additional notes", validators=[Optional()])
+    entry_id = HiddenField(validators = [Required(), NumberRange(min = 1)])
+    score_gameplay = IntegerField("Gameplay rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    score_graphics = IntegerField("Graphics rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    score_audio = IntegerField("Audio rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    score_innovation = IntegerField("Innovation rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    score_story = IntegerField("Story rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    score_technical = IntegerField("Technical rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    score_controls = IntegerField("Controls rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    score_overall = IntegerField("Overall rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    note = TextField("Additional notes", validators=[Optional()])
 
 class SkipRating(Form):
     reason = SelectField("Reason to skip", choices = [
