@@ -2,6 +2,11 @@
 
 {% block title %}[{{ error.code }}] {{ error.name }}{% endblock %}
 
+{# Add font for error displaying #}
+{% block head %}
+    <link href='http://fonts.googleapis.com/css?family=Loved+by+the+King&subset=latin&v2' rel='stylesheet' type='text/css'>
+{% endblock %}
+
 {% block content %}
 
 <div class="error-page">

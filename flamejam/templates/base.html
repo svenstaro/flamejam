@@ -8,6 +8,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='jquery.lightbox-0.5.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+    {% block head %}{% endblock %}
 </head>
 <body>
     <div id="WRAPPER">
