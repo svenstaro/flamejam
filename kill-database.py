@@ -4,7 +4,7 @@
 #
 
 from flamejam import db
-from flamejam.models import Announcement, Participant, Jam, Entry, Rating, Comment
+from flamejam.models import Announcement, Participant, Jam, Entry, Rating, Comment, EntryScreenshot
 from datetime import datetime, timedelta
 
 # Kill everything and recreate tables
@@ -70,6 +70,21 @@ db.session.add(game1)
 db.session.add(game2)
 db.session.add(game3)
 db.session.add(game4)
+
+# Add screenshots
+s1 = EntryScreenshot("http://2.bp.blogspot.com/_gx7OZdt7Uhs/SwwanX_-API/AAAAAAAADAM/vbZbIPERdhs/s1600/Star-Wars-Wallpaper-star-wars-6363340-1024-768.jpg", "Awesome cover art", space_game)
+s2 = EntryScreenshot("http://celebritywonder.ugo.com/wp/Hayden_Christensen_in_Star_Wars:_Episode_III_-_Revenge_of_the_Sith_Wallpaper_1_1280.jpg", "Close combat during final showdown", space_game)
+s3 = EntryScreenshot("http://www.new-dream.de/image/wallpaper/film/star-wars/star-wars-03.jpg", "Nice open-space battle", space_game)
+s4 = EntryScreenshot("http://wallpapercavern.com/wallpapers/wallpaper_lego_star_wars_the_video_game_01_1600-1280x960.jpg", "Example collection figure, shipped with premium DVD kit", space_game)
+s5 = EntryScreenshot("http://images.psxextreme.com/wallpapers/ps3/star_wars___battle_1182.jpg", "Sample vehicles", space_game)
+s6 = EntryScreenshot("http://sethspopcorn.com/wp-content/uploads/2010/10/CloneTrooper.jpg", "Character selection screen", space_game)
+
+db.session.add(s1)
+db.session.add(s2)
+db.session.add(s3)
+db.session.add(s4)
+db.session.add(s5)
+db.session.add(s6)
 
 # Make ratings
 rating1 = Rating(3, 5, 1, 7, 3, 1, 5, 2, "cool stuff", best_game, peter)
