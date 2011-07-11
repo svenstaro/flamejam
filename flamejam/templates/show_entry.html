@@ -54,8 +54,8 @@
         <ul class="screenshots">
         {% for screenshot in entry.screenshots %}
             <li>
-                <a href="{{ screenshot.url }}" target="_blank">
-                <div class="image"><img src="{{ screenshot.url }}" width="160" /></div>
+                <a href="{{ screenshot.url }}" target="_blank" title="{{ screenshot.caption }}">
+                <div class="image"><img src="{{ screenshot.url }}" width="160" alt="{{ screenshot.caption }}" /></div>
                 <div class="caption">
                     {{ screenshot.caption }}
                 </div>
