@@ -10,8 +10,8 @@
  * @copyright (c) 2008 Leandro Vieira Pinho (leandrovieira.com)
  * @license CCAttribution-ShareAlike 2.5 Brazil - http://creativecommons.org/licenses/by-sa/2.5/br/deed.en_US
  * @example Visit http://leandrovieira.com/projects/jquery/lightbox/ for more informations about this jQuery plugin
- * This version was modified by Paul 'opatut' Bienkowski in order to scale
- * the images to fit the viewport.
+ * This version was modified by Paul 'opatut' Bienkowski  in order to scale
+ * the images to fit the viewport. Contact: <paulbienkowski@aol.com>
  */
 
 // Offering a Custom Alias suport - More info: http://docs.jquery.com/Plugins/Authoring#Custom_Alias
