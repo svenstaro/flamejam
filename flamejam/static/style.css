@@ -68,6 +68,68 @@ hr {
     border-top: 1px solid #aaa;
 }
 
+code {
+    background: #FFF;
+    border: 1px dashed #CCC;
+}
+
+pre code {
+    display: block;
+    padding: 2px 8px;
+}
+
+/* ------------------------------------------------------ */
+
+.markdown p,
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+    border: 0;
+    margin: 0;
+    margin-bottom: 4px;
+    padding: 0;
+    line-height: 1.5em;
+    color: #000;
+}
+
+.markdown h1 {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #000;
+}
+
+.markdown h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #000;
+}
+
+.markdown h3 {
+    font-size: 10pt;
+}
+
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+    font-size: 8pt;
+}
+
+.markdown ul {
+    list-style: disc;
+    padding-left: 2em;
+    margin: 10px 0;
+}
+
+.markdown blockquote {
+    border-left: 3px solid #369;
+    margin: 0;
+    padding-left: 7px;
+}
+
+
 /* ------------------------------------------------------ */
 
 ._announcement {
