@@ -6,7 +6,7 @@
 {% block content %}
 <h1>{{ entry.jam.title }} &raquo; Rating</h1>
 
-<h2>Please rate: <a href="{{ entry.url() }}">{{ entry.title }}</a> by <a href="{{ entry.participant.url() }}">{{ entry.participant.username }}</a></h2>
+<h2>You are rating: <a href="{{ entry.url() }}">{{ entry.title }}</a></h2>
 
 
 <form action="{{ url_for('rate_entries', jam_slug=jam.slug, action='submit_rating')}}" method="post">
@@ -17,7 +17,10 @@
         <h4>Details</h4>
         <div class="box-content">
             <table class="details">
-                <tr><th>Author</th><td>{{ entry.participant.getLink() }}</td></tr>
+                <tr><th>Team</th><td>
+                    <p>{{ entry.participant.getLink("author") }}</p>
+                    {% for member in entry.team %}<p>{{ member.getLink() }}</p>{% endfor %}
+                    </td></tr>
                 <tr><th>Submitted</th><td>{{ entry.posted | humantime }}</td></tr>
                 <tr><th>Description</th><td>{{ entry.description }}</td></tr>
             </table>

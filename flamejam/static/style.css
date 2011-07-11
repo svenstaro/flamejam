@@ -22,7 +22,18 @@ a {
     text-decoration: none;
 }
 
-a:hover {
+a.author {
+    color: #080;
+}
+
+a.admin:after {
+    content: " [A]";
+    color: #F00;
+}
+
+a:hover,
+a.author:hover,
+a.admin:hover {
     color: #FF4500;
 }
 

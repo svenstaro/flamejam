@@ -54,7 +54,11 @@ tetris = Entry("tetris", "original concept", rgj4, paul)
 game1 = Entry("game1", "game1", loljam, paul)
 game2 = Entry("game2", "game2", loljam, paddy)
 game3 = Entry("game3", "game3", loljam, pablo)
-game4 = Entry("game4", "game4", loljam, peter)
+
+game3.team.append(paddy)
+game3.team.append(pablo)
+game3.team.append(peter)
+game3.team.append(per)
 
 # Add entries
 db.session.add(best_game)
@@ -69,7 +73,6 @@ db.session.add(tetris)
 db.session.add(game1)
 db.session.add(game2)
 db.session.add(game3)
-db.session.add(game4)
 
 # Add screenshots
 s1 = EntryScreenshot("http://2.bp.blogspot.com/_gx7OZdt7Uhs/SwwanX_-API/AAAAAAAADAM/vbZbIPERdhs/s1600/Star-Wars-Wallpaper-star-wars-6363340-1024-768.jpg", "Awesome cover art", space_game)

@@ -10,6 +10,7 @@
 <p>
     <ul class="tabs">
         <li><a href="{{ entry.url('edit') }}">Edit entry</a></li>
+        <li><a href="{{ entry.url('add_team_member') }}">Add team member</a></li>
         <li><a href="{{ entry.url('add_screenshot') }}">Add screenshot</a></li>
         <li><a href="{{ entry.url('add_package') }}">Add package</a></li>
     </ul>
@@ -20,7 +21,15 @@
     <h4>Details</h4>
     <div class="box-content">
         <table class="details">
-            <tr><th>Author</th><td>{{ entry.participant.getLink() }}</td></tr>
+            <tr><th>Team</th><td>
+                <p>{{ entry.participant.getLink("author") }}</p>
+                {% for member in entry.team %}
+                    <p>
+                        {{ member.getLink() }}
+                        {% if session.username == entry.participant.username %}<a style="margin-left: 50px;" href="{{ entry.url('remove_team_member', remove_id = member.id) }}">Remove</a>{% endif %}
+                    </p>
+                {% endfor %}
+                </td></tr>
 
             <tr><th>Jam</th><td><a href="{{ entry.jam.url() }}">{{ entry.jam.title }}</a></td></tr>
 

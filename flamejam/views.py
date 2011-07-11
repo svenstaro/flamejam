@@ -255,10 +255,14 @@ def show_entry(jam_slug, entry_slug, action=None):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     entry = Entry.query.filter_by(slug = entry_slug).filter_by(jam = jam).first_or_404()
 
+    participant_username = session['username']
+    participant = Participant.query.filter_by(username = participant_username).first_or_404()
+
+    if not action in ["new_comment", None] and not participant.canEdit(entry):
+        abort(403)
+
     if action == "new_comment" and comment_form.validate_on_submit():
         text = comment_form.text.data
-        participant_username = session['username']
-        participant = Participant.query.filter_by(username = participant_username).first_or_404()
         new_comment = Comment(text, entry, participant)
         db.session.add(new_comment)
         db.session.commit()
@@ -267,11 +271,7 @@ def show_entry(jam_slug, entry_slug, action=None):
             entry_slug = entry_slug))
 
     if action == "edit":
-        if entry.participant.username != session["username"]:
-            abort(403)
-
         error = ""
-
         edit_form = SubmitEditEntry()
         if edit_form.validate_on_submit():
             title = edit_form.title.data
@@ -297,7 +297,6 @@ def show_entry(jam_slug, entry_slug, action=None):
 
     if action == "add_screenshot":
         screen_form = EntryAddScreenshot()
-
         if screen_form.validate_on_submit():
             s = EntryScreenshot(screen_form.url.data, screen_form.caption.data, entry)
             db.session.add(s)
@@ -309,7 +308,6 @@ def show_entry(jam_slug, entry_slug, action=None):
 
     if action == "add_package":
         package_form = EntryAddPackage()
-
         if package_form.validate_on_submit():
             s = EntryPackage(entry, package_form.url.data, package_form.type.data)
             db.session.add(s)
@@ -319,10 +317,26 @@ def show_entry(jam_slug, entry_slug, action=None):
 
         return render_template("add_package.html", entry = entry, form = package_form)
 
+    if action == "add_team_member":
+        team_form = EntryAddTeamMember()
+        if team_form.validate_on_submit():
+            member = Participant.query.filter_by(username = team_form.username.data).first_or_404()
+            if member == participant:
+                flash("You cannot add yourself to the team.")
+            elif not member:
+                flash("That username does not exist.")
+            elif member in entry.team:
+                flash("That username is already in the team.")
+            else:
+                entry.team.append(member)
+                db.session.commit()
+                flash("%s has been added to the team." % member.username)
+                return redirect(entry.url())
+
+        return render_template("add_team_member.html", entry = entry, form = team_form)
+
     if action == "remove_screenshot":
         remove_id = request.args.get("remove_id", "")
-        if not entry.participant.username == session["username"]:
-            abort(403)
         s = EntryScreenshot.query.filter_by(entry_id = entry.id, id = remove_id).first_or_404()
         db.session.delete(s)
         db.session.commit()
@@ -331,12 +345,19 @@ def show_entry(jam_slug, entry_slug, action=None):
 
     if action == "remove_package":
         remove_id = request.args.get("remove_id", "")
-        if not entry.participant.username == session["username"]:
-            abort(403)
         s = EntryPackage.query.filter_by(entry_id = entry.id, id = remove_id).first_or_404()
         db.session.delete(s)
         db.session.commit()
         flash("The package has been removed.")
+        return redirect(entry.url())
+
+    if action == "remove_team_member":
+        remove_id = request.args.get("remove_id", "0")
+        member = Participant.query.get(remove_id)
+        db.session.commit()
+        entry.team.remove(member)
+        db.session.commit()
+        flash("%s has been removed from the team." % member.username)
         return redirect(entry.url())
 
     return render_template('show_entry.html', entry=entry, form = comment_form)

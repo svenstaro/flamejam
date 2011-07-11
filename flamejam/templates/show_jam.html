@@ -58,10 +58,6 @@
                         <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." width="160" height="120" />
                         {% endif %}
                     </a>
-
-                    <div class="entry-list-author">
-                        {{ entry.participant.getLink() }}
-                    </div>
                 </li>
             {% endfor %}
         </ul>
@@ -76,7 +72,7 @@
         <table class="ratings">
              <tr>
                 <th>#</th>
-                <th>Author</th>
+                <th>Team</th>
                 <th>Game title</th>
                 <th class="score"><span class="icon-16 icon-16-gameplay"      title="gameplay"></span></th>
                 <th class="score"><span class="icon-16 icon-16-graphics"      title="graphics"></span></th>
@@ -95,7 +91,10 @@
             {% set a = entry.getAverageRating() %}
             <tr>
                 <td class="rank">{{ i }}</td>
-                <td>{{ entry.participant.getLink() }}</td>
+                <td>
+                    {{ entry.participant.getLink("author") }}
+                    {% for member in entry.team %}, {{ member.getLink() }}{% endfor %}
+                </td>
                 <td><a href="{{entry.url()}}">{{ entry.title }}</a></td>
                 <td class="score">{{ "%.2f" % a["gameplay"]  }}</td>
                 <td class="score">{{ "%.2f" % a["graphics"]  }}</td>

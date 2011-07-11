@@ -11,15 +11,12 @@ import re
 # Participant <one2many> RatingSkip <many2one> Entry
 # Participant <one2many> Rating <many2one> Entry
 
-skipped_entries = db.Table('skipped_entries',
+# Teams:
+# Participant <many2many> Entry
+
+team_members = db.Table('team_members',
     db.Column('entry_id', db.Integer, db.ForeignKey('entry.id')),
     db.Column('participant_id', db.Integer, db.ForeignKey('participant.id')),
-    db.Column('reason', db.Enum('platform', 'uninteresting', 'crash'))
-)
-
-rated_entries = db.Table('rated_entries',
-    db.Column('entry_id', db.Integer, db.ForeignKey('entry.id')),
-    db.Column('participant_id', db.Integer, db.ForeignKey('participant.id'))
 )
 
 def get_slug(s):
@@ -38,6 +35,9 @@ class Participant(db.Model):
     is_verified = db.Column(db.Boolean)
     registered = db.Column(db.DateTime)
     entries = db.relationship('Entry', backref='participant', lazy='dynamic')
+    team_entries = db.relationship("Entry",
+                    secondary = team_members,
+                    backref = "team")
     ratings = db.relationship('Rating', backref='participant', lazy='dynamic')
     comments = db.relationship('Comment', backref='participant', lazy='dynamic')
     jams = db.relationship('Jam', backref='author', lazy='dynamic')
@@ -78,10 +78,18 @@ class Participant(db.Model):
     def getAvatar(self, size = 32):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
 
-    def getLink(self):
+    def getLink(self, class_ = ""):
         s = 12
-        return Markup('<a class="user" href="{0}"><img width="{2}" height="{2}" src="{3}" class="icon"/> {1}</a>'.format(
-            self.url(), self.username, s, self.getAvatar(s)))
+        if self.is_admin:
+            class_ += " admin"
+        return Markup('<a class="user {4}" href="{0}"><img width="{2}" height="{2}" src="{3}" class="icon"/> {1}</a>'.format(
+            self.url(), self.username, s, self.getAvatar(s), class_))
+
+    def canRate(self, entry):
+        return entry.participant != self and not self in entry.team
+
+    def canEdit(self, entry):
+        return entry.participant == self
 
 
 class JamStatusCode(object):

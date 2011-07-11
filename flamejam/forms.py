@@ -85,6 +85,9 @@ class EntryAddScreenshot(Form):
     url = TextField("URL", validators = [Required(), URL()])
     caption = TextField("Caption", validators = [Required()])
 
+class EntryAddTeamMember(Form):
+    username = TextField("Username:", validators = [Required(), UsernameExists()])
+
 from models import entry_package_type_string
 
 class EntryAddPackage(Form):
