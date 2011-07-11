@@ -243,6 +243,26 @@ def show_entry(jam_slug, entry_slug, action=None):
 
         return render_template("add_package.html", entry = entry, form = package_form)
 
+    if action == "remove_screenshot":
+        remove_id = request.args.get("remove_id", "")
+        if not entry.participant.username == session["username"]:
+            abort(403)
+        s = EntryScreenshot.query.filter_by(entry_id = entry.id, id = remove_id).first_or_404()
+        db.session.delete(s)
+        db.session.commit()
+        flash("The screenshot has been removed.")
+        return redirect(entry.url())
+
+    if action == "remove_package":
+        remove_id = request.args.get("remove_id", "")
+        if not entry.participant.username == session["username"]:
+            abort(403)
+        s = EntryPackage.query.filter_by(entry_id = entry.id, id = remove_id).first_or_404()
+        db.session.delete(s)
+        db.session.commit()
+        flash("The package has been removed.")
+        return redirect(entry.url())
+
     return render_template('show_entry.html', entry=entry, form = comment_form)
 
 @app.route('/participants/<username>/')

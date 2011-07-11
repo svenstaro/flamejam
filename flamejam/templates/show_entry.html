@@ -33,11 +33,17 @@
 
             <tr><th>Packages{% if entry.packages.all() %} ({{ entry.packages.all() | length }}){% endif %}</th><td>
                 {% for package in entry.packages %}
-                    {% if package.type in ["hg", "svn", "git"] %}
-                    <p><b>{{ package.typeString() }}:</b> <span class="repo-url">{{ package.url }}</span></p>
-                    {% else %}
-                    <p><a href="{{ package.url }}">{{ package.typeString() }}</a></p>
+                <p>
+                    {% if session.username == entry.participant.username %}
+                    <a href="{{ entry.url('remove_package', remove_id = package.id) }}" style="float:right; margin-left: 20px;">Remove</a>
                     {% endif %}
+
+                    {% if package.type in ["hg", "svn", "git"] %}
+                    <b>{{ package.typeString() }}:</b> <span class="repo-url">{{ package.url }}</span>
+                    {% else %}
+                    <a href="{{ package.url }}">{{ package.typeString() }}</a>
+                    {% endif %}
+                </p>
                 {% endfor %}
                 {% if not entry.packages.all() %}
                 No packages submitted yet.
@@ -54,12 +60,15 @@
         <ul class="screenshots">
         {% for screenshot in entry.screenshots %}
             <li>
-                <a href="{{ screenshot.url }}" target="_blank" title="{{ screenshot.caption }}">
+                <a href="{{ screenshot.url }}" target="_blank" title="{{ screenshot.caption }}" class="screenshot">
                 <div class="image"><img src="{{ screenshot.url }}" width="160" alt="{{ screenshot.caption }}" /></div>
                 <div class="caption">
                     {{ screenshot.caption }}
                 </div>
                 </a>
+                {% if session.username == entry.participant.username %}
+                <a href="{{ entry.url('remove_screenshot', remove_id = screenshot.id) }}">Remove</a>
+                {% endif %}
             </li>
         {% endfor %}
         </ul>

@@ -174,8 +174,8 @@ class Entry(db.Model):
     def __repr__(self):
         return '<Entry %r>' % self.title
 
-    def url(self, action = ""):
-        return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action)
+    def url(self, action = "", **kwargs):
+        return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action, **kwargs)
 
     def getAverageRating(self):
         categories = ["gameplay", "graphics","audio","innovation","story","technical", "controls", "overall"]
