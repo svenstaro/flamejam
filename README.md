@@ -11,6 +11,20 @@ This application is designed to make sure that participants vote on other
 entries fairly and evenly. This is achieved by only presenting one game at a
 time to vote on.
 
+License
+-------
+This application, all of its sources and resources are licensed under the zlib license with the
+following exceptions:
+
+ - jquery
+ - lightbox
+ - 8-bit Reddit alien
+ - Reddit alien drawing on error page
+
+These exceptions are subject to their own copyrights and licenses. This project only makes use of them.
+
+For the full license text, please see the included LICENSE file.
+
 Dependencies
 ------------
 You will need
