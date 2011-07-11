@@ -3,6 +3,24 @@
 <head>
     <title>RGJ » {% block title %}You were eaten hardly!{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.lightbox-0.5.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.lightbox-0.5.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('ul.screenshots li a').lightBox({
+
+                imageLoading: "{{ url_for('static', filename = 'gfx/lightbox-ico-loading.gif') }}",
+                imageBtnClose: "{{ url_for('static', filename = 'gfx/lightbox-btn-close.gif') }}",
+                imageBtnPrev: "{{ url_for('static', filename = 'gfx/lightbox-btn-prev.gif') }}",
+                imageBtnNext: "{{ url_for('static', filename = 'gfx/lightbox-btn-next.gif') }}",
+                imageBlank: "{{ url_for('static', filename = 'gfx/lightbox-blank.gif') }}",
+                txtImage: "Screenshot",
+                fixedNavigation: true
+
+                });
+        });
+    </script>
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
