@@ -405,6 +405,7 @@ ul.tabs li {
 }
 
 .button,
+.form-buttons a,
 ul.tabs li a {
     background: -webkit-gradient(linear, left top, left bottom, from(#FFF), to(#DDD));
     color: #666;
@@ -417,6 +418,7 @@ ul.tabs li a {
 }
 
 .button:hover,
+.form-buttons a:hover,
 ul.tabs li a:hover {
     background: -webkit-gradient(linear, left top, left bottom, from(#FFF), color-stop(0.8, #EEE), to(#DDD));
     color: #333;
@@ -424,6 +426,7 @@ ul.tabs li a:hover {
 }
 
 .button.default,
+.form-buttons a.default,
 ul.tabs li.default a {
     font-weight: bold;
 }
@@ -563,4 +566,39 @@ ul.comments li .text {
 
 ul.comments li .text p {
     margin: 0;
+}
+
+ul.screenshots li {
+    display: inline-block;
+}
+
+ul.screenshots li a {
+    display: inline-block;
+    vertical-align: top;
+    background: #DDD;
+    border: 1px solid #CCC;
+    text-align: center;
+    padding: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    color: #666;
+    font-weight: normal;
+}
+
+ul.screenshots li a:hover {
+    background: #CCC;
+    color: #FFF;
+}
+
+ul.screenshots li div.image img {
+    background: #FFF url("gfx/default-screenshot.png") center center no-repeat;
+    width: 160px;
+    min-height: 120px;
+    border: 1px solid #CCC;
+    padding: 2px;
+    margin: 0;
+}
+
+ul.screenshots li div.caption {
+    width: 160px;
 }
