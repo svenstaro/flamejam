@@ -312,7 +312,7 @@ class Rating(db.Model):
 
 class RatingSkip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    reason = db.Column(db.Enum("platform", "uninteresting", "Not interested"))
+    reason = db.Column(db.Enum("platform", "uninteresting", "crash"))
     entry_id = db.Column(db.Integer, db.ForeignKey("entry.id"))
     participant_id = db.Column(db.Integer, db.ForeignKey("participant.id"))
 
