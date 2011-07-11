@@ -59,10 +59,14 @@ class Participant(db.Model):
         return self.ratings.filter_by(entry = entry).first() != None
 
     def getRatingCount(self, jam):
-        return len(self.ratings.filter(Entry.jam_id == jam.id).all())
+        i = 0
+        for r in self.ratings:
+            if r.entry.jam == jam:
+                i += 1
+        return i
 
     def getSkippedCount(self, jam):
-        return len(self.rating_skips.filter(Entry.jam_id == jam.id).all())
+        return len(self.rating_skips.filter(RatingSkip.participant_id == self.id and Entry.jam_id == jam.id).all())
 
     def __repr__(self):
         return '<User %r>' % self.username

@@ -6,41 +6,88 @@
 {% block content %}
 <h1>{{ entry.jam.title }} &raquo; Rating</h1>
 
-<h2>Please rate: {{ entry.title }} by {{ entry.participant.getLink() }}</h2>
+<h2>Please rate: <a href="{{ entry.url() }}">{{ entry.title }}</a> by <a href="{{ entry.participant.url() }}">{{ entry.participant.username }}</a></h2>
+
 
 <form action="{{ url_for('rate_entries', jam_slug=jam.slug, action='submit_rating')}}" method="post">
 {{ rate_form.hidden_tag() }}
-<div class="box">
-    <div class="box-content">
-        <p>
-            Here you can give up- and downvotes! <b>One point</b> is the worst and <b>ten points</b> the best you can give.
-        </p>
-        <p>
-            <table class="details">
-                {% macro renderScoreField(field) %}
-                <tr><th>{{ field.label }}</th><td>{{ field(class="text-input slider", size=1, style="text-align: center;") }}
-                    </td></tr>
-                {% endmacro %}
-                {{ renderScoreField(rate_form.score_gameplay) }}
-                {{ renderScoreField(rate_form.score_graphics) }}
-                {{ renderScoreField(rate_form.score_audio) }}
-                {{ renderScoreField(rate_form.score_innovation) }}
-                {{ renderScoreField(rate_form.score_story) }}
-                {{ renderScoreField(rate_form.score_technical) }}
-                {{ renderScoreField(rate_form.score_controls) }}
-                {{ renderScoreField(rate_form.score_overall) }}
 
-                <tr><th>{{ rate_form.note.label }}</th><td>
-                    {{ rate_form.note(class="text-input", size = 100) }}
-                    <div class="input-info">Optional, <b>not</b> parsed with markdown</div>
-                    </td></tr>
+<div class="columns">
+    <div class="box">
+        <h4>Details</h4>
+        <div class="box-content">
+            <table class="details">
+                <tr><th>Author</th><td>{{ entry.participant.getLink() }}</td></tr>
+                <tr><th>Submitted</th><td>{{ entry.posted | humantime }}</td></tr>
+                <tr><th>Description</th><td>{{ entry.description }}</td></tr>
             </table>
-        </p>
+        </div>
+        <h4 class="inner">Screenshot</h3>
+        <div class="box-content">
+            <div class="rating-details-screenshot-div">
+
+                {% set s = entry.screenshots.first() %}
+                <a class="rating-details-screenshot" href="{% if s %}{{s.url}}{% endif %}" target="_blank">
+                    {% if s %}
+                    <img src="{{ s.url }}" title="{{ entry.title }}: {{ s.caption }}" style="max-height: 120px; max-width: 160px;"/>
+                    {% else %}
+                    <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." width="160" height="120" />
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        <h4 class="inner">Download</h3>
+        <div class="box-content">
+                {% for package in entry.packages %}
+                <p>
+                    {% if package.type in ["hg", "svn", "git"] %}
+                    <b>{{ package.typeString() }}:</b> <span class="repo-url">{{ package.url }}</span>
+                    {% else %}
+                    <a href="{{ package.url }}">{{ package.typeString() }}</a>
+                    {% endif %}
+                </p>
+                {% endfor %}
+                {% if not entry.packages.all() %}
+                    <p>No packages submitted.</p>
+                {% endif %}
+        </div>
     </div>
 
-    <p class="form-buttons">
-        <input type="submit" value="submit &raquo;" class="button default" />
-    </p>
+    <div class="columns-separator"></div>
+
+    <div class="box">
+        <h4>Rating</h4>
+        <div class="box-content">
+            <p>
+                Here you can give up- and downvotes! <b>One point</b> is the worst and <b>ten points</b> the best you can give.
+            </p>
+            <p>
+                <table class="details">
+                    {% macro renderScoreField(field) %}
+                    <tr><th>{{ field.label }}</th><td>{{ field(class="text-input slider", size=1, style="text-align: center;") }}
+                        </td></tr>
+                    {% endmacro %}
+                    {{ renderScoreField(rate_form.score_gameplay) }}
+                    {{ renderScoreField(rate_form.score_graphics) }}
+                    {{ renderScoreField(rate_form.score_audio) }}
+                    {{ renderScoreField(rate_form.score_innovation) }}
+                    {{ renderScoreField(rate_form.score_story) }}
+                    {{ renderScoreField(rate_form.score_technical) }}
+                    {{ renderScoreField(rate_form.score_controls) }}
+                    {{ renderScoreField(rate_form.score_overall) }}
+
+                    <tr><th>{{ rate_form.note.label }}</th><td>
+                        {{ rate_form.note(class="text-input", size=44) }}
+                        <div class="input-info">Optional, <b>not</b> parsed with markdown</div>
+                        </td></tr>
+                </table>
+            </p>
+        </div>
+
+        <p class="form-buttons">
+            <input type="submit" value="submit &raquo;" class="button default" />
+        </p>
+    </div>
 </div>
 </form>
 
@@ -56,7 +103,10 @@
             <input type="submit" value="skip &raquo;" class="button" />
         </form>
         {% else %}
-        <p>You cannot skip this entry. You already skipped it, and no unskipped entries are left for you to rate.</p>
+        <p>
+            You cannot skip this entry. You already skipped it, and no unskipped entries are left for you to rate.
+            But you can <a href="#" class="refresh">refresh</a> this page and hope to randomly get an other entry.
+        </p>
         {% endif %}
 
         <ul style="margin-top: 5px;" class="tabs">

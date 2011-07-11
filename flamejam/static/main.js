@@ -45,15 +45,6 @@ function step_slider() {
 }
 
 $(document).ready(function() {
-    $('ul.screenshots li a.screenshot').lightBox({
-        imageLoading: "{{ url_for('static', filename = 'gfx/lightbox-ico-loading.gif') }}",
-        imageBtnClose: "{{ url_for('static', filename = 'gfx/lightbox-btn-close.gif') }}",
-        imageBtnPrev: "{{ url_for('static', filename = 'gfx/lightbox-btn-prev.gif') }}",
-        imageBtnNext: "{{ url_for('static', filename = 'gfx/lightbox-btn-next.gif') }}",
-        imageBlank: "{{ url_for('static', filename = 'gfx/lightbox-blank.gif') }}",
-        txtImage: "Screenshot",
-        fixedNavigation: true
-    });
-
     $("input.slider").step_slider();
+    $(".refresh").click(function() { location.reload(true); });
 });

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from hashlib import sha512
 from random import randint
+import random
 
 from flask import session, redirect, url_for, escape, request, \
         render_template, flash, abort
@@ -232,7 +233,7 @@ def rate_entries(jam_slug, action = None):
         entry = new_entries[0][0]
     elif skipped_entries:
         # We don't have any new entries left, but some skipped ones. Take the first one.
-        entry = skipped_entries[0][0]
+        entry = random.choice(skipped_entries)[0]
         is_skipped_entry = True
 
     if entry:
