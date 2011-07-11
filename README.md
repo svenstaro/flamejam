@@ -32,8 +32,10 @@ You will need
  - Python 2.7
  - flask
  - flask-sqlalchemy
- - flask-wtforms
+ - flask-wtf
  - flask-login
+ - flask-markdown
+ - python-dateutil
 
 as well as their respective dependencies. I recommend using a virtualenv and pip
 to install all of those.
