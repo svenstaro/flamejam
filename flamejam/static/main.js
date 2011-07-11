@@ -36,7 +36,6 @@ function step_slider() {
             this.input.change(function() { object.update($(this).val()); return false; });
             this.input.keyup(function() { object.update($(this).val()); return false; });
             this.input.click(function() { object.update($(this).val()); return false; });
-            this.input.mousemove(function() { object.update($(this).val()); return false; });
             this.update(this.input.val());
         },
         stepclick: function($$) {
