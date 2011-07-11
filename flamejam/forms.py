@@ -95,7 +95,6 @@ class EntryAddPackage(Form):
         ("linux32",      entry_package_type_string("linux32")),
         ("linux64",      entry_package_type_string("linux64")),
         ("windows",      entry_package_type_string("windows")),
-        ("windows32",    entry_package_type_string("windows32")),
         ("windows64",    entry_package_type_string("windows64")),
         ("mac",          entry_package_type_string("mac")),
         ("source",       entry_package_type_string("source")),

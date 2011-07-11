@@ -180,11 +180,10 @@ class Entry(db.Model):
 
 def entry_package_type_string(type):
     if type == "web":       return "Web link (Flash etc.)"
-    if type == "linux":       return "Binaries: Linux general"
+    if type == "linux":       return "Binaries: Linux 32/64-bit"
     if type == "linux32":       return "Binaries: Linux 32-bit"
     if type == "linux64":       return "Binaries: Linux 64-bit"
-    if type == "windows":       return "Binaries: Windows general"
-    if type == "windows32":       return "Binaries: Windows 32-bit"
+    if type == "windows":       return "Binaries: Windows"
     if type == "windows64":       return "Binaries: Windows 64-bit"
     if type == "mac":       return "Binaries: MacOS Application"
     if type == "source":       return "Source: package"
@@ -208,7 +207,6 @@ class EntryPackage(db.Model):
         "linux32",  # Linux32 binaries (e.g. *.tar.gz)
         "linux64",  # Linux64 binaries (e.g. *.tar.gz)
         "windows",  # Windows binaries (e.g. *.zip, *.exe)
-        "windows32",# Windows32 binaries (e.g. *.zip, *.exe)
         "windows64",# Windows64 binaries (e.g. *.zip, *.exe)
         "mac",      # MacOS application packages
         "combi",    # Linux + Windows + Source (and more, optional)
