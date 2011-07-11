@@ -737,7 +737,8 @@ ul.screenshots li div.caption {
     display: inline-block;
     background: url("rating.png") left bottom;
     font-size: 0;
-    margin-right: 4px;
+    margin-right: 8px;
+    cursor: pointer;
     -webkit-transition: background-position 0.5s ease-in-out
 }
 
