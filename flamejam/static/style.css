@@ -117,7 +117,8 @@ pre code {
     font-size: 8pt;
 }
 
-.markdown ul {
+.markdown ul,
+ul.normal {
     list-style: disc;
     padding-left: 2em;
     margin: 10px 0;

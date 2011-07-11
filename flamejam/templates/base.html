@@ -29,7 +29,7 @@
             <div id="ICON">
             </div>
             <div id="MINI_SEARCH">
-                <form>
+                <form method="get" action="{{ url_for('search') }}">
                     <input type="text" id="MINI_SEARCH_Q" name="q" placeholder="Search..." autocomplete="off"><input type="submit" value="" id="MINI_SEARCH_S">
                 </form>
             </div>

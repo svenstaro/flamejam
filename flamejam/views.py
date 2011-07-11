@@ -346,6 +346,35 @@ def show_participant(username):
     participant = Participant.query.filter_by(username = username).first_or_404()
     return render_template('show_participant.html', participant = participant)
 
+@app.route("/search")
+def search():
+    q = request.args.get("q", "")
+    if not q:
+        return redirect(url_for("index"))
+
+    jams = Jam.query.filter(db.or_(
+        Jam.title.like("%"+q+"%"))).all()
+
+    entries = Entry.query.filter(db.or_(
+        Entry.description.like("%"+q+"%"),
+        Entry.title.like("%"+q+"%"))).all()
+
+    participants = Participant.query.filter(
+        Participant.username.like("%"+q+"%")).all()
+
+    j = len(jams)
+    e = len(entries)
+    p = len(participants)
+
+    if j == 1 and e == 0 and p == 0:
+        return redirect(jams[0].url())
+    elif j == 0 and e == 1 and p == 0:
+        return redirect(entries[0].url())
+    elif j == 0 and e == 0 and p == 1:
+        return redirect(participants[0].url())
+
+    return render_template("search.html", q = q, jams = jams, entries = entries, participants = participants)
+
 @app.route('/contact')
 def contact():
     return render_template('contact.html')

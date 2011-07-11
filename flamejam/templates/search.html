@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<h1>Search</h1>
+
+{% if q == "%" %}
+<p>Your search for the answer to life the universe and everything returned 42 results.</p>
+{% else %}
+<p>Your search for <b>{{ q }}</b> had {% if jams or entries or participants %}the following{% else %}no{% endif %} results.</p>
+{% endif %}
+
+{% if jams %}
+<h2>Jams</h2>
+<ul>
+    {% for jam in jams %}
+    <li><a href="{{ jam.url() }}">{{ jam.title }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No jams matched.</p>
+{% endif %}
+
+
+{% if entries %}
+<h2>Entries</h2>
+<ul>
+    {% for entry in entries %}
+    <li><a href="{{ entry.url() }}">{{ entry.jam.title }} &raquo; {{ entry.title }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No entries matched.</p>
+{% endif %}
+
+{% if participants %}
+
+<h2>Participants</h2>
+<ul>
+    {% for participant in participants %}
+    <li>{{ participant.getLink() }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No participants matched.</p>
+{% endif %}
+
+{% endblock %}
