@@ -691,7 +691,7 @@ ul.screenshots li div.caption {
     vertical-align: middle;
 }
 
-
+/*
 .step-slider {
     display: inline-block;
     margin: 0 20px;
@@ -724,4 +724,23 @@ ul.screenshots li div.caption {
 .step-slider .step-slider-step-7.on  { background: #CD0; }
 .step-slider .step-slider-step-8.on  { background: #8B0; }
 .step-slider .step-slider-step-9.on  { background: #490; color: #FFF; }
-.step-slider .step-slider-step-10.on { background: #080; color: #FFF; }
+.step-slider .step-slider-step-10.on { background: #080; color: #FFF; } */
+
+.step-slider {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.step-slider-step {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url("rating.png") left bottom;
+    font-size: 0;
+    margin-right: 4px;
+    -webkit-transition: background-position 0.5s ease-in-out
+}
+
+.step-slider-step.on {
+    background-position: left top;
+}
