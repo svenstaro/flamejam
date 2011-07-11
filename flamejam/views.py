@@ -121,26 +121,7 @@ def rate_entries(jam_slug, action = None):
     if not (jam.packaging_deadline < datetime.utcnow() < jam.rating_end):
         abort(404)
 
-    # Figure out next entry (that which has fewest ratings of all entries) and
-    # present it to the user who is looking for the next entry to rate.
-    entries = Entry.query.outerjoin(Rating)\
-                         .group_by(Entry.id)\
-                         .order_by(db.func.count(Rating.id))\
-                         .filter(Entry.jam == jam)\
-                         .filter(db.not_(Entry.skipped_by.contains(participant)))\
-                         .filter(db.not_(Entry.rated_by.contains(participant)))\
-                         .all()
-
-    # TODO: Add skipped entries to end of preferred entries instead of
-    # discarding them.
-    # TODO: Choose a random entry if the lowest numbers of ratings is not
-    # unique so that people rating at the same time might get different entries
-    # to rate on
-
-    entry = entries[0]
-
     error = None
-    form = RateEntry()
     skip_form = SkipRating()
     rate_form = RateEntry()
     # TODO: Filter for jams that match the the criteria to enable rating
@@ -148,45 +129,123 @@ def rate_entries(jam_slug, action = None):
     # TODO: Keep track of who already rated
 
     participant_username = session['username']
-    participant = Participant.query.filter_by(username=participant_username).first()
-
-    if request.method == "POST":
-        rate_form.entry_id.data = entry.id
-        skip_form.entry_id.data = entry.id
+    participant = Participant.query.filter_by(username = participant_username).first()
 
     if action == "submit_rating" and rate_form.validate_on_submit():
         entry_id = rate_form.entry_id.data
-        entry = Entry.query.filter_by(id=entry_id).first()
-        score_gameplay = rate_form.score_gameplay .data
+        entry = Entry.query.filter_by(id = entry_id).first_or_404()
+
+        # remove previous rating, if any
+        edited = False
+        if participant.ratedEntry(entry):
+            old_entry = Rating.query.filter_by(entry_id = entry.id, participant_id = participant.id).first_or_404()
+            db.session.delete(old_entry)
+            edited = True
+
+        # remove skip mark, if any
+        if participant.skippedEntry(entry):
+            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, participant_id = participant.id).first_or_404()
+            db.session.delete(rating_skip)
+
+        # read data from form
+        score_gameplay = rate_form.score_gameplay.data
         score_graphics = rate_form.score_graphics.data
         score_audio = rate_form.score_audio.data
         score_innovation = rate_form.score_innovation.data
-        score_story = rate_form.score_story .data
-        score_technical = rate_form.score_technical .data
+        score_story = rate_form.score_story.data
+        score_technical = rate_form.score_technical.data
         score_controls = rate_form.score_controls.data
-        score_overall = rate_form.score_overall .data
+        score_overall = rate_form.score_overall.data
         note = rate_form.note.data
+
+        # create new rating
         new_rating = Rating(score_gameplay, score_graphics, score_audio, score_innovation,
                 score_story, score_technical, score_controls, score_overall,
                 note, entry, participant)
         db.session.add(new_rating)
         db.session.commit()
-        flash('Rating added')
-        return redirect(url_for('rate_entries', jam_slug=jam.slug))
+        flash('You rated for %s' % entry.title)
+        return redirect(url_for('rate_entries', jam_slug = jam.slug))
 
-    if action == "skip_rating" and skip_form.validate_on_submit():
-        entry_id = skip_form.entry_id.data
-        entry = Entry.query.filter_by(id=entry_id).first()
+    elif action == "skip_rating" and skip_form.validate_on_submit():
+        entry_id = rate_form.entry_id.data
+        entry = Entry.query.filter_by(id = entry_id).first_or_404()
+
+        # error if you have already rated
+        if participant.ratedEntry(entry):
+            flash("You already rated for %s." % entry.title)
+            return redirect(url_for("rate_entries", jam_slug = jam.slug))
+
+        # remove skip mark, if any
+        if participant.skippedEntry(entry):
+            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, participant_id = participant.id).first_or_404()
+            db.session.delete(rating_skip)
+
+        # read data from form
         reason = skip_form.reason.data
-
-        participant.skipped_entries.append(entry)
+        skip = RatingSkip(participant, entry, reason)
+        db.session.add(skip)
         db.session.commit()
-        flash('Entry skipped')
-        return redirect(url_for('rate_entries', jam_slug=jam.slug))
+        flash('You skipped rating for %s' % entry.title)
+        return redirect(url_for('rate_entries', jam_slug = jam.slug))
 
-    return render_template("rate_entries.html", jam = jam, error = error,
-                           entry = jam.entries.first(), rate_form = rate_form,
-                           skip_form = skip_form, participant = participant)
+    # Find all entries from this jam, including their rating count, ordered
+    # by rating count ascending. Steps:
+    # - select entries
+    # - also select their rating count and label this "rcount" for later sorting
+    # - outer join with rating to get count even if there are no ratings
+    # - group by entry to count ratings PER ENTRY
+    # - order by rating count, ascending (default)
+
+    pairs = db.session.query(
+            Entry,
+            db.func.count(Rating.id).label("rcount"))\
+        .filter_by(jam_id = jam.id)\
+        .outerjoin(Rating)\
+        .group_by(Entry.id)\
+        .order_by("rcount")\
+        .all()
+
+    # Sort them into skipped, rated and "new" entries (that's what we
+    # call them for now)
+    rated_entries = []
+    skipped_entries = []
+    new_entries = []
+
+    for pair in pairs:
+        if participant.ratedEntry(pair[0]):
+            rated_entries.append(pair)
+        elif participant.skippedEntry(pair[0]):
+            skipped_entries.append(pair)
+        else:
+            new_entries.append(pair)
+
+    # Luckily, the lists are still sorted
+
+    entry = None
+    is_skipped_entry = False
+    if new_entries:
+        # We got at least 1 new entry. Take the first one.
+        # TODO: Choose a random entry if the lowest numbers of ratings is not
+        # unique so that people rating at the same time might get different entries
+        # to rate on
+        entry = new_entries[0][0]
+    elif skipped_entries:
+        # We don't have any new entries left, but some skipped ones. Take the first one.
+        entry = skipped_entries[0][0]
+        is_skipped_entry = True
+
+    if entry:
+        # We are going to display the form. Set the entry id into the hidden fields.
+        rate_form.entry_id.data = entry.id
+        skip_form.entry_id.data = entry.id
+        return render_template("rate_entries.html", jam = jam, error = error,
+            entry = entry, is_skipped_entry = is_skipped_entry, rate_form = rate_form,
+            skip_form = skip_form, participant = participant)
+    else:
+        # We have nothing left to vote on
+        flash("You have no entries left to vote on. Thanks for participating.")
+        return redirect(jam.url())
 
 @app.route('/jams/<jam_slug>/<entry_slug>/')
 @app.route('/jams/<jam_slug>/<entry_slug>/<action>', methods=("GET", "POST"))

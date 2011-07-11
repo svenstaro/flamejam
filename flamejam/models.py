@@ -6,6 +6,10 @@ from flamejam import db, filters
 from flask import url_for, Markup
 import re
 
+# rating:
+# Participant <one2many> RatingSkip <many2one> Entry
+# Participant <one2many> Rating <many2one> Entry
+
 skipped_entries = db.Table('skipped_entries',
     db.Column('entry_id', db.Integer, db.ForeignKey('entry.id')),
     db.Column('participant_id', db.Integer, db.ForeignKey('participant.id')),
@@ -36,10 +40,8 @@ class Participant(db.Model):
     ratings = db.relationship('Rating', backref='participant', lazy='dynamic')
     comments = db.relationship('Comment', backref='participant', lazy='dynamic')
     jams = db.relationship('Jam', backref='author', lazy='dynamic')
-    skipped_entries = db.relationship('Entry', secondary=skipped_entries,
-        backref=db.backref('skipped_by', lazy='dynamic'))
-    rated_entries = db.relationship('Entry', secondary=rated_entries,
-        backref=db.backref('rated_by', lazy='dynamic'))
+    rating_skips = db.relationship('RatingSkip', backref='participant', lazy='dynamic')
+    ratings = db.relationship('Rating', backref = 'participant', lazy='dynamic')
 
     def __init__(self, username, password, email, is_admin=False,
             is_verified=False):
@@ -49,6 +51,18 @@ class Participant(db.Model):
         self.is_admin = is_admin
         self.is_verified = is_verified
         self.registered = datetime.utcnow()
+
+    def skippedEntry(self, entry):
+        return self.rating_skips.filter_by(entry = entry).first() != None
+
+    def ratedEntry(self, entry):
+        return self.ratings.filter_by(entry = entry).first() != None
+
+    def getRatingCount(self, jam):
+        return len(self.ratings.filter(Entry.jam_id == jam.id).all())
+
+    def getSkippedCount(self, jam):
+        return len(self.rating_skips.filter(Entry.jam_id == jam.id).all())
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -158,7 +172,8 @@ class Entry(db.Model):
     posted = db.Column(db.DateTime)
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
     participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
-    ratings = db.relationship('Rating', backref='entry', lazy='dynamic')
+    rating_skips = db.relationship('RatingSkip', backref='entry', lazy='dynamic')
+    ratings = db.relationship('Rating', backref = 'entry', lazy='dynamic')
     comments = db.relationship('Comment', backref='entry', lazy='dynamic')
     packages = db.relationship('EntryPackage', backref='entry', lazy='dynamic')
     screenshots = db.relationship('EntryScreenshot', backref='entry', lazy='dynamic')
@@ -290,6 +305,20 @@ class Rating(db.Model):
 
     def __repr__(self):
         return '<Rating %r>' % self.id
+
+class RatingSkip(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reason = db.Column(db.Enum("platform", "uninteresting", "Not interested"))
+    entry_id = db.Column(db.Integer, db.ForeignKey("entry.id"))
+    participant_id = db.Column(db.Integer, db.ForeignKey("participant.id"))
+
+    def __init__(self, participant, entry, reason):
+        self.participant = participant
+        self.entry = entry
+        self.reason = reason
+
+    def __repr__(self):
+        return "<RatingSkip %r>" % self.id
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

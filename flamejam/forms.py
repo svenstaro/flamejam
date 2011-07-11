@@ -123,7 +123,7 @@ class SkipRating(Form):
     reason = SelectField("Reason to skip", choices = [
         ("platform", "Platform not supported"),
         ("uninteresting", "Not interested"),
-        ("crash", "Entry crashed on start")
+        ("crash", "Game crashed on start")
     ])
 
 class WriteComment(Form):

@@ -6,7 +6,6 @@
 {% block content %}
 <h1>{{ entry.jam.title }} &raquo; Rating</h1>
 
-
 <h2>Please rate: {{ entry.title }} by {{ entry.participant.getLink() }}</h2>
 
 <form action="{{ url_for('rate_entries', jam_slug=jam.slug, action='submit_rating')}}" method="post">
@@ -47,6 +46,7 @@
 
 <div class="box">
     <div class="box-content">
+        {% if not is_skipped_entry %}
         <form style="float: right;" action="{{ url_for('rate_entries',
             jam_slug=jam.slug,
             action='skip_rating')}}" method="post">
@@ -55,9 +55,18 @@
             {{ skip_form.reason() }}
             <input type="submit" value="skip &raquo;" class="button" />
         </form>
+        {% else %}
+        <p>You cannot skip this entry. You already skipped it, and no unskipped entries are left for you to rate.</p>
+        {% endif %}
 
         <ul style="margin-top: 5px;" class="tabs">
             <li><a href="{{ entry.jam.url() }}">&laquo; Back to the jam</a></li>
+            <li>
+                Rating progress:
+                {{ participant.getRatingCount(jam) }} /
+                {{ entry.jam.entries.all() | length }} rated,
+                {{ participant.getSkippedCount(jam) }} skipped
+            </li>
         </ul>
 
         <div style="clear: right;"></div>
