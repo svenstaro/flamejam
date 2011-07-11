@@ -22,7 +22,7 @@
                 <tr><th>Description</th><td>{{ entry.description }}</td></tr>
             </table>
         </div>
-        <h4 class="inner">Screenshot</h3>
+        <h4 class="inner">Main Screenshot</h3>
         <div class="box-content">
             <div class="rating-details-screenshot-div">
 
@@ -125,11 +125,30 @@
 
 <h2>Overview: Entries of this jam</h2>
 <ul>
-{% for e in jam.entries %}
-    <li><a href="{{ e.url() }}">{{ e.title }}</a> {% if participant in e.rated_by
-    %}rated{% endif %}{% if participant in e.skipped_by
-    %}skipped{% endif %}</li>
-{% endfor %}
+    {% for e in jam.entries %}
+        <li class="box floatingbox" style="width: 84px;">
+            <h4><a href="{{ e.url() }}">{{ e.title }}</a></h4>
+
+            <a href="{{ e.url() }}" class="entry-list-small-image">
+                {% set s = entry.screenshots.first() %}
+                {% if s %}
+                <img src="{{ s.url }}" title="{{ e.title }}: {{ s.caption }}" style="max-height: 60px; max-width: 80px;"/>
+                {% else %}
+                <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." width="80" height="60" />
+                {% endif %}
+            </a>
+
+            <div class="entry-list-author">
+                {% if participant.skippedEntry(e) %}
+                <span class="icon-16 icon-16-skipped"></span> <span style="color: #F90">skipped</span>
+                {% elif participant.ratedEntry(e) %}
+                <span class="icon-16 icon-16-rated"></span> <span style="color: #080">rated</span>
+                {% else %}
+                <span class="icon-16 icon-16-pending"></span> <span style="color: #F00">pending</span>
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
 </ul>
 <p>Click to unskip</p>
 
