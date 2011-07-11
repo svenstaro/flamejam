@@ -130,7 +130,7 @@
             <h4><a href="{{ e.url() }}">{{ e.title }}</a></h4>
 
             <a href="{{ e.url() }}" class="entry-list-small-image">
-                {% set s = entry.screenshots.first() %}
+                {% set s = e.screenshots.first() %}
                 {% if s %}
                 <img src="{{ s.url }}" title="{{ e.title }}: {{ s.caption }}" style="max-height: 60px; max-width: 80px;"/>
                 {% else %}
