@@ -750,3 +750,37 @@ ul.screenshots li div.caption {
 .step-slider-step.on {
     background-position: left top;
 }
+
+
+.error-page {
+    width: 700px;
+    height: 400px;
+    background: url("gfx/error-page.png") center center;
+    margin: 40px auto;
+    position: relative;
+}
+
+.error-page .title {
+    font-family: "URW Chancery L", script;
+    font-weight: bold;
+    font-size: 30pt;
+    position: absolute;
+    left: 240px;
+    top: 50px;
+    line-height: 1.4em;
+    color: #444;
+    width: 390px;
+}
+
+.error-page .text {
+    font-family: "URW Chancery L", script;
+    font-weight: bold;
+    font-size: 20pt;
+    position: absolute;
+    right: 60px;
+    bottom: 160px;
+    line-height: 1.4em;
+    color: #AAA;
+    width: 410px;
+    text-align: right;
+}

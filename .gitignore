@@ -1,3 +1,4 @@
 *.pyc
 env/
 flamejam.db
+*.psd

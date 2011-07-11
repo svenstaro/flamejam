@@ -293,9 +293,16 @@ def contact():
 @app.route('/rules')
 @app.route('/rulez')
 def rules():
+    abort(500)
     return render_template('rules.html')
 
 @app.route('/announcements')
 def announcements():
     announcements = Announcement.query.order_by(Announcement.posted.desc())
     return render_template('announcements.html', announcements = announcements)
+
+@app.errorhandler(404)
+@app.errorhandler(403)
+@app.errorhandler(500)
+def error(error):
+    return render_template("error.html", error = error)
