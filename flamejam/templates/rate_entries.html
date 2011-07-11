@@ -50,6 +50,7 @@
         <form style="float: right;" action="{{ url_for('rate_entries',
             jam_slug=jam.slug,
             action='skip_rating')}}" method="post">
+            {{ skip_form.hidden_tag() }}
             {{ skip_form.reason.label }}
             {{ skip_form.reason() }}
             <input type="submit" value="skip &raquo;" class="button" />
@@ -66,8 +67,8 @@
 <h2>Overview: Entries of this jam</h2>
 <ul>
 {% for e in jam.entries %}
-    <li><a href="{{ e.url() }}">{{ e.title }}</a> {% if participant.id in e.rated_by
-    %}rated{% endif %}{% if participant.id in e.skipped_by
+    <li><a href="{{ e.url() }}">{{ e.title }}</a> {% if participant in e.rated_by
+    %}rated{% endif %}{% if participant in e.skipped_by
     %}skipped{% endif %}</li>
 {% endfor %}
 </ul>

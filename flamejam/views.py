@@ -147,26 +147,42 @@ def rate_entries(jam_slug, action = None):
     # (needs to happen during rating period only)
     # TODO: Keep track of who already rated
 
+    participant_username = session['username']
+    participant = Participant.query.filter_by(username=participant_username).first()
+
+    if request.method == "POST":
+        rate_form.entry_id.data = entry.id
+        skip_form.entry_id.data = entry.id
+
     if action == "submit_rating" and rate_form.validate_on_submit():
-        entry_query = Entry.query.filter_by(name=entry_name).first()
+        entry_id = rate_form.entry_id.data
+        entry = Entry.query.filter_by(id=entry_id).first()
+        score_gameplay = rate_form.score_gameplay .data
         score_graphics = rate_form.score_graphics.data
         score_audio = rate_form.score_audio.data
         score_innovation = rate_form.score_innovation.data
-        score_humor = rate_form.score_humor.data
-        score_fun = rate_form.score_fun.data
-        score_overall = rate_form.score_overall.data
+        score_story = rate_form.score_story .data
+        score_technical = rate_form.score_technical .data
+        score_controls = rate_form.score_controls.data
+        score_overall = rate_form.score_overall .data
         note = rate_form.note.data
-        participant_username = session['username']
-        participant = Participant.query.filter_by(username=participant_username).first()
-        new_rating = Rating(score_graphics, score_audio, score_innovation,
-                score_humor, score_fun, score_overall, note, entry_query, participant)
+        new_rating = Rating(score_gameplay, score_graphics, score_audio, score_innovation,
+                score_story, score_technical, score_controls, score_overall,
+                note, entry, participant)
         db.session.add(new_rating)
         db.session.commit()
         flash('Rating added')
-        return redirect(url_for('rate_entries', jam_name=jam_name))
+        return redirect(url_for('rate_entries', jam_slug=jam.slug))
 
     if action == "skip_rating" and skip_form.validate_on_submit():
+        entry_id = skip_form.entry_id.data
+        entry = Entry.query.filter_by(id=entry_id).first()
         reason = skip_form.reason.data
+
+        participant.skipped_entries.append(entry)
+        db.session.commit()
+        flash('Entry skipped')
+        return redirect(url_for('rate_entries', jam_slug=jam.slug))
 
     return render_template("rate_entries.html", jam = jam, error = error,
                            entry = jam.entries.first(), rate_form = rate_form,

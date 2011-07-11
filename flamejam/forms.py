@@ -119,6 +119,7 @@ class RateEntry(Form):
     note = TextField("Additional notes", validators=[Optional()])
 
 class SkipRating(Form):
+    entry_id = HiddenField(validators = [Required(), NumberRange(min = 1)])
     reason = SelectField("Reason to skip", choices = [
         ("platform", "Platform not supported"),
         ("uninteresting", "Not interested"),
