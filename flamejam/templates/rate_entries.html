@@ -50,6 +50,7 @@
         <form style="float: right;" action="{{ url_for('rate_entries',
             jam_slug=jam.slug,
             action='skip_rating')}}" method="post">
+            {{ skip_form.hidden_tag() }}
             {{ skip_form.reason.label }}
             {{ skip_form.reason() }}
             <input type="submit" value="skip &raquo;" class="button" />
