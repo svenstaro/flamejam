@@ -73,7 +73,7 @@ h6 {
 
 .info {
     background: #EEE;
-    padding: 10px 20px;
+    padding: 10px 30px;
 }
 
 hr {
@@ -148,14 +148,18 @@ ul.normal {
 
 ._announcement {
     font-weight:bold;
-    font-size: 8pt;
+    font-size: 10pt;
     color: #333;
 }
 
 ._flash {
     font-weight:bold;
-    font-size: 8pt;
+    font-size: 10pt;
     color: #dd7744;
+    background: #FED;
+    border: 2px solid #dd7744;
+    padding: 4px 10px;
+    margin: 2px 0;
 }
 
 ._jam {
@@ -858,6 +862,5 @@ ul.screenshots li div.caption {
     border-bottom: 5px solid #005;
     padding: 5px 20px;
     float: right;
-    margin-top: -10px;
     color: #005;
 }

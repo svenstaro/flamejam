@@ -33,6 +33,7 @@ class Participant(db.Model):
     email = db.Column(db.String(256), unique=True)
     is_admin = db.Column(db.Boolean)
     is_verified = db.Column(db.Boolean)
+    receive_emails = db.Column(db.Boolean)
     registered = db.Column(db.DateTime)
     entries = db.relationship('Entry', backref='participant', lazy='dynamic')
     team_entries = db.relationship("Entry",

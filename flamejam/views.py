@@ -45,7 +45,8 @@ def register():
         username = form.username.data
         password = form.password.data
         email = form.email.data
-        new_participant = Participant(username, password, email)
+        receive_emails = form.receive_emails.data
+        new_participant = Participant(username, password, email, receive_emails)
         db.session.add(new_participant)
         db.session.commit()
         flash('Registration successful')

@@ -36,6 +36,10 @@
                         <th>{{ form.email.label }}</th>
                         <td>{{ form.email(class="text-input") }}
                             <span class="input-info">(will be used for <a href="http://gravatar.com" target="_blank">Gravatar</a>)</span>
+
+                            <div title="Email notifications are sent when jams are announced, started, finished and more.">
+                                {{ form.receive_emails }} {{ form.receive_emails.label }}
+                            </div>
                         </td>
                     </tr>
                 </table>
