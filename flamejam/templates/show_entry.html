@@ -104,7 +104,7 @@
         <th class="score"><span class="icon-16 icon-16-technical"     title="technical"></span></th>
         <th class="score"><span class="icon-16 icon-16-controls"      title="controls"></span></th>
         <th class="score"><span class="icon-16 icon-16-rating"        title="overall"></span></th>
-        <th>posted</th>
+        <th class="score"><span class="icon-16 icon-16-average"        title="average"></span></th>
         <th>Notes</th>
     </tr>
     {% set a = entry.getAverageRating() %}
@@ -118,7 +118,7 @@
         <td class="score">{{ "%.2f" % a["technical"] }}</td>
         <td class="score">{{ "%.2f" % a["controls"]  }}</td>
         <td class="score">{{ "%.2f" % a["overall"]   }}</td>
-        <td></td>
+        <td class="score">{{ "%.2f" % a["average"]   }}</td>
         <td></td>
     </tr>
     {% for rating in entry.ratings %}
@@ -132,7 +132,7 @@
         <td class="score">{{ rating.score_technical }}</td>
         <td class="score">{{ rating.score_controls }}</td>
         <td class="score">{{ rating.score_overall }}</td>
-        <td class="time">{{ rating.posted | humantime }}</td>
+        <td class="score">{{ "%.2f" % rating.getAverage() }}</td>
         <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
     </tr>
     {% endfor %}

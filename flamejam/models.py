@@ -221,7 +221,7 @@ class Entry(db.Model):
 
     def getAverageRating(self):
         categories = ["gameplay", "graphics","audio","innovation","story","technical", "controls", "overall"]
-        r = {}
+        r = {"average": 0}
 
         for c in categories:
             r[c] = 0
@@ -231,10 +231,11 @@ class Entry(db.Model):
             for rating in self.ratings:
                 for c in categories:
                     r[c] += getattr(rating, "score_" + c)
+                r["average"] += rating.getAverage()
 
             for c in categories:
                 r[c] *= 1.0 / ratings
-
+            r["average"] *= 1.0 / ratings
         return r
 
     def getTotalScore(self):
@@ -248,19 +249,19 @@ class Entry(db.Model):
 
 
 def entry_package_type_string(type):
-    if type == "web":       return "Web link (Flash etc.)"
-    if type == "linux":       return "Binaries: Linux 32/64-bit"
+    if type == "web":           return "Web link (Flash etc.)"
+    if type == "linux":         return "Binaries: Linux 32/64-bit"
     if type == "linux32":       return "Binaries: Linux 32-bit"
     if type == "linux64":       return "Binaries: Linux 64-bit"
     if type == "windows":       return "Binaries: Windows"
-    if type == "windows64":       return "Binaries: Windows 64-bit"
-    if type == "mac":       return "Binaries: MacOS Application"
-    if type == "source":       return "Source: package"
-    if type == "git":       return "Source: Git repository"
-    if type == "svn":       return "Source: SVN repository"
-    if type == "hg":       return "Source: HG repository"
-    if type == "combi":       return "Combined package: Linux + Windows + Source (+ more, optional)"
-    if type == "love":       return "Love package"
+    if type == "windows64":     return "Binaries: Windows 64-bit"
+    if type == "mac":           return "Binaries: MacOS Application"
+    if type == "source":        return "Source: package"
+    if type == "git":           return "Source: Git repository"
+    if type == "svn":           return "Source: SVN repository"
+    if type == "hg":            return "Source: HG repository"
+    if type == "combi":         return "Combined package: Linux + Windows + Source (+ more, optional)"
+    if type == "love":          return "Love package"
     if type == "blender":       return "Blender file"
     if type == "unknown":       return "Other"
 
@@ -344,6 +345,17 @@ class Rating(db.Model):
 
     def __repr__(self):
         return '<Rating %r>' % self.id
+
+    def getAverage(self):
+        return (self.score_gameplay
+            + self.score_graphics
+            + self.score_audio
+            + self.score_innovation
+            + self.score_story
+            + self.score_technical
+            + self.score_controls
+            + self.score_overall) * 1.0 / 8.0
+
 
 class RatingSkip(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -554,6 +554,7 @@ span.icon-16-story      { background-image: url("gfx/icons/story.png"); }
 span.icon-16-technical  { background-image: url("gfx/icons/technical.png"); }
 span.icon-16-controls   { background-image: url("gfx/icons/controls.png"); }
 span.icon-16-rating     { background-image: url("gfx/icons/rating.png"); }
+span.icon-16-average    { background-image: url("gfx/icons/average.png"); }
 
 
 span.icon-16-pending    { background-image: url("gfx/icons/pending.png"); }
@@ -834,4 +835,17 @@ ul.screenshots li div.caption {
 
 .columns > div.columns-separator {
     width: 10px;
+}
+
+
+.stamp {
+    font-size: 14pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-top: 5px solid #005;
+    border-bottom: 5px solid #005;
+    padding: 5px 20px;
+    float: right;
+    margin-top: -10px;
+    color: #005;
 }

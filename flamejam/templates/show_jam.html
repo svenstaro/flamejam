@@ -3,14 +3,14 @@
 {% block title %}Jam {{ jam.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ jam.title }}</h1>
 
-<div class="box">
-    <h4>Status</h4>
-    <div class="box-content">
-        {{ jam.getStatus() }}
-    </div>
-</div>
+{% set status = jam.getStatus() %}
+
+{% set s = ["announced", "in progress", "packaging", "rating", "finished"][status.code] %}
+{% set c = ["#600",      "#008",        "#F90",      "#8B0",   "#090"][status.code] %}
+<div title="{{ jam.status }}" class="stamp" style="color: {{ c }}; border-color: {{ c }};">{{s}}</div>
+
+<h1>{{ jam.title }}</h1>
 
 <div class="box">
     <h4>Details</h4>
@@ -21,10 +21,12 @@
             <tr><th>Announced</th><td>{{ jam.announced | humantime }} by {{ jam.author.getLink() }}</a></td></tr>
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.start_time | humandelta(jam.end_time) }}</td></tr>
+            {% if status.code == 2 or status.code == 3 %}
+            <tr><th>Rating deadline</th><td>{{ jam.rating_end | humantime }}</td></tr>
+            {% endif %}
         </table>
     </div>
     {% if session.logged_in %}
-        {% set status = jam.getStatus() %}
         <p class="form-buttons">
             {% if status.code == 3 %}
             <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate the entries</a>
@@ -82,7 +84,7 @@
                 <th class="score"><span class="icon-16 icon-16-technical"     title="technical"></span></th>
                 <th class="score"><span class="icon-16 icon-16-controls"      title="controls"></span></th>
                 <th class="score"><span class="icon-16 icon-16-rating"        title="overall"></span></th>
-                <th class="total">Total</th>
+                <th class="total"><span class="icon-16 icon-16-average"        title="average"></span> Total</th>
             </tr>
 
             {% set i = 0 %}
