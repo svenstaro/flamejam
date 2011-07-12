@@ -403,7 +403,6 @@ def contact():
 @app.route('/rules')
 @app.route('/rulez')
 def rules():
-    abort(500)
     return render_template('rules.html')
 
 @app.route('/announcements')

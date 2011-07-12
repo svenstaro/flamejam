@@ -4,8 +4,36 @@
 
 {% block content %}
 <h1>Reddit Game Jam - Home</h1>
+
+<h2>About the jam</h2>
+<div class="info">
+    <p>
+        A game jam is an event during which all participants <b>create
+        games</b> according to a provided theme <b>within a short amount of time</b>
+        (usually between two days to a week). The Reddit Game Jam hosts game jams as
+        part of the wonderful <a href="http://reddit.com/r/redditgamejam" target="_blank">
+        Reddit community</a>.
+    </p>
+    <p>
+        <b>Anybody can participate</b>, experienced or newbie, flash developer or
+        C hacker.
+    </p>
+    <p>
+        The main goal of this game jam is to be a <b>learning experience</b> for
+        everyone involved. There is nothing to win except for fame, comments
+        and of course karma.
+    </p>
+    <p>
+        Feel free to <a href="{{ url_for('register') }}">register and participate</a>. Please link your account with
+        your reddit account (i.e. use the same nickname). If you are not
+        already on reddit, <a href="http://www.reddit.com/login" target="_blank">go there and join</a>. You won't regret it!
+    </p>
+</div>
+
 <h2>Active Jams</h2>
 <ul>
+{% set active = false %}
+
 {# Jams that haven't started yet #}
 {% for jam in jams if jam.start_time > current_datetime %}
     <li>
@@ -41,6 +69,7 @@
         <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate entries now</a>
     </li>
 {% endfor %}
+
 </ul>
 <h2>Previous Jams</h2>
 <ul>

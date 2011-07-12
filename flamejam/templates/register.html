@@ -4,19 +4,20 @@
 {% block content %}
 <h2>Register</h2>
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-    
+
     <form action="{{ url_for('register') }}" method="post">
         {{ form.hidden_tag() }}
-        <div class="box" style="width: 320px; margin: 0 auto;">
+        <div class="box" style="width: 500px; margin: 0 auto;">
             <h4>Register</h4>
             <div class="box-content">
                 <p>{{ form_errors(form) }}</p>
                 <table class="details">
                     <tr>
-                        <th width="1000">{{ form.username.label }}</th>
+                        <th width="">{{ form.username.label }}</th>
                         <td>
                             {{ form.username(class="text-input") }}
-                            <span class="input-info" title="Allowed characters: letters, numbers, dashes, underscores">min 6 characters</span></span>
+                            <span class="input-info" title="Allowed characters: letters, numbers, dashes, underscores">min 6 characters</span>
+                            <div class="input-info">Please use your reddit account name</div>
                         </td>
                     </tr>
                     <tr>
