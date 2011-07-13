@@ -37,7 +37,7 @@ a.admin:hover {
     color: #FF4500;
 }
 
-a[target=_blank]:after,
+#CONTENT a[target=_blank]:after,
 a.external:after {
     background: url("/static/img/external.png") right center no-repeat;
     background-position:0px 0px;
@@ -48,7 +48,8 @@ a.external:after {
     content: " ";
     vertical-align: 1px;
 }
-a[target=_blank]:hover:after,
+
+#CONTENT a[target=_blank]:hover:after,
 a.external:hover:after {
     background-position:-9px 0px;
 }
