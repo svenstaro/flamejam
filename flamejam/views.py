@@ -88,12 +88,12 @@ def new_jam():
 @app.route('/jams/<jam_slug>/', methods=("GET", "POST"))
 def show_jam(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('show_jam.html', jam = jam)
+    return render_template('show_jam.html', jam = jam, current_datetime=datetime.utcnow())
 
 @app.route('/jams/<jam_slug>/countdown', methods=("GET", "POST"))
 def countdown(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('countdown.html', jam = jam)
+    return render_template('countdown.html', jam = jam, current_datetime=datetime.utcnow())
 
 @app.route('/jams/<jam_slug>/new_entry', methods=("GET", "POST"))
 def new_entry(jam_slug):

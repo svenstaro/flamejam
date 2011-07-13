@@ -12,6 +12,21 @@
 
 <h1>{{ jam.title }}</h1>
 
+{% if session.logged_in %}
+<p>
+    <ul class="tabs">
+        {% if status.code == 3 %}
+        <li><a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate the entries</a></li>
+        {% elif status.code == 5 %}
+        <li><a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Show the winner</a></li>
+        {% else %}
+        <li><a href="{{ url_for('new_entry', jam_slug = jam.slug) }}">New entry</a></li>
+        {% endif %}
+    </ul>
+</p>
+{% endif %}
+
+
 <div class="box">
     <h4>Details</h4>
     <div class="box-content">
@@ -21,23 +36,20 @@
             <tr><th>Announced</th><td>{{ jam.announced | humantime }} by {{ jam.author.getLink() }}</a></td></tr>
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.start_time | humandelta(jam.end_time) }}</td></tr>
+            {% if status.code == 1 %}
+            <tr><th>Time left</th><td>
+                <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
+                    <div class="mini-countdown" time="{{ (jam.end_time - current_datetime) | countdowndelta }}">
+                        <div class="time">{{ (jam.end_time - current_datetime) | countdowndelta }}</div>
+                    </div>
+                </a>
+            </td></tr>
+            {% endif %}
             {% if status.code == 2 or status.code == 3 %}
             <tr><th>Rating deadline</th><td>{{ jam.rating_end | humantime }}</td></tr>
             {% endif %}
         </table>
     </div>
-    {% if session.logged_in %}
-        <p class="form-buttons">
-            {% if status.code == 3 %}
-            <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate the entries</a>
-            {% elif status.code == 5 %}
-            <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Show the winner</a>
-            {% else %}
-            <a href="{{ url_for('new_entry', jam_slug = jam.slug) }}">New entry</a>
-            {% endif %}
-        </p>
-    {% endif %}
-
 </div>
 
 <h2>Entries</h2>

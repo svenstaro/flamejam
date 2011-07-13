@@ -16,8 +16,12 @@ function leadingZero(num, count) {
 }
 
 function countdown() {
-    $(".countdown, .home-countdown").each(function() {
+    $(".countdown, .home-countdown, .mini-countdown").each(function() {
         var t = $(this).attr("time");
+
+        if (t == "00:00:00:00") {
+            return;
+        }
 
         var times = t.split(/[^0-9]/);
 
@@ -53,14 +57,14 @@ function countdown() {
         $(this).find(".s0").addClass("n" + times[3][0]);
         $(this).find(".s1").addClass("n" + times[3][1]);
 
-        if(times[2] < 1) {
+        if(times[1] < 1) {
             // less than 1 hour
             $(this).find(".time").addClass("red");
         } else {
             $(this).find(".time").removeClass("red");
         }
 
-        if($(this).hasClass("home-countdown")) {
+        if(! $(this).hasClass("countdown")) {
             $(this).find(".time").text(times.join(":"));
         }
         $(this).attr("time", times.join(":"));

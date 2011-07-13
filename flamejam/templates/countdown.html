@@ -8,7 +8,7 @@
     </head>
     <body>
         <div class="wrapper">
-            <div class="countdown" time="1:23:45:53">
+            <div class="countdown" time="{{ (jam.end_time - current_datetime) | countdowndelta }}">
                 <div class="text">{{ jam.title }} ends in</div>
                 <div class="time">
                     <div class="digit d1 n8"></div>
