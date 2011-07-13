@@ -18,7 +18,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if get_get_current_user()() != None:
+    if get_current_user():
         flash("You are already logged in.")
         return redirect(url_for("index"))
 
@@ -50,7 +50,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if get_get_current_user()() != None:
+    if get_current_user():
         flash("You are already logged in.")
         return redirect(url_for("index"))
 
@@ -96,7 +96,7 @@ def new_jam():
         if Jam.query.filter_by(slug = new_slug).first():
             error = 'A jam with a similar title already exists.'
         else:
-            new_jam = Jam(title, get_get_current_user()(), start_time)
+            new_jam = Jam(title, get_current_user(), start_time)
             db.session.add(new_jam)
             db.session.commit()
             flash('New jam added')
@@ -123,7 +123,7 @@ def new_entry(jam_slug):
 
     # check if the user has already an entry in this jam
     for entry in jam.entries:
-        if entry.participant == get_get_current_user()():
+        if entry.participant == get_current_user():
             flash("You already have an entry for this jam. Look here!")
             return redirect(entry.url())
         elif get_current_user() in entry.team:
