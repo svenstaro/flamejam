@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Links{% endblock %}
+
+{% block content %}
+<h1>Links</h1>
+
+<a name="resources"></a><h2>Resources</h2>
+
+<div class="info">
+    <p>
+        Here are some game development resources for you. Always make sure to check
+        the licence!
+        <ul class="normal">
+            <li>
+                <a target="_blank" href="http://opengameart.org">OpenGameArt.org</a>
+                - open collection of artwork for games. You can find sprites,
+                models and sounds here.
+            </li>
+
+            <li>
+                <a target="_blank" href="http://cgtextures.com">CgTextures.com</a>
+                - huge collection of freely available high quality textures.
+                Download limit for free accounts.
+            </li>
+
+            <li>
+                <a target="_blank" href="http://www.superflashbros.net/as3sfxr/">as3sfxr</a> and
+                <a target="_blanK" href="http://www.bfxr.net/">bfxr</a>
+                - two sound effect synthesizers for retro games
+            </li>
+
+            <li>
+                <a target="_blank" href="http://videogamena.me/">The Video Game Name Generator</a>
+                - in case you're stuck for ideas.
+            </li>
+
+            <li>
+                <a target="_blank" href="http://www.ludumdare.com/compo/tools/">ludumdare tools list</a>
+                - a list of tools for game development
+            </li>
+        </ul>
+        If you have something to add, please tell us on
+        <a href="{{ url_for('contact') }}#irc">IRC</a> or send a
+        quick <a href="{{ url_for('contact') }}">email</a>.
+    </p>
+</div>
+
+
+<h2>Other game jams</h2>
+
+<div class="info">
+    <p>
+        We are not the only ones. Go check out these game jams as well,
+        they are all awesome (not as awesome as redditgamejam, but
+        still... good).
+
+        <ul>
+            <li><a target="_blank" href="http://globalgamejam.org">GlobalGameJam.org</a>
+            - once each year the whole world is jamming</li>
+
+            <li><a target="_blank" href="http://www.ludumdare.com/compo/">LudumDare.com</a>
+            - probably one of the bigger gamedev communities, separated
+            into a competition and a jam</li>
+        </ul>
+    </p>
+</div>
+
+<h2>More</h2>
+
+<div class="info">
+    <p>
+        More things we like.
+        <ul>
+            <li><a target="_blank" href="http://reddit.com">Reddit.com</a>
+            - the awesome reddit community</li>
+
+            <li><a target="_blank" href="http://reddit.com/r/redditgamejam">RedditGameJam subreddit</a>
+            - the most awesome subreddit. It's like double rainbows.</li>
+
+            <li><a target="_blank" href="http://reddit.com/r/gamedev">gamedev subreddit</a>
+            - another great subreddit for all game developers</li>
+
+            <li><a target="_blank" href="http://archlinux.org">ArchLinux.org</a>
+            - a <i>"lightweight and flexible Linux® distribution that tries to Keep It Simple"</i></li>
+        </ul>
+    </p>
+</div>
+
+{% endblock %}
