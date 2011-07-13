@@ -24,6 +24,7 @@
     {% block head %}{% endblock %}
 </head>
 <body>
+    <a name="top"></a>
     <div id="WRAPPER">
         <div id="HEADER">
             <a href="{{ url_for('index') }}">
@@ -53,7 +54,7 @@
                 <div id="NAVBAR">
                     <ul>
                         {% for key, caption in [("index","home"),("announcements","announcements"),("rules","rulez")] %}
-                            {% set current = request.endpoint.startswith(key) %}
+                            {% set current = request.endpoint and request.endpoint.startswith(key) %}
                             <li><a {% if current %}class="current"{% endif %} href="{{ url_for( key ) }}">{{caption}}</a></li>
                         {% endfor %}
 

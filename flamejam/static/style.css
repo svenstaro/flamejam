@@ -37,15 +37,18 @@ a.admin:hover {
     color: #FF4500;
 }
 
+a[target=_blank]:after,
 a.external:after {
     background: url("/static/img/external.png") right center no-repeat;
     background-position:0px 0px;
-    margin-left:2px;
+    margin-left: 4px;
     width:9px;
     height:9px;
     display: inline-block;
     content: " ";
+    vertical-align: 1px;
 }
+a[target=_blank]:hover:after,
 a.external:hover:after {
     background-position:-9px 0px;
 }
@@ -73,7 +76,7 @@ h6 {
 
 .info {
     background: #EEE;
-    padding: 10px 30px;
+    padding: 5px 30px;
 }
 
 hr {
@@ -356,6 +359,12 @@ div#FOOTER div#COPYRIGHT_NOTE a {
 
 dl dt {
     clear: left;
+}
+
+.jamlist li {
+    background: #EEE;
+    margin-bottom: 4px;
+    padding: 5px 10px;
 }
 
 .announcements {

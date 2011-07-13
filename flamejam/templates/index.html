@@ -5,84 +5,94 @@
 {% block content %}
 <h1>Reddit Game Jam - Home</h1>
 
-<h2>About the jam</h2>
-<div class="info">
-    <p>
-        A game jam is an event during which all participants <b>create
-        games</b> according to a provided theme <b>within a short amount of time</b>
-        (usually between two days to a week). The Reddit Game Jam hosts game jams as
-        part of the wonderful <a href="http://reddit.com/r/redditgamejam" target="_blank">
-        Reddit community</a>.
-    </p>
-    <p>
-        <b>Anybody can participate</b>, experienced or newbie, flash developer or
-        C hacker.
-    </p>
-    <p>
-        The main goal of this game jam is to be a <b>learning experience</b> for
-        everyone involved. There is nothing to win except for fame, comments
-        and of course karma.
-    </p>
-    <p>
-        Feel free to <a href="{{ url_for('register') }}">register and participate</a>. Please link your account with
-        your reddit account (i.e. use the same nickname). If you are not
-        already on reddit, <a href="http://www.reddit.com/login" target="_blank">go there and join</a>. You won't regret it!
-    </p>
+<div class="columns">
+    <div> <!-- Column 1 -->
+        <h2>About reddit game jam</h2>
+        <div class="info">
+            <p>
+                A game jam is an event during which all participants <b>create
+                games</b> according to a provided theme <b>within a short amount of time</b>
+                (usually between two days to a week). The Reddit Game Jam hosts game jams as
+                part of the wonderful <a href="http://reddit.com/r/redditgamejam" target="_blank">
+                Reddit community</a>.
+            </p>
+            <p>
+                <b>Anybody can participate</b>, experienced or newbie, flash developer or
+                C hacker.
+            </p>
+            <p>
+                The main goal of this game jam is to be a <b>learning experience</b> for
+                everyone involved. There is nothing to win except for fame, comments
+                and of course karma.
+            </p>
+            <p>
+                Feel free to <a href="{{ url_for('register') }}">register and participate</a>. Please link your account with
+                your reddit account (i.e. use the same nickname). If you are not
+                already on reddit, <a href="http://www.reddit.com/login" target="_blank">go there and join</a>. You won't regret it!
+            </p>
+        </div>
+    </div>
+
+    <div style="width: 30px"></div>
+
+    <!-- Column 2 -->
+    <div style="width: 50%">
+        <h2>Active Jams</h2>
+        <ul class="jamlist">
+        {% set active = false %}
+
+        {# Jams that haven't started yet #}
+        {% for jam in jams if jam.start_time > current_datetime %}
+            <li>
+                <a href="{{ jam.url() }}">{{ jam.title }}</a>
+                announced for {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }}
+                (in {{ current_datetime | humandelta(jam.start_time) }})
+            </li>
+        {% endfor %}
+
+        {# Jams that are in progress #}
+        {% for jam in jams if jam.start_time < current_datetime < jam.end_time %}
+            <li>
+                <a href="{{ jam.url() }}">{{ jam.title }}</a>
+                is currently in progress! (ends in {{ current_datetime | humandelta(jam.end_time) }})
+            </li>
+        {% endfor %}
+
+        {# Jams that have finished but are still in packaging period #}
+        {% for jam in jams if jam.end_time < current_datetime < jam.packaging_deadline %}
+            <li>
+                <a href="{{ jam.url() }}">{{ jam.title }}</a>
+                has finished and is in packaging phase (time left:
+                {{ current_datetime | humandelta(jam.packaging_deadline) }})
+            </li>
+        {% endfor %}
+
+        {# Jams that are in rating period #}
+        {% for jam in jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
+            <li>
+                <a href="{{ jam.url() }}">{{ jam.title }}</a>
+                is in rating period for another {{ current_datetime | humandelta(jam.rating_end) }}
+                <!-- TODO: Check this is possible in view -->
+                <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate entries now</a>
+            </li>
+        {% endfor %}
+
+        </ul>
+        <h2>Previous Jams</h2>
+        <ul class="jamlist">
+        {% for jam in jams if jam.rating_end < current_datetime %}
+            <li>
+                <a href="{{ jam.url() }}">{{ jam.title }}</a>
+                from {{ jam.start_time | formattime }} to {{
+                jam.end_time | formattime }}
+                (length: {{ jam.end_time | humandelta(jam.start_time) }})
+                show the {{ jam.entries.all() | length }} entries
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
 </div>
 
-<h2>Active Jams</h2>
-<ul>
-{% set active = false %}
-
-{# Jams that haven't started yet #}
-{% for jam in jams if jam.start_time > current_datetime %}
-    <li>
-        <a href="{{ jam.url() }}">{{ jam.title }}</a>
-        announced for {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }}
-        (in {{ current_datetime | humandelta(jam.start_time) }})
-    </li>
-{% endfor %}
-
-{# Jams that are in progress #}
-{% for jam in jams if jam.start_time < current_datetime < jam.end_time %}
-    <li>
-        <a href="{{ jam.url() }}">{{ jam.title }}</a>
-        is currently in progress! (ends in {{ current_datetime | humandelta(jam.end_time) }})
-    </li>
-{% endfor %}
-
-{# Jams that have finished but are still in packaging period #}
-{% for jam in jams if jam.end_time < current_datetime < jam.packaging_deadline %}
-    <li>
-        <a href="{{ jam.url() }}">{{ jam.title }}</a>
-        has finished and is in packaging phase (time left:
-        {{ current_datetime | humandelta(jam.packaging_deadline) }})
-    </li>
-{% endfor %}
-
-{# Jams that are in rating period #}
-{% for jam in jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
-    <li>
-        <a href="{{ jam.url() }}">{{ jam.title }}</a>
-        is in rating period for another {{ current_datetime | humandelta(jam.rating_end) }}
-        <!-- TODO: Check this is possible in view -->
-        <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate entries now</a>
-    </li>
-{% endfor %}
-
-</ul>
-<h2>Previous Jams</h2>
-<ul>
-{% for jam in jams if jam.rating_end < current_datetime %}
-    <li>
-        <a href="{{ jam.url() }}">{{ jam.title }}</a>
-        from {{ jam.start_time | formattime }} to {{
-        jam.end_time | formattime }}
-        (length: {{ jam.end_time | humandelta(jam.start_time) }})
-        show the {{ jam.entries.all() | length }} entries
-    </li>
-{% endfor %}
-</ul>
 
 <h2>Stuff to do</h2>
 <ul>
