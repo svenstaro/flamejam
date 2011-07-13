@@ -85,14 +85,23 @@ hr {
     border-top: 1px solid #aaa;
 }
 
+pre code {
+    display: block;
+    padding: 2px 8px;
+}
+
 code {
     background: #FFF;
     border: 1px dashed #CCC;
 }
 
-pre code {
+code.term {
     display: block;
+    background: #333;
+    color: #FFF;
+    border: 0;
     padding: 2px 8px;
+    margin: 5px 0;
 }
 
 /* ------------------------------------------------------ */

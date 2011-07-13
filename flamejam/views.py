@@ -521,6 +521,17 @@ def announcements():
     announcements = Announcement.query.order_by(Announcement.posted.desc())
     return render_template('announcements.html', announcements = announcements)
 
+@app.route('/faq')
+@app.route('/faq/<page>')
+def faq(page = ""):
+    if page.lower() == "packaging":
+        return render_template('faq_packaging.html')
+    return render_template('faq.html')
+
+@app.route('/links')
+def links():
+    return render_template('links.html')
+
 @app.errorhandler(404)
 @app.errorhandler(403)
 @app.errorhandler(500)
