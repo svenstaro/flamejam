@@ -9,23 +9,35 @@
 
 <div class="info">
     <p>
-        What is packaging, why do I need to do that?
+        You might code up the very most awesomest game of them all but nopony may be able to play it only because you failed to package it correctly. The problems of packaging are manifold and treacherous. There are many different configurations, programming languages  and systems and you are only able to account for a limited number of those. Due to its inherent difficulty, this guide will focus on C++ for now as other languages are usually much easier to package due to being interpreted as opposed to being compiled.
     </p>
 </div>
 
 <h2>Linux</h2>
 <div class="info">
     <p>
-        This is how it works.
-        <code class="term">$ makepkg --source</code>
-        Ah that's how.
+        On Linux, we need to try to stay distribution-neutral and thus we cannot make distribution-specific packages like .rpm or .deb. Instead, we'll focus on making self-contained universal packages that are well suited for game jams.
+    </p>
+    <p>
+        Let's say your game's executable is called coolgame.bin and you used g++ to compile it without any special flags. Now run <i>ldd</i> on that executable and you will see all dynamic libraries you explicitly or implicitly link against. Wow, they are quite many, aren't they? Let's try something, compile your game with <b>g++ -static -static-libgcc -static-libstdc++</b> and run <i>ldd</i> on it again. Quite a lot less dynamies libraries will show up now as you just linked many things statically into the executable which in turn as grown in size.
+    </p>
+    <p>
+        Moving on, to handle the remaining shared libraries, create a new directory beside your executable and call it "libs". Using ldd's output as a guideline, copy all remaining shared libraries into this directory. They may be quite numerous but don't worry about it. When time matters - as it happens to do in a game jam - we can't be too picky about redundancy.
+    </p>
+    <p>Lastly, make a little helper script, maybe call it "run.sh". It should have something like this:</p>
+    <pre>
+    current_dir="$(dirname $(readlink -f $0))"
+    LD_LIBRARY_PATH="$current_dir/libs" ./coolgame.bin
+    </pre>
+    <p>
+        Remember to make it all executable. You can now tar this up and it will work all nicely everywhere.
     </p>
 </div>
 
 <h2>Windows</h2>
 <div class="info">
     <p>
-        How windows.
+        We will not be creating a nice installer here but rather a self-contained archive that people can just drop where ever they want and the game will run nonetheless. Make sure all required dlls are in the same place as the executable. If you are using mingw, you should compile using g++ -static -static-libgcc -static-libstdc++ so that you will not need to copy as many dlls. If you use MSVS, you will need to tell others to install the Microsoft C++ runtime before trying to run your game.
     </p>
 </div>
 
