@@ -56,6 +56,9 @@
     <div class="box-content">
         <table class="details">
             <tr><th>Best rated entries</th><td>
+                {% if not stats['best_entries'] or stats["best_entries"][0].getTotalScore() == 0 %}
+                    <p>There are no rated entries yet.</p>
+                {% else %}
                 {% for n in [0,1,2] if stats['best_entries'][n] %}
                 <p>
                     Score {{ "%.2f" % stats["best_entries"][n].getTotalScore() }}:
@@ -65,14 +68,19 @@
                     </a>
                 </p>
                 {% endfor %}
+                {% endif %}
                 </td></tr>
             <tr><th>Participant with most entries</th><td>
+                {% if not stats['participant_most_entries'] or stats["participant_most_entries"][0].getTotalEntryCount() == 0 %}
+                    <p>Nobody has entries yet.</p>
+                {% else %}
                 {% for n in [0,1,2] if stats['participant_most_entries'][n] %}
                 <p>
                     {{ stats["participant_most_entries"][n].getLink() }}
                     with {{ stats["participant_most_entries"][n].getTotalEntryCount() }} entries
                 </p>
                 {% endfor %}
+                {% endif %}
                 </td></tr>
         </table>
     </div>

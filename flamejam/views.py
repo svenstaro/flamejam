@@ -458,18 +458,28 @@ def statistics():
     participant_most_entries.sort(cmp = participantTotalEntryCompare)
     stats["participant_most_entries"] = participant_most_entries[:3]
 
-    stats["average_participants"] = all_jam_participants * 1.0 / stats["total_jams"];
+    if stats["total_jams"]: # against division by zero
+        stats["average_participants"] = all_jam_participants * 1.0 / stats["total_jams"];
+    else:
+        stats["average_participants"] = 0
     stats["most_participants_per_jam"] = most_participants_per_jam
     stats["most_participants_jam"] = most_participants_jam
 
     stats["total_entries"] = db.session.query(db.func.count(Entry.id)).first()[0];
-    stats["average_entries"] = stats["total_entries"] * 1.0 / stats["total_jams"]
+    if stats["total_jams"]: # against division by zero
+        stats["average_entries"] = stats["total_entries"] * 1.0 / stats["total_jams"]
+    else:
+        stats["average_entries"] = 0
     stats["most_entries_per_jam"] = most_entries_per_jam
     stats["most_entries_jam"] = most_entries_jam
 
-    stats["average_team_size"] = stats["average_participants"] * 1.0 / stats["average_entries"]
+    if stats["average_entries"]: # against division by zero
+        stats["average_team_size"] = stats["average_participants"] * 1.0 / stats["average_entries"]
+    else:
+        stats["average_team_size"] = 0
     stats["biggest_team_size"] = biggest_team_size
     stats["biggest_team_entry"] = biggest_team_entry
+
 
     #Best rated entries
     #Participant with most entries
