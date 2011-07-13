@@ -3,7 +3,7 @@
 from operator import attrgetter
 from datetime import datetime, timedelta
 from hashlib import sha512, md5
-from flamejam import db, filters
+from flamejam import app, db, filters
 from flask import url_for, Markup
 import re
 
@@ -53,6 +53,11 @@ class Participant(db.Model):
         self.is_admin = is_admin
         self.is_verified = is_verified
         self.registered = datetime.utcnow()
+
+    def getVerificationHash(self):
+        # combine a few properties, hash md5
+        # take first 8 chars for simplicity
+        return md5(self.username + str(self.id) + str(self.registered)).hexdigest()[:8]
 
     def skippedEntry(self, entry):
         return self.rating_skips.filter_by(entry = entry).first() != None

@@ -11,19 +11,26 @@
             <h4>Register</h4>
             <div class="box-content">
                 <p>{{ form_errors(form) }}</p>
+                <ul class="form-errors">
+                    <li>
+                        You <b>must</b> use your reddit username, we will check that in the next step!
+                    </li>
+                </ul>
+                <div align="center" class="input-info">Not on reddit? <a href="http://reddit.com/login" target="_blank">Register there first.</a></div>
+                <hr />
                 <table class="details">
                     <tr>
                         <th width="">{{ form.username.label }}</th>
                         <td>
                             {{ form.username(class="text-input") }}
-                            <span class="input-info" title="Allowed characters: letters, numbers, dashes, underscores">min 6 characters</span>
-                            <div class="input-info">Please use your reddit account name</div>
+                            <span class="input-info" title="Allowed characters: letters, numbers, dashes, underscores">your reddit username</span>
                         </td>
                     </tr>
                     <tr>
                         <th>{{ form.password.label }}</th>
                         <td>{{ form.password(class="password-input") }}
                         <span class="input-info" title="all characters allowed">min 8 characters</span>
+                        <div class="input-info">You <b>don't</b> need to use your reddit password.</div>
                         </td>
                     </tr>
                     <tr>

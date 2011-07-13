@@ -65,12 +65,15 @@ class ParticipantRegistration(Form):
     username = TextField("Username", validators=[
         MatchesRegex("[^0-9a-zA-Z\-_]", "Your username contains invalid characters. Only use alphanumeric characters, dashes and underscores."),
         Not(UsernameExists(), message = "That username already exists."),
-        Length(min=6, max=80, message="You have to enter a username of 6 to 80 characters length.")])
+        Length(min=3, max=80, message="You have to enter a username of 3 to 80 characters length.")])
     password = PasswordField("Password", validators=[Length(min=8, message = "Please enter a password of at least 8 characters.")])
     password2 = PasswordField("Password, again", validators=[EqualTo("password", "Passwords do not match.")])
     email = EmailField("Email", validators=[Email(message = "The email address you entered is invalid.")])
     # Also use recaptcha here
     receive_emails = BooleanField("I want to receive email notifications.", default = True)
+
+class VerifyForm(Form):
+    pass
 
 class NewJam(Form):
     title = TextField("Jam title", validators=[Required(), Length(max=128)])
