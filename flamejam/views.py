@@ -50,7 +50,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if get_current_user() != None:
+    if get_current_user():
         flash("You are already logged in.")
         return redirect(url_for("index"))
 
