@@ -260,6 +260,10 @@ class Entry(db.Model):
             c += 1
         return s * 1.0/ c
 
+    def getRank(self):
+        jam_entries = list(self.jam.entries.all())
+        jam_entries.sort(cmp = entryCompare)
+        return jam_entries.index(self) + 1
 
 def entry_package_type_string(type):
     if type == "web":           return "Web link (Flash etc.)"

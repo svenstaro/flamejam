@@ -470,6 +470,19 @@ form .input-info {
     clear: both;
 }
 
+.rankinfo {
+    font-size: 8pt;
+    color: #FFF;
+    background: #333;
+    border-radius: 10px;
+    padding: 2px 4px;
+}
+
+.rankinfo .rank {
+    color: #68F;
+    font-weight: bold;
+}
+
 
 img.icon {
     border: 1px solid #666;
