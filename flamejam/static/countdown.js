@@ -18,26 +18,34 @@ function leadingZero(num, count) {
 function countdown() {
     $(".countdown, .home-countdown, .mini-countdown").each(function() {
         var t = $(this).attr("time");
-
-        if (t == "00:00:00:00") {
+        if(t == null) {
             return;
         }
 
-        var times = t.split(/[^0-9]/);
+        var end_utc = new Date(t);
+        var end_utc_msec = end_utc.getTime();
 
-        times[3] -= 1;
-        if (times[3] < 0) {
-            times[3] += 60;
-            times[2] -= 1;
+        var local = new Date();
+        var local_msec = local.getTime();
+        var local_offset = local.getTimezoneOffset() * 60000;
+        var local_utc_msec = local_msec + local_offset;
+
+        var diff_msec = end_utc_msec - local_msec;
+        // we lose an hour somewhere, probably JS counts since "1970-1-1 01:00" or so
+        // test and monitor this!
+        diff_msec += 3600000;
+
+        if(diff_msec < 0) {
+            return;
         }
-        if (times[2] < 0) {
-            times[2] += 60;
-            times[1] -= 1;
-        }
-        if (times[1] < 0) {
-            times[0] += 24;
-            times[0] -= 1;
-        }
+        var diff = new Date(diff_msec);
+
+        var times = new Array(
+            diff.getDate() - 1,
+            diff.getHours(),
+            diff.getMinutes(),
+            diff.getSeconds()
+            );
 
         times[0] = leadingZero(times[0], 2);
         times[1] = leadingZero(times[1], 2);
@@ -67,12 +75,13 @@ function countdown() {
         if(! $(this).hasClass("countdown")) {
             $(this).find(".time").text(times.join(":"));
         }
-        $(this).attr("time", times.join(":"));
+        /*$(this).attr("time", times.join(":"));
+        */
     });
 
     setTimeout(countdown, 1000);
 }
 
 $(document).ready(function() {
-    setTimeout(countdown, 1000);
+    countdown();
 });

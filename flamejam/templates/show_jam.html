@@ -39,7 +39,7 @@
             {% if status.code == 1 %}
             <tr><th>Time left</th><td>
                 <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
-                    <div class="mini-countdown" time="{{ (jam.end_time - current_datetime) | countdowndelta }}">
+                    <div class="mini-countdown" time="{{ jam.end_time }}">
                         <div class="time">{{ (jam.end_time - current_datetime) | countdowndelta }}</div>
                     </div>
                 </a>

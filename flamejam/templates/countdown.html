@@ -8,20 +8,53 @@
     </head>
     <body>
         <div class="wrapper">
-            <div class="countdown" time="{{ (jam.end_time - current_datetime) | countdowndelta }}">
-                <div class="text">{{ jam.title }} ends in</div>
-                <div class="time">
-                    <div class="digit d1 n8"></div>
-                    <div class="colon"></div>
-                    <div class="digit h0 n8"></div>
-                    <div class="digit h1 n8"></div>
-                    <div class="colon"></div>
-                    <div class="digit m0 n8"></div>
-                    <div class="digit m1 n8"></div>
-                    <div class="colon"></div>
-                    <div class="digit s0 n8"></div>
-                    <div class="digit s1 n8"></div>
-                </div>
+                {% if jam.start_time > current_datetime %}
+                <div class="countdown">
+                    <div class="text">{{ jam.title }} has not started yet.</div>
+                    <div class="time red">
+                        <div class="digit n0"></div>
+                        <div class="colon"></div>
+                        <div class="digit n0"></div>
+                        <div class="digit n0"></div>
+                        <div class="colon"></div>
+                        <div class="digit n0"></div>
+                        <div class="digit n0"></div>
+                        <div class="colon"></div>
+                        <div class="digit n0"></div>
+                        <div class="digit n0"></div>
+                    </div>
+                {% elif jam.end_time < current_datetime %}
+                <div class="countdown">
+                    <div class="text">{{ jam.title }} has finished.</div>
+                    <div class="time red">
+                        <div class="digit n0"></div>
+                        <div class="colon"></div>
+                        <div class="digit n0"></div>
+                        <div class="digit n0"></div>
+                        <div class="colon"></div>
+                        <div class="digit n0"></div>
+                        <div class="digit n0"></div>
+                        <div class="colon"></div>
+                        <div class="digit n0"></div>
+                        <div class="digit n0"></div>
+                    </div>
+                {% else %}
+                {#<div class="countdown" time="{{ (jam.end_time - current_datetime) | countdowndelta }}">#}
+                <div class="countdown" time="{{ jam.end_time  }}">
+                    <div class="text">{{ jam.title }} ends in</div>
+                    <div class="time">
+                        <div class="digit d1 n8"></div>
+                        <div class="colon"></div>
+                        <div class="digit h0 n8"></div>
+                        <div class="digit h1 n8"></div>
+                        <div class="colon"></div>
+                        <div class="digit m0 n8"></div>
+                        <div class="digit m1 n8"></div>
+                        <div class="colon"></div>
+                        <div class="digit s0 n8"></div>
+                        <div class="digit s1 n8"></div>
+                    </div>
+                {% endif %}
                 <div class="link"><a href="{{jam.url()}}">&laquo; back to the jam</a></div>
             </div>
         </div>

@@ -13,7 +13,7 @@
     {% endblock %}
     <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
         {% set diff = jam.end_time - current_datetime %}
-        <div class="home-countdown" time="{{ diff | countdowndelta }}">
+        <div class="home-countdown" time="{{ jam.end_time }}">
             <div class="text">{{ jam.title }} ends in</div>
             <div class="time">{{ diff | countdowndelta }}</div>
         </div>

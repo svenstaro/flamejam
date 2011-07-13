@@ -1,7 +1,7 @@
 from flamejam import app
 from datetime import *
 from dateutil import relativedelta
-
+import time
 
 # format a timestamp in default format (0000-00-00 00:00:00)
 @app.template_filter()
@@ -63,3 +63,8 @@ def countdowndelta(s):
     hours, remainder = divmod(s.seconds, 60*60)
     minutes, seconds = divmod(remainder, 60)
     return '%02d:%02d:%02d:%02d' % (s.days, hours, minutes, seconds)
+
+@app.template_filter()
+def epoch(s):
+    # s = datetime.utcnow()
+    return time.mktime(s.timetuple())
