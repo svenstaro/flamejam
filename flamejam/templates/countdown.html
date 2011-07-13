@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <title>{{ jam.title }} - Countdown</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='countdown.css') }}" />
+        <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"> </script>
+        <script type="text/javascript" src="{{ url_for('static', filename='countdown.js') }}"> </script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="countdown" time="1:23:45:53">
+                <div class="text">{{ jam.title }} ends in</div>
+                <div class="time">
+                    <div class="digit d1 n8"></div>
+                    <div class="colon"></div>
+                    <div class="digit h0 n8"></div>
+                    <div class="digit h1 n8"></div>
+                    <div class="colon"></div>
+                    <div class="digit m0 n8"></div>
+                    <div class="digit m1 n8"></div>
+                    <div class="colon"></div>
+                    <div class="digit s0 n8"></div>
+                    <div class="digit s1 n8"></div>
+                </div>
+                <div class="link"><a href="{{jam.url()}}">&laquo; back to the jam</a></div>
+            </div>
+        </div>
+    </body>
+</html>

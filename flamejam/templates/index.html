@@ -5,6 +5,21 @@
 {% block content %}
 <h1>Reddit Game Jam - Home</h1>
 
+{% set counting = false %}
+{% for jam in jams if jam.start_time < current_datetime < jam.end_time and not counting %}
+    {% set counting = true %}
+    {% block head %}
+        <link href='http://fonts.googleapis.com/css?family=Wallpoet&v2' rel='stylesheet' type='text/css'>
+    {% endblock %}
+    <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
+        {% set diff = jam.end_time - current_datetime %}
+        <div class="home-countdown" time="{{ diff | countdowndelta }}">
+            <div class="text">{{ jam.title }} ends in</div>
+            <div class="time">{{ diff | countdowndelta }}</div>
+        </div>
+    </a>
+{% endfor %}
+
 <div class="columns">
     <div> <!-- Column 1 -->
         <h2>About reddit game jam</h2>

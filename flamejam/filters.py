@@ -56,3 +56,10 @@ def humantime(s):
         return humandelta(diff)
     else:
         return formattime(s)
+
+
+@app.template_filter()
+def countdowndelta(s):
+    hours, remainder = divmod(s.seconds, 60*60)
+    minutes, seconds = divmod(remainder, 60)
+    return '%02d:%02d:%02d:%02d' % (s.days, hours, minutes, seconds)
