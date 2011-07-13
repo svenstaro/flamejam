@@ -7,18 +7,18 @@
 
     <form action="{{ url_for('login') }}" method="post">
         {{ form.hidden_tag() }}
-        <div class="box" style="width: 300px; margin: 0 auto;">
+        <div class="box" style="width: 400px; margin: 0 auto;">
             <h4>Login</h4>
             <div class="box-content">
                 {{ form_errors(form) }}
                 <table class="details">
                     <tr>
-                        <th width="1000">{{ form.username.label }}</th>
-                        <td>{{ form.username(class="text-input") }}</td>
+                        <th>{{ form.username.label }}</th>
+                        <td>{{ form.username(class="text-input", size="40") }}</td>
                     </tr>
                     <tr>
                         <th>{{ form.password.label }}</th>
-                        <td>{{ form.password(class="password-input") }}</td>
+                        <td>{{ form.password(class="password-input", size="40") }}</td>
                     </tr>
                 </table>
             </div>
@@ -27,5 +27,8 @@
             </p>
         </div>
     </form>
-</form>
+
+    <p align="center">
+        <a href="{{ url_for('register') }}">Not registered yet?</a>
+    </p>
 {% endblock %}

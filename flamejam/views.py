@@ -9,15 +9,24 @@ from flamejam import app
 
 from flamejam.models import *
 from flamejam.forms import *
+from flamejam.login import *
 
 @app.route('/')
 def index():
     jams = Jam.query.all()
-    return render_template('index.html', jams=jams,
-            current_datetime=datetime.utcnow())
+    return render_template('index.html', jams=jams)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if get_get_current_user()() != None:
+        flash("You are already logged in.")
+        return redirect(url_for("index"))
+
+    next = request.args.get("next","")
+    if next:
+        # remember where we wanted to go
+        session["next"] = next
+
     error = None
     form = ParticipantLogin()
     if form.validate_on_submit():
@@ -29,16 +38,22 @@ def login():
         elif not participant.password == password:
             error = 'Invalid password'
         else:
-            session['logged_in'] = True
-            session['username'] = username
-            if participant.is_admin:
-                session['is_admin'] = True
-            flash('You were logged in')
-            return redirect(url_for('index'))
+            login_as(participant)
+            if "next" in session:
+                # no redirect where we wanted to go
+                flash('You were logged in and redirected.')
+                return redirect(session.pop("next"))
+            else:
+                flash('You were logged in.')
+                return redirect(url_for('index'))
     return render_template('login.html', form=form, error=error)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if get_get_current_user()() != None:
+        flash("You are already logged in.")
+        return redirect(url_for("index"))
+
     error = None
     form = ParticipantRegistration()
     if form.validate_on_submit():
@@ -49,27 +64,31 @@ def register():
         new_participant = Participant(username, password, email, receive_emails)
         db.session.add(new_participant)
         db.session.commit()
-        flash('Registration successful')
-        return redirect(url_for('index'))
+        login_as(new_participant)
+        if "next" in session:
+            # no redirect where we wanted to go
+            flash('Registration successful. You were logged in and redirected.')
+            return redirect(session.pop("next"))
+        else:
+            flash('Registration successful. You are now logged in.')
+            return redirect(url_for('index'))
+
     return render_template('register.html', form=form, error=error)
 
 @app.route('/logout')
 def logout():
-    session.pop('logged_in', None)
-    session.pop('username', None)
-    session.pop('is_admin', None)
-    #session.pop('is_verified', None)
+    require_login()
+
+    logout_now()
     flash('You were logged out')
     return redirect(url_for('index'))
 
 @app.route('/new_jam', methods=("GET", "POST"))
 def new_jam():
+    require_admin()
+
     error = None
     form = NewJam()
-    # use decorator to check whether user is logged in and is admin
-    #if not session['logged_in'] or not session['is_admin']:
-    #    flash('Not an admin')
-    #    return redirect(url_for('index'))
     if form.validate_on_submit():
         title = form.title.data
         start_time = form.start_time.data
@@ -77,8 +96,7 @@ def new_jam():
         if Jam.query.filter_by(slug = new_slug).first():
             error = 'A jam with a similar title already exists.'
         else:
-            current_user = Participant.query.filter_by(username = session["username"]).first_or_404()
-            new_jam = Jam(title, current_user, start_time)
+            new_jam = Jam(title, get_get_current_user()(), start_time)
             db.session.add(new_jam)
             db.session.commit()
             flash('New jam added')
@@ -88,28 +106,38 @@ def new_jam():
 @app.route('/jams/<jam_slug>/', methods=("GET", "POST"))
 def show_jam(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('show_jam.html', jam = jam, current_datetime=datetime.utcnow())
+    return render_template('show_jam.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/countdown', methods=("GET", "POST"))
 def countdown(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('countdown.html', jam = jam, current_datetime=datetime.utcnow())
+    return render_template('countdown.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/new_entry', methods=("GET", "POST"))
 def new_entry(jam_slug):
+    require_login()
+
     error = None
     form = SubmitEditEntry()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+
+    # check if the user has already an entry in this jam
+    for entry in jam.entries:
+        if entry.participant == get_get_current_user()():
+            flash("You already have an entry for this jam. Look here!")
+            return redirect(entry.url())
+        elif get_current_user() in entry.team:
+            flash("You are part of this team!")
+            return redirect(entry.url())
+
     if form.validate_on_submit():
         title = form.title.data
         new_slug = models.get_slug(title)
         description = form.description.data
-        participant_username = session['username']
-        participant = Participant.query.filter_by(username=participant_username).first()
         if Entry.query.filter_by(slug = new_slug, jam = jam).first():
             error = 'An entry with a similar name already exists for this jam'
         else:
-            new_entry = Entry(title, description, jam, participant)
+            new_entry = Entry(title, description, jam, get_current_user())
             db.session.add(new_entry)
             db.session.commit()
             flash('Entry submitted')
@@ -119,10 +147,9 @@ def new_entry(jam_slug):
 @app.route('/jams/<jam_slug>/rate')
 @app.route('/jams/<jam_slug>/rate/<action>', methods=("GET", "POST"))
 def rate_entries(jam_slug, action = None):
-    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    require_login()
 
-    participant_username = session['username']
-    participant = Participant.query.filter_by(username=participant_username).first()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
     # Check whether jam is in rating period
     if not (jam.packaging_deadline < datetime.utcnow() < jam.rating_end):
@@ -135,23 +162,20 @@ def rate_entries(jam_slug, action = None):
     # (needs to happen during rating period only)
     # TODO: Keep track of who already rated
 
-    participant_username = session['username']
-    participant = Participant.query.filter_by(username = participant_username).first()
-
     if action == "submit_rating" and rate_form.validate_on_submit():
         entry_id = rate_form.entry_id.data
         entry = Entry.query.filter_by(id = entry_id).first_or_404()
 
         # remove previous rating, if any
         edited = False
-        if participant.ratedEntry(entry):
-            old_entry = Rating.query.filter_by(entry_id = entry.id, participant_id = participant.id).first_or_404()
+        if get_current_user().ratedEntry(entry):
+            old_entry = Rating.query.filter_by(entry_id = entry.id, participant_id = get_current_user().id).first_or_404()
             db.session.delete(old_entry)
             edited = True
 
         # remove skip mark, if any
-        if participant.skippedEntry(entry):
-            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, participant_id = participant.id).first_or_404()
+        if get_current_user().skippedEntry(entry):
+            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, participant_id = get_current_user().id).first_or_404()
             db.session.delete(rating_skip)
 
         # read data from form
@@ -168,7 +192,7 @@ def rate_entries(jam_slug, action = None):
         # create new rating
         new_rating = Rating(score_gameplay, score_graphics, score_audio, score_innovation,
                 score_story, score_technical, score_controls, score_overall,
-                note, entry, participant)
+                note, entry, get_current_user())
         db.session.add(new_rating)
         db.session.commit()
         flash('You rated for %s' % entry.title)
@@ -179,13 +203,13 @@ def rate_entries(jam_slug, action = None):
         entry = Entry.query.filter_by(id = entry_id).first_or_404()
 
         # error if you have already rated
-        if participant.ratedEntry(entry):
+        if get_current_user().ratedEntry(entry):
             flash("You already rated for %s." % entry.title)
             return redirect(url_for("rate_entries", jam_slug = jam.slug))
 
         # remove skip mark, if any
-        if participant.skippedEntry(entry):
-            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, participant_id = participant.id).first_or_404()
+        if get_current_user().skippedEntry(entry):
+            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, participant_id = get_current_user().id).first_or_404()
             db.session.delete(rating_skip)
 
         # read data from form
@@ -220,9 +244,9 @@ def rate_entries(jam_slug, action = None):
     new_entries = []
 
     for pair in pairs:
-        if participant.ratedEntry(pair[0]):
+        if get_current_user().ratedEntry(pair[0]):
             rated_entries.append(pair)
-        elif participant.skippedEntry(pair[0]):
+        elif get_current_user().skippedEntry(pair[0]):
             skipped_entries.append(pair)
         else:
             new_entries.append(pair)
@@ -248,7 +272,7 @@ def rate_entries(jam_slug, action = None):
         skip_form.entry_id.data = entry.id
         return render_template("rate_entries.html", jam = jam, error = error,
             entry = entry, is_skipped_entry = is_skipped_entry, rate_form = rate_form,
-            skip_form = skip_form, participant = participant)
+            skip_form = skip_form, participant = get_current_user())
     else:
         # We have nothing left to vote on
         flash("You have no entries left to vote on. Thanks for participating.")
@@ -261,30 +285,23 @@ def show_entry(jam_slug, entry_slug, action=None):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     entry = Entry.query.filter_by(slug = entry_slug).filter_by(jam = jam).first_or_404()
 
-    participant_username = session['username']
-    participant = Participant.query.filter_by(username = participant_username).first_or_404()
-
-    if not action in ["new_comment", None] and not participant.canEdit(entry):
-        abort(403)
-
     if action == "new_comment" and comment_form.validate_on_submit():
+        require_login()
         text = comment_form.text.data
-        new_comment = Comment(text, entry, participant)
+        new_comment = Comment(text, entry, get_current_user())
         db.session.add(new_comment)
         db.session.commit()
         flash('Comment added')
-        return redirect(url_for('show_entry', jam_slug = jam_slug,
-            entry_slug = entry_slug))
+        return redirect(url_for('show_entry', jam_slug = jam_slug, entry_slug = entry_slug))
 
     if action == "edit":
+        require_user(entry.participant)
         error = ""
         edit_form = SubmitEditEntry()
         if edit_form.validate_on_submit():
             title = edit_form.title.data
             new_slug = models.get_slug(title)
             description = edit_form.description.data
-            participant_username = session['username']
-            participant = Participant.query.filter_by(username=participant_username).first()
             old_entry = Entry.query.filter_by(slug = new_slug, jam = jam).first()
             if old_entry and old_entry != entry:
                 error = 'An entry with a similar name already exists for this jam.'
@@ -302,6 +319,8 @@ def show_entry(jam_slug, entry_slug, action=None):
         return render_template('edit_entry.html', entry = entry, form = edit_form, error = error)
 
     if action == "add_screenshot":
+        require_user(entry.participant)
+
         screen_form = EntryAddScreenshot()
         if screen_form.validate_on_submit():
             s = EntryScreenshot(screen_form.url.data, screen_form.caption.data, entry)
@@ -313,6 +332,8 @@ def show_entry(jam_slug, entry_slug, action=None):
         return render_template("add_screenshot.html", entry = entry, form = screen_form)
 
     if action == "add_package":
+        require_user(entry.participant)
+
         package_form = EntryAddPackage()
         if package_form.validate_on_submit():
             s = EntryPackage(entry, package_form.url.data, package_form.type.data)
@@ -324,15 +345,17 @@ def show_entry(jam_slug, entry_slug, action=None):
         return render_template("add_package.html", entry = entry, form = package_form)
 
     if action == "add_team_member":
+        require_user(entry.participant)
+
         team_form = EntryAddTeamMember()
         if team_form.validate_on_submit():
             member = Participant.query.filter_by(username = team_form.username.data).first_or_404()
-            if member == participant:
+            if member == get_current_user():
                 flash("You cannot add yourself to the team.")
             elif not member:
                 flash("That username does not exist.")
             elif member in entry.team:
-                flash("That username is already in the team.")
+                flash("That participant is already in the team.")
             else:
                 entry.team.append(member)
                 db.session.commit()
@@ -342,6 +365,8 @@ def show_entry(jam_slug, entry_slug, action=None):
         return render_template("add_team_member.html", entry = entry, form = team_form)
 
     if action == "remove_screenshot":
+        require_user(entry.participant)
+
         remove_id = request.args.get("remove_id", "")
         s = EntryScreenshot.query.filter_by(entry_id = entry.id, id = remove_id).first_or_404()
         db.session.delete(s)
@@ -350,6 +375,8 @@ def show_entry(jam_slug, entry_slug, action=None):
         return redirect(entry.url())
 
     if action == "remove_package":
+        require_user(entry.participant)
+
         remove_id = request.args.get("remove_id", "")
         s = EntryPackage.query.filter_by(entry_id = entry.id, id = remove_id).first_or_404()
         db.session.delete(s)
@@ -358,6 +385,8 @@ def show_entry(jam_slug, entry_slug, action=None):
         return redirect(entry.url())
 
     if action == "remove_team_member":
+        require_user(entry.participant)
+
         remove_id = request.args.get("remove_id", "0")
         member = Participant.query.get(remove_id)
         db.session.commit()
@@ -369,6 +398,7 @@ def show_entry(jam_slug, entry_slug, action=None):
     return render_template('show_entry.html', entry=entry, form = comment_form)
 
 @app.route('/participants/<username>/')
+@app.route('/users/<username>/')
 def show_participant(username):
     participant = Participant.query.filter_by(username = username).first_or_404()
     return render_template('show_participant.html', participant = participant)
@@ -495,4 +525,9 @@ def announcements():
 @app.errorhandler(403)
 @app.errorhandler(500)
 def error(error):
-    return render_template("error.html", error = error)
+    return render_template("error.html", error = error), error.code
+
+@app.errorhandler(flamejam.login.LoginRequired)
+def login_required(exception):
+    flash(exception.message)
+    return redirect(url_for('login', next = exception.next))

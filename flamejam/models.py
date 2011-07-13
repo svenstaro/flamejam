@@ -83,7 +83,7 @@ class Participant(db.Model):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
 
     def getLink(self, class_ = ""):
-        s = 12
+        s = 14
         if self.is_admin:
             class_ += " admin"
         return Markup('<a class="user {4}" href="{0}"><img width="{2}" height="{2}" src="{3}" class="icon"/> {1}</a>'.format(

@@ -474,7 +474,7 @@ form .input-info {
 img.icon {
     border: 1px solid #666;
     background: #FFF;
-    vertical-align: top;
+    vertical-align: -2px;
 }
 
 img.icon.big {

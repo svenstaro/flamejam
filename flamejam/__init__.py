@@ -13,8 +13,17 @@ Markdown(app, safe_mode="escape")
 import flamejam.filters
 import flamejam.views
 import flamejam.models
+import flamejam.login
 
 @app.context_processor
 def inject_announcement():
     a = flamejam.models.Announcement.query.order_by(flamejam.models.Announcement.posted.desc()).first()
     return dict(last_announcement = a)
+
+@app.context_processor
+def inject_user():
+    return dict(current_user = flamejam.login.get_current_user())
+
+@app.context_processor
+def inject_time():
+    return dict(current_datetime = datetime.utcnow())

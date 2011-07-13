@@ -12,7 +12,7 @@
 
 <h1>{{ jam.title }}</h1>
 
-{% if session.logged_in %}
+{% if current_user %}
 <p>
     <ul class="tabs">
         {% if status.code == 3 %}

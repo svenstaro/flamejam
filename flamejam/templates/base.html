@@ -43,8 +43,8 @@
             <div id="MENU">
                 <div id="LOGIN">
                     <ul>
-                        {% if session.logged_in %}
-                            <li>Logged in as <a href="{{ url_for('show_participant', username = session.username) }}">{{ session.username }}</a></li>
+                        {% if current_user %}
+                            <li>Logged in as <a href="{{ current_user.url() }}">{{ current_user.username }}</a></li>
                             <li><a href="{{ url_for('logout') }}">log out</a></li>
                         {% else %}
                             <li><a href="{{ url_for('login') }}">log in</a></li>
