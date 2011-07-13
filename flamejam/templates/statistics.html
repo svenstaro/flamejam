@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+<h1>Statistics</h1>
+
+<h2>General</h2>
+<div class="box">
+    <div class="box-content">
+        <table class="details">
+            <tr><th>Total Jams</th>
+                <td>{{ stats["total_jams"] }} jams</td></tr>
+
+            <tr><th>Registered Participants</th>
+                <td>{{ stats["total_participants"] }} participants</td></tr>
+
+            <tr><th>Average participants per jam</th>
+                <td>{{ "%.2f" % stats["average_participants"] }} participants per jam</td></tr>
+
+            <tr><th>Most participants per jam</th>
+                <td>{{ stats["most_participants_per_jam"] }} participants
+                {% if stats['most_participants_jam'] %}
+                in <a href="{{ stats['most_participants_jam'].url() }}">{{ stats["most_participants_jam"].title }}</a>
+                {% endif %}
+                </td></tr>
+
+            <tr><th>Total Entries</th>
+                <td>{{ stats["total_entries"] }} entries</td></tr>
+
+            <tr><th>Average entries per jam</th>
+                <td>{{ "%.2f" % stats["average_entries"] }} entries per jam</td></tr>
+
+            <tr><th>Most entries per jam</th>
+                <td>{{ stats["most_entries_per_jam"] }} entries
+                {% if stats['most_entries_jam'] %}
+                in <a href="{{ stats['most_entries_jam'].url() }}">{{ stats["most_entries_jam"].title }}</a>
+                {% endif %}
+                </td></tr>
+
+            <tr><th>Average team size</th>
+                <td>{{ "%.2f" % stats["average_team_size"] }} team members</td></tr>
+
+            <tr><th>Biggest team</th>
+                <td>{{ stats["biggest_team_size"] }} team members
+                {% if stats['biggest_team_entry'] %}
+                made <a href="{{ stats['biggest_team_entry'].url() }}">{{ stats["biggest_team_entry"].title }}</a>
+                {% endif %}
+                </td></tr>
+        </table>
+    </div>
+</div>
+
+<h2>Hall of fame</h2>
+<div class="box">
+    <div class="box-content">
+        <table class="details">
+            <tr><th>Best rated entries</th><td>
+                {% for n in [0,1,2] if stats['best_entries'][n] %}
+                <p>
+                    Score {{ "%.2f" % stats["best_entries"][n].getTotalScore() }}:
+                    <a href="{{ stats['best_entries'][n].url() }}">
+                        {{ stats["best_entries"][n].jam.title }} &raquo;
+                        {{ stats["best_entries"][n].title }}
+                    </a>
+                </p>
+                {% endfor %}
+                </td></tr>
+            <tr><th>Participant with most entries</th><td>
+                {% for n in [0,1,2] if stats['participant_most_entries'][n] %}
+                <p>
+                    {{ stats["participant_most_entries"][n].getLink() }}
+                    with {{ stats["participant_most_entries"][n].getTotalEntryCount() }} entries
+                </p>
+                {% endfor %}
+                </td></tr>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

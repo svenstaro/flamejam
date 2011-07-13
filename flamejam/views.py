@@ -411,6 +411,71 @@ def contact():
 def rules():
     return render_template('rules.html')
 
+@app.route('/stats')
+@app.route('/statistics')
+def statistics():
+    # collect all the data
+
+    stats = {}
+
+    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0];
+    stats["total_participants"] = db.session.query(db.func.count(Participant.id)).first()[0];
+
+    all_jam_participants = 0
+    most_participants_per_jam = 0
+    most_participants_jam = None
+    most_entries_per_jam = 0
+    most_entries_jam = None
+    biggest_team_size = 0
+    biggest_team_entry = None
+
+    for jam in Jam.query.all():
+        participants = 0
+        for entry in jam.entries:
+            teamsize = len(entry.team) + 1 # for the author
+            participants += teamsize
+
+            if teamsize > biggest_team_size:
+                biggest_team_size = teamsize
+                biggest_team_entry = entry
+
+        if participants > most_participants_per_jam:
+            most_participants_per_jam = participants
+            most_participants_jam = jam
+
+        entries = len(jam.entries.all())
+        if entries > most_entries_per_jam:
+            most_entries_per_jam = entries
+            most_entries_jam = jam
+
+        all_jam_participants += participants
+
+    best_entries = Entry.query.all()
+    best_entries.sort(cmp = entryCompare)
+    stats["best_entries"] = best_entries[:3]
+
+    participant_most_entries = Participant.query.all()
+    participant_most_entries.sort(cmp = participantTotalEntryCompare)
+    stats["participant_most_entries"] = participant_most_entries[:3]
+
+    stats["average_participants"] = all_jam_participants * 1.0 / stats["total_jams"];
+    stats["most_participants_per_jam"] = most_participants_per_jam
+    stats["most_participants_jam"] = most_participants_jam
+
+    stats["total_entries"] = db.session.query(db.func.count(Entry.id)).first()[0];
+    stats["average_entries"] = stats["total_entries"] * 1.0 / stats["total_jams"]
+    stats["most_entries_per_jam"] = most_entries_per_jam
+    stats["most_entries_jam"] = most_entries_jam
+
+    stats["average_team_size"] = stats["average_participants"] * 1.0 / stats["average_entries"]
+    stats["biggest_team_size"] = biggest_team_size
+    stats["biggest_team_entry"] = biggest_team_entry
+
+    #Best rated entries
+    #Participant with most entries
+
+    return render_template('statistics.html', stats = stats)
+
 @app.route('/announcements')
 def announcements():
     announcements = Announcement.query.order_by(Announcement.posted.desc())

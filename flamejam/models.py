@@ -67,6 +67,9 @@ class Participant(db.Model):
                 i += 1
         return i
 
+    def getTotalEntryCount(self):
+        return len(self.entries.all()) + len(self.team_entries)
+
     def getSkippedCount(self, jam):
         return len(self.rating_skips.filter(RatingSkip.participant_id == self.id and Entry.jam_id == jam.id).all())
 
@@ -185,6 +188,15 @@ class Jam(db.Model):
 
 def entryCompare(left, right):
     x = right.getTotalScore() - left.getTotalScore()
+    if x > 0:
+        return 1
+    elif x < 0:
+        return -1
+    else:
+        return 0
+
+def participantTotalEntryCompare(left, right):
+    x = right.getTotalEntryCount() - left.getTotalEntryCount()
     if x > 0:
         return 1
     elif x < 0:
