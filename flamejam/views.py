@@ -40,7 +40,7 @@ def login():
         else:
             if not login_as(participant):
                 # not verified
-                return redirect(url_for("register", step = 2))
+                return redirect(url_for("verify", username = username))
             elif "next" in session:
                 # no redirect where we wanted to go
                 flash('You were logged in and redirected.')
@@ -121,10 +121,33 @@ def new_jam():
             return redirect(new_jam.url())
     return render_template('new_jam.html', form = form, error = error)
 
+@app.route('/jams/')
+def jams():
+    return render_template("search.html", jams = Jam.query.all())
+
 @app.route('/jams/<jam_slug>/', methods=("GET", "POST"))
 def show_jam(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('show_jam.html', jam = jam)
+
+@app.route('/jams/<jam_slug>/edit_theme', methods=("GET", "POST"))
+def edit_theme(jam_slug):
+    require_admin()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+
+    form = EditJamTheme()
+    if form.validate_on_submit():
+        jam.theme = form.theme.data
+        db.session.commit()
+        if form.email.data:
+            flash("TODO: Email notifications.")
+        flash("The jam theme for %s has been changed to %s." % (jam.title, jam.theme))
+        return redirect(jam.url())
+
+    elif request.method != "POST":
+        form.theme.data = jam.theme
+
+    return render_template('edit_jam_theme.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/countdown', methods=("GET", "POST"))
 def countdown(jam_slug):
@@ -411,6 +434,13 @@ def show_entry(jam_slug, entry_slug, action=None):
         entry.team.remove(member)
         db.session.commit()
         flash("%s has been removed from the team." % member.username)
+        return redirect(entry.url())
+
+    if action == "quit":
+        require_user(list(entry.team))
+        entry.team.remove(get_current_user())
+        db.session.commit()
+        flash("You have been removed from the team.")
         return redirect(entry.url())
 
     return render_template('show_entry.html', entry=entry, form = comment_form)

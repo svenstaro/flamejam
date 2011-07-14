@@ -4,7 +4,14 @@
 {% block title %}{{ entry.jam.title }} » {{ entry.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ entry.jam.title }} &raquo; {{ entry.title }}</h1>
+<h1>
+    {% if entry.jam.theme %}
+        <div style="float: right;">
+        Theme: <span class="theme">{{ entry.jam.theme }}</span>
+        </div>
+    {% endif %}
+    {{ entry.title }}
+</h1>
 
 {% if entry.participant == current_user %}
 <p>
@@ -13,6 +20,12 @@
         <li><a href="{{ entry.url('add_team_member') }}">Add team member</a></li>
         <li><a href="{{ entry.url('add_screenshot') }}">Add screenshot</a></li>
         <li><a href="{{ entry.url('add_package') }}">Add package</a></li>
+    </ul>
+</p>
+{% elif current_user in entry.team %}
+<p>
+    <ul class="tabs">
+        <li><a href="{{ entry.url('quit') }}">Quit the team</a></li>
     </ul>
 </p>
 {% endif %}
@@ -31,7 +44,8 @@
                 {% endfor %}
                 </td></tr>
 
-            <tr><th>Jam</th><td><a href="{{ entry.jam.url() }}">{{ entry.jam.title }}</a></td></tr>
+            <tr><th>Jam</th><td><a href="{{ entry.jam.url() }}">{{ entry.jam.title }}</a>
+                {% if entry.jam.theme %}<span class="theme">{{ entry.jam.theme }}</span>{% endif %}</td></tr>
 
             <tr><th>Submitted</th>
                 <td>{{ entry.posted | humantime }}</td></tr>

@@ -15,15 +15,31 @@
 {% if current_user %}
 <p>
     <ul class="tabs">
+        {% if status.code == 4 %}
+        <li><a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Show the winner</a></li>
+        {% elif status.code == 2 or status.code == 1 %}
+        <li><a href="{{ url_for('new_entry', jam_slug = jam.slug) }}">New entry</a></li>
+        {% endif %}
+
         {% if status.code == 3 %}
         <li><a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate the entries</a></li>
-        {% elif status.code == 5 %}
-        <li><a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Show the winner</a></li>
-        {% else %}
-        <li><a href="{{ url_for('new_entry', jam_slug = jam.slug) }}">New entry</a></li>
+        {% endif %}
+
+        {% if status.code <= 1 and current_user.is_admin %}
+        <li><a href="{{ url_for('edit_theme', jam_slug = jam.slug) }}">Edit the theme</a></li>
         {% endif %}
     </ul>
 </p>
+{% if status.code == 0 %}
+    <div class="info">
+        <p>
+            You will be able to create an entry here as soon as
+            the jam starts.
+        </p>
+    </div>
+    <br />
+{% endif %}
+
 {% endif %}
 
 

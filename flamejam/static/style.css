@@ -16,6 +16,16 @@ ul {
     list-style: none none;
 }
 
+span.theme {
+    font-style: italic;
+    color: #666;
+    font-size: 0.8em;
+}
+span.theme:before,
+span.theme:after {
+    content:'"';
+}
+
 a {
     font-weight: bold;
     color: #369;

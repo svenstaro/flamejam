@@ -14,6 +14,7 @@
     {% for entry in list %}
     <tr><th>
         <a href="{{ entry.jam.url() }}">{{ entry.jam.title }}</a>
+        {% if entry.jam.theme %}<span class="theme">{{ entry.jam.theme }}</span>{% endif %}
     </th><td>
         <a href="{{ entry.url() }}">{{ entry.title }}</a>
         {% if entry.jam.getStatus().code == 4 %}
@@ -28,28 +29,24 @@
 {% endmacro %}
 
 <div style="margin-left: 80px">
-    <div class="columns">
-        <div class="box">
-            <h4>Entries as author</h4>
-            <div class="box-content">
-                {{ entrylist(participant.entries) }}
-                {% if not participant.entries.all() %}
-                    {{ participant.username.capitalize() }} has not created any entries.
-                {% endif %}
-            </div>
+    <div class="box">
+        <h4>Entries as author</h4>
+        <div class="box-content">
+            {{ entrylist(participant.entries) }}
+            {% if not participant.entries.all() %}
+                {{ participant.username.capitalize() }} has not created any entries.
+            {% endif %}
         </div>
+    </div>
 
-        <div class="columns-separator"></div>
+    <div class="box">
+        <h4>Entries as team member</h4>
+        <div class="box-content">
+            {{ entrylist(participant.team_entries) }}
 
-        <div class="box">
-            <h4>Entries as team member</h4>
-            <div class="box-content">
-                {{ entrylist(participant.team_entries) }}
-
-                {% if not participant.team_entries %}
-                    {{ participant.username.capitalize() }} has not participated as a team member.
-                {% endif %}
-            </div>
+            {% if not participant.team_entries %}
+                {{ participant.username.capitalize() }} has not participated as a team member.
+            {% endif %}
         </div>
     </div>
 </div>

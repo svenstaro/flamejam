@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block title %}
+    Edit jam theme
+{% endblock %}
+
+{% block content %}
+<h2>Edit jam theme: {{ jam.title }}</h2>
+
+    <form action="{{ url_for('edit_theme', jam_slug = jam.slug) }}" method="post">
+        {{ form.hidden_tag() }}
+        <div class="box" style="margin: 0 auto; width: 600px;">
+            <h4>Register</h4>
+            <div class="box-content">
+                <p>{{ form_errors(form) }}</p>
+                <table class="details">
+                    <tr>
+                        <th width="140">{{ form.theme.label }}</th>
+                        <td width="400">
+                            {{ form.theme(class="text-input", style="width: 100%") }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td>{{ form.email }} {{ form.email.label }}</td>
+                    </tr>
+                </table>
+            </div>
+            <p class="form-buttons">
+                <a href="{{ jam.url() }}" class="button">Back to jam</a>
+                <input type="submit" class="button default" value="Save theme">
+            </p>
+        </div>
+    </form>
+</form>
+{% endblock %}

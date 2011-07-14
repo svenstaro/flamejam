@@ -81,6 +81,10 @@ class NewJam(Form):
             format="%Y-%m-%d %H:%M", validators=[Required()])
     # Add remaining fields
 
+class EditJamTheme(Form):
+    theme = TextField("New theme", validators=[Required(), Length(max=128)])
+    email = BooleanField("Send everyone an email about this theme.", default = True)
+
 class SubmitEditEntry(Form):
     title = TextField("Entry title", validators=[Required(), Length(max=128)])
     description = TextAreaField("Description", validators=[Required()])

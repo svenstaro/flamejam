@@ -15,7 +15,10 @@
 <h2>Jams</h2>
 <ul>
     {% for jam in jams %}
-    <li><a href="{{ jam.url() }}">{{ jam.title }}</a></li>
+    <li>
+        <a href="{{ jam.url() }}">{{ jam.title }}</a>
+        {% if jam.theme %}<span class="theme">{{ jam.theme }}</span>{% endif %}
+    </li>
     {% endfor %}
 </ul>
 {% else %}
