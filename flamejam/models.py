@@ -48,7 +48,7 @@ class Participant(db.Model):
     def __init__(self, username, password, email, is_admin=False,
             is_verified=False):
         self.username = username
-        self.password = sha512(password).hexdigest()
+        self.password = sha512(password+app.config['SECRET_KEY']).hexdigest()
         self.email = email
         self.is_admin = is_admin
         self.is_verified = is_verified

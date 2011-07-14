@@ -31,7 +31,7 @@ def login():
     form = ParticipantLogin()
     if form.validate_on_submit():
         username = form.username.data
-        password = sha512(form.password.data).hexdigest()
+        password = sha512(form.password.data+app.config['SECRET_KEY']).hexdigest()
         participant = Participant.query.filter_by(username=username).first()
         if not participant:
             error = 'Invalid username'
