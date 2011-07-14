@@ -9,16 +9,13 @@ class LoginRequired(Exception):
         self.message = message
         self.next = next
 
-current_user = None
-
 def get_current_user():
-    global current_user
-    return current_user
+    if "login_id" in session:
+        return Participant.query.filter_by(id = session["login_id"]).first()
+    return None
 
 @app.before_request
 def check_login():
-    global current_user
-    current_user = None
     if "login_id" in session:
         user_id = session["login_id"]
         current_user = Participant.query.filter_by(id = user_id).first()
@@ -36,17 +33,17 @@ def logout_now():
     session.pop("login_id")
 
 def require_login(message = "You need to be logged in to view this page."):
-    if not current_user:
+    if not get_current_user():
         raise LoginRequired(message, request.url)
 
 def require_user(user):
     require_login()
-    if (isinstance(user, list) and not current_user in user) or user != current_user:
+    if (isinstance(user, list) and not get_current_user() in user) or user != get_current_user():
         abort(403)
 
 def require_admin():
     require_login()
-    if not current_user.is_admin:
+    if not get_current_user().is_admin:
         abort(403)
 
 def check_reddit(username, hash):
