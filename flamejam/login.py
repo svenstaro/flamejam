@@ -10,27 +10,32 @@ class LoginRequired(Exception):
         self.next = next
 
 def get_current_user():
-    if "login_id" in session:
-        return Participant.query.filter_by(id = session["login_id"]).first()
+    if "login_user" in session:
+        return session["login_user"]
+        # return Participant.query.filter_by(id = session["login_id"]).first()
     return None
 
 @app.before_request
 def check_login():
+    # refresh the user object in the session
     if "login_id" in session:
-        user_id = session["login_id"]
-        current_user = Participant.query.filter_by(id = user_id).first()
-        if not current_user:
-            session.pop("login_id")
+        session["login_user"] = Participant.query.filter_by(id = session["login_id"]).first()
+        if not get_current_user():
+            logout_now()
 
 def login_as(user):
     if not user.is_verified:
         flash("Your account is not verified.")
         return False
     session["login_id"] = user.id
+    session["login_user"] = user
     return True
 
 def logout_now():
-    session.pop("login_id")
+    if "login_id" in session:
+        session.pop("login_id")
+    if "login_user" in session:
+        session.pop("login_user")
 
 def require_login(message = "You need to be logged in to view this page."):
     if not get_current_user():
