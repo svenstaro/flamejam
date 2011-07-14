@@ -61,6 +61,7 @@
 
         {# Jams that haven't started yet #}
         {% for jam in jams if jam.start_time > current_datetime %}
+            {% set active = true %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
                 announced for {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }}
@@ -70,6 +71,7 @@
 
         {# Jams that are in progress #}
         {% for jam in jams if jam.start_time < current_datetime < jam.end_time %}
+            {% set active = true %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
                 is currently in progress! (ends in {{ current_datetime | humandelta(jam.end_time) }})
@@ -78,6 +80,7 @@
 
         {# Jams that have finished but are still in packaging period #}
         {% for jam in jams if jam.end_time < current_datetime < jam.packaging_deadline %}
+            {% set active = true %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
                 has finished and is in packaging phase (time left:
@@ -87,6 +90,7 @@
 
         {# Jams that are in rating period #}
         {% for jam in jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
+            {% set active = true %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
                 is in rating period for another {{ current_datetime | humandelta(jam.rating_end) }}
@@ -94,6 +98,10 @@
                 <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate entries now</a>
             </li>
         {% endfor %}
+
+        {% if not active %}
+        <p>There are no active jams right now.</p>
+        {% endif %}
 
         </ul>
         <h2>Previous Jams</h2>

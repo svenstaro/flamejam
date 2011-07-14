@@ -116,9 +116,9 @@
             <li><a href="{{ entry.jam.url() }}">&laquo; Back to the jam</a></li>
             <li>
                 Rating progress:
-                {{ participant.getRatingCount(jam) }} /
+                {{ current_user.getRatingCount(jam) }} /
                 {{ entry.jam.entries.all() | length }} rated,
-                {{ participant.getSkippedCount(jam) }} skipped
+                {{ current_user.getSkippedCount(jam) }} skipped
             </li>
         </ul>
 
@@ -142,9 +142,11 @@
             </a>
 
             <div class="entry-list-author">
-                {% if participant.skippedEntry(e) %}
+                {% if current_user in e.team or current_user == e.participant %}
+                <span class="icon-16 icon-16-rated"></span> <span style="color: #080">yours</span>
+                {% elif current_user.skippedEntry(e) %}
                 <span class="icon-16 icon-16-skipped"></span> <span style="color: #F90">skipped</span>
-                {% elif participant.ratedEntry(e) %}
+                {% elif current_user.ratedEntry(e) %}
                 <span class="icon-16 icon-16-rated"></span> <span style="color: #080">rated</span>
                 {% else %}
                 <span class="icon-16 icon-16-pending"></span> <span style="color: #F00">pending</span>
@@ -153,6 +155,5 @@
         </li>
     {% endfor %}
 </ul>
-<p>Click to unskip</p>
 
 {% endblock %}
