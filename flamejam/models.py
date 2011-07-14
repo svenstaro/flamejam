@@ -100,6 +100,17 @@ class Participant(db.Model):
     def canEdit(self, entry):
         return entry.participant == self
 
+    def getEntryInJam(self, jam):
+        for entry in self.entries:
+            if entry.jam == jam:
+                return entry
+        return None
+
+    def getTeamEntryInJam(self, jam):
+        for entry in self.team_entries:
+            if entry.jam == jam:
+                return entry
+        return None
 
 class JamStatusCode(object):
     ANNOUNCED   = 0

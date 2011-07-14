@@ -135,6 +135,12 @@ def edit_theme(jam_slug):
     require_admin()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
+    if not 0 <= jam.getStatus().code <= 1:
+        # theme editing only during the jam and before
+        flash("The jam is over, you cannot edit the theme anymore.")
+        return redirect(jam.url())
+
+
     form = EditJamTheme()
     if form.validate_on_submit():
         jam.theme = form.theme.data
@@ -162,13 +168,18 @@ def new_entry(jam_slug):
     form = SubmitEditEntry()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
+    if not 1 <= jam.getStatus().code <= 2:
+        # new entries only during the jam and the packaging phase
+        flash("New entries are not allowed at this time.")
+        return redirect(jam.url())
+
     # check if the user has already an entry in this jam
     for entry in jam.entries:
         if entry.participant == get_current_user():
             flash("You already have an entry for this jam. Look here!")
             return redirect(entry.url())
         elif get_current_user() in entry.team:
-            flash("You are part of this team!")
+            flash("You are part of this team! Leave the team to create your own entry.")
             return redirect(entry.url())
 
     if form.validate_on_submit():
@@ -193,8 +204,9 @@ def rate_entries(jam_slug, action = None):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
     # Check whether jam is in rating period
-    if not (jam.packaging_deadline < datetime.utcnow() < jam.rating_end):
-        abort(404)
+    if jam.getStatus().code != 3:
+        flash("Rating for this jam is closed.")
+        return redirect(jam.url())
 
     error = None
     skip_form = SkipRating()
@@ -206,6 +218,11 @@ def rate_entries(jam_slug, action = None):
     if action == "submit_rating" and rate_form.validate_on_submit():
         entry_id = rate_form.entry_id.data
         entry = Entry.query.filter_by(id = entry_id).first_or_404()
+
+        # check if user can rate this entry
+        if not get_current_user().canRate(entry):
+            flash("You cannot rate your own entry.")
+            return redirect(url_for("rate_entries", jam_slug = jam.slug))
 
         # remove previous rating, if any
         edited = False
@@ -255,7 +272,7 @@ def rate_entries(jam_slug, action = None):
 
         # read data from form
         reason = skip_form.reason.data
-        skip = RatingSkip(participant, entry, reason)
+        skip = RatingSkip(get_current_user(), entry, reason)
         db.session.add(skip)
         db.session.commit()
         flash('You skipped rating for %s' % entry.title)
@@ -285,6 +302,10 @@ def rate_entries(jam_slug, action = None):
     new_entries = []
 
     for pair in pairs:
+        # ignore entries by the user
+        if get_current_user() == pair[0].participant or get_current_user() in pair[0].team:
+            continue
+
         if get_current_user().ratedEntry(pair[0]):
             rated_entries.append(pair)
         elif get_current_user().skippedEntry(pair[0]):
@@ -313,7 +334,7 @@ def rate_entries(jam_slug, action = None):
         skip_form.entry_id.data = entry.id
         return render_template("rate_entries.html", jam = jam, error = error,
             entry = entry, is_skipped_entry = is_skipped_entry, rate_form = rate_form,
-            skip_form = skip_form, participant = get_current_user())
+            skip_form = skip_form)
     else:
         # We have nothing left to vote on
         flash("You have no entries left to vote on. Thanks for participating.")
@@ -397,6 +418,12 @@ def show_entry(jam_slug, entry_slug, action=None):
                 flash("That username does not exist.")
             elif member in entry.team:
                 flash("That participant is already in the team.")
+            elif member.getEntryInJam(entry.jam):
+                flash("That participant has an entry for this jam. Look here!")
+                return redirect(member.getEntryInJam(entry.jam).url())
+            elif member.getTeamEntryInJam(entry.jam):
+                flash("That participant is already part of a team for this jam. Look here!")
+                return redirect(member.getTeamEntryInJam(entry.jam).url())
             else:
                 entry.team.append(member)
                 db.session.commit()
