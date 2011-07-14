@@ -1,6 +1,6 @@
 from flamejam import *
 from flamejam.models import Participant
-from flask import has_request_context, session, abort, request
+from flask import has_request_context, session, abort, request, flash
 from httplib import HTTPConnection, HTTPResponse
 import json
 
@@ -43,7 +43,8 @@ def require_login(message = "You need to be logged in to view this page."):
 
 def require_user(user):
     require_login()
-    if (isinstance(user, list) and not get_current_user() in user) or user != get_current_user():
+    islist = isinstance(user, list)
+    if (islist and not get_current_user() in user) or (not islist and user != get_current_user()):
         abort(403)
 
 def require_admin():
