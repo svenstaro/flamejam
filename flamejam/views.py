@@ -14,7 +14,14 @@ from flamejam.login import *
 @app.route('/')
 def index():
     jams = Jam.query.all()
-    return render_template('index.html', jams=jams)
+    active_count = 0
+    inactive_count = 0
+    for jam in jams:
+        if jam.getStatus().code == 4:
+            inactive_count += 1
+        else:
+            active_count += 1
+    return render_template('index.html', jams = jams, active_count = active_count, inactive_count = inactive_count)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

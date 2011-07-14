@@ -22,7 +22,7 @@
 
 <div class="columns">
     <div> <!-- Column 1 -->
-        <h2>About reddit game jam</h2>
+        <h2>About Reddit Game Jam</h2>
         <div class="info">
             <p>
                 A game jam is an event during which all participants <b>create
@@ -55,13 +55,12 @@
 
     <!-- Column 2 -->
     <div style="width: 50%">
-        <h2>Active Jams</h2>
-        <ul class="jamlist">
-        {% set active = false %}
+        {% if active_count %}
+        <h2>{{ active_count }} Active Jam{% if active_count != 1 %}s{% endif %}</h2>
 
+        <ul class="jamlist">
         {# Jams that haven't started yet #}
         {% for jam in jams if jam.start_time > current_datetime %}
-            {% set active = true %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
                 announced for {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }}
@@ -71,7 +70,6 @@
 
         {# Jams that are in progress #}
         {% for jam in jams if jam.start_time < current_datetime < jam.end_time %}
-            {% set active = true %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
                 is currently in progress! (ends in {{ current_datetime | humandelta(jam.end_time) }})
@@ -80,7 +78,6 @@
 
         {# Jams that have finished but are still in packaging period #}
         {% for jam in jams if jam.end_time < current_datetime < jam.packaging_deadline %}
-            {% set active = true %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
                 has finished and is in packaging phase (time left:
@@ -90,7 +87,6 @@
 
         {# Jams that are in rating period #}
         {% for jam in jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
-            {% set active = true %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
                 is in rating period for another {{ current_datetime | humandelta(jam.rating_end) }}
@@ -98,13 +94,14 @@
                 <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate entries now</a>
             </li>
         {% endfor %}
-
-        {% if not active %}
-        <p>There are no active jams right now.</p>
+        </ul>
+        {% else %}
+        <h2>No Active Jams</h2>
+        <div class="info"><p>There are no active jams right now.</p></div>
         {% endif %}
 
-        </ul>
-        <h2>Previous Jams</h2>
+        {% if inactive_count %}
+        <h2>{{ inactive_count }} Previous Jam{% if inactive_count != 1 %}s{% endif %}</h2>
         <ul class="jamlist">
         {% for jam in jams if jam.rating_end < current_datetime %}
             <li>
@@ -115,10 +112,14 @@
                 show the {{ jam.entries.all() | length }} entries
             </li>
         {% endfor %}
+        {% else %}
+        <h2>No Previous Jams</h2>
+        <div class="info"><p>There have not been any jams yet.</p></div>
+        {% endif %}
+
         </ul>
     </div>
 </div>
-
 
 <h2>Stuff to do</h2>
 <ul>
