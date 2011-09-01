@@ -7,8 +7,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flamejam.db'
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = 'lolsecret'
-app.config['REDDIT_SERVER'] = 'reddit.com'
-app.config['REDDIT_CONFIRM_THREAD'] = 'http://reddit.com/r/test/comments/iot3h/api_test/'
+#app.config['REDDIT_SERVER'] = 'reddit.com'
+#app.config['REDDIT_CONFIRM_THREAD'] = 'http://reddit.com/r/test/comments/iot3h/api_test/'
 db = SQLAlchemy(app)
 Markdown(app, safe_mode="escape")
 

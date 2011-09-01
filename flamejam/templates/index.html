@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>Reddit Game Jam - Home</h1>
+<h1>BaconGameJam - Home</h1>
 
 {% set counting = false %}
 {% for jam in jams if jam.start_time < current_datetime < jam.end_time and not counting %}
@@ -22,14 +22,16 @@
 
 <div class="columns">
     <div> <!-- Column 1 -->
-        <h2>About Reddit Game Jam</h2>
+        <h2>About BaconGameJam</h2>
         <div class="info">
             <p>
                 A game jam is an event during which all participants <b>create
                 games</b> according to a provided theme <b>within a short amount of time</b>
-                (usually between two days to a week). The Reddit Game Jam hosts game jams as
-                part of the wonderful <a href="http://reddit.com/r/redditgamejam" target="_blank">
-                Reddit community</a>.
+                (usually between two days to a week). The BaconGameJam was founded
+                as "RedditGameJam" on the wonderful
+                <a href="http://reddit.com/r/redditgamejam" target="_blank">
+                Reddit community</a>, and later renamed to BaconGameJam due
+                to trademark issues.
             </p>
             <p>
                 <b>Anybody can participate</b>, experienced or newbie, flash developer or
@@ -41,9 +43,12 @@
                 and of course karma.
             </p>
             <p>
-                Feel free to <a href="{{ url_for('register') }}">register and participate</a>. Please link your account with
-                your reddit account (i.e. use the same nickname). If you are not
-                already on reddit, <a href="http://www.reddit.com/login" target="_blank">go there and join</a>. You won't regret it!
+                Feel free to <a href="{{ url_for('register') }}">register and participate</a>, even
+                if you are not on <a href="http://reddit.com" target="_blank">reddit</a>
+                (but it wouldn't be to your disadvantage to
+                check it out!). If you do have an account on reddit, you are strongly
+                advised to link your BaconGameJam account with your reddit
+                account by using the same nickname!
             </p>
             <p>
                 More questions? Read the <a href="{{ url_for('faq') }}">FAQ</a>.

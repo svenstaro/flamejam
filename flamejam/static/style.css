@@ -213,8 +213,8 @@ div#HEADER h2 {
 }
 
 div#HEADER div#ICON {
-    background: url("/static/img/alien.png");
-    width: 46px;
+    background: url("/static/gfx/monitor.png");
+    width: 80px;
     height: 72px;
     display: block;
     float: left;
@@ -263,7 +263,7 @@ div#HEADER div#MINI_SEARCH form input#MINI_SEARCH_S:active {
 
 div#HEADER div#HEADLINE {
     color: #FFF;
-    margin-left: 70px;
+    margin-left: 100px;
     height: 54px;
 }
 
@@ -290,7 +290,7 @@ div#HEADER div#HEADLINE h1 a {
 
 div#HEADER div#MENU {
     color: #FFF;
-    margin-left: 70px;
+    margin-left: 100px;
 }
 
 div#HEADER div#MENU a,
@@ -857,7 +857,8 @@ ul.screenshots li div.caption {
 }
 
 .error-page .title {
-    font-family: 'Loved by the King', "URW Chancery L", script;
+    /* font-family: 'Loved by the King', "URW Chancery L", script; */
+    font-family: 'VT323', monospace;
     font-weight: bold;
     font-size: 30pt;
     position: absolute;
@@ -869,7 +870,8 @@ ul.screenshots li div.caption {
 }
 
 .error-page .text {
-    font-family: 'Loved by the King', "URW Chancery L", script;
+    /* font-family: 'Loved by the King', "URW Chancery L", script; */
+    font-family: 'VT323', monospace;
     font-weight: bold;
     font-size: 20pt;
     position: absolute;

@@ -71,34 +71,37 @@ def register():
         email = form.email.data
         receive_emails = form.receive_emails.data
         new_participant = Participant(username, password, email, receive_emails)
+        new_participant.is_verified = True
         db.session.add(new_participant)
         db.session.commit()
-        flash("Your account has been created, and is now waiting to be verified.")
-        return redirect(url_for('verify', username = username))
+        #flash("Your account has been created, and is now waiting to be verified.")
+        #return redirect(url_for('verify', username = username))
+        flash('Your account has been created, you can login now.')
+        return redirect(url_for('login'))
 
     return render_template('register.html', form=form, error=error)
 
-@app.route('/verify/<username>', methods = ["POST", "GET"])
-def verify(username):
-    participant_to_verify = Participant.query.filter_by(username = username).first_or_404()
-    if participant_to_verify.is_verified:
-        flash("%s's account is already validated." % participant_to_verify.username.capitalize())
-        return redirect(url_for('index'))
+#@app.route('/verify/<username>', methods = ["POST", "GET"])
+#def verify(username):
+#    participant_to_verify = Participant.query.filter_by(username = username).first_or_404()
+#    if participant_to_verify.is_verified:
+#        flash("%s's account is already validated." % participant_to_verify.username.capitalize())
+#        return redirect(url_for('index'))
 
-    form = VerifyForm()
-    submitted = False
+#    form = VerifyForm()
+#    submitted = False
 
-    if form.validate_on_submit():
-        submitted = True
-        if check_reddit(username, participant_to_verify.getVerificationHash()):
-            flash('Verification successful. You can login now.')
-            participant_to_verify.is_verified = True
-            db.session.commit()
-            return redirect(url_for('login'))
+#    if form.validate_on_submit():
+#        submitted = True
+#        if check_reddit(username, participant_to_verify.getVerificationHash()):
+#            flash('Verification successful. You can login now.')
+#            participant_to_verify.is_verified = True
+#            db.session.commit()
+#            return redirect(url_for('login'))
 
-    return render_template('verify.html', submitted = submitted,
-        participant_to_verify = participant_to_verify,
-        form = form, thread = app.config["REDDIT_CONFIRM_THREAD"])
+#    return render_template('verify.html', submitted = submitted,
+#        participant_to_verify = participant_to_verify,
+#        form = form, thread = app.config["REDDIT_CONFIRM_THREAD"])
 
 @app.route('/logout')
 def logout():

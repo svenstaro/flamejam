@@ -52,7 +52,8 @@ def require_admin():
     if not get_current_user().is_admin:
         abort(403)
 
-def check_reddit(username, hash):
+# Commented out because we removed reddit verification
+"""def check_reddit(username, hash):
     connection = HTTPConnection(app.config['REDDIT_SERVER'])
     url = app.config['REDDIT_CONFIRM_THREAD'] + ".json"
     data = ""
@@ -90,4 +91,4 @@ def check_reddit(username, hash):
                     if data["author"] == username and hash in data["body"]:
                         return True
 
-    return False
+    return False"""
