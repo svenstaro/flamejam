@@ -5,6 +5,19 @@
 {% block content %}
 <h1>{{ participant.username }}</h1>
 
+{% if current_user == participant %}
+<p>
+    <ul class="tabs">
+        {% if current_user.receive_emails %}
+        <li><a href="{{ url_for('disable_emails') }}">Disable Email Notifications</a></li>
+        {% else %}
+        <li><a href="{{ url_for('enable_emails') }}">Enable Email Notifications</a></li>
+        {% endif %}
+    </ul>
+</p>
+{% endif %}
+
+
 <div style="float: left;">
     <img class="icon big" width="64" height="64" src="{{ participant.getAvatar(64) }}" />
 </div>

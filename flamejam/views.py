@@ -70,9 +70,9 @@ def register():
         password = form.password.data
         email = form.email.data
         receive_emails = form.receive_emails.data
-        new_participant = Participant(username, 
-                password, 
-                email, 
+        new_participant = Participant(username,
+                password,
+                email,
                 False, # no admin
                 True,  # is verified
                 receive_emails)
@@ -144,30 +144,56 @@ def show_jam(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('show_jam.html', jam = jam)
 
-@app.route('/jams/<jam_slug>/edit_theme', methods=("GET", "POST"))
-def edit_theme(jam_slug):
+@app.route('/jams/<jam_slug>/edit', methods=("GET", "POST"))
+def edit_jam(jam_slug):
     require_admin()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
     if not 0 <= jam.getStatus().code <= 1:
-        # theme editing only during the jam and before
-        flash("The jam is over, you cannot edit the theme anymore.")
+        # editing only during the jam and before
+        flash("The jam is over, you cannot edit it anymore.")
         return redirect(jam.url())
 
-
-    form = EditJamTheme()
+    form = EditJam()
     if form.validate_on_submit():
+        # remember what has changed
+        changes = {}
+        changes["theme"] = [jam.theme != form.theme.data, jam.theme]
+        changes["title"] = [jam.title != form.title.data, jam.title]
+        changes["start_time"] = [jam.start_time != form.start_time.data, jam.start_time]
+
+        title_changed = jam.title != form.title.data
+        start_time_changed = jam.start_time != form.start_time.data
+
+        # change the options
         jam.theme = form.theme.data
+        jam.title = form.title.data
+        jam.start_time = form.start_time.data
         db.session.commit()
-        if form.email.data:
-            flash("TODO: Email notifications.")
-        flash("The jam theme for %s has been changed to %s." % (jam.title, jam.theme))
+
+        changed = (changes["theme"][0] or
+            changes["title"][0] or
+            changes["start_time"][0])
+
+        if not changed:
+            flash("Nothing has changed. Keep moving!")
+        else:
+            # inform users about change
+            if form.email.data:
+                flash("TODO: Email notifications.")
+                # render email
+                mail_content = render_template("emails/jam_changed.html", jam = jam, changes = changes)
+                mail_subject = "BaconGameJam: Jam \"%s\" changed" % changes["title"][1]
+
+            flash("The jam has been changed.")
         return redirect(jam.url())
 
     elif request.method != "POST":
+        form.title.data = jam.title
         form.theme.data = jam.theme
+        form.start_time.data = jam.start_time
 
-    return render_template('edit_jam_theme.html', jam = jam, form = form)
+    return render_template('edit_jam.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/countdown', methods=("GET", "POST"))
 def countdown(jam_slug):
@@ -486,11 +512,33 @@ def show_entry(jam_slug, entry_slug, action=None):
 
     return render_template('show_entry.html', entry=entry, form = comment_form)
 
+@app.route('/profile')
+def profile():
+    return redirect(get_current_user().url());
+
 @app.route('/participants/<username>/')
 @app.route('/users/<username>/')
 def show_participant(username):
     participant = Participant.query.filter_by(username = username).first_or_404()
     return render_template('show_participant.html', participant = participant)
+
+@app.route('/profile/disable_emails')
+def disable_emails():
+    require_login()
+    user = get_current_user()
+    user.receive_emails = False
+    db.session.commit()
+    flash("Your email notifications have been disabled.")
+    return redirect(user.url())
+
+@app.route('/profile/enable_emails')
+def enable_emails():
+    require_login()
+    user = get_current_user()
+    user.receive_emails = True
+    db.session.commit()
+    flash("Your email notifications have been enabled.")
+    return redirect(user.url())
 
 @app.route("/search")
 def search():

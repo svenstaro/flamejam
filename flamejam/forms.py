@@ -77,13 +77,13 @@ class VerifyForm(Form):
 
 class NewJam(Form):
     title = TextField("Jam title", validators=[Required(), Length(max=128)])
-    start_time = DateTimeField("Start time",
-            format="%Y-%m-%d %H:%M", validators=[Required()])
-    # Add remaining fields
+    start_time = DateTimeField("Start time", format="%Y-%m-%d %H:%M", validators=[Required()])
 
-class EditJamTheme(Form):
-    theme = TextField("New theme", validators=[Required(), Length(max=128)])
-    email = BooleanField("Send everyone an email about this theme.", default = True)
+class EditJam(Form):
+    title = TextField("Jam title", validators=[Required(), Length(max=128)])
+    theme = TextField("Theme", validators=[Required(), Length(max=128)])
+    start_time = DateTimeField("Start time", format="%Y-%m-%d %H:%M", validators=[Required()])
+    email = BooleanField("Send everyone an email about this change", default = True)
 
 class SubmitEditEntry(Form):
     title = TextField("Entry title", validators=[Required(), Length(max=128)])

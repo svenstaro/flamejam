@@ -26,7 +26,7 @@
         {% endif %}
 
         {% if status.code <= 1 and current_user.is_admin %}
-        <li><a href="{{ url_for('edit_theme', jam_slug = jam.slug) }}">Edit the theme</a></li>
+        <li><a href="{{ url_for('edit_jam', jam_slug = jam.slug) }}">Edit the jam</a></li>
         {% endif %}
     </ul>
 </p>
