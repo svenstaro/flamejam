@@ -12,12 +12,11 @@ db.drop_all()
 db.create_all()
 
 # Make users
-peter = Participant("peter", "omgdlaad21", "M8R-jejnbk@mailinator.com")
-paul = Participant("paul", "lol", "M8R-jejnbk@mailinator.com", is_admin=True,
-        is_verified=True)
-per = Participant("per", "lpdla", "M8R-jejnbk@mailinator.com", is_verified = True)
-pablo = Participant("pablo", "lad112", "M8R-jejnbk@mailinator.com")
-paddy = Participant("paddy", "rqtjio4j1", "M8R-jejnbk@mailinator.com")
+peter = Participant("peter", "omgdlaad21", "roflomg-peter@mailinator.com")
+paul = Participant("paul", "lol", "roflomg-paul@mailinator.com", is_admin=True, is_verified=True)
+per = Participant("per", "lpdla", "roflomg-per@mailinator.com", is_verified = True, receive_emails = False)
+pablo = Participant("pablo", "lad112", "roflomg-pablo@mailinator.com")
+paddy = Participant("paddy", "rqtjio4j1", "roflomg-paddy@mailinator.com")
 
 # Add users
 db.session.add(peter)
