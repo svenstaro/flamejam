@@ -6,6 +6,7 @@ from hashlib import sha512, md5
 from flamejam import app, db, filters
 from flask import url_for, Markup
 import re
+import random
 
 # rating:
 # Participant <one2many> RatingSkip <many2one> Entry
@@ -200,6 +201,11 @@ class Jam(db.Model):
     def getTopEntries(self):
         e = list(self.entries.all())
         e.sort(cmp = entryCompare)
+        return e
+
+    def getShuffledEntries(self):
+        e = list(self.entries.all())
+        random.shuffle(e)
         return e
 
 def entryCompare(left, right):
