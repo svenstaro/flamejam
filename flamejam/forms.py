@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flaskext.wtf import BaseForm, Form, TextField, TextAreaField, PasswordField,\
-        DateTimeField, SubmitField, SelectField, HiddenField, BooleanField
+        DateTimeField, SubmitField, SelectField, HiddenField, BooleanField, RecaptchaField
 from flaskext.wtf import Required, Length, EqualTo, Optional, NumberRange, Email,\
         ValidationError, URL
 from flaskext.wtf.html5 import IntegerField, EmailField
@@ -69,8 +69,8 @@ class ParticipantRegistration(Form):
     password = PasswordField("Password", validators=[Length(min=8, message = "Please enter a password of at least 8 characters.")])
     password2 = PasswordField("Password, again", validators=[EqualTo("password", "Passwords do not match.")])
     email = EmailField("Email", validators=[Email(message = "The email address you entered is invalid.")])
-    # Also use recaptcha here
     receive_emails = BooleanField("I want to receive email notifications.", default = True)
+    captcha = RecaptchaField()
 
 class VerifyForm(Form):
     pass
