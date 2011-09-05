@@ -1,9 +1,11 @@
 from flask import Flask
 from datetime import *
+from flaskext.mail import Mail
 from flaskext.sqlalchemy import SQLAlchemy
 from flaskext.markdown import Markdown
 
 app = Flask(__name__)
+mail = Mail(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flamejam.db'
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['SECRET_KEY'] = 'lolsecret'

@@ -29,6 +29,7 @@ You will need
 
  - Python 2.7
  - flask
+ - flask-mail
  - flask-sqlalchemy
  - flask-wtf
  - flask-login
