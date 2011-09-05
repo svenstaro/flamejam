@@ -1,0 +1,43 @@
+{% extends "emails/base.html" %}
+
+{% set old_title = changes["title"][1] %}
+{% set old_theme = changes["theme"][1] %}
+
+{% block content %}
+<a href="{{ jam.url() }}"><h2>Jam "{{ old_title }}" changed</h2></a>
+<div class="info">
+    <p>
+        You receive this notification because <a href="{{ current_user.url() }}">
+        {{ current_user.username }}</a> has edited the game jam <b>"{{ old_title }}"</b>.
+    </p>
+
+    {% if changes["title"][0] %}
+    <p>
+        The <b>new title</b> of this game jam is now <b>"{{ jam.title }}"</b>. Prior
+        to this change, the jam was know as <i>"{{ changes["title"][1] }}"</i>.
+    </p>
+    {% endif %}
+
+    {% if changes["start_time"][0] %}
+    <p>
+        It has also been decided that the game <b>will start</b>
+        {{ jam.start_time | humantime }}, which is exactly <b>{{ jam.start_time }}</b>.
+        This used to be <i>{{ changes["start_time"][1] }}</i> before this change.
+    </p>
+    {% endif %}
+
+    {% if changes["theme"][0] %}
+    <p>
+        The <b>theme</b> has been {% if old_theme %}set{% else %}changed{% endif %} to <b>"{{ jam.theme }}"</b>.
+        {% if old_theme %}Before, the theme was <i>"{{ old_theme }}"</i>, but
+        that is now outdated...{% endif %}
+    </p>
+    {% endif %}
+</div>
+<br />
+
+<div class="info">
+    <p>We hope to see you participating in this jam. To find out more about
+    the details, visit the <a href="{{ jam.url() }}">jam details page</a>.</p>
+</div>
+{% endblock %}
