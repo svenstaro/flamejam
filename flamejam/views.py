@@ -5,6 +5,7 @@ import random
 
 from flask import session, redirect, url_for, escape, request, \
         render_template, flash, abort
+from flaskext.mail import Message
 from flamejam import app
 
 from flamejam.models import *
@@ -128,6 +129,17 @@ def new_jam():
             db.session.add(new_jam)
             db.session.commit()
             flash('New jam added')
+
+            # Send out mails to all interesed users.
+            participants = Participant.query.filter_by(receive_emails=True).all()
+            with mail.connect() as conn:
+                for participant in participants:
+                    msg = Message("BaconGameJam")
+                    msg.body = "lol"
+                    msg.html = "<b>lol</b>"
+                    msg.recipients = [participant.email]
+                    conn.send(msg)
+
             return redirect(new_jam.url())
     return render_template('new_jam.html', form = form, error = error)
 
