@@ -3,3 +3,5 @@ env/
 flamejam.db
 *.psd
 *.swp
+flamejam.cfg
+recaptcha.cfg

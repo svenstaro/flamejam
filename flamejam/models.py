@@ -87,7 +87,7 @@ class Participant(db.Model):
         return url_for('show_participant', username = self.username)
 
     def getAvatar(self, size = 32):
-        return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
+        return "http://www.gravatar.com/avatar/{0}?s={1}&d=retro".format(md5(self.email.lower()).hexdigest(), size)
 
     def getLink(self, class_ = ""):
         s = 14
