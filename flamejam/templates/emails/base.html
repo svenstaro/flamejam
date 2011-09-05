@@ -1,8 +1,39 @@
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-
         <style>
+            body {
+                font-size: 9pt;
+                font-family: Verdana, Arial, sans-serif;
+                background: #333;
+                line-height: 1.4em;
+            }
+
+            a {
+                font-weight: bold;
+                color: #369;
+                text-decoration: none;
+            }
+
+            h1 {
+                font-weight: normal;
+                margin-top: 25px;
+                padding-bottom: 5px;
+                border-bottom: 2px solid #AAA;
+                color: #666;
+            }
+
+            h2 {
+                color: #369;
+                font-size: 18pt;
+                font-weight: normal;
+                margin-top: 30px;
+            }
+
+            .info {
+                background: #EEE;
+                padding: 5px 30px;
+            }
+
             #wrap {
                 width: 600px;
                 margin: 20px auto;
@@ -36,9 +67,6 @@
                 line-height: 52px;
             }
 
-            body {
-                font-size: 9pt;
-            }
         </style>
     </head>
     <body>
