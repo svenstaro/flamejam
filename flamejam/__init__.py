@@ -5,10 +5,12 @@ from flaskext.markdown import Markdown
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flamejam.db'
-app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ECHO'] = False
 app.config['SECRET_KEY'] = 'lolsecret'
 #app.config['REDDIT_SERVER'] = 'reddit.com'
 #app.config['REDDIT_CONFIRM_THREAD'] = 'http://reddit.com/r/test/comments/iot3h/api_test/'
+app.config.from_pyfile('../flamejam.cfg', silent=True)
+app.config.from_pyfile('../recaptcha.cfg', silent=True)
 db = SQLAlchemy(app)
 Markdown(app, safe_mode="escape")
 
