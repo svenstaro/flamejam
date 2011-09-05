@@ -31,7 +31,7 @@ class Participant(db.Model):
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
     email = db.Column(db.String(256), unique=True)
-    is_admin = db.Column(db.Boolean)
+    is_admin = db.Column(db.Boolean, default=False)
     is_verified = db.Column(db.Boolean)
     receive_emails = db.Column(db.Boolean)
     registered = db.Column(db.DateTime)
@@ -46,13 +46,14 @@ class Participant(db.Model):
     ratings = db.relationship('Rating', backref = 'participant', lazy='dynamic')
 
     def __init__(self, username, password, email, is_admin=False,
-            is_verified=False):
+            is_verified=False, receive_emails = True):
         self.username = username
         self.password = sha512(password+app.config['SECRET_KEY']).hexdigest()
         self.email = email
         self.is_admin = is_admin
         self.is_verified = is_verified
         self.registered = datetime.utcnow()
+        self.receive_emails = receive_emails
 
     def getVerificationHash(self):
         # combine a few properties, hash md5

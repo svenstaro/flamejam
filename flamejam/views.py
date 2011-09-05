@@ -70,8 +70,12 @@ def register():
         password = form.password.data
         email = form.email.data
         receive_emails = form.receive_emails.data
-        new_participant = Participant(username, password, email, receive_emails)
-        new_participant.is_verified = True
+        new_participant = Participant(username, 
+                password, 
+                email, 
+                False, # no admin
+                True,  # is verified
+                receive_emails)
         db.session.add(new_participant)
         db.session.commit()
         #flash("Your account has been created, and is now waiting to be verified.")
