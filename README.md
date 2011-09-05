@@ -4,7 +4,7 @@ flamejam - a game jam application using Flask
 Description
 -----------
 flamejam is a generic game jam application that uses the Flask microframework.
-It was initially created as a voting platforms for the [Reddit Game Jam](http://www.reddit.com/r/RedditGameJam). However,
+It was initially created as a voting platforms for the [BaconGameJam](http://www.reddit.com/r/BaconGameJam). However,
 it is generic and as such it is usable for any other game jam event.
 
 This application is designed to make sure that participants vote on other
@@ -18,8 +18,6 @@ following exceptions:
 
  - jquery
  - lightbox
- - 8-bit Reddit alien
- - Reddit alien drawing on error page
 
 These exceptions are subject to their own copyrights and licenses. This project only makes use of them.
 
@@ -39,6 +37,8 @@ You will need
 
 as well as their respective dependencies. I recommend using a virtualenv and pip
 to install all of those.
+
+A setup.sh script is provided for your convenience.
 
 Running
 -------
