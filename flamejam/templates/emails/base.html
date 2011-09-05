@@ -15,11 +15,11 @@
             }
 
             #email_note {
-                color: #111;
+                color: #000;
             }
 
             #email_note a {
-                color: #111;
+                color: #000;
                 text-decoration: underline;
                 font-weight: normal;
             }
@@ -52,10 +52,16 @@
             </div>
 
             <div id="email_note">
-                You received this email because you subscribed to email
-                notifications on <a href="{{ url_for('index') }}">bacongamejam.org</a>.
-                If you don't want to receive further emails, you can turn these
-                off on your <a href="{{ url_for('profile') }}">profile page</a>.
+                <p>
+                    You received this email to <i>{{ recipient.email }}</i> because you subscribed to email
+                    notifications on <a href="{{ url_for('index') }}">bacongamejam.org</a>.
+                    If you don't want to receive further emails, you can turn these
+                    off on your <a href="{{ url_for('profile') }}">profile page</a>. Your
+                    username was <i>{{ recipient.username }}</i>.
+                </p>
+                <p>
+                    All times are <a href="http://www.worldtimeserver.com/current_time_in_UTC.aspx" target="_blank">UTC/GMT</a>.
+                </p>
             </div>
         </div>
     </body>

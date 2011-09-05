@@ -120,32 +120,34 @@ def logout():
 def new_jam():
     require_admin()
 
-    error = None
     form = NewJam()
     if form.validate_on_submit():
         title = form.title.data
-        start_time = form.start_time.data
         new_slug = get_slug(title)
         if Jam.query.filter_by(slug = new_slug).first():
-            error = 'A jam with a similar title already exists.'
+            flash('A jam with a similar title already exists.')
         else:
+            start_time = form.start_time.data
             new_jam = Jam(title, get_current_user(), start_time)
+            new_jam.theme = form.theme.data
+            new_jam.end_time = start_time + timedelta(hours = form.duration.data)
             db.session.add(new_jam)
             db.session.commit()
-            flash('New jam added')
+            flash('New jam added.')
 
-            # Send out mails to all interesed users.
-            participants = Participant.query.filter_by(receive_emails=True).all()
+            # Send out mails to all interested users.
             with mail.connect() as conn:
+                participants = Participant.query.filter_by(receive_emails=True).all()
                 for participant in participants:
-                    msg = Message("BaconGameJam")
-                    msg.body = "lol"
-                    msg.html = "<b>lol</b>"
+                    msg = Message("BaconGameJam: Jam \"%s\" announced" % title)
+                    msg.html = render_template("emails/jam_announced.html", jam = new_jam, recipient = participant)
                     msg.recipients = [participant.email]
                     conn.send(msg)
+                flash("Email notifications have been sent.")
 
+            #return render_template("emails/jam_announced.html", jam = new_jam, recipient = get_current_user())
             return redirect(new_jam.url())
-    return render_template('new_jam.html', form = form, error = error)
+    return render_template('new_jam.html', form = form)
 
 @app.route('/jams/')
 def jams():
@@ -192,10 +194,14 @@ def edit_jam(jam_slug):
         else:
             # inform users about change
             if form.email.data:
-                flash("TODO: Email notifications.")
-                # render email
-                mail_content = render_template("emails/jam_changed.html", jam = jam, changes = changes)
-                mail_subject = "BaconGameJam: Jam \"%s\" changed" % changes["title"][1]
+                with mail.connect() as conn:
+                    participants = Participant.query.filter_by(receive_emails=True).all()
+                    for participant in participants:
+                        msg = Message("BaconGameJam: Jam \"%s\" changed" % changes["title"][1])
+                        msg.html = render_template("emails/jam_changed.html", jam = jam, changes = changes, recipient = participant)
+                        msg.recipients = [participant.email]
+                        conn.send(msg)
+                    flash("Email notifications have been sent.")
 
             flash("The jam has been changed.")
         return redirect(jam.url())

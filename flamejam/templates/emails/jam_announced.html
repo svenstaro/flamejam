@@ -1,0 +1,34 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+<a href="{{ jam.url() }}"><h2>Jam "{{ jam.title }}" announced</h2></a>
+
+<p>
+    Hello {{ recipient.username }}!
+</p>
+<p>
+    You receive this notification because <a href="{{ current_user.url() }}">
+    {{ current_user.username }}</a> has announced a new game jam on
+    <a href="{{ url_for('index') }}">bacongamejam.org</a>. We'd love to
+    see you participating{% if current_user.entries or current_user.team_entries %}
+    again{% endif %}, so mark the date in your calendar and create a great
+    game!
+</p>
+
+<p class="info">
+    <b>Title:</b> {{ jam.title }} <br/>
+    <b>Theme:</b> {% if jam.theme %}{{ jam.theme }}{% else %}<i>none yet</i>{% endif %} <br/>
+    <b>Starting:</b> {{ jam.start_time }} ({{ jam.start_time | humantime }})<br/>
+    <b>Ending:</b> {{ jam.end_time }} ({{ jam.end_time | humantime }})<br/>
+    <b>Duration: </b> {{ jam.start_time | humandelta(jam.end_time) }}
+</p>
+
+<p>
+    We hope to see you participating in this jam. To find out more about
+    the jam, visit the <a href="{{ jam.url() }}">jam details page</a>.
+</p>
+
+<p>
+    <i>The BaconGameJam Staff</i>
+</p>
+{% endblock %}

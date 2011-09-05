@@ -360,6 +360,11 @@ div#FOOTER div#FOOTER_NAVBAR div#FOOTER_NAVBAR_LEFT {
     float: left;
 }
 
+#FOOTER_NAVBAR_LEFT a {
+    color: #888;
+    font-weight: normal;
+}
+
 div#FOOTER div#FOOTER_NAVBAR ul li a {
     color: #FFF;
 }
