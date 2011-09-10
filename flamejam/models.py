@@ -83,8 +83,8 @@ class Participant(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
-    def url(self):
-        return url_for('show_participant', username = self.username)
+    def url(self, **values):
+        return url_for('show_participant', username = self.username, **values)
 
     def getAvatar(self, size = 32):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=retro".format(md5(self.email.lower()).hexdigest(), size)
@@ -196,8 +196,8 @@ class Jam(db.Model):
         else:
             return JamStatus(JamStatusCode.FINISHED, self.end_time)
 
-    def url(self):
-        return url_for('show_jam', jam_slug = self.slug)
+    def url(self, **values):
+        return url_for('show_jam', jam_slug = self.slug, **values)
 
     def getTopEntries(self):
         e = list(self.entries.all())
@@ -252,8 +252,8 @@ class Entry(db.Model):
     def __repr__(self):
         return '<Entry %r>' % self.title
 
-    def url(self, action = "", **kwargs):
-        return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action, **kwargs)
+    def url(self, action = "", **values):
+        return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action, **values)
 
     def getAverageRating(self):
         categories = ["gameplay", "graphics","audio","innovation","story","technical", "controls", "overall"]

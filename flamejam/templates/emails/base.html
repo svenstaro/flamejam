@@ -73,8 +73,8 @@
 
         <div id="wrap">
             <div id="page">
-                <img src="{{ url_for('static', filename='gfx/bacon.png') }}" style="float: left;"/>
-                <img src="{{ url_for('static', filename='gfx/bacon.png') }}" style="float: right;"/>
+                <img src="{{ url_for('static', filename='gfx/bacon.png', _external=True) }}" style="float: left;"/>
+                <img src="{{ url_for('static', filename='gfx/bacon.png', _external=True) }}" style="float: right;"/>
                 <div id="title">Bacon News!</div>
                 {% block content %} {% endblock %}
             </div>
@@ -82,9 +82,9 @@
             <div id="email_note">
                 <p>
                     You received this email to <i>{{ recipient.email }}</i> because you subscribed to email
-                    notifications on <a href="{{ url_for('index') }}">bacongamejam.org</a>.
+                    notifications on <a href="{{ url_for('index', _external=True) }}">bacongamejam.org</a>.
                     If you don't want to receive further emails, you can turn these
-                    off on your <a href="{{ url_for('profile') }}">profile page</a>. Your
+                    off on your <a href="{{ url_for('profile', _external=True) }}">profile page</a>. Your
                     username was <i>{{ recipient.username }}</i>.
                 </p>
                 <p>

@@ -1,15 +1,15 @@
 {% extends "emails/base.html" %}
 
 {% block content %}
-<a href="{{ jam.url() }}"><h2>Jam "{{ jam.title }}" announced</h2></a>
+<a href="{{ jam.url(_external=True) }}"><h2>Jam "{{ jam.title }}" announced</h2></a>
 
 <p>
     Hello {{ recipient.username }}!
 </p>
 <p>
-    You receive this notification because <a href="{{ current_user.url() }}">
+    You receive this notification because <a href="{{ current_user.url(_external=True) }}">
     {{ current_user.username }}</a> has announced a new game jam on
-    <a href="{{ url_for('index') }}">bacongamejam.org</a>. We'd love to
+    <a href="{{ url_for('index', _external=True) }}">bacongamejam.org</a>. We'd love to
     see you participating{% if current_user.entries or current_user.team_entries %}
     again{% endif %}, so mark the date in your calendar and create a great
     game!
@@ -25,7 +25,7 @@
 
 <p>
     We hope to see you participating in this jam. To find out more about
-    the jam, visit the <a href="{{ jam.url() }}">jam details page</a>.
+    the jam, visit the <a href="{{ jam.url(_external=True) }}">jam details page</a>.
 </p>
 
 <p>

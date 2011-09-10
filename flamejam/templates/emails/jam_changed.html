@@ -4,13 +4,13 @@
 {% set old_theme = changes["theme"][1] %}
 
 {% block content %}
-<a href="{{ jam.url() }}"><h2>Jam "{{ old_title }}" changed</h2></a>
+<a href="{{ jam.url(_external=True) }}"><h2>Jam "{{ old_title }}" changed</h2></a>
 
 <p>
     Hello {{ recipient.username }}!
 </p>
 <p>
-    You receive this notification because <a href="{{ current_user.url() }}">
+    You receive this notification because <a href="{{ current_user.url(_external=True) }}">
     {{ current_user.username }}</a> has edited the options of the game jam
     <b>"{{ old_title }}"</b>.
 </p>
@@ -40,7 +40,7 @@
 
 <p>
     We hope to see you participating in this jam. To find out more about
-    the jam, visit the <a href="{{ jam.url() }}">jam details page</a>.
+    the jam, visit the <a href="{{ jam.url(_external=True) }}">jam details page</a>.
 </p>
 
 <p>
