@@ -65,7 +65,7 @@
         </div>
         <div id="CONTENT">
             <div class="_announcement">
-                Annoucement: {{ last_announcement.text }} [{{ last_announcement.posted | humantime }}]
+                Announcement: {{ last_announcement.text }} [{{ last_announcement.posted | humantime }}]
             </div>
             {% for message in get_flashed_messages() %}
                 <div class="_flash">{{ message }}</div>
