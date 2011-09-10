@@ -65,7 +65,9 @@
         </div>
         <div id="CONTENT">
             <div class="_announcement">
-                Announcement: {{ last_announcement.text }} [{{ last_announcement.posted | humantime }}]
+                {% if last_announcement.text %}
+                    Announcement: {{ last_announcement.text }} [{{ last_announcement.posted | humantime }}]
+                {% endif %}
             </div>
             {% for message in get_flashed_messages() %}
                 <div class="_flash">{{ message }}</div>
