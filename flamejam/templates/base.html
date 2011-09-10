@@ -44,6 +44,9 @@
                 <div id="LOGIN">
                     <ul>
                         {% if current_user %}
+                            {% if current_user.is_admin %}
+                            <li>Admin: <a href="{{ url_for('new_jam') }}">new jam</a></li>
+                            {% endif %}
                             <li>Logged in as <a href="{{ current_user.url() }}">{{ current_user.username }}</a></li>
                             <li><a href="{{ url_for('logout') }}">log out</a></li>
                         {% else %}

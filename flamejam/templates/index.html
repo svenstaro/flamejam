@@ -125,12 +125,4 @@
         </ul>
     </div>
 </div>
-
-<h2>Stuff to do</h2>
-<ul>
-    {% if current_user and current_user.is_admin %}
-    <li><a href="{{ url_for('new_jam') }}">New Jam</a></li>
-    {% endif %}
-    <li><a href="{{ url_for('contact') }}">Contact</a></li>
-</ul>
 {% endblock %}
