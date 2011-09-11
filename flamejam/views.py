@@ -687,6 +687,10 @@ def faq(page = ""):
 def links():
     return render_template('links.html')
 
+@app.route('/subreddit')
+def subreddit():
+    return redirect("http://www.reddit.com/r/bacongamejam")
+
 @app.errorhandler(404)
 @app.errorhandler(403)
 @app.errorhandler(500)

@@ -57,7 +57,7 @@
                 </div>
                 <div id="NAVBAR">
                     <ul>
-                        {% for key, caption in [("index","home"),("announcements","announcements"),("rules","rulez"),("statistics","stats")] %}
+                        {% for key, caption in [("index","home"),("announcements","announcements"),("rules","rulez"),("statistics","stats"),("subreddit","subreddit")] %}
                             {% set current = request.endpoint and request.endpoint.startswith(key) %}
                             <li><a {% if current %}class="current"{% endif %} href="{{ url_for( key ) }}">{{caption}}</a></li>
                         {% endfor %}
