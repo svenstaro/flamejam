@@ -22,9 +22,9 @@ function countdown() {
             return;
         }
 
-	var yymmdd, hhmmss;
-	yymmdd = t.split(" ")[0].split("-");
-	hhmmss = t.split(" ")[1].split(".")[0].split(":");
+        var yymmdd, hhmmss;
+        yymmdd = t.split(" ")[0].split("-");
+        hhmmss = t.split(" ")[1].split(".")[0].split(":");
 	
         var end_utc = new Date(yymmdd[0], yymmdd[1] - 1, yymmdd[2], hhmmss[0], hhmmss[1], hhmmss[2], 0);
         var end_utc_msec = end_utc.getTime();
@@ -80,7 +80,7 @@ function countdown() {
             $(this).find(".time").text(times.join(":"));
         }
         /*$(this).attr("time", times.join(":"));
-*/
+        */
     });
 
     setTimeout(countdown, 1000);
