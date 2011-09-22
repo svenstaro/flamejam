@@ -7,6 +7,11 @@ $.fn.countdown = function() {
 
 };
 
+function isInvalidDate(date) {
+        return isNaN(date.getTime());
+}
+
+
 function leadingZero(num, count) {
     var r = num + '';
     while(r.length < count) {
@@ -21,12 +26,11 @@ function countdown() {
         if(t == null) {
             return;
         }
-
-        var yymmdd, hhmmss;
-        yymmdd = t.split(" ")[0].split("-");
-        hhmmss = t.split(" ")[1].split(".")[0].split(":");
-	
-        var end_utc = new Date(yymmdd[0], yymmdd[1] - 1, yymmdd[2], hhmmss[0], hhmmss[1], hhmmss[2], 0);
+        
+        var end_utc = new Date(t);
+        if (isNaN(end_utc.getTime())) {
+                end_utc = new Date(t.split(".")[0].replace(/-/g, "/"));
+        }
         var end_utc_msec = end_utc.getTime();
 
         var local = new Date();
