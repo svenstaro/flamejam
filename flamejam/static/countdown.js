@@ -7,10 +7,6 @@ $.fn.countdown = function() {
 
 };
 
-function isInvalidDate(date) {
-        return isNaN(date.getTime());
-}
-
 
 function leadingZero(num, count) {
     var r = num + '';
