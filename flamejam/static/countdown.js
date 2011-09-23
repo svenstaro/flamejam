@@ -7,6 +7,7 @@ $.fn.countdown = function() {
 
 };
 
+
 function leadingZero(num, count) {
     var r = num + '';
     while(r.length < count) {
@@ -21,8 +22,11 @@ function countdown() {
         if(t == null) {
             return;
         }
-
+        
         var end_utc = new Date(t);
+        if (isNaN(end_utc.getTime())) {
+                end_utc = new Date(t.split(".")[0].replace(/-/g, "/"));
+        }
         var end_utc_msec = end_utc.getTime();
 
         var local = new Date();
@@ -85,3 +89,4 @@ function countdown() {
 $(document).ready(function() {
     countdown();
 });
+
