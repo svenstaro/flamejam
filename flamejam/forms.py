@@ -43,7 +43,7 @@ class UsernameExists(object):
             raise ValidationError("The username does not exist.")
 
 class LoginValidator(object):
-    def __init__(self, pw_field, message_username = "The username is incorrect.", message_password = "The password is incorrect."):
+    def __init__(self, pw_field, message_username = "The username or password is incorrect.", message_password = "The username or password is incorrect."):
         self.pw_field = pw_field
         self.message_username = message_username
         self.message_password = message_password
