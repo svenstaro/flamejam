@@ -41,21 +41,16 @@ def login():
         username = form.username.data
         password = sha512(form.password.data+app.config['SECRET_KEY']).hexdigest()
         participant = Participant.query.filter_by(username=username).first()
-        if not participant:
-            error = 'Invalid username'
-        elif not participant.password == password:
-            error = 'Invalid password'
+        if not login_as(participant):
+            # not verified
+            return redirect(url_for("verify", username = username))
+        elif "next" in session:
+            # no redirect where we wanted to go
+            flash('You were logged in and redirected.')
+            return redirect(session.pop("next"))
         else:
-            if not login_as(participant):
-                # not verified
-                return redirect(url_for("verify", username = username))
-            elif "next" in session:
-                # no redirect where we wanted to go
-                flash('You were logged in and redirected.')
-                return redirect(session.pop("next"))
-            else:
-                flash('You were logged in.')
-                return redirect(url_for('index'))
+            flash('You were logged in.')
+            return redirect(url_for('index'))
     return render_template('login.html', form=form, error=error)
 
 @app.route('/register', methods=['GET', 'POST'])
