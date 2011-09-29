@@ -118,7 +118,8 @@
                 Rating progress:
                 {{ current_user.getRatingCount(jam) }} /
                 {{ entry.jam.entries.all() | length }} rated,
-                {{ current_user.getSkippedCount(jam) }} skipped
+                {{ current_user.getSkippedCount(jam) }} skipped,
+                {{ my_entries }} created by you
             </li>
         </ul>
 

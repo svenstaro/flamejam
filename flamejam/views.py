@@ -353,10 +353,12 @@ def rate_entries(jam_slug, action = None):
     rated_entries = []
     skipped_entries = []
     new_entries = []
+    my_entries = 0
 
     for pair in pairs:
         # ignore entries by the user
         if get_current_user() == pair[0].participant or get_current_user() in pair[0].team:
+            my_entries = my_entries + 1
             continue
 
         if get_current_user().ratedEntry(pair[0]):
@@ -387,7 +389,7 @@ def rate_entries(jam_slug, action = None):
         skip_form.entry_id.data = entry.id
         return render_template("rate_entries.html", jam = jam, error = error,
             entry = entry, is_skipped_entry = is_skipped_entry, rate_form = rate_form,
-            skip_form = skip_form)
+            skip_form = skip_form, my_entries = my_entries)
     else:
         # We have nothing left to vote on
         flash("You have no entries left to vote on. Thanks for participating.")
