@@ -118,7 +118,8 @@
                 Rating progress:
                 {{ current_user.getRatingCount(jam) }} /
                 {{ entry.jam.entries.all() | length }} rated,
-                {{ current_user.getSkippedCount(jam) }} skipped
+                {{ current_user.getSkippedCount(jam) }} skipped,
+                {{ my_entries }} created by you
             </li>
         </ul>
 
@@ -140,7 +141,6 @@
                 <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." width="80" height="60" />
                 {% endif %}
             </a>
-
             <div class="entry-list-author">
                 {% if current_user in e.team or current_user == e.participant %}
                 <span class="icon-16 icon-16-rated"></span> <span style="color: #080">yours</span>
