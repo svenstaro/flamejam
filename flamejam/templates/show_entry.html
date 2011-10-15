@@ -62,7 +62,7 @@
                     {% endif %}
 
                     {% if package.type in ["hg", "svn", "git"] %}
-                    <b>{{ package.typeString() }}:</b> <span class="repo-url">{{ package.url }}</span>
+                    <b>{{ package.typeString() }}:</b> <a class="repo-url" href="{{ package.url }}">{{ package.url }}</a>
                     {% else %}
                     <a href="{{ package.url }}">{{ package.typeString() }}</a>
                     {% endif %}
