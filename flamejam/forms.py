@@ -33,7 +33,7 @@ class MatchesRegex(object):
         self.message = message
 
     def __call__(self, form, field):
-        if re.match(self.regex, field.data):
+        if re.search(self.regex, field.data):
             raise ValidationError(self.message.format(self.regex))
 
 class UsernameExists(object):
