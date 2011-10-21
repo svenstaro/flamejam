@@ -43,7 +43,7 @@ def login():
         participant = Participant.query.filter_by(username=username).first()
         if not login_as(participant):
             # not verified
-            return redirect(url_for("verify", username = username))
+            return redirect(url_for("verify", username=username))
         elif "next" in session:
             # no redirect where we wanted to go
             flash('You were logged in and redirected.')
@@ -70,38 +70,59 @@ def register():
                 password,
                 email,
                 False, # no admin
-                True,  # is verified
+                False,  # is verified
                 receive_emails)
-        db.session.add(new_participant)
-        db.session.commit()
-        #flash("Your account has been created, and is now waiting to be verified.")
-        #return redirect(url_for('verify', username = username))
-        flash('Your account has been created, you can login now.')
-        return redirect(url_for('login'))
+        
+    db.session.add(new_participant)
+    db.session.commit()
+
+    msg = Message("Welcome to Bacon Game Jam, " + username, 
+        recipients=[email],
+        sender=("bgj","noreply@bacongamejam.org"))
+
+    msg.body = "Click the following link to verify your registration " + \
+        "http://bacongamejam.org/verify/" + username + "/" + \
+        new_participant.getVerificationHash()
+    mail.send(msg)
+
+    flash("Your account has been created, confirm your email to verify.")
+    return redirect(url_for('verify_status', username=username))
 
     return render_template('register.html', form=form, error=error)
 
-#@app.route('/verify/<username>', methods = ["POST", "GET"])
-#def verify(username):
-#    participant_to_verify = Participant.query.filter_by(username = username).first_or_404()
-#    if participant_to_verify.is_verified:
-#        flash("%s's account is already validated." % participant_to_verify.username.capitalize())
-#        return redirect(url_for('index'))
+@app.route('/verify_status/', methods=["GET"])
+def verify_status():
 
-#    form = VerifyForm()
-#    submitted = False
+    username = request.args.get('username', '')
+    submitted = request.args.get('submitted', None)
+    participant = Participant.query.filter_by(username = username).first_or_404()
 
-#    if form.validate_on_submit():
-#        submitted = True
-#        if check_reddit(username, participant_to_verify.getVerificationHash()):
-#            flash('Verification successful. You can login now.')
-#            participant_to_verify.is_verified = True
-#            db.session.commit()
-#            return redirect(url_for('login'))
+    if participant.is_verified:
+        flash("%s's account is already validated." % participant.username.capitalize())
+        return redirect(url_for('index'))
 
-#    return render_template('verify.html', submitted = submitted,
-#        participant_to_verify = participant_to_verify,
-#        form = form, thread = app.config["REDDIT_CONFIRM_THREAD"])
+    return render_template('verify_status.html', submitted=submitted, username=username)
+
+@app.route('/verify/<username>/<verification>', methods=["GET"])
+def verify(username, verification):
+
+    participant = Participant.query.filter_by(username = username).first_or_404()
+
+    if participant.is_verified:
+        flash("%s's account is already validated." % participant_to_verify.username.capitalize())
+        return redirect(url_for('index'))
+    
+    # verification success
+    if verification == participant.getVerificationHash():
+        participant.is_verified = True
+        db.session.commit()
+
+        flash("Your email has been confirmed, you may now login")
+        return redirect(url_for('login'))
+
+    # verification failure
+    else:
+        return redirect(url_for('verify_status', username=username, submitted=True))
 
 @app.route('/logout')
 def logout():
