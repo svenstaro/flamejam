@@ -43,7 +43,7 @@ def login():
         participant = Participant.query.filter_by(username=username).first()
         if not login_as(participant):
             # not verified
-            return redirect(url_for("verify", username=username))
+            return redirect(url_for("verify_status", username=username))
         elif "next" in session:
             # no redirect where we wanted to go
             flash('You were logged in and redirected.')
@@ -80,9 +80,9 @@ def register():
             recipients=[email],
             sender=("bgj","noreply@bacongamejam.org"))
 
-        msg.body = "Click the following link to verify your registration " + \
-            "http://bacongamejam.org/verify/" + username + "/" + \
-            new_participant.getVerificationHash()
+        msg.html = render_template("emails/verification.html",
+                                   recipient=new_participant)
+        msg.recipients = [new_participant.email]
         mail.send(msg)
 
         flash("Your account has been created, confirm your email to verify.")
@@ -90,10 +90,35 @@ def register():
 
     return render_template('register.html', form=form, error=error)
 
-@app.route('/verify_status/', methods=["GET"])
-def verify_status():
+@app.route('/verify/', methods=["POST", "GET"])
+def verify_send():
+    if request.method == 'GET':
+        return redirect(url_for('index'))
 
-    username = request.args.get('username', '')
+    username = request.form.get('username', "")
+    print('username = ' + username)
+    participant = Participant.query.filter_by(username = username).first_or_404()
+
+    if participant.is_verified:
+        flash("%s's account is already validated." % participant.username.capitalize())
+        return redirect(url_for('index'))
+
+
+    msg = Message("Welcome to Bacon Game Jam, " + username, 
+                  recipients=[participant.email],
+                  sender=("bgj","noreply@bacongamejam.org"))
+
+    msg.html = render_template("emails/verification.html",
+                               recipient=participant)
+
+    msg.recipients = [participant.email]
+    mail.send(msg)
+
+    flash('Verification has been resent, check your email')
+    return redirect(url_for('verify_status', username=username))
+
+@app.route('/verify/<username>', methods=["GET"])
+def verify_status(username):
     submitted = request.args.get('submitted', None)
     participant = Participant.query.filter_by(username = username).first_or_404()
 
@@ -109,7 +134,7 @@ def verify(username, verification):
     participant = Participant.query.filter_by(username = username).first_or_404()
 
     if participant.is_verified:
-        flash("%s's account is already validated." % participant_to_verify.username.capitalize())
+        flash("%s's account is already validated." % participant.username.capitalize())
         return redirect(url_for('index'))
     
     # verification success

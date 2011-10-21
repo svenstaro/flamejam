@@ -4,10 +4,11 @@
 {% block content %}
 <h1>Verify your account</h1>
 
-
 <div class="info">
-    <p> {{username}}'s account is awaiting verification, please confirm your email. </p>
-
+    <p>
+      {{username}}'s account currently pending verification, please
+      confirm your email.
+    </p>
     <hr />
 	
     {% if submitted %}
@@ -18,8 +19,11 @@
     	<hr />
     {% endif %}
     
-    {# TODO: allow verification to be re-sent if necessary #}
-    <button type="button">Resend verification email</button>
-
+    <form action="{{ url_for('verify_send') }}" method="POST">
+      <input type="hidden" name="username" value="{{ username }}"></input>
+      <button type="submit">
+        Resend verification email
+      </button>
+    </form>
 </div>
 {% endblock %}
