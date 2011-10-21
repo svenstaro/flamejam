@@ -73,20 +73,20 @@ def register():
                 False,  # is verified
                 receive_emails)
         
-    db.session.add(new_participant)
-    db.session.commit()
+        db.session.add(new_participant)
+        db.session.commit()
 
-    msg = Message("Welcome to Bacon Game Jam, " + username, 
-        recipients=[email],
-        sender=("bgj","noreply@bacongamejam.org"))
+        msg = Message("Welcome to Bacon Game Jam, " + username, 
+            recipients=[email],
+            sender=("bgj","noreply@bacongamejam.org"))
 
-    msg.body = "Click the following link to verify your registration " + \
-        "http://bacongamejam.org/verify/" + username + "/" + \
-        new_participant.getVerificationHash()
-    mail.send(msg)
+        msg.body = "Click the following link to verify your registration " + \
+            "http://bacongamejam.org/verify/" + username + "/" + \
+            new_participant.getVerificationHash()
+        mail.send(msg)
 
-    flash("Your account has been created, confirm your email to verify.")
-    return redirect(url_for('verify_status', username=username))
+        flash("Your account has been created, confirm your email to verify.")
+        return redirect(url_for('verify_status', username=username))
 
     return render_template('register.html', form=form, error=error)
 
