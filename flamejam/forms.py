@@ -42,6 +42,12 @@ class UsernameExists(object):
         if not u:
             raise ValidationError("The username does not exist.")
 
+class EmailExists(object):
+    def __call__(self, form, field):
+        e = models.Participant.query.filter_by(email = field.data).first()
+        if not e:
+            raise ValidationError("That email does not exist")
+
 class LoginValidator(object):
     def __init__(self, pw_field, message_username = "The username or password is incorrect.", message_password = "The username or password is incorrect."):
         self.pw_field = pw_field
@@ -68,7 +74,9 @@ class ParticipantRegistration(Form):
         Length(min=3, max=80, message="You have to enter a username of 3 to 80 characters length.")])
     password = PasswordField("Password", validators=[Length(min=8, message = "Please enter a password of at least 8 characters.")])
     password2 = PasswordField("Password, again", validators=[EqualTo("password", "Passwords do not match.")])
-    email = EmailField("Email", validators=[Email(message = "The email address you entered is invalid.")])
+    email = EmailField("Email", validators=[
+            Not(EmailExists(), message = "That email address is already in use."),
+            Email(message = "The email address you entered is invalid.")])
     receive_emails = BooleanField("I want to receive email notifications.", default = True)
     captcha = RecaptchaField()
 

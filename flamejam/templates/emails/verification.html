@@ -1,0 +1,30 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+
+<p>
+    Hello {{ recipient.username }}, welcome to BaconGameJam!
+</p>
+
+<p>
+    You have recieved this email to confirm your ownership of the email
+    given during sign up for the user {{ recipient.username }}.
+</p>
+
+<p>
+    To verify your account, please visit the following verification
+    link:
+
+    <a href="{{ url_for('verify', username=recipient.username,
+             verification=recipient.getVerificationHash(),
+             _external=True) }}">
+        {{ url_for('verify', username=recipient.username,
+        verification=recipient.getVerificationHash(),
+        _external=True) }}
+    </a>
+</p>
+
+<p>
+    <i>The BaconGameJam Staff</i>
+</p>
+{% endblock %}
