@@ -73,10 +73,7 @@ def register():
                 False, # no admin
                 False,  # is verified
                 receive_emails)
-        
-        db.session.add(new_participant)
-        db.session.commit()
-
+                
         msg = Message("Welcome to Bacon Game Jam, " + username, 
             recipients=[email],
             sender=("bgj","noreply@bacongamejam.org"))
@@ -85,6 +82,9 @@ def register():
                                    recipient=new_participant)
         msg.recipients = [new_participant.email]
         mail.send(msg)
+
+        db.session.add(new_participant)
+        db.session.commit()
 
         flash("Your account has been created, confirm your email to verify.")
         return redirect(url_for('verify_status', username=username))
