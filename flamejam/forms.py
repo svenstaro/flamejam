@@ -52,7 +52,7 @@ class LoginValidator(object):
         u = models.Participant.query.filter_by(username = field.data).first()
         if not u:
             raise ValidationError(self.message_username)
-        elif u.password != sha512(form[self.pw_field].data+app.config['SECRET_KEY']).hexdigest():
+        elif u.password != sha512((form[self.pw_field].data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest():
             raise ValidationError(self.message_password)
 
 ############## FORMS ####################
