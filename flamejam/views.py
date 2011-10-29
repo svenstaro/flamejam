@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from hashlib import sha512
 from random import randint
 import random
+import smtplib
 
 from flask import session, redirect, url_for, escape, request, \
         render_template, flash, abort
@@ -739,6 +740,11 @@ def subreddit():
 @app.errorhandler(500)
 def error(error):
     return render_template("error.html", error = error), error.code
+
+@app.errorhandler(smtplib.SMTPRecipientsRefused)
+def invalid_email(exception):
+    flash("Invalid email address.")
+    return redirect(url_for('register'))
 
 @app.errorhandler(flamejam.login.LoginRequired)
 def login_required(exception):
