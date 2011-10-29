@@ -39,7 +39,7 @@ def login():
     form = ParticipantLogin()
     if form.validate_on_submit():
         username = form.username.data
-        password = sha512(form.password.data+app.config['SECRET_KEY']).hexdigest()
+        password = sha512((form.password.data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
         participant = Participant.query.filter_by(username=username).first()
         if not login_as(participant):
             # not verified
