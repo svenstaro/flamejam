@@ -80,6 +80,7 @@ class NewJam(Form):
     theme = TextField("Theme", validators=[Required(), Length(max=128)])
     start_time = DateTimeField("Start time", format="%Y-%m-%d %H:%M", validators=[Required()])
     duration = IntegerField("Duration, in hours", validators=[NumberRange(min = 1), Required()], default = 48)
+    team_jam = BooleanField("Team Jam", default = False)
 
 class EditJam(Form):
     title = TextField("Jam title", validators=[Required(), Length(max=128)])
