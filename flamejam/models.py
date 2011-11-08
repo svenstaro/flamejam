@@ -152,16 +152,18 @@ class Jam(db.Model):
     end_time = db.Column(db.DateTime) # The jamming phase ends at this moment
     packaging_deadline = db.Column(db.DateTime) # Packaging ends at this moment
     rating_end = db.Column(db.DateTime) # Rating period ends and jam is over
+    team_jam = db.Column(db.Boolean)
     entries = db.relationship('Entry', backref='jam', lazy='dynamic')
     author_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
 
     def __init__(self, title, author, start_time, end_time=None,
-            packaging_deadline=None, voting_end=None, theme = ''):
+            packaging_deadline=None, voting_end=None, team_jam=False, theme = ''):
         self.title = title
         self.slug = get_slug(title)
         self.start_time = start_time
         self.theme = theme
         self.author = author
+        self.team_jam = team_jam
 
         if end_time is None:
             self.end_time = start_time + timedelta(days=2)

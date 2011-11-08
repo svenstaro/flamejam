@@ -17,7 +17,9 @@
 <p>
     <ul class="tabs">
         <li><a href="{{ entry.url('edit') }}">Edit entry</a></li>
-        <li><a href="{{ entry.url('add_team_member') }}">Add team member</a></li>
+        {% if entry.jam.team_jam %}
+            <li><a href="{{ entry.url('add_team_member') }}">Add team member</a></li>
+        {% endif %}
         <li><a href="{{ entry.url('add_screenshot') }}">Add screenshot</a></li>
         <li><a href="{{ entry.url('add_package') }}">Add package</a></li>
     </ul>
