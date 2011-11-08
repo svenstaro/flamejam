@@ -173,6 +173,7 @@ def new_jam():
             new_jam = Jam(title, get_current_user(), start_time)
             new_jam.theme = form.theme.data
             new_jam.end_time = start_time + timedelta(hours = form.duration.data)
+            new_jam.team_jam = form.team_jam.data
             db.session.add(new_jam)
             db.session.commit()
             flash('New jam added.')
@@ -522,6 +523,11 @@ def show_entry(jam_slug, entry_slug, action=None):
     if action == "add_team_member":
         require_user(entry.participant)
 
+        jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+        if jam.team_jam == False:
+            flash("This jam is not a team jam.")
+            return redirect(entry.url())
+
         team_form = EntryAddTeamMember()
         if team_form.validate_on_submit():
             member = Participant.query.filter_by(username = team_form.username.data).first_or_404()
@@ -568,6 +574,11 @@ def show_entry(jam_slug, entry_slug, action=None):
     if action == "remove_team_member":
         require_user(entry.participant)
 
+        jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+        if jam.team_jam == False:
+            flash("This jam is not a team jam.")
+            return redirect(entry.url())
+
         remove_id = request.args.get("remove_id", "0")
         member = Participant.query.get(remove_id)
         db.session.commit()
@@ -578,6 +589,12 @@ def show_entry(jam_slug, entry_slug, action=None):
 
     if action == "quit":
         require_user(list(entry.team))
+
+        jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+        if jam.team_jam == False:
+            flash("This jam is not a team jam.")
+            return redirect(entry.url())
+
         entry.team.remove(get_current_user())
         db.session.commit()
         flash("You have been removed from the team.")
