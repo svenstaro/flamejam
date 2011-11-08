@@ -103,10 +103,6 @@
 
 <h2>Detailed Ratings</h2>
 
-{% if entry.jam.getStatus().code != 4 %}
-<p>The voting for this jam is not over, so ratings are hidden.</p>
-{% else %}
-{% if entry.ratings.all() %}
 <table class="ratings">
     <tr>
         <th>Participant</th>
@@ -121,6 +117,30 @@
         <th class="score"><span class="icon-16 icon-16-average"        title="average"></span></th>
         <th>Notes</th>
     </tr>
+{% if entry.jam.getStatus().code != 4 %}
+
+    {# check if the user has rated this entry #}
+    {% set rating = entry.ratings.filter_by(participant = current_user).first() %}
+    {% if rating %}
+        <tr>
+        <td>{{ rating.participant.getLink() }}</td>
+        <td class="score">{{ rating.score_gameplay }}</td>
+        <td class="score">{{ rating.score_graphics }}</td>
+        <td class="score">{{ rating.score_audio }}</td>
+        <td class="score">{{ rating.score_innovation }}</td>
+        <td class="score">{{ rating.score_story }}</td>
+        <td class="score">{{ rating.score_technical }}</td>
+        <td class="score">{{ rating.score_controls }}</td>
+        <td class="score">{{ rating.score_overall }}</td>
+        <td class="score">{{ "%.2f" % rating.getAverage() }}</td>
+        <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
+    </tr>
+    {% elif current_user %}
+        <tr><td colspan="11">You have not yet rated this entry. <a href="{{ url_for('rate_entries', jam_slug = entry.jam.slug) }}">Start rating on this jam now.</a></td></tr>
+    {% endif %}
+    <tr><td colspan="11">The voting for this jam is not over, so other people's ratings are hidden.</td></tr>
+{% else %}
+{% if entry.ratings.all() %}
     {% set a = entry.getAverageRating() %}
     <tr class="average">
         <td>Average</td>
@@ -150,11 +170,18 @@
         <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
     </tr>
     {% endfor %}
-</table>
 {% else %}
-    <p>There are no ratings yet.</p>
+    <tr><td colspan="11">There are no ratings yet.</td></tr>
 {% endif %}
 {% endif %}
+</table>
+
+{% if entry.ratings.filter_by(participant = current_user).first() and entry.jam.getStatus().code == 3 %}
+    <p><a href="{{ url_for('reset_vote', jam_slug = entry.jam.slug, entry_slug = entry.slug) }}">Click here if you want to reset your vote for this entry</a>. You will have
+    to start the voting process again to be prompted for your vote for
+    this entry.</p>
+{% endif %}
+
 
 <h2>Comments</h2>
     {% if entry.comments.all() %}

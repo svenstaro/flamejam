@@ -73,8 +73,8 @@ def register():
                 False, # no admin
                 False,  # is verified
                 receive_emails)
-                
-        msg = Message("Welcome to Bacon Game Jam, " + username, 
+
+        msg = Message("Welcome to Bacon Game Jam, " + username,
             recipients=[email],
             sender=("bgj","noreply@bacongamejam.org"))
 
@@ -105,7 +105,7 @@ def verify_send():
         return redirect(url_for('index'))
 
 
-    msg = Message("Welcome to Bacon Game Jam, " + username, 
+    msg = Message("Welcome to Bacon Game Jam, " + username,
                   recipients=[participant.email],
                   sender=("bgj","noreply@bacongamejam.org"))
 
@@ -137,7 +137,7 @@ def verify(username, verification):
     if participant.is_verified:
         flash("%s's account is already validated." % participant.username.capitalize())
         return redirect(url_for('index'))
-    
+
     # verification success
     if verification == participant.getVerificationHash():
         participant.is_verified = True
@@ -441,6 +441,17 @@ def rate_entries(jam_slug, action = None):
         # We have nothing left to vote on
         flash("You have no entries left to vote on. Thanks for participating.")
         return redirect(jam.url())
+
+@app.route('/jams/<jam_slug>/<entry_slug>/reset_vote')
+def reset_vote(jam_slug, entry_slug):
+    require_login()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    entry = Entry.query.filter_by(slug = entry_slug).filter_by(jam = jam).first_or_404()
+    rating = entry.ratings.filter_by(participant = get_current_user()).first_or_404()
+    db.session.delete(rating)
+    db.session.commit()
+    flash("Your rating for this entry has been reset. Visit the jam page to vote again.")
+    return redirect(entry.url())
 
 @app.route('/jams/<jam_slug>/<entry_slug>/')
 @app.route('/jams/<jam_slug>/<entry_slug>/<action>', methods=("GET", "POST"))
