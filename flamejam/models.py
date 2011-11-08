@@ -59,7 +59,7 @@ class Participant(db.Model):
     def getVerificationHash(self):
         # combine a few properties, hash md5
         # take first 8 chars for simplicity
-        return md5(self.username + str(self.id) + str(self.registered)).hexdigest()[:8]
+        return md5(self.username + self.password + app.config['SECRET_KEY']).hexdigest()[:8]
 
     def skippedEntry(self, entry):
         return self.rating_skips.filter_by(entry = entry).first() != None
