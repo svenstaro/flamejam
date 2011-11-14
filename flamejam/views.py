@@ -606,11 +606,38 @@ def show_entry(jam_slug, entry_slug, action=None):
 def profile():
     return redirect(get_current_user().url());
 
+@app.route('/profile/change_pw', methods=("GET", "POST"))
+def change_pw():
+    require_login()
+
+    error = None
+
+    form = ChangePassword()
+    if form.validate_on_submit():
+        oldpw = sha512((form.oldpw.data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
+        u = models.Participant.query.filter_by(id = session["login_id"]).first()
+        if not u:
+            abort(404)
+        elif u.password != oldpw:
+            flash("Your old password was wrong.")
+            return redirect(url_for('profile'))
+        else:
+            u.password = sha512((form.newpw.data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
+            db.session.commit()
+            flash("Your password has been changed successfully.")
+            return redirect(url_for('profile'))
+
+    participant = Participant.query.filter_by(id = session["login_id"]).first_or_404()
+    return render_template('profile.html', participant = participant, form = form, error = error)
+
 @app.route('/participants/<username>/')
 @app.route('/users/<username>/')
 def show_participant(username):
+    require_login()
+    form = ChangePassword()
     participant = Participant.query.filter_by(username = username).first_or_404()
-    return render_template('show_participant.html', participant = participant)
+
+    return render_template('profile.html', participant = participant, form = form)
 
 @app.route('/profile/disable_emails')
 def disable_emails():

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block title %}Participants » {{ participant.username }}{% endblock %}
 
@@ -63,5 +64,42 @@
         </div>
     </div>
 </div>
+<hr />
+<h2>Edit your profile</h2>
+    {% if error %}<p class="error"><strong>Error:</strong>{{ error }}{% endif %}
 
+    <form action="{{ url_for('change_pw') }}" method="post">
+        {{ form.hidden_tag() }}
+        <div class="box">
+            <h4>Change Password</h4>
+            <div class="box-content">
+                <p>{{ form_errors(form) }}</p>
+                <table class="details">
+                    <tr>
+                        <th>{{ form.oldpw.label }}</th>
+                        <td>
+                            {{ form.oldpw(class="password-input") }}
+                            <span class="input-info">your old password</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{{ form.newpw.label }}</th>
+                        <td>{{ form.newpw(class="password-input") }}
+                            <span class="input-info">min 8 characters</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{{ form.newpw2.label }}</th>
+                        <td>{{ form.newpw2(class="password-input") }}
+                            <span class="input-info">repeat for verification</span> 
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <p class="form-buttons">
+                <input type="reset" class="button" value="Reset" />
+                <input type="submit" class="button default" value="Change Password" />
+            </p>
+        </div>
+    </form>
 {% endblock %}

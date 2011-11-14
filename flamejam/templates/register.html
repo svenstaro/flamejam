@@ -20,7 +20,7 @@
                 <hr />
                 <table class="details">
                     <tr>
-                        <th width="">{{ form.username.label }}</th>
+                        <th>{{ form.username.label }}</th>
                         <td>
                             {{ form.username(class="text-input") }}
                             <span class="input-info" title="Allowed characters: letters, numbers, dashes, underscores">your username</span>
@@ -54,10 +54,9 @@
                 </table>
             </div>
             <p class="form-buttons">
-                <input type="reset" class="button" value="Reset">
-                <input type="submit" class="button default" value="Register">
+                <input type="reset" class="button" value="Reset" />
+                <input type="submit" class="button default" value="Register" />
             </p>
         </div>
     </form>
-</form>
 {% endblock %}

@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 #
 # This is a short script to kill all tables and fill them with new test data.
 # It should be run from a virtualenv.
