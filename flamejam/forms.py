@@ -80,6 +80,11 @@ class ParticipantRegistration(Form):
     receive_emails = BooleanField("I want to receive email notifications.", default = True)
     captcha = RecaptchaField()
 
+class ChangePassword(Form):
+    oldpw = PasswordField("Old password", validators = [])
+    newpw = PasswordField("New password", validators=[Length(min=8, message = "Please enter a password of at least 8 characters.")])
+    newpw2 = PasswordField("New password, again", validators=[EqualTo("newpw", "Passwords do not match.")])
+
 class VerifyForm(Form):
     pass
 
