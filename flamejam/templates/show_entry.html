@@ -83,7 +83,7 @@
     <div class="box-content">
         {% if entry.screenshots.all() %}
         <ul class="screenshots">
-        {% for screenshot in entry.screenshots %}
+        {% for screenshot in entry.screenshots|reverse %}
             <li>
                 <a href="{{ screenshot.url }}" target="_blank" title="{{ screenshot.caption }}" class="screenshot">
                 <div class="image"><img src="{{ screenshot.url }}" width="160" alt="{{ screenshot.caption }}" /></div>
