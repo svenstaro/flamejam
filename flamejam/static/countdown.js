@@ -27,17 +27,9 @@ function countdown() {
         if (isNaN(end_utc.getTime())) {
                 end_utc = new Date(t.split(".")[0].replace(/-/g, "/"));
         }
-        var end_utc_msec = end_utc.getTime();
 
-        var local = new Date();
-        var local_msec = local.getTime();
-        var local_offset = local.getTimezoneOffset() * 60000;
-        var local_utc_msec = local_msec + local_offset;
-
-        var diff_msec = end_utc_msec - local_msec;
-        // we lose an hour somewhere, probably JS counts since "1970-1-1 01:00" or so
-        // test and monitor this!
-        diff_msec += 3600000;
+	var now_utc = new Date();
+	var diff_msec = new Date(end_utc - now_utc);
 
         if(diff_msec < 0) {
             return;
