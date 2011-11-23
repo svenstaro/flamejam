@@ -442,6 +442,11 @@ table.details p {
     margin: 0;
 }
 
+.warning {
+    font-size: 8pt;
+    color: red;
+}
+
 form table.details th label {
     padding-top: 6px;
     display: inline-block;
