@@ -214,6 +214,7 @@ def delete_jam(jam_slug):
 
         db.session.delete(jam)
         db.session.commit()
+        flash(jam.title+" was deleted")
         return redirect('/')
 
     return render_template('delete_jam.html', jam = jam)
