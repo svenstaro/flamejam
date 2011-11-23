@@ -201,6 +201,23 @@ def show_jam(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('show_jam.html', jam = jam)
 
+@app.route('/jams/<jam_slug>/delete', methods=("GET", "POST"))
+def delete_jam(jam_slug):
+    require_admin()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+
+    # is this a confirmation?
+    if request.method == "POST":
+        # delete all the entries for the jam
+        for entry in jam.entries[:]:
+            db.session.delete(entry)
+
+        db.session.delete(jam)
+        db.session.commit()
+        return redirect('/')
+
+    return render_template('delete_jam.html', jam = jam)
+
 @app.route('/jams/<jam_slug>/edit', methods=("GET", "POST"))
 def edit_jam(jam_slug):
     require_admin()
