@@ -689,13 +689,13 @@ def rules():
 @app.route('/stats')
 @app.route('/statistics')
 def statistics():
-    # collect all the data
+        # collect all the data
 
     stats = {}
 
-    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0];
-    stats["total_participants"] = db.session.query(db.func.count(Participant.id)).first()[0];
-
+    totaljams = 0
+    total_entries = 0
+    totalparticipants = 0
     all_jam_participants = 0
     most_participants_per_jam = 0
     most_participants_jam = None
@@ -704,30 +704,45 @@ def statistics():
     biggest_team_size = 0
     biggest_team_entry = None
 
+    finished_jams = []
+    finished_entries = []
+
     for jam in Jam.query.all():
-        participants = 0
-        for entry in jam.entries:
-            teamsize = len(entry.team) + 1 # for the author
-            participants += teamsize
+        if jam.rating_end < datetime.now():
 
-            if teamsize > biggest_team_size:
-                biggest_team_size = teamsize
-                biggest_team_entry = entry
+            finished_jams.append(jam)
 
-        if participants > most_participants_per_jam:
-            most_participants_per_jam = participants
-            most_participants_jam = jam
+            totaljams = totaljams + 1
+	    totalparticipants = totalparticipants + 1
 
-        entries = len(jam.entries.all())
-        if entries > most_entries_per_jam:
-            most_entries_per_jam = entries
-            most_entries_jam = jam
+            participants = 0
 
-        all_jam_participants += participants
+            for entry in jam.entries:
+		total_entries = total_entries + 1;
+	        finished_entries.append(entry)
+                teamsize = len(entry.team) + 1 # for the author
+                participants += teamsize
 
-    best_entries = Entry.query.all()
-    best_entries.sort(cmp = entryCompare)
-    stats["best_entries"] = best_entries[:3]
+                if teamsize > biggest_team_size:
+                    biggest_team_size = teamsize
+                    biggest_team_entry = entry
+
+            if participants > most_participants_per_jam:
+                most_participants_per_jam = participants
+                most_participants_jam = jam
+
+            entries = len(jam.entries.all())
+            if entries > most_entries_per_jam:
+                most_entries_per_jam = entries
+                most_entries_jam = jam
+
+            all_jam_participants += participants
+
+    stats["total_jams"] = totaljams;
+    stats["total_participants"] = totalparticipants;
+
+    finished_entries.sort(cmp = entryCompare)
+    stats["best_entries"] = finished_entries[:3]
 
     participant_most_entries = Participant.query.all()
     participant_most_entries.sort(cmp = participantTotalEntryCompare)
@@ -740,7 +755,7 @@ def statistics():
     stats["most_participants_per_jam"] = most_participants_per_jam
     stats["most_participants_jam"] = most_participants_jam
 
-    stats["total_entries"] = db.session.query(db.func.count(Entry.id)).first()[0];
+    stats["total_entries"] = total_entries
     if stats["total_jams"]: # against division by zero
         stats["average_entries"] = stats["total_entries"] * 1.0 / stats["total_jams"]
     else:
