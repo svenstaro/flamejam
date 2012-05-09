@@ -185,6 +185,7 @@ def new_jam():
                     msg = Message("BaconGameJam: Jam \"%s\" announced" % title)
                     msg.html = render_template("emails/jam_announced.html", jam = new_jam, recipient = participant)
                     msg.recipients = [participant.email]
+		    msg.sender = ["bgj","noreply@bacongamejam.org"]
                     conn.send(msg)
                 flash("Email notifications have been sent.")
 
@@ -261,6 +262,7 @@ def edit_jam(jam_slug):
                         msg = Message("BaconGameJam: Jam \"%s\" changed" % changes["title"][1])
                         msg.html = render_template("emails/jam_changed.html", jam = jam, changes = changes, recipient = participant)
                         msg.recipients = [participant.email]
+		        msg.sender = ["bgj","noreply@bacongamejam.org"]
                         conn.send(msg)
                     flash("Email notifications have been sent.")
 
@@ -689,7 +691,7 @@ def rules():
 @app.route('/stats')
 @app.route('/statistics')
 def statistics():
-        # collect all the data
+    # collect all the data
 
     stats = {}
 
