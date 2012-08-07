@@ -22,7 +22,7 @@
                     {% for member in entry.team %}<p>{{ member.getLink() }}</p>{% endfor %}
                     </td></tr>
                 <tr><th>Submitted</th><td>{{ entry.posted | humantime }}</td></tr>
-                <tr><th>Description</th><td>{{ entry.description }}</td></tr>
+                <tr><th>Description</th><td>{{ entry.description | markdown }}</td></tr>
             </table>
         </div>
         <h4 class="inner">Main Screenshot</h3>
