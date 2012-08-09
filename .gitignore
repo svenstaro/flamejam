@@ -5,3 +5,4 @@ flamejam.db
 *.swp
 flamejam.cfg
 recaptcha.cfg
+.DS_Store

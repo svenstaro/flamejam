@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from flaskext.wtf import BaseForm, Form, TextField, TextAreaField, PasswordField,\
+from flask.ext.wtf import Form, TextField, TextAreaField, PasswordField,\
         DateTimeField, SubmitField, SelectField, HiddenField, BooleanField, RecaptchaField
-from flaskext.wtf import Required, Length, EqualTo, Optional, NumberRange, Email,\
+from flask.ext.wtf import Required, Length, EqualTo, Optional, NumberRange, Email,\
         ValidationError, URL
-from flaskext.wtf.html5 import IntegerField, EmailField
+from flask.ext.wtf.html5 import IntegerField, EmailField
 import re
 from hashlib import sha512
 from flamejam import app, models
