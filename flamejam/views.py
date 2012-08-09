@@ -19,7 +19,7 @@ def index():
     active_count = 0
     inactive_count = 0
     for jam in jams:
-        if jam.getStatus().code == 4:
+        if jam.getStatus().code == JamStatusCode.FINISHED:
             inactive_count += 1
         else:
             active_count += 1
@@ -725,9 +725,13 @@ def statistics():
 
         all_jam_participants += participants
 
-    best_entries = Entry.query.all()
-    best_entries.sort(cmp = entryCompare)
-    stats["best_entries"] = best_entries[:3]
+    all_entries = Entry.query.all()
+    finished_entries = []
+    for entry in all_entries:
+      if entry.jam.getStatus() == JamStatusCode.FINISHED:
+        finished_entries.append(entry)
+    finished_entries.sort(cmp = entryCompare)
+    stats["best_entries"] = finished_entries[:3]
 
     participant_most_entries = Participant.query.all()
     participant_most_entries.sort(cmp = participantTotalEntryCompare)
