@@ -3,6 +3,7 @@ from hashlib import sha512
 from random import randint
 import random
 import smtplib
+import sys
 
 from flask import session, redirect, url_for, escape, request, \
         render_template, flash, abort
@@ -91,13 +92,60 @@ def register():
 
     return render_template('register.html', form=form, error=error)
 
+@app.route('/reset', methods=['GET', 'POST'])
+def reset_request():
+    if get_current_user():
+        flash("You are already logged in.")
+        return redirect(url_for("index"))
+    error = None
+    form = ResetPassword()
+    if form.validate_on_submit():
+        # thanks to the UsernameValidator we cam assume the username exists 
+        participant = Participant.query.filter_by(username=form.username.data).first()
+        participant.token = randint(0, sys.maxint)
+        print participant.getResetToken()
+        db.session.commit()
+        msg = Message("Welcome to Bacon Game Jam, " + participant.username,
+                      recipients=[participant.email],
+                      sender=("bgj","noreply@bacongamejam.org"))
+
+        msg.html = render_template("emails/reset_password.html",
+                                   recipient=participant)
+
+        msg.recipients = [participant.email]
+        mail.send(msg)
+
+        flash('Your password has been reset, check your email')
+    return render_template('reset_request.html', form=form, error=error)
+
+@app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
+def reset_verify(username, token):
+    participant = Participant.query.filter_by(username=username).first_or_404()
+    if participant.token == None:
+        flash("%s's account has not requested a password reset." % participant.username.capitalize())
+        return redirect(url_for('index'))
+    if participant.getResetToken() != token:
+        flash("This does not seem to be a valid reset link, if you reset your account multiple times make sure you are using the link in the last email you received!")
+        return redirect(url_for('index'))
+    form = NewPassword()
+    error = None
+    if form.validate_on_submit():
+        # null the reset token
+        participant.token = None
+        # set the new password
+        participant.password = sha512((form.password.data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
+        db.session.commit()
+        flash('Your password was updated and you can login with it now.')
+        return redirect(url_for('login'))
+    return render_template('reset_newpassword.html', participant=participant, form=form, error=error)
+
+
 @app.route('/verify/', methods=["POST", "GET"])
 def verify_send():
     if request.method == 'GET':
         return redirect(url_for('index'))
 
     username = request.form.get('username', "")
-    print('username = ' + username)
     participant = Participant.query.filter_by(username = username).first_or_404()
 
     if participant.is_verified:

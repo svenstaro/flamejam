@@ -31,6 +31,7 @@ class Participant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
+    token = db.Column(db.Integer, nullable=True, default=None)
     email = db.Column(db.String(256), unique=True)
     is_admin = db.Column(db.Boolean, default=False)
     is_verified = db.Column(db.Boolean)
@@ -60,6 +61,11 @@ class Participant(db.Model):
         # combine a few properties, hash md5
         # take first 8 chars for simplicity
         return md5(self.username + self.password + app.config['SECRET_KEY']).hexdigest()[:8]
+
+    def getResetToken(self):
+        # combine a few properties, hash md5
+        # take first 8 chars for simplicity
+        return md5(str(self.token) + app.config['SECRET_KEY']).hexdigest()[:8]
 
     def skippedEntry(self, entry):
         return self.rating_skips.filter_by(entry = entry).first() != None
