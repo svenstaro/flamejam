@@ -127,7 +127,7 @@
             <tr>
                 <td class="rank">{{ i }}</td>
                 <td>
-                    {{ entry.participant.getLink("author") }}
+                    {{ entry.user.getLink("author") }}
                     {% for member in entry.team %}, {{ member.getLink() }}{% endfor %}
                 </td>
                 <td><a href="{{entry.url()}}">{{ entry.title }}</a></td>

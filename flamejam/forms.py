@@ -38,13 +38,13 @@ class MatchesRegex(object):
 
 class UsernameExists(object):
     def __call__(self, form, field):
-        u = models.Participant.query.filter_by(username = field.data).first()
+        u = models.User.query.filter_by(username = field.data).first()
         if not u:
             raise ValidationError("The username does not exist.")
 
 class EmailExists(object):
     def __call__(self, form, field):
-        e = models.Participant.query.filter_by(email = field.data).first()
+        e = models.User.query.filter_by(email = field.data).first()
         if not e:
             raise ValidationError("That email does not exist")
 
@@ -55,7 +55,7 @@ class LoginValidator(object):
         self.message_password = message_password
 
     def __call__(self, form, field):
-        u = models.Participant.query.filter_by(username = field.data).first()
+        u = models.User.query.filter_by(username = field.data).first()
         if not u:
             raise ValidationError(self.message_username)
         elif u.password != sha512((form[self.pw_field].data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest():
@@ -63,11 +63,11 @@ class LoginValidator(object):
 
 ############## FORMS ####################
 
-class ParticipantLogin(Form):
+class UserLogin(Form):
     username = TextField("Username", validators=[LoginValidator("password")])
     password = PasswordField("Password", validators = [])
 
-class ParticipantRegistration(Form):
+class UserRegistration(Form):
     username = TextField("Username", validators=[
         MatchesRegex("[^0-9a-zA-Z\-_]", "Your username contains invalid characters. Only use alphanumeric characters, dashes and underscores."),
         Not(UsernameExists(), message = "That username already exists."),

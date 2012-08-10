@@ -18,7 +18,7 @@
         <div class="box-content">
             <table class="details">
                 <tr><th>Team</th><td>
-                    <p>{{ entry.participant.getLink("author") }}</p>
+                    <p>{{ entry.user.getLink("author") }}</p>
                     {% for member in entry.team %}<p>{{ member.getLink() }}</p>{% endfor %}
                     </td></tr>
                 <tr><th>Submitted</th><td>{{ entry.posted | humantime }}</td></tr>
@@ -143,7 +143,7 @@
                 {% endif %}
             </a>
             <div class="entry-list-author">
-                {% if current_user in e.team or current_user == e.participant %}
+                {% if current_user in e.team or current_user == e.user %}
                 <span class="icon-16 icon-16-rated"></span> <span style="color: #080">yours</span>
                 {% elif current_user.skippedEntry(e) %}
                 <span class="icon-16 icon-16-skipped"></span> <span style="color: #F90">skipped</span>

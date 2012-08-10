@@ -13,7 +13,7 @@
     {{ entry.title }}
 </h1>
 
-{% if entry.participant == current_user %}
+{% if entry.user == current_user %}
 <p>
     <ul class="tabs">
         <li><a href="{{ entry.url('edit') }}">Edit entry</a></li>
@@ -37,11 +37,11 @@
     <div class="box-content">
         <table class="details">
             <tr><th>Team</th><td>
-                <p>{{ entry.participant.getLink("author") }}</p>
+                <p>{{ entry.user.getLink("author") }}</p>
                 {% for member in entry.team %}
                     <p>
                         {{ member.getLink() }}
-                        {% if current_user == entry.participant %}<a style="margin-left: 50px;" href="{{ entry.url('remove_team_member', remove_id = member.id) }}">Remove</a>{% endif %}
+                        {% if current_user == entry.user %}<a style="margin-left: 50px;" href="{{ entry.url('remove_team_member', remove_id = member.id) }}">Remove</a>{% endif %}
                     </p>
                 {% endfor %}
                 </td></tr>
@@ -59,7 +59,7 @@
             <tr><th>Packages{% if entry.packages.all() %} ({{ entry.packages.all() | length }}){% endif %}</th><td>
                 {% for package in entry.packages %}
                 <p>
-                    {% if current_user == entry.participant %}
+                    {% if current_user == entry.user %}
                     <a href="{{ entry.url('remove_package', remove_id = package.id) }}" style="float:right; margin-left: 20px;">Remove</a>
                     {% endif %}
 
@@ -92,7 +92,7 @@
                     {{ screenshot.caption }}
                 </div>
                 </a>
-                {% if current_user == entry.participant %}
+                {% if current_user == entry.user %}
                 <a href="{{ entry.url('remove_screenshot', remove_id = screenshot.id) }}">Remove</a>
                 {% endif %}
             </li>
@@ -108,7 +108,7 @@
 
 <table class="ratings">
     <tr>
-        <th>Participant</th>
+        <th>User</th>
         <th class="score"><span class="icon-16 icon-16-gameplay"      title="gameplay"></span></th>
         <th class="score"><span class="icon-16 icon-16-graphics"      title="graphics"></span></th>
         <th class="score"><span class="icon-16 icon-16-audio"         title="audio"></span></th>
@@ -123,10 +123,10 @@
 {% if entry.jam.getStatus().code != 4 %}
 
     {# check if the user has rated this entry #}
-    {% set rating = entry.ratings.filter_by(participant = current_user).first() %}
+    {% set rating = entry.ratings.filter_by(user = current_user).first() %}
     {% if rating %}
         <tr>
-        <td>{{ rating.participant.getLink() }}</td>
+        <td>{{ rating.user.getLink() }}</td>
         <td class="score">{{ rating.score_gameplay }}</td>
         <td class="score">{{ rating.score_graphics }}</td>
         <td class="score">{{ rating.score_audio }}</td>
@@ -160,7 +160,7 @@
     </tr>
     {% for rating in entry.ratings %}
     <tr>
-        <td>{{ rating.participant.getLink() }}</td>
+        <td>{{ rating.user.getLink() }}</td>
         <td class="score">{{ rating.score_gameplay }}</td>
         <td class="score">{{ rating.score_graphics }}</td>
         <td class="score">{{ rating.score_audio }}</td>
@@ -179,7 +179,7 @@
 {% endif %}
 </table>
 
-{% if entry.ratings.filter_by(participant = current_user).first() and entry.jam.getStatus().code == 3 %}
+{% if entry.ratings.filter_by(user = current_user).first() and entry.jam.getStatus().code == 3 %}
     <p><a href="{{ url_for('reset_vote', jam_slug = entry.jam.slug, entry_slug = entry.slug) }}">Click here if you want to reset your vote for this entry</a>. You will have
     to start the voting process again to be prompted for your vote for
     this entry.</p>
@@ -193,12 +193,12 @@
     {% for comment in entry.comments %}
         <li>
             <div class="icon">
-                <a href="{{ comment.participant.url() }}">
-                    <img src="{{ comment.participant.getAvatar(32) }}" width="32" height="32"/>
+                <a href="{{ comment.user.url() }}">
+                    <img src="{{ comment.user.getAvatar(32) }}" width="32" height="32"/>
                 </a>
             </div>
             <div class="meta">
-                <a class="author" href="{{ comment.participant.url() }}">{{ comment.participant.username }}</a>
+                <a class="author" href="{{ comment.user.url() }}">{{ comment.user.username }}</a>
                 said <span class="posted" title="{{ comment.posted | formattime }}">{{ comment.posted | humantime }}</span>:
             </div>
             <div class="text markdown">

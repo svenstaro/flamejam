@@ -1,5 +1,5 @@
 from flamejam import *
-from flamejam.models import Participant
+from flamejam.models import User
 from flask import has_request_context, session, abort, request, flash
 from httplib import HTTPConnection, HTTPResponse
 import json
@@ -12,14 +12,14 @@ class LoginRequired(Exception):
 def get_current_user():
     if "login_user" in session:
         return session["login_user"]
-        # return Participant.query.filter_by(id = session["login_id"]).first()
+        # return User.query.filter_by(id = session["login_id"]).first()
     return None
 
 @app.before_request
 def check_login():
     # refresh the user object in the session
     if "login_id" in session:
-        session["login_user"] = Participant.query.filter_by(id = session["login_id"]).first()
+        session["login_user"] = User.query.filter_by(id = session["login_id"]).first()
         if not get_current_user():
             logout_now()
 

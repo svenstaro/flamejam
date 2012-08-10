@@ -9,15 +9,15 @@ import re
 import random
 
 # rating:
-# Participant <one2many> RatingSkip <many2one> Entry
-# Participant <one2many> Rating <many2one> Entry
+# User <one2many> RatingSkip <many2one> Entry
+# User <one2many> Rating <many2one> Entry
 
 # Teams:
-# Participant <many2many> Entry
+# User <many2many> Entry
 
 team_members = db.Table('team_members',
     db.Column('entry_id', db.Integer, db.ForeignKey('entry.id')),
-    db.Column('participant_id', db.Integer, db.ForeignKey('participant.id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
 )
 
 def get_slug(s):
@@ -27,7 +27,7 @@ def get_slug(s):
     return s
 
 
-class Participant(db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
@@ -36,15 +36,15 @@ class Participant(db.Model):
     is_verified = db.Column(db.Boolean)
     receive_emails = db.Column(db.Boolean)
     registered = db.Column(db.DateTime)
-    entries = db.relationship('Entry', backref='participant', lazy='dynamic')
+    entries = db.relationship('Entry', backref='user', lazy='dynamic')
     team_entries = db.relationship("Entry",
                     secondary = team_members,
                     backref = "team")
-    ratings = db.relationship('Rating', backref='participant', lazy='dynamic')
-    comments = db.relationship('Comment', backref='participant', lazy='dynamic')
+    ratings = db.relationship('Rating', backref='user', lazy='dynamic')
+    comments = db.relationship('Comment', backref='user', lazy='dynamic')
     jams = db.relationship('Jam', backref='author', lazy='dynamic')
-    rating_skips = db.relationship('RatingSkip', backref='participant', lazy='dynamic')
-    ratings = db.relationship('Rating', backref = 'participant', lazy='dynamic')
+    rating_skips = db.relationship('RatingSkip', backref='user', lazy='dynamic')
+    ratings = db.relationship('Rating', backref = 'user', lazy='dynamic')
 
     def __init__(self, username, password, email, is_admin=False,
             is_verified=False, receive_emails = True):
@@ -78,13 +78,13 @@ class Participant(db.Model):
         return len(self.entries.all()) + len(self.team_entries)
 
     def getSkippedCount(self, jam):
-        return len(self.rating_skips.filter(RatingSkip.participant_id == self.id and Entry.jam_id == jam.id).all())
+        return len(self.rating_skips.filter(RatingSkip.user_id == self.id and Entry.jam_id == jam.id).all())
 
     def __repr__(self):
         return '<User %r>' % self.username
 
     def url(self, **values):
-        return url_for('show_participant', username = self.username, **values)
+        return url_for('show_user', username = self.username, **values)
 
     def getAvatar(self, size = 32):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=retro".format(md5(self.email.lower()).hexdigest(), size)
@@ -97,10 +97,10 @@ class Participant(db.Model):
             self.url(), self.username, s, self.getAvatar(s), class_))
 
     def canRate(self, entry):
-        return entry.participant != self and not self in entry.team
+        return entry.user != self and not self in entry.team
 
     def canEdit(self, entry):
-        return entry.participant == self
+        return entry.user == self
 
     def getEntryInJam(self, jam):
         for entry in self.entries:
@@ -154,7 +154,7 @@ class Jam(db.Model):
     rating_end = db.Column(db.DateTime) # Rating period ends and jam is over
     team_jam = db.Column(db.Boolean)
     entries = db.relationship('Entry', backref='jam', lazy='dynamic')
-    author_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, title, author, start_time, end_time=None,
             packaging_deadline=None, voting_end=None, team_jam=False, theme = ''):
@@ -220,7 +220,7 @@ def entryCompare(left, right):
     else:
         return 0
 
-def participantTotalEntryCompare(left, right):
+def userTotalEntryCompare(left, right):
     x = right.getTotalEntryCount() - left.getTotalEntryCount()
     if x > 0:
         return 1
@@ -236,19 +236,19 @@ class Entry(db.Model):
     description = db.Column(db.Text)
     posted = db.Column(db.DateTime)
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
-    participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     rating_skips = db.relationship('RatingSkip', backref='entry', lazy='dynamic')
     ratings = db.relationship('Rating', backref = 'entry', lazy='dynamic')
     comments = db.relationship('Comment', backref='entry', lazy='dynamic')
     packages = db.relationship('EntryPackage', backref='entry', lazy='dynamic')
     screenshots = db.relationship('EntryScreenshot', backref='entry', lazy='dynamic')
 
-    def __init__(self, title, description, jam, participant):
+    def __init__(self, title, description, jam, user):
         self.title = title
         self.slug = get_slug(title)
         self.description = description
         self.jam = jam
-        self.participant = participant
+        self.user = user
         self.posted = datetime.utcnow()
 
     def __repr__(self):
@@ -368,10 +368,10 @@ class Rating(db.Model):
     text = db.Column(db.Text)
     posted = db.Column(db.DateTime)
     entry_id = db.Column(db.Integer, db.ForeignKey('entry.id'))
-    participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, score_gameplay, score_graphics, score_audio, score_innovation,
-        score_story, score_technical, score_controls, score_overall, text, entry, participant):
+        score_story, score_technical, score_controls, score_overall, text, entry, user):
         self.score_gameplay = score_gameplay
         self.score_graphics = score_graphics
         self.score_audio = score_audio
@@ -382,7 +382,7 @@ class Rating(db.Model):
         self.score_overall = score_overall
         self.text = text
         self.entry = entry
-        self.participant = participant
+        self.user = user
         self.posted = datetime.utcnow()
 
     def __repr__(self):
@@ -403,10 +403,10 @@ class RatingSkip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     reason = db.Column(db.Enum("platform", "uninteresting", "crash"))
     entry_id = db.Column(db.Integer, db.ForeignKey("entry.id"))
-    participant_id = db.Column(db.Integer, db.ForeignKey("participant.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    def __init__(self, participant, entry, reason):
-        self.participant = participant
+    def __init__(self, user, entry, reason):
+        self.user = user
         self.entry = entry
         self.reason = reason
 
@@ -418,12 +418,12 @@ class Comment(db.Model):
     text = db.Column(db.Text)
     posted = db.Column(db.DateTime)
     entry_id = db.Column(db.Integer, db.ForeignKey('entry.id'))
-    participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, text, entry, participant):
+    def __init__(self, text, entry, user):
         self.text = text
         self.entry = entry
-        self.participant = participant
+        self.user = user
         self.posted = datetime.utcnow()
 
     def __repr__(self):

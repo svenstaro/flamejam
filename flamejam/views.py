@@ -37,12 +37,12 @@ def login():
         session["next"] = next
 
     error = None
-    form = ParticipantLogin()
+    form = UserLogin()
     if form.validate_on_submit():
         username = form.username.data
         password = sha512((form.password.data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
-        participant = Participant.query.filter_by(username=username).first()
-        if not login_as(participant):
+        user = User.query.filter_by(username=username).first()
+        if not login_as(user):
             # not verified
             return redirect(url_for("verify_status", username=username))
         elif "next" in session:
@@ -61,13 +61,13 @@ def register():
         return redirect(url_for("index"))
 
     error = None
-    form = ParticipantRegistration()
+    form = UserRegistration()
     if form.validate_on_submit():
         username = form.username.data.strip()
         password = form.password.data
         email = form.email.data
         receive_emails = form.receive_emails.data
-        new_participant = Participant(username,
+        new_user = User(username,
                 password,
                 email,
                 False, # no admin
@@ -79,11 +79,11 @@ def register():
             sender=("bgj","noreply@bacongamejam.org"))
 
         msg.html = render_template("emails/verification.html",
-                                   recipient=new_participant)
-        msg.recipients = [new_participant.email]
+                                   recipient=new_user)
+        msg.recipients = [new_user.email]
         mail.send(msg)
 
-        db.session.add(new_participant)
+        db.session.add(new_user)
         db.session.commit()
 
         flash("Your account has been created, confirm your email to verify.")
@@ -98,21 +98,21 @@ def verify_send():
 
     username = request.form.get('username', "")
     print('username = ' + username)
-    participant = Participant.query.filter_by(username = username).first_or_404()
+    user = User.query.filter_by(username = username).first_or_404()
 
-    if participant.is_verified:
-        flash("%s's account is already validated." % participant.username.capitalize())
+    if user.is_verified:
+        flash("%s's account is already validated." % user.username.capitalize())
         return redirect(url_for('index'))
 
 
     msg = Message("Welcome to Bacon Game Jam, " + username,
-                  recipients=[participant.email],
+                  recipients=[user.email],
                   sender=("bgj","noreply@bacongamejam.org"))
 
     msg.html = render_template("emails/verification.html",
-                               recipient=participant)
+                               recipient=user)
 
-    msg.recipients = [participant.email]
+    msg.recipients = [user.email]
     mail.send(msg)
 
     flash('Verification has been resent, check your email')
@@ -121,10 +121,10 @@ def verify_send():
 @app.route('/verify/<username>', methods=["GET"])
 def verify_status(username):
     submitted = request.args.get('submitted', None)
-    participant = Participant.query.filter_by(username = username).first_or_404()
+    user = User.query.filter_by(username = username).first_or_404()
 
-    if participant.is_verified:
-        flash("%s's account is already validated." % participant.username.capitalize())
+    if user.is_verified:
+        flash("%s's account is already validated." % user.username.capitalize())
         return redirect(url_for('index'))
 
     return render_template('verify_status.html', submitted=submitted, username=username)
@@ -132,15 +132,15 @@ def verify_status(username):
 @app.route('/verify/<username>/<verification>', methods=["GET"])
 def verify(username, verification):
 
-    participant = Participant.query.filter_by(username = username).first_or_404()
+    user = User.query.filter_by(username = username).first_or_404()
 
-    if participant.is_verified:
-        flash("%s's account is already validated." % participant.username.capitalize())
+    if user.is_verified:
+        flash("%s's account is already validated." % user.username.capitalize())
         return redirect(url_for('index'))
 
     # verification success
-    if verification == participant.getVerificationHash():
-        participant.is_verified = True
+    if verification == user.getVerificationHash():
+        user.is_verified = True
         db.session.commit()
 
         flash("Your email has been confirmed, you may now login")
@@ -180,11 +180,11 @@ def new_jam():
 
             # Send out mails to all interested users.
             with mail.connect() as conn:
-                participants = Participant.query.filter_by(receive_emails=True).all()
-                for participant in participants:
+                users = User.query.filter_by(receive_emails=True).all()
+                for user in users:
                     msg = Message("BaconGameJam: Jam \"%s\" announced" % title)
-                    msg.html = render_template("emails/jam_announced.html", jam = new_jam, recipient = participant)
-                    msg.recipients = [participant.email]
+                    msg.html = render_template("emails/jam_announced.html", jam = new_jam, recipient = user)
+                    msg.recipients = [user.email]
                     conn.send(msg)
                 flash("Email notifications have been sent.")
 
@@ -256,11 +256,11 @@ def edit_jam(jam_slug):
             # inform users about change
             if form.email.data:
                 with mail.connect() as conn:
-                    participants = Participant.query.filter_by(receive_emails=True).all()
-                    for participant in participants:
+                    users = User.query.filter_by(receive_emails=True).all()
+                    for user in users:
                         msg = Message("BaconGameJam: Jam \"%s\" changed" % changes["title"][1])
-                        msg.html = render_template("emails/jam_changed.html", jam = jam, changes = changes, recipient = participant)
-                        msg.recipients = [participant.email]
+                        msg.html = render_template("emails/jam_changed.html", jam = jam, changes = changes, recipient = user)
+                        msg.recipients = [user.email]
                         conn.send(msg)
                     flash("Email notifications have been sent.")
 
@@ -294,7 +294,7 @@ def new_entry(jam_slug):
 
     # check if the user has already an entry in this jam
     for entry in jam.entries:
-        if entry.participant == get_current_user():
+        if entry.user == get_current_user():
             flash("You already have an entry for this jam. Look here!")
             return redirect(entry.url())
         elif get_current_user() in entry.team:
@@ -346,13 +346,13 @@ def rate_entries(jam_slug, action = None):
         # remove previous rating, if any
         edited = False
         if get_current_user().ratedEntry(entry):
-            old_entry = Rating.query.filter_by(entry_id = entry.id, participant_id = get_current_user().id).first_or_404()
+            old_entry = Rating.query.filter_by(entry_id = entry.id, user_id = get_current_user().id).first_or_404()
             db.session.delete(old_entry)
             edited = True
 
         # remove skip mark, if any
         if get_current_user().skippedEntry(entry):
-            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, participant_id = get_current_user().id).first_or_404()
+            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, user_id = get_current_user().id).first_or_404()
             db.session.delete(rating_skip)
 
         # read data from form
@@ -386,7 +386,7 @@ def rate_entries(jam_slug, action = None):
 
         # remove skip mark, if any
         if get_current_user().skippedEntry(entry):
-            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, participant_id = get_current_user().id).first_or_404()
+            rating_skip = RatingSkip.query.filter_by(entry_id = entry.id, user_id = get_current_user().id).first_or_404()
             db.session.delete(rating_skip)
 
         # read data from form
@@ -423,7 +423,7 @@ def rate_entries(jam_slug, action = None):
 
     for pair in pairs:
         # ignore entries by the user
-        if get_current_user() == pair[0].participant or get_current_user() in pair[0].team:
+        if get_current_user() == pair[0].user or get_current_user() in pair[0].team:
             my_entries = my_entries + 1
             continue
 
@@ -466,7 +466,7 @@ def reset_vote(jam_slug, entry_slug):
     require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     entry = Entry.query.filter_by(slug = entry_slug).filter_by(jam = jam).first_or_404()
-    rating = entry.ratings.filter_by(participant = get_current_user()).first_or_404()
+    rating = entry.ratings.filter_by(user = get_current_user()).first_or_404()
     db.session.delete(rating)
     db.session.commit()
     flash("Your rating for this entry has been reset. Visit the jam page to vote again.")
@@ -489,7 +489,7 @@ def show_entry(jam_slug, entry_slug, action=None):
         return redirect(url_for('show_entry', jam_slug = jam_slug, entry_slug = entry_slug))
 
     if action == "edit":
-        require_user(entry.participant)
+        require_user(entry.user)
         error = ""
         edit_form = SubmitEditEntry()
         if edit_form.validate_on_submit():
@@ -513,7 +513,7 @@ def show_entry(jam_slug, entry_slug, action=None):
         return render_template('edit_entry.html', entry = entry, form = edit_form, error = error)
 
     if action == "add_screenshot":
-        require_user(entry.participant)
+        require_user(entry.user)
 
         screen_form = EntryAddScreenshot()
         if screen_form.validate_on_submit():
@@ -526,7 +526,7 @@ def show_entry(jam_slug, entry_slug, action=None):
         return render_template("add_screenshot.html", entry = entry, form = screen_form)
 
     if action == "add_package":
-        require_user(entry.participant)
+        require_user(entry.user)
 
         package_form = EntryAddPackage()
         if package_form.validate_on_submit():
@@ -539,7 +539,7 @@ def show_entry(jam_slug, entry_slug, action=None):
         return render_template("add_package.html", entry = entry, form = package_form)
 
     if action == "add_team_member":
-        require_user(entry.participant)
+        require_user(entry.user)
 
         jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
         if jam.team_jam == False:
@@ -548,18 +548,18 @@ def show_entry(jam_slug, entry_slug, action=None):
 
         team_form = EntryAddTeamMember()
         if team_form.validate_on_submit():
-            member = Participant.query.filter_by(username = team_form.username.data).first_or_404()
+            member = User.query.filter_by(username = team_form.username.data).first_or_404()
             if member == get_current_user():
                 flash("You cannot add yourself to the team.")
             elif not member:
                 flash("That username does not exist.")
             elif member in entry.team:
-                flash("That participant is already in the team.")
+                flash("That user is already in the team.")
             elif member.getEntryInJam(entry.jam):
-                flash("That participant has an entry for this jam. Look here!")
+                flash("That user has an entry for this jam. Look here!")
                 return redirect(member.getEntryInJam(entry.jam).url())
             elif member.getTeamEntryInJam(entry.jam):
-                flash("That participant is already part of a team for this jam. Look here!")
+                flash("That user is already part of a team for this jam. Look here!")
                 return redirect(member.getTeamEntryInJam(entry.jam).url())
             else:
                 entry.team.append(member)
@@ -570,7 +570,7 @@ def show_entry(jam_slug, entry_slug, action=None):
         return render_template("add_team_member.html", entry = entry, form = team_form)
 
     if action == "remove_screenshot":
-        require_user(entry.participant)
+        require_user(entry.user)
 
         remove_id = request.args.get("remove_id", "")
         s = EntryScreenshot.query.filter_by(entry_id = entry.id, id = remove_id).first_or_404()
@@ -580,7 +580,7 @@ def show_entry(jam_slug, entry_slug, action=None):
         return redirect(entry.url())
 
     if action == "remove_package":
-        require_user(entry.participant)
+        require_user(entry.user)
 
         remove_id = request.args.get("remove_id", "")
         s = EntryPackage.query.filter_by(entry_id = entry.id, id = remove_id).first_or_404()
@@ -590,7 +590,7 @@ def show_entry(jam_slug, entry_slug, action=None):
         return redirect(entry.url())
 
     if action == "remove_team_member":
-        require_user(entry.participant)
+        require_user(entry.user)
 
         jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
         if jam.team_jam == False:
@@ -598,7 +598,7 @@ def show_entry(jam_slug, entry_slug, action=None):
             return redirect(entry.url())
 
         remove_id = request.args.get("remove_id", "0")
-        member = Participant.query.get(remove_id)
+        member = User.query.get(remove_id)
         db.session.commit()
         entry.team.remove(member)
         db.session.commit()
@@ -624,11 +624,10 @@ def show_entry(jam_slug, entry_slug, action=None):
 def profile():
     return redirect(get_current_user().url());
 
-@app.route('/participants/<username>/')
 @app.route('/users/<username>/')
-def show_participant(username):
-    participant = Participant.query.filter_by(username = username).first_or_404()
-    return render_template('show_participant.html', participant = participant)
+def show_user(username):
+    user = User.query.filter_by(username = username).first_or_404()
+    return render_template('show_user.html', user = user)
 
 @app.route('/profile/disable_emails')
 def disable_emails():
@@ -661,21 +660,21 @@ def search():
         Entry.description.like("%"+q+"%"),
         Entry.title.like("%"+q+"%"))).all()
 
-    participants = Participant.query.filter(
-        Participant.username.like("%"+q+"%")).all()
+    users = User.query.filter(
+        User.username.like("%"+q+"%")).all()
 
     j = len(jams)
     e = len(entries)
-    p = len(participants)
+    p = len(users)
 
     if j == 1 and e == 0 and p == 0:
         return redirect(jams[0].url())
     elif j == 0 and e == 1 and p == 0:
         return redirect(entries[0].url())
     elif j == 0 and e == 0 and p == 1:
-        return redirect(participants[0].url())
+        return redirect(users[0].url())
 
-    return render_template("search.html", q = q, jams = jams, entries = entries, participants = participants)
+    return render_template("search.html", q = q, jams = jams, entries = entries, users = users)
 
 @app.route('/contact')
 def contact():
@@ -694,36 +693,36 @@ def statistics():
     stats = {}
 
     stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0];
-    stats["total_participants"] = db.session.query(db.func.count(Participant.id)).first()[0];
+    stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0];
 
-    all_jam_participants = 0
-    most_participants_per_jam = 0
-    most_participants_jam = None
+    all_jam_users = 0
+    most_users_per_jam = 0
+    most_users_jam = None
     most_entries_per_jam = 0
     most_entries_jam = None
     biggest_team_size = 0
     biggest_team_entry = None
 
     for jam in Jam.query.all():
-        participants = 0
+        users = 0
         for entry in jam.entries:
             teamsize = len(entry.team) + 1 # for the author
-            participants += teamsize
+            users += teamsize
 
             if teamsize > biggest_team_size:
                 biggest_team_size = teamsize
                 biggest_team_entry = entry
 
-        if participants > most_participants_per_jam:
-            most_participants_per_jam = participants
-            most_participants_jam = jam
+        if users > most_users_per_jam:
+            most_users_per_jam = users
+            most_users_jam = jam
 
         entries = len(jam.entries.all())
         if entries > most_entries_per_jam:
             most_entries_per_jam = entries
             most_entries_jam = jam
 
-        all_jam_participants += participants
+        all_jam_users += users
 
     all_entries = Entry.query.all()
     finished_entries = []
@@ -733,16 +732,16 @@ def statistics():
     finished_entries.sort(cmp = entryCompare)
     stats["best_entries"] = finished_entries[:3]
 
-    participant_most_entries = Participant.query.all()
-    participant_most_entries.sort(cmp = participantTotalEntryCompare)
-    stats["participant_most_entries"] = participant_most_entries[:3]
+    user_most_entries = User.query.all()
+    user_most_entries.sort(cmp = userTotalEntryCompare)
+    stats["user_most_entries"] = user_most_entries[:3]
 
     if stats["total_jams"]: # against division by zero
-        stats["average_participants"] = all_jam_participants * 1.0 / stats["total_jams"];
+        stats["average_users"] = all_jam_users * 1.0 / stats["total_jams"];
     else:
-        stats["average_participants"] = 0
-    stats["most_participants_per_jam"] = most_participants_per_jam
-    stats["most_participants_jam"] = most_participants_jam
+        stats["average_users"] = 0
+    stats["most_users_per_jam"] = most_users_per_jam
+    stats["most_users_jam"] = most_users_jam
 
     stats["total_entries"] = db.session.query(db.func.count(Entry.id)).first()[0];
     if stats["total_jams"]: # against division by zero
@@ -753,7 +752,7 @@ def statistics():
     stats["most_entries_jam"] = most_entries_jam
 
     if stats["average_entries"]: # against division by zero
-        stats["average_team_size"] = stats["average_participants"] * 1.0 / stats["average_entries"]
+        stats["average_team_size"] = stats["average_users"] * 1.0 / stats["average_entries"]
     else:
         stats["average_team_size"] = 0
     stats["biggest_team_size"] = biggest_team_size
@@ -761,7 +760,7 @@ def statistics():
 
 
     #Best rated entries
-    #Participant with most entries
+    #User with most entries
 
     return render_template('statistics.html', stats = stats)
 

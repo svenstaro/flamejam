@@ -12,16 +12,16 @@
             <tr><th>Total Jams</th>
                 <td>{{ stats["total_jams"] }} jams</td></tr>
 
-            <tr><th>Registered Participants</th>
-                <td>{{ stats["total_participants"] }} participants</td></tr>
+            <tr><th>Registered Users</th>
+                <td>{{ stats["total_users"] }} users</td></tr>
 
-            <tr><th>Average participants per jam</th>
-                <td>{{ "%.2f" % stats["average_participants"] }} participants per jam</td></tr>
+            <tr><th>Average users per jam</th>
+                <td>{{ "%.2f" % stats["average_users"] }} users per jam</td></tr>
 
-            <tr><th>Most participants per jam</th>
-                <td>{{ stats["most_participants_per_jam"] }} participants
-                {% if stats['most_participants_jam'] %}
-                in <a href="{{ stats['most_participants_jam'].url() }}">{{ stats["most_participants_jam"].title }}</a>
+            <tr><th>Most users per jam</th>
+                <td>{{ stats["most_users"] }} users
+                {% if stats['most_users_jam'] %}
+                in <a href="{{ stats['most_users_jam'].url() }}">{{ stats["most_users_jam"].title }}</a>
                 {% endif %}
                 </td></tr>
 
@@ -70,14 +70,14 @@
                 {% endfor %}
                 {% endif %}
                 </td></tr>
-            <tr><th>Participant with most entries</th><td>
-                {% if not stats['participant_most_entries'] or stats["participant_most_entries"][0].getTotalEntryCount() == 0 %}
+            <tr><th>User with most entries</th><td>
+                {% if not stats['user_most_entries'] or stats["user_most_entries"][0].getTotalEntryCount() == 0 %}
                     <p>Nobody has entries yet.</p>
                 {% else %}
-                {% for n in [0,1,2] if stats['participant_most_entries'][n] %}
+                {% for n in [0,1,2] if stats['user_most_entries'][n] %}
                 <p>
-                    {{ stats["participant_most_entries"][n].getLink() }}
-                    with {{ stats["participant_most_entries"][n].getTotalEntryCount() }} entries
+                    {{ stats["user_most_entries"][n].getLink() }}
+                    with {{ stats["user_most_entries"][n].getTotalEntryCount() }} entries
                 </p>
                 {% endfor %}
                 {% endif %}

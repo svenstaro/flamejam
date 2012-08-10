@@ -4,7 +4,7 @@
 #
 
 from flamejam import db
-from flamejam.models import Announcement, Participant, Jam, Entry, Rating, Comment, EntryScreenshot
+from flamejam.models import Announcement, User, Jam, Entry, Rating, Comment, EntryScreenshot
 from datetime import datetime, timedelta
 
 # Kill everything and recreate tables
@@ -12,11 +12,11 @@ db.drop_all()
 db.create_all()
 
 # Make users
-peter = Participant("peter", "omgdlaad21", "roflomg-peter@mailinator.com")
-paul = Participant("paul", "lol", "roflomg-paul@mailinator.com", is_admin=True, is_verified=True)
-per = Participant("per", "lpdla", "roflomg-per@mailinator.com", is_verified = True, receive_emails = False)
-pablo = Participant("pablo", "lad112", "roflomg-pablo@mailinator.com")
-paddy = Participant("paddy", "rqtjio4j1", "roflomg-paddy@mailinator.com")
+peter = User("peter", "omgdlaad21", "roflomg-peter@mailinator.com")
+paul = User("paul", "lol", "roflomg-paul@mailinator.com", is_admin=True, is_verified=True)
+per = User("per", "lpdla", "roflomg-per@mailinator.com", is_verified = True, receive_emails = False)
+pablo = User("pablo", "lad112", "roflomg-pablo@mailinator.com")
+paddy = User("paddy", "rqtjio4j1", "roflomg-paddy@mailinator.com")
 
 # Add users
 db.session.add(peter)

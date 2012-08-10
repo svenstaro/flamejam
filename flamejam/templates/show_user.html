@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Participants » {{ participant.username }}{% endblock %}
+{% block title %}{{ user.username }}{% endblock %}
 
 {% block content %}
-<h1>{{ participant.username }}</h1>
+<h1>{{ user.username }}</h1>
 
-{% if current_user == participant %}
+{% if current_user == user %}
 <p>
     <ul class="tabs">
         {% if current_user.receive_emails %}
@@ -19,7 +19,7 @@
 
 
 <div style="float: left;">
-    <img class="icon big" width="64" height="64" src="{{ participant.getAvatar(64) }}" />
+    <img class="icon big" width="64" height="64" src="{{ user.getAvatar(64) }}" />
 </div>
 
 {% macro entrylist(list) %}
@@ -45,9 +45,9 @@
     <div class="box">
         <h4>Entries as author</h4>
         <div class="box-content">
-            {{ entrylist(participant.entries) }}
-            {% if not participant.entries.all() %}
-                {{ participant.username.capitalize() }} has not created any entries.
+            {{ entrylist(user.entries) }}
+            {% if not user.entries.all() %}
+                {{ user.username.capitalize() }} has not created any entries.
             {% endif %}
         </div>
     </div>
@@ -55,10 +55,10 @@
     <div class="box">
         <h4>Entries as team member</h4>
         <div class="box-content">
-            {{ entrylist(participant.team_entries) }}
+            {{ entrylist(user.team_entries) }}
 
-            {% if not participant.team_entries %}
-                {{ participant.username.capitalize() }} has not participated as a team member.
+            {% if not user.team_entries %}
+                {{ user.username.capitalize() }} has not participated as a team member.
             {% endif %}
         </div>
     </div>

@@ -8,7 +8,7 @@
 {% if q == "%" %}
 <p>Your search for the answer to life the universe and everything returned 42 results.</p>
 {% else %}
-<p>Your search for <b>{{ q }}</b> had {% if jams or entries or participants %}the following{% else %}no{% endif %} results.</p>
+<p>Your search for <b>{{ q }}</b> had {% if jams or entries or users %}the following{% else %}no{% endif %} results.</p>
 {% endif %}
 
 {% if jams %}
@@ -37,16 +37,16 @@
 <p>No entries matched.</p>
 {% endif %}
 
-{% if participants %}
+{% if users %}
 
-<h2>Participants</h2>
+<h2>Users</h2>
 <ul>
-    {% for participant in participants %}
-    <li>{{ participant.getLink() }}</li>
+    {% for user in users %}
+    <li>{{ user.getLink() }}</li>
     {% endfor %}
 </ul>
 {% else %}
-<p>No participants matched.</p>
+<p>No users matched.</p>
 {% endif %}
 
 {% endblock %}
