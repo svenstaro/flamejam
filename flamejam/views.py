@@ -103,7 +103,6 @@ def reset_request():
         # thanks to the UsernameValidator we cam assume the username exists 
         participant = Participant.query.filter_by(username=form.username.data).first()
         participant.token = randint(0, sys.maxint)
-        print participant.getResetToken()
         db.session.commit()
         msg = Message("Welcome to Bacon Game Jam, " + participant.username,
                       recipients=[participant.email],
