@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from flaskext.wtf import BaseForm, Form, TextField, TextAreaField, PasswordField,\
+from flask.ext.wtf import Form, TextField, TextAreaField, PasswordField,\
         DateTimeField, SubmitField, SelectField, HiddenField, BooleanField, RecaptchaField
-from flaskext.wtf import Required, Length, EqualTo, Optional, NumberRange, Email,\
+from flask.ext.wtf import Required, Length, EqualTo, Optional, NumberRange, Email,\
         ValidationError, URL
-from flaskext.wtf.html5 import IntegerField, EmailField
+from flask.ext.wtf.html5 import IntegerField, EmailField
 import re
 from hashlib import sha512
 from flamejam import app, models
@@ -61,6 +61,15 @@ class LoginValidator(object):
         elif u.password != sha512((form[self.pw_field].data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest():
             raise ValidationError(self.message_password)
 
+class UsernameValidator(object):
+    def __init__(self, message_username = "The username is incorrect."):
+        self.message_username = message_username
+
+    def __call__(self, form, field):
+        u = models.Participant.query.filter_by(username = field.data).first()
+        if not u:
+            raise ValidationError(self.message_username)
+
 ############## FORMS ####################
 
 class ParticipantLogin(Form):
@@ -79,6 +88,13 @@ class ParticipantRegistration(Form):
             Email(message = "The email address you entered is invalid.")])
     receive_emails = BooleanField("I want to receive email notifications.", default = True)
     captcha = RecaptchaField()
+
+class ResetPassword(Form):
+    username = TextField("Username", validators=[UsernameValidator()])
+
+class NewPassword(Form):
+    password = PasswordField("Password", validators=[Length(min=8, message = "Please enter a password of at least 8 characters.")])
+    password2 = PasswordField("Password, again", validators=[EqualTo("password", "Passwords do not match.")])
 
 class VerifyForm(Form):
     pass
