@@ -1,8 +1,8 @@
 from flask import Flask
 from datetime import *
-from flaskext.mail import Mail
-from flaskext.sqlalchemy import SQLAlchemy
-from flaskext.markdown import Markdown
+from flask.ext.mail import Mail
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.markdown import Markdown
 
 app = Flask(__name__)
 mail = Mail(app)
