@@ -252,13 +252,19 @@ def new_jam():
 @app.route('/jams/')
 @path("Jams")
 def jams():
-    return render_template("search.html", jams = Jam.query.all())
+    return render_template("misc/search.html", jams = Jam.query.all())
 
 @app.route('/jams/<jam_slug>/', methods=("GET", "POST"))
 @path("Jams", "Show")
-def show_jam(jam_slug):
+def jam_info(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('jam/show_jam.html', jam = jam)
+    return render_template('jam/jam_info.html', jam = jam)
+
+@app.route('/jams/<jam_slug>/games/')
+@path("Jams", "Games")
+def jam_games(jam_slug):
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    return render_template('jam/games.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/delete', methods=("GET", "POST"))
 @path("Jams", "Delete")
@@ -743,7 +749,7 @@ def search():
     elif j == 0 and e == 0 and p == 1:
         return redirect(users[0].url())
 
-    return render_template("search.html", q = q, jams = jams, entries = entries, users = users)
+    return render_template("misc/search.html", q = q, jams = jams, entries = entries, users = users)
 
 @app.route('/contact')
 @path("Contact")

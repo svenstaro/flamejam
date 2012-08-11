@@ -3,173 +3,153 @@
 {% block title %}Rules{% endblock %}
 
 {% block content %}
-<h1>Game Jam Rules</h1>
+<h1>Jam Rules</h1>
 
-<div class="info">
-    <p>
-        These rules are laid down to allow a fun, entertaining and fair event
-        for everyone. They are subject for iteration and improvement. These
-        rules apply to all jams, unless otherwise stated.
-    </p>
+<div class="row-fluid">
+    <div class="span4">
+        <h2>General</h2>
+        <p>
+            These rules are laid down to allow a fun, entertaining and fair event
+            for everyone. They are subject for iteration and improvement. These
+            rules apply to all jams, unless otherwise stated.
+        </p>
 
-    <p>
-        The admins may remove entries if they do not conform to these
-        regulations.
-    </p>
+        <p>
+            The admins may remove entries if they do not conform to these
+            regulations.
+        </p>
+
+        <h2>Procedure</h2>
+        <p>
+            Every game jam can be divided into the following states:
+        </p>
+
+        <ul class="normal">
+            <li><b>Announcement</b> (usually ~2 weeks before the jam)</li>
+            <li><b>Programming</b> (usually 48 hours)</li>
+            <li><b>Packaging</b> (usually 24 hours)</li>
+            <li><b>Voting</b> (usually 1 week)</li>
+            <li><b>Finished</b></li>
+        </ul>
+
+        <h2>Theme</h2>
+        <p>
+            The theme will be randomly chosen from suggestions from the
+            previous jams, from IRC and from the subreddit. It will be announced
+            at the beginning of the contest here, in the
+            <a href="{{ url_for('subreddit') }}" target="_blank">BaconGameJam subreddit</a>
+            and on <a href="{{ url_for('contact') }}#irc">IRC</a>. Everyone
+            may suggest a theme.
+        </p>
+        <p>
+            Participants who have registered with the option to receive
+            email notifications will also receive the theme by email.
+        </p>
+        <p>
+            All entries must have something to do with the theme. We won't
+            be fussy about that, though, so it's ok if the theme is not the
+            main thing of your project, but it has to be visible.
+            Browse the <a href="{{ url_for('jams') }}">list of jams</a> to see what
+            has been chosen as theme previously.
+        </p>
+
+    </div>
+    <div class="span4">
+
+        <h2>Artwork</h2>
+        <p>
+            Freely available, external artwork may be used as long as a source
+            is provided in the posted game. The artwork authors should be
+            credited. This applies to sounds and graphics likewise.
+        </p>
+
+        <h2>Cross-platform</h2>
+        <p>
+            Making a cross-platform game is strongly encouraged. However, you
+            are not required to make your game cross-platform in order to
+            participate. Be aware that the community does not consist only of
+            Windows users. A user may downvote your game if it can't run on the
+            user's platform.
+        </p>
+
+        <h2>Libraries/Engines</h2>
+        <p>
+            Any freely available external libraries may be used for your game.
+            The library doesn't need to be <a title="Wikipedia: Free and open source software"
+            href="http://en.wikipedia.org/wiki/Free_and_open_source_software" target="_blank">
+            FOSS</a> but it can't be payware. Proprietary engines like
+            <a href="http://www.udk.com/" target="_blank">UDK</a> and <a href="http://unity3d.com/" target="_blank">Unity</a>
+            are alright.
+        </p>
+
+        <h2>Snippets/personal Code</h2>
+        <p>
+            If you want to reuse pre-existing code of yours, it must have been
+            available in source form for the public to see a fair amount of time
+            prior to the start of the contest. The same goes for random snippets
+            of code.
+        </p>
+
+        <h2>Hardware compatibility</h2>
+        <p>
+            Your game will be run by netbook users as well as high-performance
+            desktop users. If you make a game full of shaders and fancy graphics
+            stuff, do not expect everyone to be able to run it. You are free to
+            do this, though. Be sensible.
+        </p>
+
+    </div>
+    <div class="span4">
+
+        <h2>Packaging</h2>
+
+        <p>
+            When packaging, you are not required to provide the full source of
+            your game with the release, it is encouraged however. Game jams
+            are a learning effort for everyone and the games created for it provide
+            excellent and small working examples. Do not be scared about losing
+            your copyright, even if you choose a copyleft license. The code is
+            still yours and you may use it commercially afterwards, regardless
+            of the license you choose for this game jam. External libraries should
+            be included in the most sensible way. A small library like zlib may
+            be put directly into the sources if this is more convenient. A bigger
+            library like Ogre3D should only be referred. You will get some extra time
+            (usually one day) for packaging your game after the jam has ended.
+            Ask in <a href="{{ url_for('contact') }}#irc">IRC</a> if you need
+            help with compiling/packaging.
+        </p>
+
+        <h2>Source control</h2>
+        <p>
+            Use of a publicly accessible source control system is encouraged
+            but not required. <a href="https://github.com" target="_blank">Github</a>
+            is recommended. To make this clear, you are not required to share
+            your source but again, you are encouraged to do so.
+        </p>
+
+
+        <h2>Team size</h2>
+        <p>
+            <b>Solo jams:</b>
+            You have to work on your own. All content that is being created for
+            your game within the time of the game has to come from you. That includes
+            the source (except external resources or older snippets available to
+            the public), artwork, sound and everything else.
+        </p>
+        <p>
+            <b>Team jams:</b>
+            You can work in teams. The team size is stated in the jam description,
+            if not, it's unlimited. Your team can include coders, artists, game
+            designers, composers, anyone.
+        </p>
+
+        <h2>Time limit</h2>
+        <p>
+            The time limit is stated in the jam details. A normal jam runs for
+            48 hours, starting from the announcement of the theme in IRC.
+            Any work after the deadline is purely minor bug fixing, compatibility
+            fixing and packaging. No gameplay changes allowed.
+        </p>
+    </div>
 </div>
-
-<a name="procedure"></a><h2>Procedure</h2>
-
-<div class="info">
-    <p>
-        Every game jam can be divided into the following states:
-    </p>
-
-    <ul class="normal">
-        <li><b>Announcement</b> (usually ~2 weeks before the jam)</li>
-        <li><b>Programming</b> (usually 48 hours)</li>
-        <li><b>Packaging</b> (usually 24 hours)</li>
-        <li><b>Voting</b> (usually 1 week)</li>
-        <li><b>Finished</b></li>
-    </ul>
-</div>
-
-<a name="theme"></a><h2>Theme</h2>
-<div class="info">
-    <p>
-        The theme will be randomly chosen from suggestions from the
-        previous jams, from IRC and from the subreddit. It will be announced
-        at the beginning of the contest here, in the
-        <a href="http://reddit.com/r/bacongamejam" target="_blank">
-            BaconGameJam subreddit</a>
-        and on <a href="{{ url_for('contact') }}#irc">IRC</a>. Everyone
-        may suggest a theme.
-    </p>
-    <p>
-        Participants who have registered with the option to receive
-        email notifications will also receive the theme by email.
-    </p>
-    <p>
-        All entries must have something to do with the theme. We won't
-        be fussy about that, though, so it's ok if the theme is not the
-        main thing of your project, but it has to be visible.
-        Browse the <a href="{{ url_for('jams') }}">list of jams</a> to see what
-        has been chosen as theme previously.
-    </p>
-</div>
-
-<a name="artwork"></a><h2>Artwork</h2>
-<div class="info">
-    <p>
-        Freely available, external artwork may be used as long as a source
-        is provided in the posted game. The artwork authors should be
-        credited. This applies to sounds and graphics likewise.
-    </p>
-</div>
-
-<a name="cross-platform"></a><h2>Cross-platform</h2>
-<div class="info">
-    <p>
-        Making a cross-platform game is strongly encouraged. However, you
-        are not required to make your game cross-platform in order to
-        participate. Be aware that the community does not consist only of
-        Windows users. A user may downvote your game if it can't run on the
-        user's platform.
-    </p>
-</div>
-
-<a name="libraries-engines"></a><h2>Libraries/Engines</h2>
-<div class="info">
-    <p>
-        Any freely available external libraries may be used for your game.
-        The library doesn't need to be <a title="Wikipedia: Free and open source software"
-        href="http://en.wikipedia.org/wiki/Free_and_open_source_software" target="_blank">
-        FOSS</a> but it can't be payware. Proprietary engines like
-        <a href="http://www.udk.com/" target="_blank">UDK</a> and <a href="http://unity3d.com/" target="_blank">Unity</a>
-        are alright.
-    </p>
-</div>
-
-<a name="snippets-personal-code"></a><h2>Snippets/personal Code</h2>
-
-<div class="info">
-    </p>
-        If you want to reuse pre-existing code of yours, it must have been
-        available in source form for the public to see a fair amount of time
-        prior to the start of the contest. The same goes for random snippets
-        of code.
-    </p>
-</div>
-
-<a name="hardware-compatibility"></a><h2>Hardware compatibility</h2>
-
-<div class="info">
-    <p>
-        Your game will be run by netbook users as well as high-performance
-        desktop users. If you make a game full of shaders and fancy graphics
-        stuff, do not expect everyone to be able to run it. You are free to
-        do this, though. Be sensible.
-    </p>
-</div>
-
-<a name="packaging"></a><h2>Packaging</h2>
-
-<div class="info">
-    <p>
-        When packaging, you are not required to provide the full source of
-        your game with the release, it is encouraged however. Game jams
-        are a learning effort for everyone and the games created for it provide
-        excellent and small working examples. Do not be scared about losing
-        your copyright, even if you choose a copyleft license. The code is
-        still yours and you may use it commercially afterwards, regardless
-        of the license you choose for this game jam. External libraries should
-        be included in the most sensible way. A small library like zlib may
-        be put directly into the sources if this is more convenient. A bigger
-        library like Ogre3D should only be referred. You will get some extra time
-        (usually one day) for packaging your game after the jam has ended.
-        Ask in <a href="{{ url_for('contact') }}#irc">IRC</a> if you need
-        help with compiling/packaging.
-    </p>
-</div>
-
-<a name="source-control"></a><h2>Source control</h2>
-
-<div class="info">
-    <p>
-        Use of a publicly accessible source control system is encouraged
-        but not required. <a href="https://github.com" target="_blank">Github</a>
-        is recommended. To make this clear, you are not required to share
-        your source but again, you are encouraged to do so.
-    </p>
-</div>
-
-<a name="team-size"></a><h2>Team size</h2>
-
-<div class="info">
-    <p>
-        <b>Solo jams:</b>
-        You have to work on your own. All content that is being created for
-        your game within the time of the game has to come from you. That includes
-        the source (except external resources or older snippets available to
-        the public), artwork, sound and everything else.
-    </p>
-    <p>
-        <b>Team jams:</b>
-        You can work in teams. The team size is stated in the jam description,
-        if not, it's unlimited. Your team can include coders, artists, game
-        designers, composers, anyone.
-    </p>
-</div>
-
-<a name="time-limit"></a><h2>Time limit</h2>
-
-<div class="info">
-    <p>
-        The time limit is stated in the jam details. A normal jam runs for
-        48 hours, starting from the announcement of the theme in IRC.
-        Any work after the deadline is purely minor bug fixing, compatibility
-        fixing and packaging. No gameplay changes allowed.
-    </p>
-</div>
-
 {% endblock %}

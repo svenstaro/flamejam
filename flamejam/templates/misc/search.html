@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<h1>Search</h1>
+
+{% if q == "%" %}
+    <p>Your search for the answer to life the universe and everything returned 42 results.</p>
+{% else %}
+    <p>Your search for <b>{{ q }}</b> had {% if jams or entries or users %}the following{% else %}no{% endif %} results.</p>
+{% endif %}
+
+<div class="row-fluid">
+    <div class="span4">
+        {% if jams %}
+        <h2>{{ jams | length }} Jam{{ "" if jams | length == 1 else "s" }}</h2>
+        <ul>
+            {% for jam in jams %}
+            <li>
+                <a href="{{ jam.url() }}">{{ jam.title }}</a>
+                {% if jam.theme %}<span class="theme">{{ jam.theme }}</span>{% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No jams matched.</p>
+        {% endif %}
+
+    </div>
+    <div class="span4">
+
+        <h2>{{ entries | length }} Entr{{ "y" if entries | length == 1 else "ies" }}</h2>
+        {% if entries %}
+        <ul class="games mini">
+            {% for entry in entries %}
+            <li>
+                <a href="{{ entry.url() }}">
+                    {% set s = entry.screenshots[-1] %}
+                    {% if s %}
+                    <img src="{{ s.url }}" title="{{ entry.title }}: {{ s.caption }}" />
+                    {% else %}
+                    <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" />
+                    {% endif %}
+                    <span>{{ entry.title }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No entries matched.</p>
+        {% endif %}
+
+    </div>
+    <div class="span4">
+
+        <h2>{{ users | length }} User{{ "" if users | length == 1 else "s" }}</h2>
+        {% if users %}
+        <ul class="users">
+            {% for user in users %}
+            <li>{{ user.getLink() }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No users matched.</p>
+        {% endif %}
+
+{% endblock %}

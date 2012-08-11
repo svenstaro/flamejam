@@ -1,0 +1,31 @@
+{% extends "jam/base.html" %}
+
+{% set status = jam.getStatus() %}
+
+{% block title %}Games of {{ jam.title }}{% endblock %}
+
+{% block content %}
+
+<h1>Games <small>This list is randomly shuffled while ratings are hidden.</small></h1>
+
+{% if jam.entries.all() | length == 0 %}
+    <p>There are no entries yet.</p>
+{% else %}
+    <ul class="games">
+        {% for entry in jam.getShuffledEntries() %}
+        <li><a href="{{ entry.url() }}">
+
+            {% set s = entry.screenshots[-1] %}
+            {% if s %}
+            <img src="{{ s.url }}" title="{{ entry.title }}: {{ s.caption }}" />
+            {% else %}
+            <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
+            {% endif %}
+
+            <span>{{ entry.title }}</span>
+        </a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

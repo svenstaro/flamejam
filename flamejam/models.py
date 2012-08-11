@@ -96,7 +96,7 @@ class User(db.Model):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=retro".format(md5(self.email.lower()).hexdigest(), size)
 
     def getLink(self, class_ = ""):
-        s = 14
+        s = 16
         if self.is_admin:
             class_ += " admin"
         return Markup('<a class="user {4}" href="{0}"><img width="{2}" height="{2}" src="{3}" class="icon"/> {1}</a>'.format(
@@ -205,7 +205,7 @@ class Jam(db.Model):
             return JamStatus(JamStatusCode.FINISHED, self.end_time)
 
     def url(self, **values):
-        return url_for('show_jam', jam_slug = self.slug, **values)
+        return url_for('jam_info', jam_slug = self.slug, **values)
 
     def getTopEntries(self):
         e = list(self.entries.all())

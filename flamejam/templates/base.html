@@ -4,14 +4,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>{% block title %}{% endblock %} « BaconGameJam</title>
 
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.lightbox-0.5.css') }}">
-        <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='jquery.lightbox-0.5.js') }}"></script>
-        <!--
-        <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='countdown.js') }}"></script>
-        -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery.lightbox-0.5.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.lightbox-0.5.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/countdown.js') }}"></script>
+
         <script type="text/javascript" lang="javascript">
             $(document).ready(function() {
                 $('ul.screenshots li a.screenshot, a.rating-details-screenshot').lightBox({
@@ -55,7 +55,9 @@
         </div>
         <div id="navigation">
             <div class="right">
-                <input class="search" type="text" placeholder="Search..." name="search" />
+                <form action="{{ url_for('search') }}">
+                    <input class="search" type="text" placeholder="Search..." name="q" />
+                </form>
             </div>
 
             <div class="left">

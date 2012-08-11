@@ -8,12 +8,16 @@
 {% block sidebar %}
 <h1>{{ jam.title }}</h1>
 
+{% macro jamMenu(endpoint, label) %}
+    <li{% if endpoint == request.endpoint %} class="current"{% endif %}><a href="{{ url_for(endpoint, jam_slug = jam.slug) }}">{{ label }}</a></li>
+{% endmacro %}
+
 <ul class="sidebar">
-    <li class="current"><a href="#">Info</a></li>
-    <li><a href="#">Games</a></li>
-    <li><a href="#">Teams</a></li>
-    <li><a href="#">Registrations</a></li>
-    <li><a href="#">Team Finder</a></li>
+    {{ jamMenu("jam_info", "Info") }}
+    {{ jamMenu("jam_games", "Games") }}
+    {{ jamMenu("faq", "Teams") }}
+    {{ jamMenu("faq", "Registrations") }}
+    {{ jamMenu("faq", "Team Finder") }}
 </ul>
 
 <hr />

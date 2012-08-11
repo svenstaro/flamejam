@@ -3,21 +3,35 @@
 {% block title %}Contact{% endblock %}
 
 {% block content %}
-<h1>Contact</h1>
-<div class="info">
-    <img src="{{ url_for('static', filename = 'gfx/contact.png') }}" />
-</div>
 
-<a name="irc"></a><h2>IRC</h2>
-<div class="info">
-    <p>
-        Meet us in IRC on <a href="http://webchat.freenode.net/?channels=bacongamejam" target="_blank">irc.freenode.org#bacongamejam</a>
-    </p>
-    <p>
-        Most of us will be in the channel during the jams, but you can
-        meet a few of us outside jamming time. Feel free to ask any
-        questions about the jam, or just join to chat.
-    </p>
+<div class="row-fluid">
+    <div class="span4">
+        <h1>Contact</h1>
+        <img src="{{ url_for('static', filename = 'gfx/contact.png') }}" />
+    </div>
+    <div class="span4">
+        <h1>IRC</h1>
+        <p>
+            Meet us in IRC on
+            <a href="http://webchat.freenode.net/?channels=bacongamejam" target="_blank">irc.freenode.org#bacongamejam</a>
+        </p>
+        <p>
+            Most of us will be in the channel during the jams, but you can
+            meet a few of us outside jamming time. Feel free to ask any
+            questions about the jam, or just join to chat.
+        </p>
+    </div>
+    <div class="span4">
+        <h1>Subreddit</h1>
+        <p>
+            For discussions, ideas, feedback, questions, and anything related
+            to the game jam in general, please create a post over at reddit.
+        </p>
+        <p>
+            <a href="{{ url_for('subreddit') }}" target="_blank" class="button large highlight">r/bacongamejam</a>
+        </p>
+
+    </div>
 </div>
 
 {% endblock %}

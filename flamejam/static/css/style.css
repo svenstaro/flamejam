@@ -1,4 +1,5 @@
 @import url("grid.css");
+@import url("button.css");
 
 body {
     color: #FFF;
@@ -31,6 +32,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 #content h1 {
     font-weight: normal;
     color: #EEE;
+    margin-top: 0;
 }
 
 #content h1 small {
@@ -40,8 +42,14 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 
 #content h2 {
     font-weight: normal;
-    font-size: 1.2em;
-    color: #AAA;
+    font-size: 1.6em;
+    border: 1px solid #222;
+    background: #222;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.1)), to(rgba(255, 255, 255, 0)));
+    border: 0;
+    border-radius: 4px 4px 0 0;
+    padding: 6px 10px;
+    color: #444;
 }
 
 p, ul {
@@ -86,7 +94,7 @@ ul {
     width: 32px;
     height: 32px;
     margin-right: 10px;
-    background: url("gfx/logo.png");
+    background: url("../gfx/logo.png");
 
     display: inline-block;
     #display: inline;
@@ -119,6 +127,7 @@ ul {
     color: #AAA;
 }
 
+a.button.large,
 a#account {
     background: -webkit-gradient(linear, left top, left bottom, from(#484848), to(#262626));
     border-radius: 4px;
@@ -127,9 +136,17 @@ a#account {
     display: inline-block;
     #display: inline;
     padding: 0 10px;
+    font-size: 1.1em;
+    font-weight: bold;
 
     color: #131313;
     text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
+    box-shadow: 3px 3px 3px #000;
+}
+
+a.button.highlight {
+    background: -webkit-gradient(linear, left top, left bottom, from(#F90), to(#840));
+    border: 1px solid #960;
 }
 
 #account img {
@@ -203,7 +220,7 @@ img {
     color: #a5a5a5;
     text-shadow: -1px -1px 1px #000;
 
-    background: url("gfx/breadcrumb.png") right center no-repeat;
+    background: url("../gfx/breadcrumb.png") right center no-repeat;
     padding-right: 25px;
 }
 
@@ -233,6 +250,7 @@ img {
     border-right: 1px solid #383838;
     text-align: right;
     font-size: 8pt;
+    vertical-align: top;
 }
 
 #sidebar h1 {
@@ -276,6 +294,7 @@ ul.sidebar li.current a {
 
 #page {
     display: table-cell;
+    vertical-align: top;
     background: #030303;
 }
 
@@ -303,12 +322,11 @@ input.search {
 input.search::-webkit-input-placeholder { color: #434343; }
 input.search:-moz-placeholder { color: #434343; }
 
-
-
-
 ul.games {
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
     list-style: none;
+    text-align: left;
 }
 
 ul.games li {
@@ -331,9 +349,26 @@ ul.games li a {
     padding: 10px;
 }
 
+ul.games li a span {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+ul.games.mini li a {
+    padding: 5px;
+    width: 64px;
+}
+
 ul.games li img {
     margin-bottom: 10px;
     opacity: 0.7;
+    width: 128px;
+    height: 128px;
+}
+
+ul.games.mini li img {
+    width: 64px;
+    height: 64px;
 }
 
 ul.games li a:hover img {
@@ -383,3 +418,38 @@ ol.steps li small {
     font-size: 0.5em;
     opacity: 0.7;
 }
+
+table.details {
+    border-collapse: collapse;
+    margin: 20px;
+}
+
+table.details th,
+table.details td {
+    padding: 4px 8px;
+}
+
+table.details th {
+    text-align: right;
+    border-right: 1px solid #333;
+    color: #777;
+    font-weight: normal;
+}
+
+ul.users {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+ul.users li {
+    display: inline-block;
+    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#222));
+    padding: 4px;
+    width: 100px;
+    margin: 2px 0;
+    border-radius: 2px;
+    font-size: 1.2em;
+}
+
