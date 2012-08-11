@@ -7,12 +7,12 @@ import sys
 
 from flask import session, redirect, url_for, escape, request, \
         render_template, flash, abort
-from flaskext.mail import Message
 from flamejam import app
 
 from flamejam.models import *
 from flamejam.forms import *
 from flamejam.login import *
+from flamejam.mail import *
 
 @app.route('/')
 def index():
@@ -75,14 +75,10 @@ def register():
                 False,  # is verified
                 receive_emails)
 
-        msg = Message("Welcome to Bacon Game Jam, " + username,
-            recipients=[email],
-            sender=("bgj","noreply@bacongamejam.org"))
-
-        msg.html = render_template("emails/verification.html",
-                                   recipient=new_participant)
-        msg.recipients = [new_participant.email]
-        mail.send(msg)
+        m = Mail("Welcome to Bacon Game Jam, " + username)
+        m.addRecipients(new_participant)
+        m.render("emails/verification.html", recipient = new_participant)
+        m.send()
 
         db.session.add(new_participant)
         db.session.commit()
@@ -104,15 +100,11 @@ def reset_request():
         participant = Participant.query.filter_by(username=form.username.data).first()
         participant.token = randint(0, sys.maxint)
         db.session.commit()
-        msg = Message("Welcome to Bacon Game Jam, " + participant.username,
-                      recipients=[participant.email],
-                      sender=("bgj","noreply@bacongamejam.org"))
 
-        msg.html = render_template("emails/reset_password.html",
-                                   recipient=participant)
-
-        msg.recipients = [participant.email]
-        mail.send(msg)
+        m = Mail("Welcome to Bacon Game Jam, " + participant.username)
+        m.addRecipients(participant.email)
+        m.render("emails/reset_password.html", recipient = participant)
+        m.send()
 
         flash('Your password has been reset, check your email')
     return render_template('reset_request.html', form=form, error=error)
@@ -152,15 +144,10 @@ def verify_send():
         return redirect(url_for('index'))
 
 
-    msg = Message("Welcome to Bacon Game Jam, " + username,
-                  recipients=[participant.email],
-                  sender=("bgj","noreply@bacongamejam.org"))
-
-    msg.html = render_template("emails/verification.html",
-                               recipient=participant)
-
-    msg.recipients = [participant.email]
-    mail.send(msg)
+    m = Mail("Welcome to Bacon Game Jam, " + username)
+    m.render("emails/verification.html", recipient = participant)
+    m.addRecipients(participant)
+    m.send()
 
     flash('Verification has been resent, check your email')
     return redirect(url_for('verify_status', username=username))
@@ -226,14 +213,12 @@ def new_jam():
             flash('New jam added.')
 
             # Send out mails to all interested users.
-            with mail.connect() as conn:
-                participants = Participant.query.filter_by(receive_emails=True).all()
-                for participant in participants:
-                    msg = Message("BaconGameJam: Jam \"%s\" announced" % title)
-                    msg.html = render_template("emails/jam_announced.html", jam = new_jam, recipient = participant)
-                    msg.recipients = [participant.email]
-                    conn.send(msg)
-                flash("Email notifications have been sent.")
+            participants = Participant.query.filter_by(receive_emails=True).all()
+            m = Mail("BaconGameJam: Jam \"%s\" announced" % title)
+            m.render("emails/jam_announced.html", jam = new_jam, recipient = participant)
+            m.addRecipients(participants)
+            m.send()
+            flash("Email notifications have been sent.")
 
             #return render_template("emails/jam_announced.html", jam = new_jam, recipient = get_current_user())
             return redirect(new_jam.url())
@@ -304,11 +289,10 @@ def edit_jam(jam_slug):
             if form.email.data:
                 with mail.connect() as conn:
                     participants = Participant.query.filter_by(receive_emails=True).all()
-                    for participant in participants:
-                        msg = Message("BaconGameJam: Jam \"%s\" changed" % changes["title"][1])
-                        msg.html = render_template("emails/jam_changed.html", jam = jam, changes = changes, recipient = participant)
-                        msg.recipients = [participant.email]
-                        conn.send(msg)
+                    m = Mail("BaconGameJam: Jam \"%s\" changed" % changes["title"][1])
+                    m.render("emails/jam_changed.html", jam = jam, changes = changes, recipient = participant)
+                    m.addRecipients(participants)
+                    m.send()
                     flash("Email notifications have been sent.")
 
             flash("The jam has been changed.")
