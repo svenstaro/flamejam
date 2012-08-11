@@ -2,6 +2,9 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/flamejam.db'
 SQLALCHEMY_ECHO = False
 SECRET_KEY = 'SUPERSECRET'
 
+MAIL_ENABLED = False
+#MAIL_SENDER = ("BaconGameJam", "noreply@bacongamejam.org")
+
 # See http://packages.python.org/Flask-Mail/
 #MAIL_SERVER = 'localhost'
 #MAIL_PORT = 25
@@ -14,3 +17,4 @@ SECRET_KEY = 'SUPERSECRET'
 #DEFAULT_MAX_EMAILS = None
 #MAIL_FAIL_SILENTLY = True
 #MAIL_SUPPRESS_SEND = False
+
