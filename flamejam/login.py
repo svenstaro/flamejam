@@ -25,7 +25,7 @@ def check_login():
 
 def login_as(user):
     if not user.is_verified:
-        flash("Your account is not verified.")
+        flash("Your account is not verified.", "error")
         return False
     session["login_id"] = user.id
     session["login_user"] = user
@@ -67,7 +67,7 @@ def require_admin():
             url = response.getheader("location")
             connection.close()
         else:
-            flash("Error fetching verification thread.")
+            flash("Error fetching verification thread.", "error")
             return False
 
     if data:

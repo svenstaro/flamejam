@@ -45,7 +45,7 @@ def home():
 @path("Login")
 def login():
     if get_current_user():
-        flash("You are already logged in.")
+        flash("You are already logged in.", "info")
         return redirect(url_for("index"))
 
     next = request.args.get("next","")
@@ -63,10 +63,10 @@ def login():
         if not login_as(user):
             return redirect(url_for("verify_status", username=username))
         elif "next" in session:
-            flash('You were logged in and redirected.')
+            flash("You were logged in and redirected.", "success")
             return redirect(session.pop("next"))
         else:
-            flash('You were logged in.')
+            flash("You were logged in.", "success")
             return redirect(url_for('index'))
     elif register_form.validate_on_submit():
         username = register_form.username.data.strip()
@@ -88,7 +88,7 @@ def login():
         db.session.add(new_user)
         db.session.commit()
 
-        flash("Your account has been created, confirm your email to verify.")
+        flash("Your account has been created, confirm your email to verify.", "success")
         return redirect(url_for('verify_status', username = username))
     return render_template('account/login.html', login_form = login_form, register_form = register_form)
 
@@ -96,7 +96,7 @@ def login():
 @path("Reset")
 def reset_request():
     if get_current_user():
-        flash("You are already logged in.")
+        flash("You are already logged in.", "info")
         return redirect(url_for("index"))
     error = None
     form = ResetPassword()
@@ -111,7 +111,7 @@ def reset_request():
         m.render("emails/reset_password.html", recipient = user)
         m.send()
 
-        flash('Your password has been reset, check your email')
+        flash("Your password has been reset, check your email.", "success")
     return render_template('reset_request.html', form=form, error=error)
 
 @app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
@@ -119,10 +119,10 @@ def reset_request():
 def reset_verify(username, token):
     user = user.query.filter_by(username=username).first_or_404()
     if user.token == None:
-        flash("%s's account has not requested a password reset." % user.username.capitalize())
+        flash("%s's account has not requested a password reset." % user.username.capitalize(), "error")
         return redirect(url_for('index'))
     if user.getResetToken() != token:
-        flash("This does not seem to be a valid reset link, if you reset your account multiple times make sure you are using the link in the last email you received!")
+        flash("This does not seem to be a valid reset link, if you reset your account multiple times make sure you are using the link in the last email you received!", "error")
         return redirect(url_for('index'))
     form = NewPassword()
     error = None
@@ -132,7 +132,7 @@ def reset_verify(username, token):
         # set the new password
         user.password = sha512((form.password.data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
         db.session.commit()
-        flash('Your password was updated and you can login with it now.')
+        flash("Your password was updated and you can login with it now.", "success")
         return redirect(url_for('login'))
     return render_template('reset_newpassword.html', user = user, form = form, error = error)
 
@@ -147,7 +147,7 @@ def verify_send():
     user = User.query.filter_by(username = username).first_or_404()
 
     if user.is_verified:
-        flash("%s's account is already validated." % user.username.capitalize())
+        flash("%s's account is already validated." % user.username.capitalize(), "info")
         return redirect(url_for('index'))
 
 
@@ -156,7 +156,7 @@ def verify_send():
     m.addRecipients(user)
     m.send()
 
-    flash('Verification has been resent, check your email')
+    flash("Verification has been resent, check your email", "success")
     return redirect(url_for('verify_status', username=username))
 
 @app.route('/verify/<username>', methods=["GET"])
@@ -166,7 +166,7 @@ def verify_status(username):
     user = User.query.filter_by(username = username).first_or_404()
 
     if user.is_verified:
-        flash("%s's account is already validated." % user.username.capitalize())
+        flash("%s's account is already validated." % user.username.capitalize(), "info")
         return redirect(url_for('index'))
 
     return render_template('verify_status.html', submitted=submitted, username=username)
@@ -178,7 +178,7 @@ def verify(username, verification):
     user = User.query.filter_by(username = username).first_or_404()
 
     if user.is_verified:
-        flash("%s's account is already validated." % user.username.capitalize())
+        flash("%s's account is already validated." % user.username.capitalize(), "success")
         return redirect(url_for('index'))
 
     # verification success
@@ -199,7 +199,7 @@ def logout():
     require_login()
 
     logout_now()
-    flash('You were logged out')
+    flash("You were logged out.", "success")
     return redirect(url_for('index'))
 
 @app.route('/new_jam', methods=("GET", "POST"))
@@ -212,7 +212,7 @@ def new_jam():
         title = form.title.data
         new_slug = get_slug(title)
         if Jam.query.filter_by(slug = new_slug).first():
-            flash('A jam with a similar title already exists.')
+            flash("A jam with a similar title already exists.", "error")
         else:
             start_time = form.start_time.data
             new_jam = Jam(title, get_current_user(), start_time)
@@ -221,7 +221,7 @@ def new_jam():
             new_jam.team_jam = form.team_jam.data
             db.session.add(new_jam)
             db.session.commit()
-            flash('New jam added.')
+            flash("New jam added.", "success")
 
             # Send out mails to all interested users.
             users = User.query.filter_by(receive_emails=True).all()
@@ -230,7 +230,7 @@ def new_jam():
                 m.render("emails/jam_announced.html", jam = new_jam, recipient = user)
                 m.addRecipient(user)
                 m.send()
-            flash("Email notifications have been sent.")
+            flash("Email notifications have been sent.", "info")
 
             #return render_template("emails/jam_announced.html", jam = new_jam, recipient = get_current_user())
             return redirect(new_jam.url())
@@ -267,7 +267,7 @@ def delete_jam(jam_slug):
 
         db.session.delete(jam)
         db.session.commit()
-        flash(jam.title+" was deleted")
+        flash(jam.title +" was deleted", "success")
         return redirect('/')
 
     return render_template('delete_jam.html', jam = jam)
@@ -280,7 +280,7 @@ def edit_jam(jam_slug):
 
     if not 0 <= jam.getStatus().code <= 1:
         # editing only during the jam and before
-        flash("The jam is over, you cannot edit it anymore.")
+        flash("The jam is over, you cannot edit it anymore.", "warning")
         return redirect(jam.url())
 
     form = EditJam()
@@ -305,7 +305,7 @@ def edit_jam(jam_slug):
             changes["start_time"][0])
 
         if not changed:
-            flash("Nothing has changed. Keep moving!")
+            flash("Nothing has changed. Keep moving!", "info")
         else:
             # inform users about change
             if form.email.data:
@@ -314,9 +314,9 @@ def edit_jam(jam_slug):
                 m.render("emails/jam_changed.html", jam = jam, changes = changes, recipient = user)
                 m.addRecipients(users)
                 m.send()
-                flash("Email notifications have been sent.")
+                flash("Email notifications have been sent.", "info")
 
-            flash("The jam has been changed.")
+            flash("The jam has been changed.", "success")
         return redirect(jam.url())
 
     elif request.method != "POST":
@@ -343,16 +343,16 @@ def new_game(jam_slug):
 
     if not 1 <= jam.getStatus().code <= 2:
         # new games only during the jam and the packaging phase
-        flash("New games are not allowed at this time.")
+        flash("New games are not allowed at this time.", "error")
         return redirect(jam.url())
 
     # check if the user has already an game in this jam
     for game in jam.games:
         if game.user == get_current_user():
-            flash("You already have an game for this jam. Look here!")
+            flash("You already have an game for this jam. Look here!", "info")
             return redirect(game.url())
         elif get_current_user() in game.team:
-            flash("You are part of this team! Leave the team to create your own game.")
+            flash("You are part of this team! Leave the team to create your own game.", "error")
             return redirect(game.url())
 
     if form.validate_on_submit():
@@ -365,7 +365,7 @@ def new_game(jam_slug):
             new_game = Game(title, description, jam, get_current_user())
             db.session.add(new_game)
             db.session.commit()
-            flash('Game submitted')
+            flash("Game submitted", "success")
             return redirect(new_game.url())
     return render_template('new_game.html', jam = jam, form = form, error = error)
 
@@ -379,7 +379,7 @@ def rate_games(jam_slug, action = None):
 
     # Check whether jam is in rating period
     if jam.getStatus().code != 3:
-        flash("Rating for this jam is closed.")
+        flash("Rating for this jam is closed.", "warning")
         return redirect(jam.url())
 
     error = None
@@ -395,7 +395,7 @@ def rate_games(jam_slug, action = None):
 
         # check if user can rate this game
         if not get_current_user().canRate(game):
-            flash("You cannot rate your own game.")
+            flash("You cannot rate your own game.", "error")
             return redirect(url_for("rate_games", jam_slug = jam.slug))
 
         # remove previous rating, if any
@@ -427,7 +427,7 @@ def rate_games(jam_slug, action = None):
                 note, game, get_current_user())
         db.session.add(new_rating)
         db.session.commit()
-        flash('You rated for %s' % game.title)
+        flash("You rated for %s" % game.title, "success")
         return redirect(url_for('rate_games', jam_slug = jam.slug))
 
     elif action == "skip_rating" and skip_form.validate_on_submit():
@@ -436,7 +436,7 @@ def rate_games(jam_slug, action = None):
 
         # error if you have already rated
         if get_current_user().ratedGame(game):
-            flash("You already rated for %s." % game.title)
+            flash("You already rated for %s." % game.title, "warning")
             return redirect(url_for("rate_games", jam_slug = jam.slug))
 
         # remove skip mark, if any
@@ -449,7 +449,7 @@ def rate_games(jam_slug, action = None):
         skip = RatingSkip(get_current_user(), game, reason)
         db.session.add(skip)
         db.session.commit()
-        flash('You skipped rating for %s' % game.title)
+        flash("You skipped rating for %s" % game.title, "info")
         return redirect(url_for('rate_games', jam_slug = jam.slug))
 
     # Find all games from this jam, including their rating count, ordered
@@ -513,7 +513,7 @@ def rate_games(jam_slug, action = None):
             skip_form = skip_form, my_games = my_games)
     else:
         # We have nothing left to vote on
-        flash("You have no games left to vote on. Thanks for participating.")
+        flash("You have no games left to vote on. Thanks for participating.", "success")
         return redirect(jam.url())
 
 @app.route('/jams/<jam_slug>/<game_slug>/reset_vote')
@@ -525,7 +525,7 @@ def reset_vote(jam_slug, game_slug):
     rating = game.ratings.filter_by(user = get_current_user()).first_or_404()
     db.session.delete(rating)
     db.session.commit()
-    flash("Your rating for this game has been reset. Visit the jam page to vote again.")
+    flash("Your rating for this game has been reset. Visit the jam page to vote again.", "success")
     return redirect(game.url())
 
 @app.route('/jams/<jam_slug>/<game_slug>/')
@@ -542,7 +542,7 @@ def show_game(jam_slug, game_slug, action=None):
         new_comment = Comment(text, game, get_current_user())
         db.session.add(new_comment)
         db.session.commit()
-        flash('Comment added')
+        flash("Comment added", "success")
         return redirect(url_for('show_game', jam_slug = jam_slug, game_slug = game_slug))
 
     if action == "edit":
@@ -561,7 +561,7 @@ def show_game(jam_slug, game_slug, action=None):
                 game.slug = new_slug
                 game.description = description
                 db.session.commit()
-                flash("Your changes have been saved.")
+                flash("Your changes have been saved.", "success")
                 return redirect(game.url())
         elif request.method != "POST":
             edit_form.title.data = game.title
@@ -577,7 +577,7 @@ def show_game(jam_slug, game_slug, action=None):
             s = gameScreenshot(screen_form.url.data, screen_form.caption.data, game)
             db.session.add(s)
             db.session.commit()
-            flash("Your screenshot has been added.")
+            flash("Your screenshot has been added.", "success")
             return redirect(game.url())
 
         return render_template("add_screenshot.html", game = game, form = screen_form)
@@ -590,7 +590,7 @@ def show_game(jam_slug, game_slug, action=None):
             s = GamePackage(game, package_form.url.data, package_form.type.data)
             db.session.add(s)
             db.session.commit()
-            flash("Your package has been added.")
+            flash("Your package has been added.", "success")
             return redirect(game.url())
 
         return render_template("add_package.html", game = game, form = package_form)
@@ -600,28 +600,28 @@ def show_game(jam_slug, game_slug, action=None):
 
         jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
         if jam.team_jam == False:
-            flash("This jam is not a team jam.")
+            flash("This jam is not a team jam.", "error")
             return redirect(game.url())
 
         team_form = GameAddTeamMember()
         if team_form.validate_on_submit():
             member = User.query.filter_by(username = team_form.username.data).first_or_404()
             if member == get_current_user():
-                flash("You cannot add yourself to the team.")
+                flash("You cannot add yourself to the team.", "error")
             elif not member:
-                flash("That username does not exist.")
+                flash("That username does not exist.", "error")
             elif member in game.team:
-                flash("That user is already in the team.")
+                flash("That user is already in the team.", "error")
             elif member.getGameInJam(game.jam):
-                flash("That user has an game for this jam. Look here!")
+                flash("That user has a game for this jam. Look here!", "error")
                 return redirect(member.getGameInJam(game.jam).url())
             elif member.getTeamGameInJam(game.jam):
-                flash("That user is already part of a team for this jam. Look here!")
+                flash("That user is already part of a team for this jam. Look here!", "error")
                 return redirect(member.getTeamGameInJam(game.jam).url())
             else:
                 game.team.append(member)
                 db.session.commit()
-                flash("%s has been added to the team." % member.username)
+                flash("%s has been added to the team." % member.username, "success")
                 return redirect(game.url())
 
         return render_template("add_team_member.html", game = game, form = team_form)
@@ -633,7 +633,7 @@ def show_game(jam_slug, game_slug, action=None):
         s = GameScreenshot.query.filter_by(game_id = game.id, id = remove_id).first_or_404()
         db.session.delete(s)
         db.session.commit()
-        flash("The screenshot has been removed.")
+        flash("The screenshot has been removed.", "success")
         return redirect(game.url())
 
     if action == "remove_package":
@@ -643,7 +643,7 @@ def show_game(jam_slug, game_slug, action=None):
         s = GamePackage.query.filter_by(game_id = game.id, id = remove_id).first_or_404()
         db.session.delete(s)
         db.session.commit()
-        flash("The package has been removed.")
+        flash("The package has been removed.", "success")
         return redirect(game.url())
 
     if action == "remove_team_member":
@@ -651,7 +651,7 @@ def show_game(jam_slug, game_slug, action=None):
 
         jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
         if jam.team_jam == False:
-            flash("This jam is not a team jam.")
+            flash("This jam is not a team jam.", "error")
             return redirect(game.url())
 
         remove_id = request.args.get("remove_id", "0")
@@ -659,7 +659,7 @@ def show_game(jam_slug, game_slug, action=None):
         db.session.commit()
         game.team.remove(member)
         db.session.commit()
-        flash("%s has been removed from the team." % member.username)
+        flash("%s has been removed from the team." % member.username, "success")
         return redirect(game.url())
 
     if action == "quit":
@@ -667,12 +667,12 @@ def show_game(jam_slug, game_slug, action=None):
 
         jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
         if jam.team_jam == False:
-            flash("This jam is not a team jam.")
+            flash("This jam is not a team jam.", "error")
             return redirect(game.url())
 
         game.team.remove(get_current_user())
         db.session.commit()
-        flash("You have been removed from the team.")
+        flash("You have been removed from the team.", "success")
         return redirect(game.url())
 
     return render_template('jam/game.html', game=game, form = comment_form)
@@ -695,7 +695,7 @@ def disable_emails():
     user = get_current_user()
     user.receive_emails = False
     db.session.commit()
-    flash("Your email notifications have been disabled.")
+    flash("Your email notifications have been disabled.", "success")
     return redirect(user.url())
 
 @app.route('/profile/enable_emails')
@@ -705,7 +705,7 @@ def enable_emails():
     user = get_current_user()
     user.receive_emails = True
     db.session.commit()
-    flash("Your email notifications have been enabled.")
+    flash("Your email notifications have been enabled.", "success")
     return redirect(user.url())
 
 @app.route("/search")
@@ -862,11 +862,11 @@ def error(error):
 @app.errorhandler(smtplib.SMTPRecipientsRefused)
 @path("Error")
 def invalid_email(exception):
-    flash("Invalid email address.")
-    return redirect(url_for('register'))
+    flash("Invalid email address.", "error")
+    return redirect(url_for('login'))
 
 @app.errorhandler(flamejam.login.LoginRequired)
 @path("Error")
 def login_required(exception):
-    flash(exception.message)
+    flash(exception.message, "error")
     return redirect(url_for('login', next = exception.next))
