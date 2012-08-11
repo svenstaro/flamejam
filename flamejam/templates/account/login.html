@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block content %}
+
+<div class="row-fluid">
+    <div class="span5">
+        <h2>Login</h2>
+        <form action="{{ url_for('login') }}" method="post" class="block">
+            {{ login_form.hidden_tag() }}
+            {{ form_errors(login_form) }}
+
+            <p>
+                {{ login_form.username.label }}
+                {{ login_form.username(class="text-input", style="width: 275px;") }}
+            </p>
+            <p>
+                {{ login_form.password.label }}
+                {{ login_form.password(class="password-input", style="width: 275px;") }}
+            </p>
+            <p class="form-buttons">
+                <input type="submit" class="btn btn-primary" value="Login">
+                <a href="{{ url_for('reset_request') }}">Forgot your password?</a>
+            </p>
+        </form>
+    </div>
+
+    <div class="span7">
+        <h2>Register</h2>
+        <form action="{{ url_for('login') }}" method="post" class="block">
+            {{ register_form.hidden_tag() }}
+            <p>You are <i>strongly advised</i> to use your reddit username!</p>
+            <p>{{ form_errors(register_form) }}</p>
+            <div class="field">
+                {{ register_form.username.label }}
+                {{ register_form.username(class="text-input") }}
+                <div class="form-info">Allowed characters: letters, numbers, dashes, underscores</div>
+            </div>
+
+            <div class="field">
+                {{ register_form.password.label }}
+                {{ register_form.password(class="password-input") }}
+                <div class="form-info">Minimum 8 characters</div>
+            </div>
+            <div class="field">
+                {{ register_form.password2.label }}
+                {{ register_form.password2(class="password-input") }}
+                <div class="form-info">Repeat for verification</div>
+            </div>
+            <div class="field">
+                {{ register_form.email.label }}
+                {{ register_form.email(class="text-input") }}
+                <div class="form-info">Will be used for <a href="http://gravatar.com" target="_blank">Gravatar</a>.</div>
+            </div>
+            <div class="field">
+                {{ register_form.captcha }}
+            </div>
+            <p class="form-buttons">
+                <input type="reset" class="btn btn-inverse" value="Reset">
+                <input type="submit" class="btn btn-primary" value="Register">
+            </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

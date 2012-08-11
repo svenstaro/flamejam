@@ -1,0 +1,209 @@
+{% set jam = game.jam %}
+{% extends "jam/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block title %}{{ game.jam.title }} » {{ game.title }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ game.title }} <small>for <a href="{{ game.jam.url() }}">{{ game.jam.title }}</a></small></h1>
+
+<div class="row-fluid">
+    <div class="span5">
+        <h2>Details</h2>
+        <table class="details">
+            <tr><th>Team</th><td>
+                <ul class="users">
+                <li>{{ game.user.getLink("author") }}</li>
+                {% for member in game.team %}
+                    <li>{{ member.getLink() }}</li>
+                {% endfor %}
+                </ul>
+                </td></tr>
+
+            <tr><th>Jam</th><td><a href="{{ game.jam.url() }}">{{ game.jam.title }}</a>
+                {% if game.jam.theme %}<span class="theme">{{ game.jam.theme }}</span>{% endif %}</td></tr>
+
+            <tr><th>Submitted</th><td>{{ game.posted | humantime }}</td></tr>
+
+            <tr><th>Packages{% if game.packages.all() %} ({{ game.packages.all() | length }}){% endif %}</th><td>
+                {% for package in game.packages %}
+                <p>
+                    {% if current_user == game.user %}
+                    <a href="{{ game.url('remove_package', remove_id = package.id) }}" style="float:right; margin-left: 20px;">Remove</a>
+                    {% endif %}
+
+                    {% if package.type in ["hg", "svn", "git"] %}
+                    <b>{{ package.typeString() }}:</b> <a class="repo-url" href="{{ package.url }}">{{ package.url }}</a>
+                    {% else %}
+                    <a href="{{ package.url }}">{{ package.typeString() }}</a>
+                    {% endif %}
+                </p>
+                {% endfor %}
+                {% if not game.packages.all() %}
+                No packages submitted yet.
+                {% endif %}
+                </td></tr>
+        </table>
+    </div>
+    <div class="span5">
+        <h2>Description</h2>
+        {{ game.description | markdown }}
+    </div>
+    <div class="span2">
+        <h2>Toolbox</h2>
+        <div class="toolbox">
+        {% if game.user == current_user %}
+            <a href="{{ game.url('edit') }}" class="btn btn-primary btn-mini">Edit game</a>
+            {% if game.jam.team_jam %}
+                <p><a href="{{ game.url('add_team_member') }}" class="btn btn-primary btn-mini">Add team member</a>
+            {% endif %}
+            <a href="{{ game.url('add_screenshot') }}" class="btn btn-primary btn-mini">Add screenshot</a>
+            <a href="{{ game.url('add_package') }}" class="btn btn-primary btn-mini">Add package</a>
+        {% elif current_user in game.team %}
+            <a href="{{ game.url('quit') }}" class="btn btn-primary btn-mini">Quit the team</a>
+        {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid">
+    <div class="span8">
+        {% if game.screenshots.all() %}
+        <h2>Screenshots <small>Click a screenshot to zoom</small></h2>
+        <ul class="screenshots">
+        {% for screenshot in game.screenshots|reverse %}
+            <li>
+                <a href="{{ screenshot.url }}" target="_blank" title="{{ screenshot.caption }}" class="screenshot">
+                <div class="image"><img src="{{ screenshot.url }}" alt="{{ screenshot.caption }}" /></div>
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+
+        <h2>Feedback</h2>
+
+        <table class="ratings">
+            <tr>
+                <th>User</th>
+                <th class="score"><span class="icon-16 icon-16-gameplay"      title="gameplay"></span></th>
+                <th class="score"><span class="icon-16 icon-16-graphics"      title="graphics"></span></th>
+                <th class="score"><span class="icon-16 icon-16-audio"         title="audio"></span></th>
+                <th class="score"><span class="icon-16 icon-16-innovation"    title="innovation"></span></th>
+                <th class="score"><span class="icon-16 icon-16-story"         title="story"></span></th>
+                <th class="score"><span class="icon-16 icon-16-technical"     title="technical"></span></th>
+                <th class="score"><span class="icon-16 icon-16-controls"      title="controls"></span></th>
+                <th class="score"><span class="icon-16 icon-16-rating"        title="overall"></span></th>
+                <th class="score"><span class="icon-16 icon-16-average"       title="average"></span></th>
+                <th>Notes</th>
+            </tr>
+
+        {% if game.jam.getStatus().code != 4 %}
+
+            {# check if the user has rated this game #}
+            {% set rating = game.ratings.filter_by(user = current_user).first() %}
+            {% if rating %}
+            <tr>
+                <td>{{ rating.user.getLink() }}</td>
+                <td class="score">{{ rating.score_gameplay }}</td>
+                <td class="score">{{ rating.score_graphics }}</td>
+                <td class="score">{{ rating.score_audio }}</td>
+                <td class="score">{{ rating.score_innovation }}</td>
+                <td class="score">{{ rating.score_story }}</td>
+                <td class="score">{{ rating.score_technical }}</td>
+                <td class="score">{{ rating.score_controls }}</td>
+                <td class="score">{{ rating.score_overall }}</td>
+                <td class="score">{{ "%.2f" % rating.getAverage() }}</td>
+                <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
+            </tr>
+            {% elif current_user %}
+                <tr><td colspan="11">You have not yet rated this game. <a href="{{ url_for('rate_games', jam_slug = game.jam.slug) }}">Start rating on this jam now.</a></td></tr>
+            {% endif %}
+            <tr><td colspan="11">The voting for this jam is not over, so other people's ratings are hidden.</td></tr>
+        {% elif game.ratings.all() %}
+                {% set a = game.getAverageRating() %}
+                <tr class="average">
+                    <td>Average</td>
+                    <td class="score">{{ "%.2f" % a["gameplay"]  }}</td>
+                    <td class="score">{{ "%.2f" % a["graphics"]  }}</td>
+                    <td class="score">{{ "%.2f" % a["audio"]     }}</td>
+                    <td class="score">{{ "%.2f" % a["innovation"]}}</td>
+                    <td class="score">{{ "%.2f" % a["story"]     }}</td>
+                    <td class="score">{{ "%.2f" % a["technical"] }}</td>
+                    <td class="score">{{ "%.2f" % a["controls"]  }}</td>
+                    <td class="score">{{ "%.2f" % a["overall"]   }}</td>
+                    <td class="score">{{ "%.2f" % a["average"]   }}</td>
+                    <td></td>
+                </tr>
+                {% for rating in game.ratings %}
+                <tr>
+                    <td>{{ rating.user.getLink() }}</td>
+                    <td class="score">{{ rating.score_gameplay }}</td>
+                    <td class="score">{{ rating.score_graphics }}</td>
+                    <td class="score">{{ rating.score_audio }}</td>
+                    <td class="score">{{ rating.score_innovation }}</td>
+                    <td class="score">{{ rating.score_story }}</td>
+                    <td class="score">{{ rating.score_technical }}</td>
+                    <td class="score">{{ rating.score_controls }}</td>
+                    <td class="score">{{ rating.score_overall }}</td>
+                    <td class="score">{{ "%.2f" % rating.getAverage() }}</td>
+                    <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
+                </tr>
+                {% endfor %}
+        {% else %}
+            <tr><td colspan="11">There are no ratings yet.</td></tr>
+        {% endif %}
+        </table>
+
+        {% if game.ratings.filter_by(user = current_user).first() and game.jam.getStatus().code == 3 %}
+            <p><a href="{{ url_for('reset_vote', jam_slug = game.jam.slug, game_slug = game.slug) }}">Click here if you want to reset your vote for this game</a>. You will have
+            to start the voting process again to be prompted for your vote for
+            this game.</p>
+        {% endif %}
+    </div>
+    <div class="span4">
+        <h2>Comments</h2>
+        {% if game.comments.all() %}
+        <p>
+        <ul class="comments">
+        {% for comment in game.comments %}
+            <li>
+                <div class="icon">
+                    <a href="{{ comment.user.url() }}">
+                        <img src="{{ comment.user.getAvatar(32) }}" width="32" height="32"/>
+                    </a>
+                </div>
+
+                <div class="meta">
+                    <a class="author" href="{{ comment.user.url() }}">{{ comment.user.username }}</a>
+                    (<span class="posted" title="{{ comment.posted | formattime }}">{{ comment.posted | humantime }}</span>)
+                </div>
+                <div class="text markdown">
+                    {{ (comment.text) | markdown }}
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+        </p>
+        {% else %}
+        <p>No comments yet.</p>
+        {% endif %}
+
+        {% if current_user %}
+        <form action="{{ game.url('new_comment') }}" method="POST">
+                {{ form_errors(form) }}
+                {{ form.hidden_tag() }}
+                {{ form.text(class="comment", rows = 4) }}
+                <!-- <p>Please don't use the comments to judge the work before the voting period is over.
+                This shall allow everyone to rate this game freely and unbiased.</p>
+                <b>Parsed with markdown.</b> -->
+            <p style="text-align: right;">
+                <input type="submit" value="Post comment" class="btn btn-primary">
+            </p>
+        </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

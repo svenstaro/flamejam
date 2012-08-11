@@ -10,6 +10,8 @@ body {
     font-size: 8pt;
     margin: 0;
     padding: 0;
+
+    min-width: 700px;
 }
 
 a {
@@ -52,6 +54,13 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     color: #444;
 }
 
+#content h2 small {
+    color: #777;
+    margin-left: 5px;
+    font-size: 0.6em;
+}
+
+
 p, ul {
     text-align: justify;
     line-height: 1.5em;
@@ -67,6 +76,53 @@ ul {
 /* h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
     text-decoration: underline;
 }*/
+
+#flashes {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 500px;
+    margin: 0;
+    margin-left: -250px;
+    padding: 0;
+    list-style: none;
+}
+
+#flashes li {
+    display: block;
+    background: #222;
+    padding: 3px 6px;
+    box-shadow: 0 0  #000;
+    font-weight: bold;
+}
+
+#flashes li:last-child {
+    border-radius: 0 0 4px 4px;
+}
+
+.error {
+    border-color: #F00 !important;
+    color: #F00 !important;
+    background: #FAA !important;
+}
+
+.info {
+    border-color: #00A !important;
+    color: #00A !important;
+    background: #ACF !important;
+}
+
+.success {
+    border-color: #080 !important;
+    color: #080 !important;
+    background: #AF8 !important;
+}
+
+.warning {
+    border-color: #F90 !important;
+    color: #A60 !important;
+    background: #FF8 !important;
+}
 
 #header {
     height: 50px;
@@ -159,6 +215,8 @@ img {
 }
 
 #navigation {
+    min-width: 700px;
+    width: 100%;
     height: 80px;
     line-height: 80px;
     background: #1E1E1E;
@@ -169,7 +227,6 @@ img {
     position: absolute;
     left: 0;
     top: 50px;
-    width: 100%;
 
     text-align: center;
 }
@@ -245,7 +302,7 @@ img {
 
 #sidebar {
     display: table-cell;
-    width: 180px;
+    width: 200px;
     background: #1E1E1E;
     border-right: 1px solid #383838;
     text-align: right;
@@ -445,11 +502,129 @@ ul.users {
 
 ul.users li {
     display: inline-block;
+}
+
+ul.users li a {
+    display: block;
     background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#222));
     padding: 4px;
     width: 100px;
     margin: 2px 0;
     border-radius: 2px;
     font-size: 1.2em;
+    color: #AAA;
 }
 
+ul.users li a:hover {
+    color: #CCC;
+    background: -webkit-gradient(linear, left top, left bottom, from(#444), to(#333));
+}
+
+ul.screenshots {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+ul.screenshots li {
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+ul.screenshots li img {
+    height: 100px;
+}
+
+.toolbox {
+    text-align: center;
+    line-height: 2.4em;
+}
+
+ul.comments {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.comments li {
+    min-height: 32px;
+    border-bottom: 1px solid #111;
+    margin-bottom: 5px;
+    padding: 4px;
+    margin: 0;
+    position: relative;
+}
+
+ul.comments li .icon {
+    padding: 0;
+    margin: 0;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+ul.comments li .meta,
+ul.comments li .text {
+    margin-left: 40px;
+}
+
+ul.comments li .meta,
+ul.comments li .meta a {
+    color: #666;
+}
+
+.markdown p:first-child {
+    margin-top: 0;
+}
+
+.markdown p:last-child {
+    margin-bottom: 0;
+}
+
+textarea {
+    background: #222;
+    font-family: inherit;
+    padding: 4px;
+    border: 1px solid #333;
+    font-size: inherit;
+    color: #777;
+}
+
+textarea.comment {
+    width: 100%;
+}
+
+form.block label {
+    width: 100px;
+    display: inline-block;
+    text-align: right;
+    color: #555;
+    margin-right: 10px;
+}
+
+form.block .field {
+    margin-bottom: 20px;
+}
+
+form.block .field .form-info {
+    margin-left: 113px;
+    margin-top: 2px;
+    color: #333;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid #2b2b2b;
+    background: -webkit-gradient(linear, left top, left bottom, from(#1c1c1c), to(#2c2c2c));
+    color: #666;
+    font-weight: bold;
+    font-size: 11pt;
+    padding: 0 8px;
+    width: 200px;
+}

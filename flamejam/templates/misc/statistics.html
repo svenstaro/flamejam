@@ -25,16 +25,16 @@
                 {% endif %}
                 </td></tr>
 
-            <tr><th>Total Entries</th>
-                <td>{{ stats["total_entries"] }} entries</td></tr>
+            <tr><th>Total Games</th>
+                <td>{{ stats["total_games"] }} games</td></tr>
 
-            <tr><th>Average entries per jam</th>
-                <td>{{ "%.2f" % stats["average_entries"] }} entries per jam</td></tr>
+            <tr><th>Average games per jam</th>
+                <td>{{ "%.2f" % stats["average_games"] }} games per jam</td></tr>
 
-            <tr><th>Most entries per jam</th>
-                <td>{{ stats["most_entries_per_jam"] }} entries
-                {% if stats['most_entries_jam'] %}
-                in <a href="{{ stats['most_entries_jam'].url() }}">{{ stats["most_entries_jam"].title }}</a>
+            <tr><th>Most games per jam</th>
+                <td>{{ stats["most_games_per_jam"] }} games
+                {% if stats['most_games_jam'] %}
+                in <a href="{{ stats['most_games_jam'].url() }}">{{ stats["most_games_jam"].title }}</a>
                 {% endif %}
                 </td></tr>
 
@@ -43,8 +43,8 @@
 
             <tr><th>Biggest team</th>
                 <td>{{ stats["biggest_team_size"] }} team members
-                {% if stats['biggest_team_entry'] %}
-                made <a href="{{ stats['biggest_team_entry'].url() }}">{{ stats["biggest_team_entry"].title }}</a>
+                {% if stats['biggest_team_game'] %}
+                made <a href="{{ stats['biggest_team_game'].url() }}">{{ stats["biggest_team_game"].title }}</a>
                 {% endif %}
                 </td></tr>
         </table>
@@ -55,29 +55,29 @@
 <div class="box">
     <div class="box-content">
         <table class="details">
-            <tr><th>Best rated entries</th><td>
-                {% if not stats['best_entries'] or stats["best_entries"][0].getTotalScore() == 0 %}
-                    <p>There are no rated entries yet.</p>
+            <tr><th>Best rated games</th><td>
+                {% if not stats['best_games'] or stats["best_games"][0].getTotalScore() == 0 %}
+                    <p>There are no rated games yet.</p>
                 {% else %}
-                {% for n in [0,1,2] if stats['best_entries'][n] %}
+                {% for n in [0,1,2] if stats['best_games'][n] %}
                 <p>
-                    Score {{ "%.2f" % stats["best_entries"][n].getTotalScore() }}:
-                    <a href="{{ stats['best_entries'][n].url() }}">
-                        {{ stats["best_entries"][n].jam.title }} &raquo;
-                        {{ stats["best_entries"][n].title }}
+                    Score {{ "%.2f" % stats["best_games"][n].getTotalScore() }}:
+                    <a href="{{ stats['best_games'][n].url() }}">
+                        {{ stats["best_games"][n].jam.title }} &raquo;
+                        {{ stats["best_games"][n].title }}
                     </a>
                 </p>
                 {% endfor %}
                 {% endif %}
                 </td></tr>
-            <tr><th>User with most entries</th><td>
-                {% if not stats['user_most_entries'] or stats["user_most_entries"][0].getTotalEntryCount() == 0 %}
-                    <p>Nobody has entries yet.</p>
+            <tr><th>User with most games</th><td>
+                {% if not stats['user_most_games'] or stats["user_most_games"][0].getTotalGameCount() == 0 %}
+                    <p>Nobody has games yet.</p>
                 {% else %}
-                {% for n in [0,1,2] if stats['user_most_entries'][n] %}
+                {% for n in [0,1,2] if stats['user_most_games'][n] %}
                 <p>
-                    {{ stats["user_most_entries"][n].getLink() }}
-                    with {{ stats["user_most_entries"][n].getTotalEntryCount() }} entries
+                    {{ stats["user_most_games"][n].getLink() }}
+                    with {{ stats["user_most_games"][n].getTotalGameCount() }} games
                 </p>
                 {% endfor %}
                 {% endif %}

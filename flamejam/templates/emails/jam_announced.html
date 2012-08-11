@@ -10,7 +10,7 @@
     You receive this notification because <a href="{{ current_user.url(_external=True) }}">
     {{ current_user.username }}</a> has announced a new game jam on
     <a href="{{ url_for('index', _external=True) }}">bacongamejam.org</a>. We'd love to
-    see you participating{% if current_user.entries or current_user.team_entries %}
+    see you participating{% if current_user.games or current_user.team_games %}
     again{% endif %}, so mark the date in your calendar and create a great
     game!
 </p>

@@ -9,14 +9,14 @@ import re
 import random
 
 # rating:
-# User <one2many> RatingSkip <many2one> Entry
-# User <one2many> Rating <many2one> Entry
+# User <one2many> RatingSkip <many2one> Game
+# User <one2many> Rating <many2one> Game
 
 # Teams:
-# User <many2many> Entry
+# User <many2many> Game
 
 team_members = db.Table('team_members',
-    db.Column('entry_id', db.Integer, db.ForeignKey('entry.id')),
+    db.Column('game_id', db.Integer, db.ForeignKey('game.id')),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
 )
 
@@ -37,8 +37,8 @@ class User(db.Model):
     is_verified = db.Column(db.Boolean)
     receive_emails = db.Column(db.Boolean)
     registered = db.Column(db.DateTime)
-    entries = db.relationship('Entry', backref='user', lazy='dynamic')
-    team_entries = db.relationship("Entry",
+    games = db.relationship('Game', backref='user', lazy='dynamic')
+    team_games = db.relationship("Game",
                     secondary = team_members,
                     backref = "team")
     ratings = db.relationship('Rating', backref='user', lazy='dynamic')
@@ -67,24 +67,24 @@ class User(db.Model):
         # take first 8 chars for simplicity
         return md5(str(self.token) + app.config['SECRET_KEY']).hexdigest()[:8]
 
-    def skippedEntry(self, entry):
-        return self.rating_skips.filter_by(entry = entry).first() != None
+    def skippedGame(self, game):
+        return self.rating_skips.filter_by(game = game).first() != None
 
-    def ratedEntry(self, entry):
-        return self.ratings.filter_by(entry = entry).first() != None
+    def ratedGame(self, game):
+        return self.ratings.filter_by(game = game).first() != None
 
     def getRatingCount(self, jam):
         i = 0
         for r in self.ratings:
-            if r.entry.jam == jam:
+            if r.game.jam == jam:
                 i += 1
         return i
 
-    def getTotalEntryCount(self):
-        return len(self.entries.all()) + len(self.team_entries)
+    def getTotalGameCount(self):
+        return len(self.games.all()) + len(self.team_games)
 
     def getSkippedCount(self, jam):
-        return len(self.rating_skips.filter(RatingSkip.user_id == self.id and Entry.jam_id == jam.id).all())
+        return len(self.rating_skips.filter(RatingSkip.user_id == self.id and Game.jam_id == jam.id).all())
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -102,22 +102,22 @@ class User(db.Model):
         return Markup('<a class="user {4}" href="{0}"><img width="{2}" height="{2}" src="{3}" class="icon"/> {1}</a>'.format(
             self.url(), self.username, s, self.getAvatar(s), class_))
 
-    def canRate(self, entry):
-        return entry.user != self and not self in entry.team
+    def canRate(self, game):
+        return game.user != self and not self in game.team
 
-    def canEdit(self, entry):
-        return entry.user == self
+    def canEdit(self, game):
+        return game.user == self
 
-    def getEntryInJam(self, jam):
-        for entry in self.entries:
-            if entry.jam == jam:
-                return entry
+    def getGameInJam(self, jam):
+        for game in self.games:
+            if game.jam == jam:
+                return game
         return None
 
-    def getTeamEntryInJam(self, jam):
-        for entry in self.team_entries:
-            if entry.jam == jam:
-                return entry
+    def getTeamGameInJam(self, jam):
+        for game in self.team_games:
+            if game.jam == jam:
+                return game
         return None
 
 class JamStatusCode(object):
@@ -159,7 +159,7 @@ class Jam(db.Model):
     packaging_deadline = db.Column(db.DateTime) # Packaging ends at this moment
     rating_end = db.Column(db.DateTime) # Rating period ends and jam is over
     team_jam = db.Column(db.Boolean)
-    entries = db.relationship('Entry', backref='jam', lazy='dynamic')
+    games = db.relationship('Game', backref='jam', lazy='dynamic')
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, title, author, start_time, end_time=None,
@@ -207,17 +207,17 @@ class Jam(db.Model):
     def url(self, **values):
         return url_for('jam_info', jam_slug = self.slug, **values)
 
-    def getTopEntries(self):
-        e = list(self.entries.all())
-        e.sort(cmp = entryCompare)
+    def getTopGames(self):
+        e = list(self.games.all())
+        e.sort(cmp = gameCompare)
         return e
 
-    def getShuffledEntries(self):
-        e = list(self.entries.all())
+    def getShuffledGames(self):
+        e = list(self.games.all())
         random.shuffle(e)
         return e
 
-def entryCompare(left, right):
+def gameCompare(left, right):
     x = right.getTotalScore() - left.getTotalScore()
     if x > 0:
         return 1
@@ -226,8 +226,8 @@ def entryCompare(left, right):
     else:
         return 0
 
-def userTotalEntryCompare(left, right):
-    x = right.getTotalEntryCount() - left.getTotalEntryCount()
+def userTotalGameCompare(left, right):
+    x = right.getTotalGameCount() - left.getTotalGameCount()
     if x > 0:
         return 1
     elif x < 0:
@@ -235,7 +235,7 @@ def userTotalEntryCompare(left, right):
     else:
         return 0
 
-class Entry(db.Model):
+class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
     slug = db.Column(db.String(128))
@@ -243,11 +243,11 @@ class Entry(db.Model):
     posted = db.Column(db.DateTime)
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    rating_skips = db.relationship('RatingSkip', backref='entry', lazy='dynamic')
-    ratings = db.relationship('Rating', backref = 'entry', lazy='dynamic')
-    comments = db.relationship('Comment', backref='entry', lazy='dynamic')
-    packages = db.relationship('EntryPackage', backref='entry', lazy='dynamic')
-    screenshots = db.relationship('EntryScreenshot', backref='entry', lazy='dynamic')
+    rating_skips = db.relationship('RatingSkip', backref='game', lazy='dynamic')
+    ratings = db.relationship('Rating', backref = 'game', lazy='dynamic')
+    comments = db.relationship('Comment', backref='game', lazy='dynamic')
+    packages = db.relationship('GamePackage', backref='game', lazy='dynamic')
+    screenshots = db.relationship('GameScreenshot', backref='game', lazy='dynamic')
 
     def __init__(self, title, description, jam, user):
         self.title = title
@@ -258,10 +258,10 @@ class Entry(db.Model):
         self.posted = datetime.utcnow()
 
     def __repr__(self):
-        return '<Entry %r>' % self.title
+        return '<Game %r>' % self.title
 
     def url(self, action = "", **values):
-        return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action, **values)
+        return url_for("show_game", jam_slug = self.jam.slug, game_slug = self.slug, action = action, **values)
 
     def getAverageRating(self):
         categories = ["gameplay", "graphics","audio","innovation","story","technical", "controls", "overall"]
@@ -292,11 +292,11 @@ class Entry(db.Model):
         return s * 1.0/ c
 
     def getRank(self):
-        jam_entries = list(self.jam.entries.all())
-        jam_entries.sort(cmp = entryCompare)
-        return jam_entries.index(self) + 1
+        jam_games = list(self.jam.games.all())
+        jam_games.sort(cmp = gameCompare)
+        return jam_games.index(self) + 1
 
-def entry_package_type_string(type):
+def game_package_type_string(type):
     if type == "web":           return "Web link (Flash etc.)"
     if type == "linux":         return "Binaries: Linux 32/64-bit"
     if type == "linux32":       return "Binaries: Linux 32-bit"
@@ -315,10 +315,10 @@ def entry_package_type_string(type):
 
     return "Unknown type"
 
-class EntryPackage(db.Model):
+class GamePackage(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     url = db.Column(db.String(256))
-    entry_id = db.Column(db.Integer, db.ForeignKey("entry.id"))
+    game_id = db.Column(db.Integer, db.ForeignKey("game.id"))
     type = db.Column(db.Enum(
         "web",      # Flash, html5, js...
         "linux",    # Linux binaries (e.g. *.tar.gz)
@@ -336,30 +336,30 @@ class EntryPackage(db.Model):
         "hg",       # Version control repository: HG
         "unknown"))
 
-    def __init__(self, entry, url, type = "unknown"):
+    def __init__(self, game, url, type = "unknown"):
         self.url = url
         self.type = type
-        self.entry = entry
+        self.game = game
 
     def __repr__(self):
-        return "<EntryPackage %r>" % self.id
+        return "<GamePackage %r>" % self.id
 
     def typeString(self):
-        return entry_package_type_string(self.type)
+        return game_package_type_string(self.type)
 
-class EntryScreenshot(db.Model):
+class GameScreenshot(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     url = db.Column(db.String(256))
     caption = db.Column(db.Text)
-    entry_id = db.Column(db.Integer, db.ForeignKey("entry.id"))
+    game_id = db.Column(db.Integer, db.ForeignKey("game.id"))
 
-    def __init__(self, url, caption, entry):
-        self.entry = entry
+    def __init__(self, url, caption, game):
+        self.game = game
         self.url = url
         self.caption = caption
 
     def __repr__(self):
-        return "<EntryScreenshot %r>" % self.id
+        return "<GameScreenshot %r>" % self.id
 
 class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -373,11 +373,11 @@ class Rating(db.Model):
     score_overall = db.Column(db.SmallInteger)
     text = db.Column(db.Text)
     posted = db.Column(db.DateTime)
-    entry_id = db.Column(db.Integer, db.ForeignKey('entry.id'))
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, score_gameplay, score_graphics, score_audio, score_innovation,
-        score_story, score_technical, score_controls, score_overall, text, entry, user):
+        score_story, score_technical, score_controls, score_overall, text, game, user):
         self.score_gameplay = score_gameplay
         self.score_graphics = score_graphics
         self.score_audio = score_audio
@@ -387,7 +387,7 @@ class Rating(db.Model):
         self.score_controls = score_controls
         self.score_overall = score_overall
         self.text = text
-        self.entry = entry
+        self.game = game
         self.user = user
         self.posted = datetime.utcnow()
 
@@ -408,12 +408,12 @@ class Rating(db.Model):
 class RatingSkip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     reason = db.Column(db.Enum("platform", "uninteresting", "crash"))
-    entry_id = db.Column(db.Integer, db.ForeignKey("entry.id"))
+    game_id = db.Column(db.Integer, db.ForeignKey("game.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    def __init__(self, user, entry, reason):
+    def __init__(self, user, game, reason):
         self.user = user
-        self.entry = entry
+        self.game = game
         self.reason = reason
 
     def __repr__(self):
@@ -423,12 +423,12 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text)
     posted = db.Column(db.DateTime)
-    entry_id = db.Column(db.Integer, db.ForeignKey('entry.id'))
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, text, entry, user):
+    def __init__(self, text, game, user):
         self.text = text
-        self.entry = entry
+        self.game = game
         self.user = user
         self.posted = datetime.utcnow()
 

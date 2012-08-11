@@ -5,120 +5,114 @@
 {% block content %}
 <h1>Packaging guide</h1>
 
-<h2>Why packaging?</h2>
-<div class="info">
-    <p>
-        You might code up the very most awesomest game of them all but
-        nopony may be able to play it only because you failed to package
-        it correctly. The problems of packaging are manifold and
-        treacherous. There are many different configurations, programming
-        languages  and systems and you are only able to account for a
-        limited number of those. Due to its inherent difficulty, this
-        guide will focus on C++ for now. Other languages are usually
-        much easier to package due to being interpreted as opposed to
-        being compiled (see the example for <a href="#python">python</a>
-        packaging).
-    </p>
-</div>
+<div class="row-fluid">
+    <div class="span6">
+        <h2>Why packaging?</h2>
+        <p>
+            You might code up the very most awesomest game of them all but
+            nopony may be able to play it only because you failed to package
+            it correctly. The problems of packaging are manifold and
+            treacherous. There are many different configurations, programming
+            languages  and systems and you are only able to account for a
+            limited number of those. Due to its inherent difficulty, this
+            guide will focus on C++ for now. Other languages are usually
+            much easier to package due to being interpreted as opposed to
+            being compiled (see the example for python packaging).
+        </p>
 
-<h2>C++ for Linux</h2>
-<div class="info">
-    <p>
-        On Linux, we need to try to stay distribution-neutral and thus
-        we cannot make distribution-specific packages like <b>.rpm</b> or <b>.deb</b>.
-        Instead, we'll focus on making self-contained universal packages that are well suited for game jams.
-    </p>
-    <p>
-        Let's say your game's executable is called <b>coolgame.bin</b>
-        and you used g++ to compile it without any special flags. Now
-        run <code class="term">$ ldd coolgame.bin</code> on that
-        executable and you will see all dynamic libraries you explicitly
-        or implicitly link against. Wow, they are quite many, aren't
-        they? Let's try something, compile your game with
-        <code class="term">$ g++ -static -static-libgcc -static-libstdc++</code>
-        and run <i>ldd</i> on it again. Quite a lot less dynamies
-        libraries will show up now as you just linked many things
-        statically into the executable which in turn as grown in size.
-    </p>
-    <p>
-        Moving on, to handle the remaining shared libraries, create a
-        new directory beside your executable and call it "libs". Using
-        ldd's output as a guideline, copy all remaining shared libraries
-        into this directory. They may be quite numerous but don't worry
-        about it. When time matters - as it happens to do in a game jam
-         - we can't be too picky about redundancy.
-    </p>
-    <p>
-        Lastly, make a little helper script, maybe call it "run.sh".
-        It should have something like this:
-    </p>
-    <pre><code>#!/bin/bash
+        <h2>C++ for Linux</h2>
+        <p>
+            On Linux, we need to try to stay distribution-neutral and thus
+            we cannot make distribution-specific packages like <b>.rpm</b> or <b>.deb</b>.
+            Instead, we'll focus on making self-contained universal packages that are well suited for game jams.
+        </p>
+        <p>
+            Let's say your game's executable is called <b>coolgame.bin</b>
+            and you used g++ to compile it without any special flags. Now
+            run <code class="term">$ ldd coolgame.bin</code> on that
+            executable and you will see all dynamic libraries you explicitly
+            or implicitly link against. Wow, they are quite many, aren't
+            they? Let's try something, compile your game with
+            <code class="term">$ g++ -static -static-libgcc -static-libstdc++</code>
+            and run <i>ldd</i> on it again. Quite a lot less dynamies
+            libraries will show up now as you just linked many things
+            statically into the executable which in turn as grown in size.
+        </p>
+        <p>
+            Moving on, to handle the remaining shared libraries, create a
+            new directory beside your executable and call it "libs". Using
+            ldd's output as a guideline, copy all remaining shared libraries
+            into this directory. They may be quite numerous but don't worry
+            about it. When time matters - as it happens to do in a game jam
+             - we can't be too picky about redundancy.
+        </p>
+        <p>
+            Lastly, make a little helper script, maybe call it "run.sh".
+            It should have something like this:
+        </p>
+        <pre><code>#!/bin/bash
 current_dir="$(dirname $(readlink -f $0))"
 LD_LIBRARY_PATH="$current_dir/libs" ./coolgame.bin</code></pre>
-    <p>
-        Remember to make it all executable. You can now tar this up and
-        it will work all nicely everywhere.
-    </p>
-</div>
+        <p>
+            Remember to make it all executable. You can now tar this up and
+            it will work all nicely everywhere.
+        </p>
+    </div>
+    <div class="span6">
+        <h2>C++ for Windows</h2>
+        <p>
+            We will not be creating a nice installer here but rather a
+            self-contained archive that people can just drop where ever
+            they want and the game will run nonetheless. Make sure all
+            required dlls are in the same place as the executable. If you
+            are using mingw to cross-compile from linux, you should compile using
+            <code class="term">$ g++ -static -static-libgcc -static-libstdc++</code>
+            so that you will not need to copy as many dlls. If you use
+            Microsoft Visual Studio, you will need to tell others to install
+            the Microsoft C++ runtime before trying to run your game.
+        </p>
+        <p>
+            Make sure to pack all
+            into a zipfile as Windows users can unpack these without
+            additional software.
+        </p>
 
-<h2>C++ for Windows</h2>
-<div class="info">
-    <p>
-        We will not be creating a nice installer here but rather a
-        self-contained archive that people can just drop where ever
-        they want and the game will run nonetheless. Make sure all
-        required dlls are in the same place as the executable. If you
-        are using mingw to cross-compile from linux, you should compile using
-        <code class="term">$ g++ -static -static-libgcc -static-libstdc++</code>
-        so that you will not need to copy as many dlls. If you use
-        Microsoft Visual Studio, you will need to tell others to install
-        the Microsoft C++ runtime before trying to run your game.
-    </p>
-    <p>
-        Make sure to pack all
-        into a zipfile as Windows users can unpack these without
-        additional software.
-    </p>
-</div>
+        <h2>Python</h2>
+        <p>
+            Python is a good example for interpreted languages. It is pretty
+            easy to package, as you just need to deploy the source code
+            and the included resources. <b>Other interpreted languages
+            work pretty much the same.</b>
+        </p>
+        <p>
+            Essentially, you copy your scripts and the resources to a
+            folder, keeping your original directory structure. You can
+            optionally write startup scripts (e.g. AwesomeGame.bat or
+            AwesomeGame.sh) that execute your main python file, but usually
+            marking the main file as such is sufficient. Users will have to
+            run it from the terminal (Linux) or just double-click (Windows)
+            the file to run your game.
+        </p>
+        <p>
+            If you include other packages (such as <a href="http://pygame.org" target="_blank">pygame</a>) you should
+            leave a dependency notice somewhere, preferably in a <b>README</b> file
+            (or <b>README.txt</b> if you want Windows users to have it easy :D).
+            Just give them a hint they need to install the package, and
+            maybe leave a download link for convienience.
+        </p>
+        <p>
+            Finally, pack your folder into a zipfile or something similar
+            (Linux users prefer tarballs) and upload it.
+        </p>
 
-<a name="python"></a><h2>Python</h2>
-<div class="info">
-    <p>
-        Python is a good example for interpreted languages. It is pretty
-        easy to package, as you just need to deploy the source code
-        and the included resources. <b>Other interpreted languages
-        work pretty much the same.</b>
-    </p>
-    <p>
-        Essentially, you copy your scripts and the resources to a
-        folder, keeping your original directory structure. You can
-        optionally write startup scripts (e.g. AwesomeGame.bat or
-        AwesomeGame.sh) that execute your main python file, but usually
-        marking the main file as such is sufficient. Users will have to
-        run it from the terminal (Linux) or just double-click (Windows)
-        the file to run your game.
-    </p>
-    <p>
-        If you include other packages (such as <a href="http://pygame.org" target="_blank">pygame</a>) you should
-        leave a dependency notice somewhere, preferably in a <b>README</b> file
-        (or <b>README.txt</b> if you want Windows users to have it easy :D).
-        Just give them a hint they need to install the package, and
-        maybe leave a download link for convienience.
-    </p>
-    <p>
-        Finally, pack your folder into a zipfile or something similar
-        (Linux users prefer tarballs) and upload it.
-    </p>
-</div>
-
-<h2>What about other frameworks / languages?</h2>
-<div class="info">
-    <p>
-        Most frameworks / game creation IDEs have their own file format
-        (e.g. Blender, Löve) or an export routine (e.g. Unity3D).
-        Browse the FAQ of your software for details on deployment, or
-        just google.
-    </p>
+        <h2>What about other frameworks / languages?</h2>
+        <p>
+            Most frameworks / game creation IDEs have their own file format
+            (e.g. Blender, Löve) or an export routine (e.g. Unity3D).
+            Browse the FAQ of your software for details on deployment, or
+            just google.
+        </p>
+    </div>
 </div>
 
 {% endblock %}

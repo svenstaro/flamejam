@@ -4,7 +4,7 @@
 #
 
 from flamejam import db
-from flamejam.models import Announcement, User, Jam, Entry, Rating, Comment, EntryScreenshot
+from flamejam.models import Announcement, User, Jam, Game, Rating, Comment, GameScreenshot
 from datetime import datetime, timedelta
 
 # Kill everything and recreate tables
@@ -40,26 +40,26 @@ db.session.add(rgj3)
 db.session.add(loljam)
 db.session.add(rgj4)
 
-# Make entries
-best_game = Entry("best game", "Simply the best game", rgj1, peter)
-space_game = Entry("space game", "A space shooter game", rgj1, paul)
-clone = Entry("clone", "very original game", rgj2, paddy)
-test_game = Entry("test_game", "just testing crap out", rgj2, paul)
-nyan = Entry("nyan", "game with a cat", rgj3, peter)
-derp = Entry("derp", "herp herp", rgj3, paul)
-lorem = Entry("lorem", "ipsum dolor?", rgj3, pablo)
-rtype = Entry("rtype", "some schmup game", rgj4, paddy)
-tetris = Entry("tetris", "original concept", rgj4, paul)
-game1 = Entry("game1", "game1", loljam, paul)
-game2 = Entry("game2", "game2", loljam, paddy)
-game3 = Entry("game3", "game3", loljam, pablo)
+# Make games
+best_game = Game("best game", "Simply the best game", rgj1, peter)
+space_game = Game("space game", "A space shooter game", rgj1, paul)
+clone = Game("clone", "very original game", rgj2, paddy)
+test_game = Game("test_game", "just testing crap out", rgj2, paul)
+nyan = Game("nyan", "game with a cat", rgj3, peter)
+derp = Game("derp", "herp herp", rgj3, paul)
+lorem = Game("lorem", "ipsum dolor?", rgj3, pablo)
+rtype = Game("rtype", "some schmup game", rgj4, paddy)
+tetris = Game("tetris", "original concept", rgj4, paul)
+game1 = Game("game1", "game1", loljam, paul)
+game2 = Game("game2", "game2", loljam, paddy)
+game3 = Game("game3", "game3", loljam, pablo)
 
 game3.team.append(paddy)
 game3.team.append(pablo)
 game3.team.append(peter)
 game3.team.append(per)
 
-# Add entries
+# Add games
 db.session.add(best_game)
 db.session.add(space_game)
 db.session.add(clone)
@@ -74,19 +74,18 @@ db.session.add(game2)
 db.session.add(game3)
 
 # Add screenshots
-s1 = EntryScreenshot("http://2.bp.blogspot.com/_gx7OZdt7Uhs/SwwanX_-API/AAAAAAAADAM/vbZbIPERdhs/s1600/Star-Wars-Wallpaper-star-wars-6363340-1024-768.jpg", "Awesome cover art", space_game)
-s2 = EntryScreenshot("http://celebritywonder.ugo.com/wp/Hayden_Christensen_in_Star_Wars:_Episode_III_-_Revenge_of_the_Sith_Wallpaper_1_1280.jpg", "Close combat during final showdown", space_game)
-s3 = EntryScreenshot("http://www.new-dream.de/image/wallpaper/film/star-wars/star-wars-03.jpg", "Nice open-space battle", space_game)
-s4 = EntryScreenshot("http://wallpapercavern.com/wallpapers/wallpaper_lego_star_wars_the_video_game_01_1600-1280x960.jpg", "Example collection figure, shipped with premium DVD kit", space_game)
-s5 = EntryScreenshot("http://images.psxextreme.com/wallpapers/ps3/star_wars___battle_1182.jpg", "Sample vehicles", space_game)
-s6 = EntryScreenshot("http://sethspopcorn.com/wp-content/uploads/2010/10/CloneTrooper.jpg", "Character selection screen", space_game)
+s1 = GameScreenshot("http://2.bp.blogspot.com/_gx7OZdt7Uhs/SwwanX_-API/AAAAAAAADAM/vbZbIPERdhs/s1600/Star-Wars-Wallpaper-star-wars-6363340-1024-768.jpg", "Awesome cover art", space_game)
+s2 = GameScreenshot("http://celebritywonder.ugo.com/wp/Hayden_Christensen_in_Star_Wars:_Episode_III_-_Revenge_of_the_Sith_Wallpaper_1_1280.jpg", "Close combat during final showdown", space_game)
+s3 = GameScreenshot("http://www.new-dream.de/image/wallpaper/film/star-wars/star-wars-03.jpg", "Nice open-space battle", space_game)
+s5 = GameScreenshot("http://images.psxextreme.com/wallpapers/ps3/star_wars___battle_1182.jpg", "Sample vehicles", space_game)
+s6 = GameScreenshot("http://sethspopcorn.com/wp-content/uploads/2010/10/CloneTrooper.jpg", "Character selection screen", space_game)
 
 db.session.add(s1)
 db.session.add(s2)
 db.session.add(s3)
-db.session.add(s4)
 db.session.add(s5)
 db.session.add(s6)
+
 
 # Make ratings
 rating1 = Rating(3, 5, 1, 7, 3, 1, 5, 2, "cool stuff", best_game, peter)
@@ -112,9 +111,9 @@ db.session.add(rating8)
 # Make comments
 comment1 = Comment("lol so bad", best_game, peter)
 comment2 = Comment("the worst", best_game, paul)
-comment3 = Comment("pew pew pew", space_game, paul)
-comment4 = Comment("omg clone", clone, paul)
-comment5 = Comment("pong is better", clone, paddy)
+comment3 = Comment("You don't provide a download for your game. Please add one via \"Add package\".", space_game, paul)
+comment4 = Comment("I really *love* this game. It is just awesome.", space_game, paul)
+comment5 = Comment("@paul Now you have a download", space_game, paddy)
 
 # Add comments
 db.session.add(comment1)

@@ -15,16 +15,18 @@ def _s(n, s):
     return str(n) + " " + s + ("s" if n > 1 else "")
 
 def _delta(delta):
+    short = True
+    threshold = 2
     if delta.years > 0:
-        return _s(delta.years, "year") + " " + _s(delta.months, "month")
+        return _s(delta.years, "year") + ("" if short and delta.years > threshold else " " + _s(delta.months, "month"))
     if delta.months > 0:
-        return _s(delta.months, "month") + " " + _s(delta.days, "day")
+        return _s(delta.months, "month") + ("" if short and delta.months > threshold else " " + _s(delta.days, "day"))
     if delta.days > 0:
-        return _s(delta.days, "day") + " " + _s(delta.hours, "hour")
+        return _s(delta.days, "day") + ("" if short and delta.days > threshold else " " + _s(delta.hours, "hour"))
     if delta.hours > 0:
-        return _s(delta.hours, "hour") + " " + _s(delta.minutes, "minute")
+        return _s(delta.hours, "hour") + ("" if short and delta.hours > threshold else " " + _s(delta.minutes, "minute"))
     if delta.minutes > 0:
-        return _s(delta.minutes, "minute") + " " + _s(delta.seconds, "second")
+        return _s(delta.minutes, "minute") + ("" if short and delta.minutes > threshold else " " + _s(delta.seconds, "second"))
     return _s(delta.seconds, "second")
 
 def timedelta(starttime, endtime):

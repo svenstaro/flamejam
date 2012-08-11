@@ -12,6 +12,9 @@
         <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/countdown.js') }}"></script>
 
+        <link rel="icon" href="{{ url_for('static', filename='gfx/favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" href="{{ url_for('static', filename='gfx/favicon.png') }}" type="image/png">
+
         <script type="text/javascript" lang="javascript">
             $(document).ready(function() {
                 $('ul.screenshots li a.screenshot, a.rating-details-screenshot').lightBox({
@@ -131,5 +134,12 @@
         </div>
         <div id="footer">
         </div>
+
+
+        <ul id="flashes">
+            {% for category, message in get_flashed_messages(with_categories = True) %}
+                <li class="{{ category if category and category != 'message' else 'info' }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
     </body>
 </html>

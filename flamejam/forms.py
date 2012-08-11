@@ -112,40 +112,40 @@ class EditJam(Form):
     start_time = DateTimeField("Start time", format="%Y-%m-%d %H:%M", validators=[Required()])
     email = BooleanField("Send everyone an email about this change", default = True)
 
-class SubmitEditEntry(Form):
-    title = TextField("Entry title", validators=[Required(), Length(max=128)])
+class SubmitEditGame(Form):
+    title = TextField("Game title", validators=[Required(), Length(max=128)])
     description = TextAreaField("Description", validators=[Required()])
 
-class EntryAddScreenshot(Form):
+class GameAddScreenshot(Form):
     url = TextField("URL", validators = [Required(), URL()])
     caption = TextField("Caption", validators = [Required()])
 
-class EntryAddTeamMember(Form):
+class GameAddTeamMember(Form):
     username = TextField("Username:", validators = [Required(), UsernameExists()])
 
-from models import entry_package_type_string
+from models import game_package_type_string
 
-class EntryAddPackage(Form):
+class GameAddPackage(Form):
     url = TextField("URL", validators = [Required()])
     type = SelectField("Type", choices = [
-        ("web",          entry_package_type_string("web")),
-        ("linux",        entry_package_type_string("linux")),
-        ("linux32",      entry_package_type_string("linux32")),
-        ("linux64",      entry_package_type_string("linux64")),
-        ("windows",      entry_package_type_string("windows")),
-        ("windows64",    entry_package_type_string("windows64")),
-        ("mac",          entry_package_type_string("mac")),
-        ("source",       entry_package_type_string("source")),
-        ("git",          entry_package_type_string("git")),
-        ("svn",          entry_package_type_string("svn")),
-        ("hg",           entry_package_type_string("hg")),
-        ("combi",        entry_package_type_string("combi")),
-        ("love",         entry_package_type_string("love")),
-        ("blender",      entry_package_type_string("blender")),
-        ("unknown",      entry_package_type_string("unknown"))])
+        ("web",          game_package_type_string("web")),
+        ("linux",        game_package_type_string("linux")),
+        ("linux32",      game_package_type_string("linux32")),
+        ("linux64",      game_package_type_string("linux64")),
+        ("windows",      game_package_type_string("windows")),
+        ("windows64",    game_package_type_string("windows64")),
+        ("mac",          game_package_type_string("mac")),
+        ("source",       game_package_type_string("source")),
+        ("git",          game_package_type_string("git")),
+        ("svn",          game_package_type_string("svn")),
+        ("hg",           game_package_type_string("hg")),
+        ("combi",        game_package_type_string("combi")),
+        ("love",         game_package_type_string("love")),
+        ("blender",      game_package_type_string("blender")),
+        ("unknown",      game_package_type_string("unknown"))])
 
-class RateEntry(Form):
-    entry_id = HiddenField(validators = [Required(), NumberRange(min = 1)])
+class RateGame(Form):
+    game_id = HiddenField(validators = [Required(), NumberRange(min = 1)])
     score_gameplay = IntegerField("Gameplay rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
     score_graphics = IntegerField("Graphics rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
     score_audio = IntegerField("Audio rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
@@ -157,7 +157,7 @@ class RateEntry(Form):
     note = TextField("Additional notes", validators=[Optional()])
 
 class SkipRating(Form):
-    entry_id = HiddenField(validators = [Required(), NumberRange(min = 1)])
+    game_id = HiddenField(validators = [Required(), NumberRange(min = 1)])
     reason = SelectField("Reason to skip", choices = [
         ("platform", "Platform not supported"),
         ("uninteresting", "Not interested"),

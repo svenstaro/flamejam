@@ -44,7 +44,13 @@ function step_slider() {
     };
 }
 
+function clearFlashes() {
+    $("#flashes li").slideUp(200);
+}
+
 $(document).ready(function() {
     $("input.slider").step_slider();
     $(".refresh").click(function() { location.reload(true); });
+
+    setTimeout("clearFlashes()", 5000);
 });
