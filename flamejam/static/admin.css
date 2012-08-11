@@ -1,0 +1,51 @@
+@import url("grid.css");
+
+body {
+    color: #333;
+    background: #f7f7f7;
+
+    font-family: "DejaVu Sans Condensed", "DejaVu Sans", Verdana, Arial, sans-serif;
+    /* font-family: Verdana, Arial, sans-serif; */
+    font-size: 9pt;
+    margin: 0;
+    padding: 0;
+}
+
+#header {
+    height: 40px;
+    line-height: 40px;
+    background: #F0F0F0;
+    border-bottom: 1px solid #CCC;
+}
+
+#header ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#header ul li {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+#header ul li a {
+    font-size: 12pt;
+    color: #AAA;
+    text-decoration: none;
+}
+
+#header ul li a:hover {
+    color: #444;
+}
+
+#content {
+    padding: 20px;
+}
+
+h1 {
+    font-size: 20pt;
+    font-weight: normal;
+    margin-top: 0;
+    color: #888;
+}

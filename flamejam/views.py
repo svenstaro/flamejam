@@ -9,13 +9,22 @@ from flask import session, redirect, url_for, escape, request, \
         render_template, flash, abort
 from flamejam import app
 
+from flamejam.menu import *
 from flamejam.models import *
 from flamejam.forms import *
 from flamejam.login import *
 from flamejam.mail import *
 
 @app.route('/')
+@path("Index")
 def index():
+    for jam in Jam.query.all():
+        if jam.getStatus().code == JamStatusCode.RUNNING:
+            return redirect(jam.url())
+    return redirect(url_for("home"))
+
+@app.context_processor
+def inject():
     jams = Jam.query.all()
     active_count = 0
     inactive_count = 0
@@ -24,9 +33,16 @@ def index():
             inactive_count += 1
         else:
             active_count += 1
-    return render_template('index.html', jams = jams, active_count = active_count, inactive_count = inactive_count)
+    return dict(all_jams = jams, active_jams = active_count, inactive_jams = inactive_count)
+
+
+@app.route("/home")
+@path("Home")
+def home():
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
+@path("Login")
 def login():
     if get_current_user():
         flash("You are already logged in.")
@@ -56,6 +72,7 @@ def login():
     return render_template('login.html', form=form, error=error)
 
 @app.route('/register', methods=['GET', 'POST'])
+@path("Register")
 def register():
     if get_current_user():
         flash("You are already logged in.")
@@ -89,6 +106,7 @@ def register():
     return render_template('register.html', form=form, error=error)
 
 @app.route('/reset', methods=['GET', 'POST'])
+@path("Reset")
 def reset_request():
     if get_current_user():
         flash("You are already logged in.")
@@ -96,7 +114,7 @@ def reset_request():
     error = None
     form = ResetPassword()
     if form.validate_on_submit():
-        # thanks to the UsernameValidator we cam assume the username exists 
+        # thanks to the UsernameValidator we cam assume the username exists
         user = User.query.filter_by(username=form.username.data).first()
         user.token = randint(0, sys.maxint)
         db.session.commit()
@@ -110,6 +128,7 @@ def reset_request():
     return render_template('reset_request.html', form=form, error=error)
 
 @app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
+@path("Reset")
 def reset_verify(username, token):
     user = user.query.filter_by(username=username).first_or_404()
     if user.token == None:
@@ -132,6 +151,7 @@ def reset_verify(username, token):
 
 
 @app.route('/verify/', methods=["POST", "GET"])
+@path("Verify")
 def verify_send():
     if request.method == 'GET':
         return redirect(url_for('index'))
@@ -153,6 +173,7 @@ def verify_send():
     return redirect(url_for('verify_status', username=username))
 
 @app.route('/verify/<username>', methods=["GET"])
+@path("Verify")
 def verify_status(username):
     submitted = request.args.get('submitted', None)
     user = User.query.filter_by(username = username).first_or_404()
@@ -164,6 +185,7 @@ def verify_status(username):
     return render_template('verify_status.html', submitted=submitted, username=username)
 
 @app.route('/verify/<username>/<verification>', methods=["GET"])
+@path("Verify")
 def verify(username, verification):
 
     user = User.query.filter_by(username = username).first_or_404()
@@ -185,6 +207,7 @@ def verify(username, verification):
         return redirect(url_for('verify_status', username=username, submitted=True))
 
 @app.route('/logout')
+@path("Logout")
 def logout():
     require_login()
 
@@ -193,6 +216,7 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/new_jam', methods=("GET", "POST"))
+@path("Admin", "New Jam")
 def new_jam():
     require_admin()
 
@@ -226,15 +250,18 @@ def new_jam():
     return render_template('new_jam.html', form = form)
 
 @app.route('/jams/')
+@path("Jams")
 def jams():
     return render_template("search.html", jams = Jam.query.all())
 
 @app.route('/jams/<jam_slug>/', methods=("GET", "POST"))
+@path("Jams", "Show")
 def show_jam(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('show_jam.html', jam = jam)
+    return render_template('jam/show_jam.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/delete', methods=("GET", "POST"))
+@path("Jams", "Delete")
 def delete_jam(jam_slug):
     require_admin()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -253,6 +280,7 @@ def delete_jam(jam_slug):
     return render_template('delete_jam.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/edit', methods=("GET", "POST"))
+@path("Jams", "Edit")
 def edit_jam(jam_slug):
     require_admin()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -306,11 +334,13 @@ def edit_jam(jam_slug):
     return render_template('edit_jam.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/countdown', methods=("GET", "POST"))
+@path("Jams", "Countdown")
 def countdown(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('countdown.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/new_entry', methods=("GET", "POST"))
+@path("Jams", "New Entry")
 def new_entry(jam_slug):
     require_login()
 
@@ -348,6 +378,7 @@ def new_entry(jam_slug):
 
 @app.route('/jams/<jam_slug>/rate')
 @app.route('/jams/<jam_slug>/rate/<action>', methods=("GET", "POST"))
+@path("Jams", "Rate")
 def rate_entries(jam_slug, action = None):
     require_login()
 
@@ -493,6 +524,7 @@ def rate_entries(jam_slug, action = None):
         return redirect(jam.url())
 
 @app.route('/jams/<jam_slug>/<entry_slug>/reset_vote')
+@path("Jams", "Rate", "Reset Vote")
 def reset_vote(jam_slug, entry_slug):
     require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -505,6 +537,7 @@ def reset_vote(jam_slug, entry_slug):
 
 @app.route('/jams/<jam_slug>/<entry_slug>/')
 @app.route('/jams/<jam_slug>/<entry_slug>/<action>', methods=("GET", "POST"))
+@path("Jams", "Show Entry")
 def show_entry(jam_slug, entry_slug, action=None):
     comment_form = WriteComment()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -652,15 +685,18 @@ def show_entry(jam_slug, entry_slug, action=None):
     return render_template('show_entry.html', entry=entry, form = comment_form)
 
 @app.route('/profile')
+@path("Profile")
 def profile():
     return redirect(get_current_user().url());
 
 @app.route('/users/<username>/')
+@path("Profile")
 def show_user(username):
     user = User.query.filter_by(username = username).first_or_404()
     return render_template('show_user.html', user = user)
 
 @app.route('/profile/disable_emails')
+@path("Profile", "Settings")
 def disable_emails():
     require_login()
     user = get_current_user()
@@ -670,6 +706,7 @@ def disable_emails():
     return redirect(user.url())
 
 @app.route('/profile/enable_emails')
+@path("Profile", "Settings")
 def enable_emails():
     require_login()
     user = get_current_user()
@@ -679,6 +716,7 @@ def enable_emails():
     return redirect(user.url())
 
 @app.route("/search")
+@path("Search")
 def search():
     q = request.args.get("q", "")
     if not q:
@@ -708,16 +746,19 @@ def search():
     return render_template("search.html", q = q, jams = jams, entries = entries, users = users)
 
 @app.route('/contact')
+@path("Contact")
 def contact():
-    return render_template('contact.html')
+    return render_template('misc/contact.html')
 
 @app.route('/rules')
 @app.route('/rulez')
+@path("Rules")
 def rules():
-    return render_template('rules.html')
+    return render_template('misc/rules.html')
 
 @app.route('/stats')
 @app.route('/statistics')
+@path("Statistics")
 def statistics():
     # collect all the data
 
@@ -793,40 +834,47 @@ def statistics():
     #Best rated entries
     #User with most entries
 
-    return render_template('statistics.html', stats = stats)
+    return render_template('misc/statistics.html', stats = stats)
 
 @app.route('/announcements')
+@path("Announcements")
 def announcements():
     announcements = Announcement.query.order_by(Announcement.posted.desc())
     return render_template('announcements.html', announcements = announcements)
 
 @app.route('/faq')
 @app.route('/faq/<page>')
+@path("FAQ")
 def faq(page = ""):
     if page.lower() == "packaging":
         return render_template('faq_packaging.html')
-    return render_template('faq.html')
+    return render_template('misc/faq.html')
 
 @app.route('/links')
+@path("Links")
 def links():
-    return render_template('links.html')
+    return render_template('misc/links.html')
 
 @app.route('/subreddit')
+@path("Subreddit")
 def subreddit():
     return redirect("http://www.reddit.com/r/bacongamejam")
 
 @app.errorhandler(404)
 @app.errorhandler(403)
 @app.errorhandler(500)
+@path("Error")
 def error(error):
     return render_template("error.html", error = error), error.code
 
 @app.errorhandler(smtplib.SMTPRecipientsRefused)
+@path("Error")
 def invalid_email(exception):
     flash("Invalid email address.")
     return redirect(url_for('register'))
 
 @app.errorhandler(flamejam.login.LoginRequired)
+@path("Error")
 def login_required(exception):
     flash(exception.message)
     return redirect(url_for('login', next = exception.next))

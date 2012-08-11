@@ -30,7 +30,7 @@
                 (usually between two days to a week). The BaconGameJam was founded
                 as "RedditGameJam" on the wonderful
                 <a href="http://reddit.com/r/redditgamejam" target="_blank">
-                Reddit community</a>, and later renamed to 
+                Reddit community</a>, and later renamed to
                 <a href="http://reddit.com/r/bacongamejam" target="_blank">BaconGameJam</a> due
                 to trademark issues.
             </p>
@@ -61,69 +61,9 @@
 
     <!-- Column 2 -->
     <div style="width: 50%">
-        {% if active_count %}
-        <h2>{{ active_count }} Active Jam{% if active_count != 1 %}s{% endif %}</h2>
-
-        <ul class="jamlist">
-        {# Jams that haven't started yet #}
-        {% for jam in jams if jam.start_time > current_datetime %}
-            <li>
-                <a href="{{ jam.url() }}">{{ jam.title }}</a>
-                announced for {{ jam.start_time.strftime("%Y-%m-%d %H:%M:%S") }}
-                (in {{ current_datetime | humandelta(jam.start_time) }})
-            </li>
-        {% endfor %}
-
-        {# Jams that are in progress #}
-        {% for jam in jams if jam.start_time < current_datetime < jam.end_time %}
-            <li>
-                <a href="{{ jam.url() }}">{{ jam.title }}</a>
-                is currently in progress! (ends in {{ current_datetime | humandelta(jam.end_time) }})
-            </li>
-        {% endfor %}
-
-        {# Jams that have finished but are still in packaging period #}
-        {% for jam in jams if jam.end_time < current_datetime < jam.packaging_deadline %}
-            <li>
-                <a href="{{ jam.url() }}">{{ jam.title }}</a>
-                has finished and is in packaging phase (time left:
-                {{ current_datetime | humandelta(jam.packaging_deadline) }})
-            </li>
-        {% endfor %}
-
-        {# Jams that are in rating period #}
-        {% for jam in jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
-            <li>
-                <a href="{{ jam.url() }}">{{ jam.title }}</a>
-                is in rating period for another {{ current_datetime | humandelta(jam.rating_end) }}
-                <!-- TODO: Check this is possible in view -->
-                <a href="{{ url_for('rate_entries', jam_slug = jam.slug) }}">Rate entries now</a>
-            </li>
-        {% endfor %}
-        </ul>
-        {% else %}
-        <h2>No Active Jams</h2>
-        <div class="info"><p>There are no active jams right now.</p></div>
-        {% endif %}
-
-        {% if inactive_count %}
-        <h2>{{ inactive_count }} Previous Jam{% if inactive_count != 1 %}s{% endif %}</h2>
-        <ul class="jamlist">
-        {% for jam in jams if jam.rating_end < current_datetime %}
-            <li>
-                <a href="{{ jam.url() }}">{{ jam.title }}</a>
-                from {{ jam.start_time | formattime }} to {{
-                jam.end_time | formattime }}
-                (length: {{ jam.end_time | humandelta(jam.start_time) }})
-                show the {{ jam.entries.all() | length }} entries
-            </li>
-        {% endfor %}
-        {% else %}
-        <h2>No Previous Jams</h2>
-        <div class="info"><p>There have not been any jams yet.</p></div>
-        {% endif %}
 
         </ul>
     </div>
 </div>
 {% endblock %}
+

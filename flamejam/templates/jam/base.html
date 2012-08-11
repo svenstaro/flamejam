@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+    <li><a href="{{ jam.url() }}">{{ jam.title }}</a></li>
+    {% block subbreadcrumb %}{% endblock %}
+{% endblock %}
+
+{% block sidebar %}
+<h1>{{ jam.title }}</h1>
+
+<ul class="sidebar">
+    <li class="current"><a href="#">Info</a></li>
+    <li><a href="#">Games</a></li>
+    <li><a href="#">Teams</a></li>
+    <li><a href="#">Registrations</a></li>
+    <li><a href="#">Team Finder</a></li>
+</ul>
+
+<hr />
+
+<ul class="sidebar">
+    <li><a href="#">Your Team</a></li>
+    <li><a href="#">Your Game</a></li>
+    <li><a href="#">Register for this jam</a></li>
+</ul>
+{% endblock %}

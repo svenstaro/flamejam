@@ -1,6 +1,7 @@
 from flamejam import app
 from datetime import *
 from dateutil import relativedelta
+from flask import Markup
 import time
 
 # format a timestamp in default format (0000-00-00 00:00:00)
@@ -53,7 +54,7 @@ def humandelta(s, other = None):
 def humantime(s):
     diff = timedelta(s, datetime.utcnow())
     if diff.years < 1:
-        return humandelta(diff)
+        return Markup('<span title="' + formattime(s) + '" class="time-title">' + humandelta(diff) + '</span>')
     else:
         return formattime(s)
 
