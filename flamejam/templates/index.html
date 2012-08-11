@@ -3,8 +3,6 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>BaconGameJam - Home</h1>
-
 {% set counting = false %}
 {% for jam in jams if jam.start_time < current_datetime < jam.end_time and not counting %}
     {% set counting = true %}
@@ -20,49 +18,59 @@
     </a>
 {% endfor %}
 
-<div class="columns">
-    <div> <!-- Column 1 -->
-        <h2>About BaconGameJam</h2>
-        <div class="info">
-            <p>
-                A game jam is an event during which all participants <b>create
-                games</b> according to a provided theme <b>within a short amount of time</b>
-                (usually between two days to a week). The BaconGameJam was founded
-                as "RedditGameJam" on the wonderful
-                <a href="http://reddit.com/r/redditgamejam" target="_blank">
-                Reddit community</a>, and later renamed to
-                <a href="http://reddit.com/r/bacongamejam" target="_blank">BaconGameJam</a> due
-                to trademark issues.
-            </p>
-            <p>
-                <b>Anybody can participate</b>, experienced or newbie, flash developer or
-                C hacker.
-            </p>
-            <p>
-                The main goal of this game jam is to be a <b>learning experience</b> for
-                everyone involved. There is nothing to win except for fame, comments
-                and of course karma.
-            </p>
-            <p>
-                Feel free to <a href="{{ url_for('register') }}">register and participate</a>, even
-                if you are not on <a href="http://reddit.com" target="_blank">reddit</a>
-                (but it wouldn't be to your disadvantage to
-                check it out!). If you do have an account on reddit, you are strongly
-                advised to link your BaconGameJam account with your reddit
-                account by using the same nickname!
-            </p>
-            <p>
-                More questions? Read the <a href="{{ url_for('faq') }}">FAQ</a>.
-            </p>
-        </div>
+<div class="row-fluid">
+    <div class="span4">
+        <h1>Welcome at BaconGameJam</h1>
+        <p>
+            A game jam is an event during which all participants <b>create
+            games</b> according to a provided theme <b>within a short amount of time</b>
+            (usually between two days to a week). The BaconGameJam was founded
+            as "RedditGameJam" on the wonderful
+            <a href="http://reddit.com/r/redditgamejam" target="_blank">
+            Reddit community</a>, and later renamed to
+            <a href="http://reddit.com/r/bacongamejam" target="_blank">BaconGameJam</a> due
+            to trademark issues.
+        </p>
+        <p>
+            <b>Anybody can participate</b>, experienced or newbie, flash developer or
+            C hacker.
+        </p>
+        <p>
+            The main goal of this game jam is to be a <b>learning experience</b> for
+            everyone involved. There is nothing to win except for fame, comments
+            and of course karma.
+        </p>
+        <p>
+            Feel free to <a href="{{ url_for('register') }}">register and participate</a>, even
+            if you are not on <a href="http://reddit.com" target="_blank">reddit</a>
+            (but it wouldn't be to your disadvantage to
+            check it out!). If you do have an account on reddit, you are strongly
+            advised to link your BaconGameJam account with your reddit
+            account by using the same nickname!
+        </p>
+        <p>
+            More questions? Read the <a href="{{ url_for('faq') }}">FAQ</a>.
+        </p>
     </div>
 
-    <div style="width: 30px"></div>
+    <div class="span4" style="text-align: center;">
+        <h1>How to participate?</h1>
 
-    <!-- Column 2 -->
-    <div style="width: 50%">
+        <ol class="steps">
+            <li><a href="{{ url_for('register') }}">1. Create account</a></li>
+            <li><a href="#">2. Register for jam</a></li>
+            <li><a href="#">3. Find a  team <small>(optional)</small></a></li>
+            <li><a href="{{ url_for('faq') }}">4. Start coding</a></li>
+        </ol>
+    </div>
 
-        </ul>
+    <div class="span4">
+        <h1>Notify me about jams!</h1>
+        <p>
+            We have no mailing list, but you can <a href="{{ url_for('register') }}">sign up</a> as a member
+            and you will automatically receive email notifications about
+            new jams, and more details and notifications if you register for a jam.
+        </p>
     </div>
 </div>
 {% endblock %}

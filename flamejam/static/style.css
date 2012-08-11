@@ -339,3 +339,32 @@ ul.games li img {
 ul.games li a:hover img {
     opacity: 1;
 }
+
+
+ol.steps {
+    font-size: 18pt;
+    list-style: none;
+    margin: 0; padding: 0;
+}
+
+ol.steps li a {
+    color: #666;
+    display: block;
+    padding: 10px;
+    margin: 5px 0;
+    background: -webkit-gradient(linear, left top, left bottom, from(#222), to(#111));
+    border-radius: 10px;
+    border: 1px solid #222;
+    box-shadow: 4px 4px 8px #000;
+}
+
+ol.steps li a:hover {
+    color: #999;
+    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#222));
+    border-color: #333;
+}
+
+ol.steps li small {
+    display: block;
+    font-size: 0.5em;
+}
