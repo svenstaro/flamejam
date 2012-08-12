@@ -40,6 +40,20 @@ db.session.add(rgj3)
 db.session.add(loljam)
 db.session.add(rgj4)
 
+# make people participate
+peter.joinJam(rgj1)
+paul.joinJam(rgj1)
+paddy.joinJam(rgj2)
+paul.joinJam(rgj2)
+peter.joinJam(rgj3)
+paul.joinJam(rgj3)
+pablo.joinJam(rgj3)
+paddy.joinJam(rgj4)
+paul.joinJam(rgj4)
+paul.joinJam(loljam)
+paddy.joinJam(loljam)
+pablo.joinJam(loljam)
+
 # Make games
 best_game = Game("best game", "Simply the best game", rgj1, peter)
 space_game = Game("space game", "A space shooter game", rgj1, paul)

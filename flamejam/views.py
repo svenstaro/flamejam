@@ -253,6 +253,41 @@ def jam_games(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('jam/games.html', jam = jam)
 
+@app.route('/jams/<jam_slug>/participants/')
+@path("Jams", "Participants")
+def jam_participants(jam_slug):
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    return render_template('jam/participants.html', jam = jam)
+
+@app.route('/jams/<jam_slug>/team_finder/', methods=("GET", "POST"))
+@path("Jams", "Team Finder")
+def jam_team_finder(jam_slug):
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    form = TeamFinderFilter()
+    l = []
+    for r in jam.registrations:
+        u = r.user
+        if (not form.show_teamed.data) and r.team and (not r.team.isSingleTeam):
+            continue # don't show teamed people
+
+        matches = 0
+        l.append((r, matches))
+
+    return render_template('jam/team_finder.html', jam = jam, form = form, results = l)
+
+@app.route('/jams/<jam_slug>/teams/')
+@path("Jams", "Teams")
+def jam_teams(jam_slug):
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    return render_template('jam/teams.html', jam = jam)
+
+@app.route('/jams/<jam_slug>/teams/<int:team_id>/')
+@path("Jams", "Team")
+def jam_team(jam_slug, team_id):
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    team = Team.query.filter_by(id = team_id, jam_id = jam.id).first_or_404()
+    return render_template('jam/team.html', jam = jam, team = team)
+
 @app.route('/jams/<jam_slug>/delete', methods=("GET", "POST"))
 @path("Jams", "Delete")
 def delete_jam(jam_slug):

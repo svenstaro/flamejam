@@ -1,0 +1,61 @@
+{% extends "jam/base.html" %}
+
+{% block title %}Team Finder « {{ jam.title }}{% endblock %}
+
+{% block content %}
+
+<h1>Team Finder</h1>
+
+<div class="row-fluid">
+    <div class="span4">
+        <h2>How it works</h2>
+        <p>
+            You can use this list to find other people who are not in a
+            team yet. Filter the list by abilities (programming / art / ...)
+            using the controls below.
+        </p>
+        <p>
+            If you want to join an existing team, browse them on the
+            <a href="{{ url_for('jam_teams', jam_slug = jam.slug) }}">teams page</a>
+            and contact any member via mail asking for an invitation.
+        </p>
+
+        <h2>Filter settings</h2>
+        <div class="row-fluid">
+            <form method="post">
+            <div class="span6">
+                {{ form.need_programmer() }} {{ form.need_programmer.label() }}<br />
+                {{ form.need_gamedesigner() }} {{ form.need_gamedesigner.label() }}<br />
+                {{ form.need_2dartist() }} {{ form.need_2dartist.label() }}<br />
+                {{ form.need_3dartist() }} {{ form.need_3dartist.label() }}<br />
+                {{ form.need_composer() }} {{ form.need_composer.label() }}<br />
+                {{ form.need_sounddesigner() }} {{ form.need_sounddesigner.label() }}
+            </div>
+            <div class="span6">
+                <p>{{ form.show_teamed() }} {{ form.show_teamed.label() }}</p>
+                <p>{{ form.order.label() }}: {{ form.order() }}</p>
+                <p><input type="submit" class="btn btn-primary" value="Apply filter" /></p>
+            </div>
+            </form>
+        </div>
+
+    </div>
+    <div class="span8">
+        <h2>Participants</h2>
+
+        <table class="teamfinder">
+            <tr><th>Username</th><th>Abilities</th><th>Location</th><th>Has team</th><th>Invite</th></tr>
+            {% for r, m in results %}
+            <tr>
+                <td>{{ r.user.getLink() }}</td>
+                <td>TODO</td>
+                <td>TODO</td>
+                <td>{{ "Yes" if r.team and not r.team.isSingleTeam else "No" }}</td>
+                <td><a href="#">Invite</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
+

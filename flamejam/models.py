@@ -37,15 +37,19 @@ class User(db.Model):
     is_verified = db.Column(db.Boolean)
     receive_emails = db.Column(db.Boolean)
     registered = db.Column(db.DateTime)
-    games = db.relationship('Game', backref='user', lazy='dynamic')
+    games = db.relationship('Game', backref='user', lazy = "dynamic")
     team_games = db.relationship("Game",
                     secondary = team_members,
-                    backref = "team")
-    ratings = db.relationship('Rating', backref='user', lazy='dynamic')
-    comments = db.relationship('Comment', backref='user', lazy='dynamic')
-    jams = db.relationship('Jam', backref='author', lazy='dynamic')
-    rating_skips = db.relationship('RatingSkip', backref='user', lazy='dynamic')
-    ratings = db.relationship('Rating', backref = 'user', lazy='dynamic')
+                    backref = "team", lazy = "dynamic")
+    ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
+    comments = db.relationship('Comment', backref='user', lazy = "dynamic")
+    jams = db.relationship('Jam', backref='author', lazy = "dynamic")
+    rating_skips = db.relationship('RatingSkip', backref='user', lazy = "dynamic")
+    ratings = db.relationship('Rating', backref = 'user', lazy = "dynamic")
+    devlog_posts = db.relationship("DevlogPost", backref = "author", lazy = "dynamic")
+    invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
+    registrations = db.relationship("Registration", backref = "user", lazy = "dynamic")
+
 
     def __init__(self, username, password, email, is_admin=False,
             is_verified=False, receive_emails = True):
@@ -120,6 +124,23 @@ class User(db.Model):
                 return game
         return None
 
+    def joinJam(self, jam, generateTeam = True):
+        r = Registration(self, jam)
+        db.session.add(r)
+        db.session.commit() # need to commit so the team does not register us automatically
+
+        if generateTeam:
+            t = Team(self, jam)
+            db.session.add(t)
+
+        db.session.commit()
+
+    def leaveJam(self, jam):
+        pass
+
+    def getRegistration(self, jam):
+        return Registration.query.filter_by(user_id = self.id, jam_id = jam.id).first()
+
 class JamStatusCode(object):
     ANNOUNCED   = 0
     RUNNING     = 1
@@ -159,8 +180,10 @@ class Jam(db.Model):
     packaging_deadline = db.Column(db.DateTime) # Packaging ends at this moment
     rating_end = db.Column(db.DateTime) # Rating period ends and jam is over
     team_jam = db.Column(db.Boolean)
-    games = db.relationship('Game', backref='jam', lazy='dynamic')
+    games = db.relationship('Game', backref='jam', lazy = "dynamic")
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    registrations = db.relationship("Registration", backref = "jam", lazy = "dynamic")
+    teams = db.relationship("Team", backref = "jam", lazy = "dynamic")
 
     def __init__(self, title, author, start_time, end_time=None,
             packaging_deadline=None, voting_end=None, team_jam=False, theme = ''):
@@ -235,6 +258,99 @@ def userTotalGameCompare(left, right):
     else:
         return 0
 
+class Registration(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    team_id = db.Column(db.Integer, db.ForeignKey("team.id"))
+    jam_id = db.Column(db.Integer, db.ForeignKey("jam.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
+    def __init__(self, user, jam):
+        self.user = user
+        self.jam = jam
+
+class DevlogPost(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    team_id = db.Column(db.Integer, db.ForeignKey("team.id"))
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    title = db.Column(db.String(128))
+    content = db.Column(db.Text)
+
+    def __init__(self, team, author, title, content):
+        self.team = team
+        self.author = author
+        self.title = title
+        self.content = content
+
+
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    jam_id = db.Column(db.Integer, db.ForeignKey("jam.id"))
+    name = db.Column(db.String(80))
+    registrations = db.relationship("Registration", backref = "team", lazy = "dynamic")
+    devlog_posts = db.relationship("DevlogPost", backref = "team", lazy = "dynamic")
+    invitations = db.relationship("Invitation", backref = "team", lazy = "dynamic")
+
+    def __init__(self, user, jam):
+        self.jam = jam
+        self.userJoin(user)
+
+        number = 1
+        while Team.query.filter_by(jam_id = jam.id, name = "Team " + str(number)).first():
+            number += 1
+        self.name = "Team " + str(number)
+
+    @property
+    def isSingleTeam(self):
+        return self.registrations.count() == 1
+
+    def url(self):
+        return url_for("jam_team", jam_slug = self.jam.slug, team_id = self.id)
+
+    def userJoin(self, user):
+        r = user.getRegistration(self.jam)
+        if not r:
+            # register user, but do not create automatic team, we don't need
+            # that anyway
+            user.joinJam(self.jam, False)
+        elif r in self.registrations:
+            return # user is already in this team
+        elif r.team and r.team != self:
+            r.team.userLeave(user)
+
+        self.registrations.append(r)
+        db.session.commit()
+
+    def userLeave(self, user):
+        r = user.getRegistration(self.jam)
+
+        if r.team != self:
+            return # not in this team, nevermind ;)
+
+        if self.isSingleTeam:
+            # only user in team, we can destroy this team
+            db.session.delete(self)
+
+        r.team = None
+        db.session.commit()
+
+    def getInvitation(self, user):
+        return Invitation.query.filter_by(user_id = user.id, team_id = self.id).first()
+
+    def inviteUser(self, user, sender): # sender: which user sent the invitation
+        if self.getInvitation(user): return # already invited
+        db.session.add(Invitation(self, user))
+        # TODO: send email
+        db.session.commit()
+
+class Invitation(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    team_id = db.Column(db.Integer, db.ForeignKey("team.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
+    def __init__(self, team, user):
+        self.team = team
+        self.user = user
+
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
@@ -243,11 +359,11 @@ class Game(db.Model):
     posted = db.Column(db.DateTime)
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    rating_skips = db.relationship('RatingSkip', backref='game', lazy='dynamic')
-    ratings = db.relationship('Rating', backref = 'game', lazy='dynamic')
-    comments = db.relationship('Comment', backref='game', lazy='dynamic')
-    packages = db.relationship('GamePackage', backref='game', lazy='dynamic')
-    screenshots = db.relationship('GameScreenshot', backref='game', lazy='dynamic')
+    rating_skips = db.relationship('RatingSkip', backref='game', lazy = "dynamic")
+    ratings = db.relationship('Rating', backref = 'game', lazy = "dynamic")
+    comments = db.relationship('Comment', backref='game', lazy = "dynamic")
+    packages = db.relationship('GamePackage', backref='game', lazy = "dynamic")
+    screenshots = db.relationship('GameScreenshot', backref='game', lazy = "dynamic")
 
     def __init__(self, title, description, jam, user):
         self.title = title

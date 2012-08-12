@@ -166,3 +166,19 @@ class SkipRating(Form):
 
 class WriteComment(Form):
     text = TextAreaField("Comment", validators=[Required(), Length(max=65535)])
+
+
+class TeamFinderFilter(Form):
+    need_programmer = BooleanField("Programmer")
+    need_gamedesigner = BooleanField("Game Designer")
+    need_2dartist = BooleanField("2D Artist")
+    need_3dartist = BooleanField("3D Artist")
+    need_composer = BooleanField("Composer")
+    need_sounddesigner = BooleanField("Sound Designer")
+
+    show_teamed = BooleanField("Show people with team")
+    order = SelectField("Sort by", choices = [
+        ("abilities", "Ability match"),
+        ("username", "Username"),
+        ("location", "Location")
+    ], default = "abilities")

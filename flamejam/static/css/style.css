@@ -504,8 +504,8 @@ ul.users li {
     display: inline-block;
 }
 
-ul.users li a {
-    display: block;
+ul.users li a.user {
+    display: inline-block;
     background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#222));
     padding: 4px;
     width: 100px;
@@ -515,7 +515,7 @@ ul.users li a {
     color: #AAA;
 }
 
-ul.users li a:hover {
+ul.users li a.user:hover {
     color: #CCC;
     background: -webkit-gradient(linear, left top, left bottom, from(#444), to(#333));
 }
@@ -627,4 +627,21 @@ input[type="text"] {
     font-size: 11pt;
     padding: 0 8px;
     width: 200px;
+}
+
+table.teamfinder {
+    border-collapse: collapse;
+    border: 1px solid #444;
+}
+
+table.teamfinder th,
+table.teamfinder td {
+    padding: 8px 12px;
+    background: #222;
+    border: 1px solid #444;
+    border-width: 1px 0;
+}
+
+table.teamfinder th {
+    background: #111;
 }

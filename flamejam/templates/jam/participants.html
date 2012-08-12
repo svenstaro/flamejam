@@ -1,0 +1,21 @@
+{% extends "jam/base.html" %}
+
+{% block title %}Participants of {{ jam.title }}{% endblock %}
+
+{% block content %}
+
+<h1>Participants <small>{{ jam.registrations.all() | length }} people are registered</small></h1>
+
+{% if jam.registrations.all() | length == 0 %}
+    <p>There are no participants yet.</p>
+{% else %}
+    <ul class="users">
+    {% for r in jam.registrations %}
+        <li>
+            {{ r.user.getLink() }}
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "jam/base.html" %}
+
+{% block title %}Teams of {{ jam.title }}{% endblock %}
+
+{% block content %}
+
+<h1>Teams <small>{{ jam.teams.all() | length }} teams</small></h1>
+
+{% if jam.teams.all() | length == 0 %}
+    <p>There are no teams yet.</p>
+{% else %}
+    <ul class="teams">
+    {% for team in jam.teams %}
+        <li>
+            <a href="{{ team.url() }}">{{ team.name }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}
