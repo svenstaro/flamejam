@@ -715,12 +715,14 @@ def show_game(jam_slug, game_slug, action=None):
 @app.route('/profile')
 @path("Profile")
 def profile():
-    return redirect(get_current_user().url());
+    require_login()
+    return render_template("account/profile.html", user = get_current_user())
 
 @app.route('/users/<username>/')
 @path("Profile")
 def show_user(username):
-    pass
+    user = User.query.filter_by(username = username).first_or_404()
+    return render_template("account/profile.html", user = user)
 
 @app.route('/settings', methods = ["POST", "GET"])
 @path("Profile", "Settings")

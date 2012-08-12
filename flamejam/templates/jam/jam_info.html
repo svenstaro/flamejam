@@ -19,14 +19,17 @@
 {% endblock %}
 
 {% block content %}
+
+<h1>{{ jam.title }}<small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme and jam.getStatus().code > 0 else "Theme not announced" }}</small></h1>
+
 <div class="row-fluid">
-    <div class="span6">
-        <h1>{{ jam.title }}<small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme else "Theme not yet selected" }}</small></h2>
+    <div class="span5">
+        <h2>Jam Details</h2>
         <table class="details">
             <tr><th>Announced</th><td>{{ jam.announced | humantime }} by {{ jam.author.getLink() }}</a></td></tr>
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
-            <tr><th>Duration</th><td>{{ jam.start_time | humandelta(jam.end_time) }}</td></tr>
-            <tr><th>Team limit</th><td>{{ jam.team_jam }}</td></tr>
+            <tr><th>Duration</th><td>{{ jam.duration }} hours</td></tr>
+            <tr><th>Max team size</th><td>{{ jam.team_limit or "Unlimited" }}</td></tr>
             {% if status.code == 1 %}
             <tr><th>Time left</th><td>
                 <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
@@ -39,17 +42,49 @@
             {% if status.code == 2 or status.code == 3 %}
             <tr><th>Rating deadline</th><td>{{ jam.rating_end | humantime }}</td></tr>
             {% endif %}
+            <tr style="height: 10px;"></tr>
+            <tr>
+                <th>Participants</th>
+                <td>{{ jam.registrations.count() }} users</td>
+            </tr>
+            <tr>
+                <th>Teams</th>
+                <td>{{ jam.teams.count() }} teams</td>
+            </tr>
+            <tr>
+                <th>Games</th>
+                <td>{{ jam.games.count() }} games</td>
+            </tr>
         </table>
-
         <p>
             <a href="#" class="btn btn-primary">Participate</a>
         </p>
 
+        {% if jam.getStatus().code == 4 %}
+        <h2>Winners</h2>
+            {% if jam.games.count() > 1  %}
+                <ul class="games-winners">
+                {% for game in jam.getTopGames()[:3] %}
+                <li class="place-{{ loop.index }}"><a href="{{ game.url() }}">
+                    {% set s = game.screenshots[-1] %}
+                    {% if s %}
+                    <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
+                    {% else %}
+                    <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
+                    {% endif %}
 
-        TODO: Show list of winners here when it's done.
+                    <div class="star"></div>
+                </a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>There were no games :(</p>
+            {% endif %}
+        {% endif %}
+
     </div>
-    <div class="span6">
-        <h1>Jam Events</h1>
+    <div class="span7">
+        <h2>Jam Events</h2>
         <p>
             EVENT TIMELINE HERE!
         </p>

@@ -16,13 +16,8 @@ import random
 # Teams:
 # User <many2many> Game
 
-team_members = db.Table('team_members',
-    db.Column('game_id', db.Integer, db.ForeignKey('game.id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-)
-
 def findLocation(loc):
-    try:
+#    try:
         r = requests.get("http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false&language=en" % loc)
         c = r.json["results"][0]["address_components"]
 
@@ -37,14 +32,14 @@ def findLocation(loc):
 
         first = state
 
-        if state == "United States":
+        if state == "United States" and region:
             first += ", " + region
 
         if city:
             first += ", " + city
         return first
-    except:
-        return None
+#    except:
+#        return None
 
 def get_slug(s):
     s = s.lower()
@@ -63,13 +58,10 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     is_verified = db.Column(db.Boolean)
     registered = db.Column(db.DateTime)
-    games = db.relationship('Game', backref='user', lazy = "dynamic")
-    team_games = db.relationship("Game", secondary = team_members, backref = "team", lazy = "dynamic")
     ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
     comments = db.relationship('Comment', backref='user', lazy = "dynamic")
     jams = db.relationship('Jam', backref='author', lazy = "dynamic")
     rating_skips = db.relationship('RatingSkip', backref='user', lazy = "dynamic")
-    ratings = db.relationship('Rating', backref = 'user', lazy = "dynamic")
     devlog_posts = db.relationship("DevlogPost", backref = "author", lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
     registrations = db.relationship("Registration", backref = "user", lazy = "dynamic")
@@ -97,8 +89,7 @@ class User(db.Model):
     notify_team_invitation = db.Column(db.Boolean, default = True)
     notify_newsletter = db.Column(db.Boolean, default = True)
 
-    def __init__(self, username, password, email, is_admin=False,
-            is_verified=False, receive_emails = True):
+    def __init__(self, username, password, email, is_admin = False, is_verified = False, receive_emails = True):
         self.username = username
         self.password = sha512((password+app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
         self.email = email
@@ -133,7 +124,11 @@ class User(db.Model):
         return i
 
     def getTotalGameCount(self):
-        return len(self.games.all()) + len(self.team_games)
+        i = 0
+        for r in self.registrations:
+            if r.team:
+                i += r.team.games.count()
+        return i
 
     def getSkippedCount(self, jam):
         return len(self.rating_skips.filter(RatingSkip.user_id == self.id and Game.jam_id == jam.id).all())
@@ -154,23 +149,37 @@ class User(db.Model):
         return Markup('<a class="user {4}" href="{0}"><img width="{2}" height="{2}" src="{3}" class="icon"/> {1}</a>'.format(
             self.url(), self.username, s, self.getAvatar(s), class_))
 
+    @property
+    def abilities(self):
+        a = []
+        if self.ability_programmer:
+            a.append("Programming")
+        if self.ability_gamedesigner:
+            a.append("Game Design")
+        if self.ability_2dartist:
+            a.append("Graphics / 2D Art")
+        if self.ability_3dartist:
+            a.append("Modelling / 3D Art")
+        if self.ability_composer:
+            a.append("Composing")
+        if self.ability_sounddesigner:
+            a.append("Sound Design")
+        return a
+
+    def getRegistration(self, jam):
+        return Registration.query.filter_by(user_id = self.id, jam_id = jam.id).first()
+
+    def getTeam(self, jam):
+        return self.getRegistration(jam).team
+
+    def inTeam(self, team):
+        return self in team.members
+
     def canRate(self, game):
-        return game.user != self and not self in game.team
+        return not self.inTeam(game.team)
 
     def canEdit(self, game):
-        return game.user == self
-
-    def getGameInJam(self, jam):
-        for game in self.games:
-            if game.jam == jam:
-                return game
-        return None
-
-    def getTeamGameInJam(self, jam):
-        for game in self.team_games:
-            if game.jam == jam:
-                return game
-        return None
+        return self.inTeam(game.team)
 
     def joinJam(self, jam, generateTeam = True):
         r = Registration(self, jam)
@@ -184,10 +193,7 @@ class User(db.Model):
         db.session.commit()
 
     def leaveJam(self, jam):
-        pass
-
-    def getRegistration(self, jam):
-        return Registration.query.filter_by(user_id = self.id, jam_id = jam.id).first()
+        pass #TODO
 
 class JamStatusCode(object):
     ANNOUNCED   = 0
@@ -224,40 +230,39 @@ class Jam(db.Model):
     theme = db.Column(db.String(128))
     announced = db.Column(db.DateTime) # Date on which the jam was announced
     start_time = db.Column(db.DateTime) # The jam starts at this moment
-    end_time = db.Column(db.DateTime) # The jamming phase ends at this moment
-    packaging_deadline = db.Column(db.DateTime) # Packaging ends at this moment
-    rating_end = db.Column(db.DateTime) # Rating period ends and jam is over
-    team_jam = db.Column(db.Boolean)
-    games = db.relationship('Game', backref='jam', lazy = "dynamic")
+    team_limit = db.Column(db.Integer) # 0 = no limit
+    games = db.relationship('Game', backref="jam", lazy = "dynamic")
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     registrations = db.relationship("Registration", backref = "jam", lazy = "dynamic")
     teams = db.relationship("Team", backref = "jam", lazy = "dynamic")
 
-    def __init__(self, title, author, start_time, end_time=None,
-            packaging_deadline=None, voting_end=None, team_jam=False, theme = ''):
+    packaging_duration = db.Column(db.Integer) # hours
+    rating_duration = db.Column(db.Integer) # hours
+    duration = db.Column(db.Integer) # hours
+
+    def __init__(self, title, author, start_time, duration = 48, team_limit = 0, theme = ''):
         self.title = title
         self.slug = get_slug(title)
         self.start_time = start_time
+        self.duration = duration
+        self.packaging_duration = 24 * 1
+        self.rating_duration = 24 * 5
+        self.announced = datetime.utcnow()
         self.theme = theme
         self.author = author
-        self.team_jam = team_jam
+        self.team_limit = team_limit
 
-        if end_time is None:
-            self.end_time = start_time + timedelta(days=2)
-        else:
-            self.end_time = end_time
+    @property
+    def end_time(self):
+        return self.start_time + timedelta(hours = self.duration)
 
-        if packaging_deadline is None:
-            self.packaging_deadline = start_time + timedelta(days=3)
-        else:
-            self.packaging_deadline = packaging_deadline
+    @property
+    def packaging_deadline(self):
+        return self.end_time + timedelta(hours = self.packaging_duration)
 
-        if self.rating_end is None:
-            self.rating_end = start_time + timedelta(days=7)
-        else:
-            self.rating_end = rating_end
-
-        self.announced = datetime.utcnow()
+    @property
+    def rating_end(self):
+        return self.packaging_deadline + timedelta(hours = self.rating_duration)
 
     def __repr__(self):
         return '<Jam %r>' % self.slug
@@ -337,6 +342,7 @@ class Team(db.Model):
     registrations = db.relationship("Registration", backref = "team", lazy = "dynamic")
     devlog_posts = db.relationship("DevlogPost", backref = "team", lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "team", lazy = "dynamic")
+    games = db.relationship("Game", backref = "team", lazy = "dynamic")
 
     def __init__(self, user, jam):
         self.jam = jam
@@ -346,6 +352,13 @@ class Team(db.Model):
         while Team.query.filter_by(jam_id = jam.id, name = "Team " + str(number)).first():
             number += 1
         self.name = "Team " + str(number)
+
+    @property
+    def members(self):
+        m = []
+        for r in self.registrations:
+            m.append(r.user)
+        return m
 
     @property
     def isSingleTeam(self):
@@ -404,22 +417,21 @@ class Game(db.Model):
     title = db.Column(db.String(128))
     slug = db.Column(db.String(128))
     description = db.Column(db.Text)
-    posted = db.Column(db.DateTime)
+    created = db.Column(db.DateTime)
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
     rating_skips = db.relationship('RatingSkip', backref='game', lazy = "dynamic")
     ratings = db.relationship('Rating', backref = 'game', lazy = "dynamic")
     comments = db.relationship('Comment', backref='game', lazy = "dynamic")
     packages = db.relationship('GamePackage', backref='game', lazy = "dynamic")
     screenshots = db.relationship('GameScreenshot', backref='game', lazy = "dynamic")
 
-    def __init__(self, title, description, jam, user):
+    def __init__(self, team, title):
+        self.team = team
+        self.jam = team.jam
         self.title = title
         self.slug = get_slug(title)
-        self.description = description
-        self.jam = jam
-        self.user = user
-        self.posted = datetime.utcnow()
+        self.created = datetime.utcnow()
 
     def __repr__(self):
         return '<Game %r>' % self.title

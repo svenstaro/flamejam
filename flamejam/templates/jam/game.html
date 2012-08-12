@@ -8,60 +8,61 @@
 
 <h1>{{ game.title }} <small>for <a href="{{ game.jam.url() }}">{{ game.jam.title }}</a></small></h1>
 
+<div class="modal hide" id="downloadModal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Download {{ game.title }}</h3>
+    </div>
+    <div class="modal-body">
+    {% if not game.packages.all() %}
+        <p>Sorry, no packages have been submitted yet.</p>
+    {% else %}
+        {% for package in game.packages %}
+        <ul>
+            {% if package.type in ["hg", "svn", "git"] %}
+                <b>{{ package.typeString() }}:</b> <a class="repo-url" href="{{ package.url }}">{{ package.url }}</a>
+            {% else %}
+                <a href="{{ package.url }}">{{ package.typeString() }}</a>
+            {% endif %}
+        </ul>
+        {% endfor %}
+    {% endif %}
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+    </div>
+</div>
+
 <div class="row-fluid">
     <div class="span5">
         <h2>Details</h2>
         <table class="details">
             <tr><th>Team</th><td>
-                <ul class="users">
-                <li>{{ game.user.getLink("author") }}</li>
-                {% for member in game.team %}
-                    <li>{{ member.getLink() }}</li>
-                {% endfor %}
-                </ul>
+                {{ game.team.name }} <a href="{{ game.team.url() }}">show »</a>
                 </td></tr>
 
             <tr><th>Jam</th><td><a href="{{ game.jam.url() }}">{{ game.jam.title }}</a>
                 {% if game.jam.theme %}<span class="theme">{{ game.jam.theme }}</span>{% endif %}</td></tr>
 
-            <tr><th>Submitted</th><td>{{ game.posted | humantime }}</td></tr>
-
-            <tr><th>Packages{% if game.packages.all() %} ({{ game.packages.all() | length }}){% endif %}</th><td>
-                {% for package in game.packages %}
-                <p>
-                    {% if current_user == game.user %}
-                    <a href="{{ game.url('remove_package', remove_id = package.id) }}" style="float:right; margin-left: 20px;">Remove</a>
-                    {% endif %}
-
-                    {% if package.type in ["hg", "svn", "git"] %}
-                    <b>{{ package.typeString() }}:</b> <a class="repo-url" href="{{ package.url }}">{{ package.url }}</a>
-                    {% else %}
-                    <a href="{{ package.url }}">{{ package.typeString() }}</a>
-                    {% endif %}
-                </p>
-                {% endfor %}
-                {% if not game.packages.all() %}
-                No packages submitted yet.
-                {% endif %}
-                </td></tr>
+            <tr><th>Submitted</th><td>{{ game.created | humantime }}</td></tr>
         </table>
     </div>
     <div class="span5">
         <h2>Description</h2>
-        {{ game.description | markdown }}
+        {{ (game.description or "*This game has no description.*") | markdown }}
     </div>
     <div class="span2">
         <h2>Toolbox</h2>
         <div class="toolbox">
-        {% if game.user == current_user %}
-            <a href="{{ game.url('edit') }}" class="btn btn-primary btn-mini">Edit game</a>
+            <a class="btn btn-primary btn-mini" data-toggle="modal" href="#downloadModal">Download</a>
+        {% if current_user and current_user.inTeam(game.team) %}
+            <a href="{{ game.url('edit') }}" class="btn btn-inverse btn-mini">Edit game</a>
             {% if game.jam.team_jam %}
-                <p><a href="{{ game.url('add_team_member') }}" class="btn btn-primary btn-mini">Add team member</a>
+                <p><a href="{{ game.url('add_team_member') }}" class="btn btn-inverse btn-mini">Add team member</a>
             {% endif %}
-            <a href="{{ game.url('add_screenshot') }}" class="btn btn-primary btn-mini">Add screenshot</a>
-            <a href="{{ game.url('add_package') }}" class="btn btn-primary btn-mini">Add package</a>
-        {% elif current_user in game.team %}
-            <a href="{{ game.url('quit') }}" class="btn btn-primary btn-mini">Quit the team</a>
+            <a href="{{ game.url('add_screenshot') }}" class="btn btn-inverse btn-mini">Add screenshot</a>
+            <a href="{{ game.url('add_package') }}" class="btn btn-inverse btn-mini">Add package</a>
+            <a href="{{ game.url('quit') }}" class="btn btn-inverse btn-mini">Quit the team</a>
         {% endif %}
         </div>
     </div>
@@ -203,6 +204,8 @@
             </p>
         </div>
         </form>
+        {% else %}
+        <a href="{{ url_for('login', next = request.url) }}">Login or Signup</a> to post a comment
         {% endif %}
     </div>
 </div>

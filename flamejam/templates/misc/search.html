@@ -13,13 +13,13 @@
 
 <div class="row-fluid">
     <div class="span4">
-        {% if jams %}
         <h2>{{ jams | length }} Jam{{ "" if jams | length == 1 else "s" }}</h2>
+        {% if jams %}
         <ul>
             {% for jam in jams %}
             <li>
                 <a href="{{ jam.url() }}">{{ jam.title }}</a>
-                {% if jam.theme %}<span class="theme">{{ jam.theme }}</span>{% endif %}
+                {% if jam.theme and jam.getStatus().code > 0 %}<span class="theme">{{ jam.theme }}</span>{% endif %}
             </li>
             {% endfor %}
         </ul>

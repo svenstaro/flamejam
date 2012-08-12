@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery.lightbox-0.5.css') }}">
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.lightbox-0.5.js') }}"></script>
-
+        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/countdown.js') }}"></script>
 
@@ -48,7 +48,7 @@
 
                 <div id="account">
                     {% if current_user %}
-                    <a href="{{ url_for('settings') }}">
+                    <a href="{{ url_for('profile') }}">
                         <img class="avatar" src="{{ current_user.getAvatar(24) }}" width="24" height="24" />
                         {{ current_user.username }}
                     </a>

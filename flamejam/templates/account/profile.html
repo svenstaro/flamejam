@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}{% endblock %}
+
+{% block content %}
+
+<h1>
+    <img class="icon big" style="margin-right: 10px;" width="48" height="48" src="{{ user.getAvatar(48) }}" />
+    {{ user.username }}
+    {% if user.real_name %}<small>{{ user.real_name }}</small>{% endif %}
+
+    {% if current_user and current_user == user %}
+    <a href="{{ url_for('settings') }}" class="btn btn-primary btn-large" style="margin-left: 20px;">Profile settings</a>
+    {% endif %}
+</h1>
+
+
+<div class="row-fluid">
+    <div class="span4">
+        <h2>Personal data</h2>
+        <table class="details">
+            <tr>
+                <th>Member since</th>
+                <td>
+                    {{ user.registered | humantime }}
+                </td>
+            </tr>
+
+            {% if user.location %}
+            <tr>
+                <th>Location</th>
+                <td>
+                    {{ user.location }}
+                    <a href="#TODO:map view">Map »</a>
+                </td>
+            </tr>
+            {% endif %}
+
+            {% if user.real_name %}
+            <tr>
+                <th>Real Name</th>
+                <td>{{ user.real_name }}</td>
+            </tr>
+            {% endif %}
+
+            {% if user.pm_mode != "disabled" %}
+            <tr>
+                <th>eMail</th>
+                <td>
+                    {% if user.pm_mode == "email" %}
+                    <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                    {% else %}
+                    <a href="#TODO:contact-form">[hidden]</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+
+            {% if user.website %}
+            <tr>
+                <th>Website</th>
+                <td>{{ user.website }}</td>
+            </tr>
+            {% endif %}
+
+            {% if user.abilities or user.abilities_extra %}
+            <tr>
+                <th>GameDev Abilities</th>
+                <td>
+                    <div>{{ ", ".join(user.abilities) }}</div>
+                    <div>{{ user.abilities_extra }}</div>
+                </td>
+            </tr>
+            {% endif %}
+        </table>
+
+        <h2>About</h2>
+        {{ (user.about or "*This user has not written a description about themselves.*" ) | markdown }}
+    </div>
+    <div class="span4">
+        <h2>Games</h2>
+    </div>
+    <div class="span4">
+        <h2>Stats</h2>
+    </div>
+</div>
+
+{% endblock %}

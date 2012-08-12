@@ -1,5 +1,29 @@
-@import url("grid.css");
-@import url("button.css");
+/*@import url("grid.css");
+@import url("button.css");*/
+@import url("bootstrap.min.css");
+
+.btn-primary {
+    color: #320;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.btn-primary:hover {
+    color: #000;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.modal {
+    color: #000;
+    font-size: 11pt;
+}
+
+.modal-content a {
+    color: #33F;
+    font-weight: bold;
+}
+
+/* === */
 
 body {
     color: #FFF;
@@ -360,6 +384,7 @@ ul.sidebar li.current a {
     display: table-cell;
     vertical-align: top;
     background: #030303;
+    padding-bottom: 100px;
 }
 
 .padding {
@@ -386,14 +411,16 @@ input[type="text"].search {
 input.search::-webkit-input-placeholder { color: #434343; }
 input.search:-moz-placeholder { color: #434343; }
 
-ul.games {
+ul.games,
+ul.games-winners {
     margin: 0;
     padding: 0;
     list-style: none;
     text-align: left;
 }
 
-ul.games li {
+ul.games li,
+ul.games-winners li {
     display: inline-block;
 }
 
@@ -415,6 +442,8 @@ ul.games li a {
 
 ul.games li a span {
     white-space: nowrap;
+    width: 100%;
+    display: block;
     overflow: hidden;
 }
 
@@ -439,6 +468,33 @@ ul.games li a:hover img {
     opacity: 1;
 }
 
+ul.games-winners {
+    text-align: center;
+}
+
+ul.games-winners li {
+    position: relative;
+    width: 128px;
+    height: 128px;
+}
+
+ul.games-winners li img,
+ul.games-winners li .star {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 128px;
+    height: 128px;
+}
+
+ul.games-winners li .star {
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+ul.games-winners li.place-1 .star { background-image: url("../gfx/stars/gold-128.png"); }
+ul.games-winners li.place-2 .star { background-image: url("../gfx/stars/silver-128.png"); }
+ul.games-winners li.place-3 .star { background-image: url("../gfx/stars/bronze-128.png"); }
 
 ol.steps {
     font-size: 18pt;
@@ -546,6 +602,10 @@ ul.screenshots li img {
 .toolbox {
     text-align: center;
     line-height: 2.4em;
+}
+
+.toolbox .btn {
+    width: 60%;
 }
 
 ul.comments {
