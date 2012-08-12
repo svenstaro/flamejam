@@ -41,12 +41,24 @@
                     <li><a href="{{ url_for('contact') }}#irc">IRC</a></li>
                     <li><a href="{{ url_for('statistics') }}">Stats</a></li>
                     <li><a href="{{ url_for('announcements') }}">Announcements</a></li>
+                    {% if current_user %}
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
                 </ul>
 
-                <a id="account">
-                    <img class="avatar" src="gfx/avatar.png" width="24" height="24" />
-                    Account
-                </a>
+                <div id="account">
+                    {% if current_user %}
+                    <a href="{{ url_for('settings') }}">
+                        <img class="avatar" src="{{ current_user.getAvatar(24) }}" width="24" height="24" />
+                        {{ current_user.username }}
+                    </a>
+
+                    {% else %}
+                    <a href="{{ url_for('login') }}">Login / Signup</a>
+                    {% endif %}
+                </div>
+
+
             </div>
 
             <div id="title">

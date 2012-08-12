@@ -3,7 +3,7 @@
 {% block content %}
 
 <p>
-    Hello {{ recipient.username }}, welcome to BaconGameJam!
+    Hello {{ recipient.username }}, {% if not email_changed %}welcome to BaconGameJam!{% endif %}
 </p>
 
 <p>
@@ -12,16 +12,18 @@
 </p>
 
 <p>
-    To verify your account, please visit the following verification
+    To verify your email address, please visit the following verification
     link:
 
-    <a href="{{ url_for('verify', username=recipient.username,
-             verification=recipient.getVerificationHash(),
-             _external=True) }}">
-        {{ url_for('verify', username=recipient.username,
-        verification=recipient.getVerificationHash(),
-        _external=True) }}
+    <a href="{{ url_for('verify', username=recipient.username, verification=recipient.getVerificationHash(), _external=True) }}">
+        {{ url_for('verify', username=recipient.username, verification=recipient.getVerificationHash(), _external=True) }}
     </a>
+</p>
+
+<p>
+    If you received this email by error or did not {% if email_changed %}
+    change your settings{% else %}register on bacongamejam.org{% endif %},
+    please ignore this email.
 </p>
 
 <p>

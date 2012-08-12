@@ -72,13 +72,12 @@ def login():
         username = register_form.username.data.strip()
         password = register_form.password.data
         email = register_form.email.data
-        receive_emails = register_form.receive_emails.data
         new_user = User(username,
                 password,
                 email,
                 False, # no admin
-                False,  # is verified
-                receive_emails)
+                False  # is verified
+                )
 
         m = Mail("Welcome to Bacon Game Jam, " + username)
         m.addRecipients(new_user)
@@ -153,7 +152,7 @@ def verify_send():
 
     m = Mail("Welcome to Bacon Game Jam, " + username)
     m.render("emails/verification.html", recipient = user)
-    m.addRecipients(user)
+    m.addRecipients(user.new_email)
     m.send()
 
     flash("Verification has been resent, check your email", "success")
@@ -169,7 +168,7 @@ def verify_status(username):
         flash("%s's account is already validated." % user.username.capitalize(), "info")
         return redirect(url_for('index'))
 
-    return render_template('verify_status.html', submitted=submitted, username=username)
+    return render_template('misc/verify_status.html', submitted=submitted, username=username)
 
 @app.route('/verify/<username>/<verification>', methods=["GET"])
 @path("Verify")
@@ -184,6 +183,7 @@ def verify(username, verification):
     # verification success
     if verification == user.getVerificationHash():
         user.is_verified = True
+        user.email = user.new_email
         db.session.commit()
 
         flash("Your email has been confirmed, you may now login")
@@ -720,28 +720,99 @@ def profile():
 @app.route('/users/<username>/')
 @path("Profile")
 def show_user(username):
-    user = User.query.filter_by(username = username).first_or_404()
-    return render_template('show_user.html', user = user)
+    pass
 
-@app.route('/profile/disable_emails')
+@app.route('/settings', methods = ["POST", "GET"])
 @path("Profile", "Settings")
-def disable_emails():
+def settings():
     require_login()
+    form = SettingsForm()
     user = get_current_user()
-    user.receive_emails = False
-    db.session.commit()
-    flash("Your email notifications have been disabled.", "success")
-    return redirect(user.url())
+    logout = False
 
-@app.route('/profile/enable_emails')
-@path("Profile", "Settings")
-def enable_emails():
-    require_login()
-    user = get_current_user()
-    user.receive_emails = True
-    db.session.commit()
-    flash("Your email notifications have been enabled.", "success")
-    return redirect(user.url())
+    if form.validate_on_submit():
+        print "GO"
+        user.ability_programmer = form.ability_programmer.data
+        user.ability_gamedesigner = form.ability_gamedesigner.data
+        user.ability_2dartist = form.ability_2dartist.data
+        user.ability_3dartist = form.ability_3dartist.data
+        user.ability_composer = form.ability_composer.data
+        user.ability_sounddesigner = form.ability_sounddesigner.data
+        user.abilities_extra = form.abilities_extra.data
+        user.real_name = form.real_name.data
+        user.about = form.about.data
+        user.website = form.website.data
+        user.pm_mode = form.pm_mode.data
+        user.notify_new_jam = form.notify_new_jam.data
+        user.notify_jam_start = form.notify_jam_start.data
+        user.notify_jam_finish = form.notify_jam_finish.data
+        user.notify_game_comment = form.notify_game_comment.data
+        user.notify_team_changes = form.notify_team_changes.data
+        user.notify_game_changes = form.notify_game_changes.data
+        user.notify_team_invitation = form.notify_team_invitation.data
+        user.notify_newsletter = form.notify_newsletter.data
+
+        if user.location != form.location.data and form.location.data:
+            new_loc = findLocation(form.location.data)
+            if new_loc:
+                user.location = new_loc
+                flash("Location was set to: " + new_loc, "success")
+            else:
+                flash("Could not find the location you entered.", "error")
+        if not form.location.data:
+            user.location = ""
+
+        if form.old_password.data and form.new_password.data and form.new_password2.data:
+            if user.password != sha512((form.old_password.data + app.config['SECRET_KEY']).encode('utf-8')).hexdigest():
+                flash("Your password is incorrect. The password was not changed.", "error")
+            else:
+                user.password = sha512((form.new_password.data + app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
+                flash("Your password was changed", "success")
+
+        if user.email != form.email.data and form.email.data:
+            user.new_email = form.email.data
+            user.is_verified = False
+
+            m = Mail("Please verify your new eMail address")
+            m.addRecipients(user.new_email)
+            m.render("emails/verification.html", recipient = user, email_changed = True)
+            m.send()
+
+            logout = True
+            flash("Your email address has changed. Please check your inbox for the verification.", "info")
+
+        db.session.commit()
+        flash("Your settings were saved.", "success")
+
+        if logout:
+            return redirect(url_for("logout"))
+        else:
+            return redirect(url_for("settings"))
+
+    elif request.method == "GET":
+        form.ability_programmer.data = user.ability_programmer
+        form.ability_gamedesigner.data = user.ability_gamedesigner
+        form.ability_2dartist.data = user.ability_2dartist
+        form.ability_3dartist.data = user.ability_3dartist
+        form.ability_composer.data = user.ability_composer
+        form.ability_sounddesigner.data = user.ability_sounddesigner
+        form.abilities_extra.data = user.abilities_extra
+        form.real_name.data = user.real_name
+        form.about.data = user.about
+        form.website.data = user.website
+        form.pm_mode.data = user.pm_mode
+        form.location.data = user.location
+        form.email.data = user.email
+        form.notify_new_jam.data = user.notify_new_jam
+        form.notify_jam_start.data = user.notify_jam_start
+        form.notify_jam_finish.data = user.notify_jam_finish
+        form.notify_game_comment.data = user.notify_game_comment
+        form.notify_team_changes.data = user.notify_team_changes
+        form.notify_game_changes.data = user.notify_game_changes
+        form.notify_team_invitation.data = user.notify_team_invitation
+        form.notify_newsletter.data = user.notify_newsletter
+
+    return render_template('account/settings.html', form = form)
 
 @app.route("/search")
 @path("Search")

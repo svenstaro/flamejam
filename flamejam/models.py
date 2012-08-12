@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from hashlib import sha512, md5
 from flamejam import app, db, filters
 from flask import url_for, Markup
+import requests
 import re
 import random
 
@@ -20,6 +21,31 @@ team_members = db.Table('team_members',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
 )
 
+def findLocation(loc):
+    try:
+        r = requests.get("http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false&language=en" % loc)
+        c = r.json["results"][0]["address_components"]
+
+        city = ""
+        state = ""
+        region = ""
+
+        for comp in c:
+            if comp["types"][0] == "locality": city = comp["long_name"]
+            elif comp["types"][0] == "administrative_area_level_1": region = comp["long_name"]
+            elif comp["types"][0] == "country": state = comp["long_name"]
+
+        first = state
+
+        if state == "United States":
+            first += ", " + region
+
+        if city:
+            first += ", " + city
+        return first
+    except:
+        return None
+
 def get_slug(s):
     s = s.lower()
     s = re.sub(r"[\s_+]+", "-", s)
@@ -33,14 +59,12 @@ class User(db.Model):
     password = db.Column(db.String(128))
     token = db.Column(db.Integer, nullable=True, default=None)
     email = db.Column(db.String(256), unique=True)
+    new_email = db.Column(db.String(256), unique=True)
     is_admin = db.Column(db.Boolean, default=False)
     is_verified = db.Column(db.Boolean)
-    receive_emails = db.Column(db.Boolean)
     registered = db.Column(db.DateTime)
     games = db.relationship('Game', backref='user', lazy = "dynamic")
-    team_games = db.relationship("Game",
-                    secondary = team_members,
-                    backref = "team", lazy = "dynamic")
+    team_games = db.relationship("Game", secondary = team_members, backref = "team", lazy = "dynamic")
     ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
     comments = db.relationship('Comment', backref='user', lazy = "dynamic")
     jams = db.relationship('Jam', backref='author', lazy = "dynamic")
@@ -50,12 +74,35 @@ class User(db.Model):
     invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
     registrations = db.relationship("Registration", backref = "user", lazy = "dynamic")
 
+    ability_programmer = db.Column(db.Boolean)
+    ability_gamedesigner = db.Column(db.Boolean)
+    ability_2dartist = db.Column(db.Boolean)
+    ability_3dartist = db.Column(db.Boolean)
+    ability_composer = db.Column(db.Boolean)
+    ability_sounddesigner = db.Column(db.Boolean)
+    abilities_extra = db.Column(db.String(128))
+    location = db.Column(db.String(128))
+    real_name = db.Column(db.String(128))
+    about = db.Column(db.Text)
+    website = db.Column(db.String(128))
+
+    pm_mode = db.Column(db.Enum("email", "form", "disabled"), default = "form")
+
+    notify_new_jam = db.Column(db.Boolean, default = True)
+    notify_jam_start = db.Column(db.Boolean, default = True)
+    notify_jam_finish = db.Column(db.Boolean, default = True)
+    notify_game_comment = db.Column(db.Boolean, default = True)
+    notify_team_changes = db.Column(db.Boolean, default = True)
+    notify_game_changes = db.Column(db.Boolean, default = True)
+    notify_team_invitation = db.Column(db.Boolean, default = True)
+    notify_newsletter = db.Column(db.Boolean, default = True)
 
     def __init__(self, username, password, email, is_admin=False,
             is_verified=False, receive_emails = True):
         self.username = username
         self.password = sha512((password+app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
         self.email = email
+        self.new_email = email
         self.is_admin = is_admin
         self.is_verified = is_verified
         self.registered = datetime.utcnow()
@@ -64,7 +111,8 @@ class User(db.Model):
     def getVerificationHash(self):
         # combine a few properties, hash md5
         # take first 8 chars for simplicity
-        return md5(self.username + self.password + app.config['SECRET_KEY']).hexdigest()[:8]
+        # make it email specific
+        return md5(self.username + self.new_email + self.password + app.config['SECRET_KEY']).hexdigest()[:8]
 
     def getResetToken(self):
         # combine a few properties, hash md5

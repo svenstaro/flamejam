@@ -86,7 +86,6 @@ class UserRegistration(Form):
     email = EmailField("Email", validators=[
             Not(EmailExists(), message = "That email address is already in use."),
             Email(message = "The email address you entered is invalid.")])
-    receive_emails = BooleanField("I want to receive email notifications.", default = True)
     captcha = RecaptchaField()
 
 class ResetPassword(Form):
@@ -182,3 +181,38 @@ class TeamFinderFilter(Form):
         ("username", "Username"),
         ("location", "Location")
     ], default = "abilities")
+
+class SettingsForm(Form):
+    ability_programmer = BooleanField("Programming")
+    ability_gamedesigner = BooleanField("Game Design")
+    ability_2dartist = BooleanField("Graphics / 2D Art")
+    ability_3dartist = BooleanField("Modelling / 3D Art")
+    ability_composer = BooleanField("Composing")
+    ability_sounddesigner = BooleanField("Sound Design")
+    abilities_extra = TextField("Detailed abilities")
+    location = TextField("Location")
+    real_name = TextField("Real Name")
+    about = TextAreaField("About me")
+    website = TextField("Website / Blog")
+
+    old_password = PasswordField("Old Password", validators=[Optional()])
+    new_password = PasswordField("New Password", validators=[Optional(), Length(min=8, message = "Please enter a password of at least 8 characters.")])
+    new_password2 = PasswordField("New Password, again", validators=[EqualTo("new_password", "Passwords do not match.")])
+
+    email = EmailField("Email", validators=[Optional(), Email(message = "The email address you entered is invalid.")])
+
+    pm_mode = SelectField("Allow PM", choices = [
+        ("email", "show my address"),
+        ("form", "use email form"),
+        ("disabled", "disable email")
+    ], default = "form")
+
+    notify_new_jam = BooleanField("when a jam is announced")
+    notify_jam_start = BooleanField("when a jam I participate in starts")
+    notify_jam_finish = BooleanField("when a jam I participate in finishes")
+    notify_game_comment = BooleanField("when someone comments on a game of mine")
+    notify_team_changes = BooleanField("when another team member edits the team data")
+    notify_game_changes = BooleanField("when another team member edits the game data")
+    notify_team_invitation = BooleanField("when someone invites me to a team")
+
+    notify_newsletter = BooleanField("send me newsletters")

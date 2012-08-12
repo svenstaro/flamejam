@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block content %}
+
+<form action="{{ url_for('settings') }}" method="post" class="block">
+{{ form.hidden_tag() }}
+{{ form_errors(form) }}
+
+{#
+
+
+#}
+
+<div class="row-fluid">
+    <div class="span4">
+        <h2>Personal data</h2>
+
+        <div class="field">
+            {{ form.location.label }}
+            {{ form.location() }}
+        </div>
+
+        <div class="field">
+            {{ form.real_name.label }}
+            {{ form.real_name() }}
+        </div>
+
+        <div class="field">
+            {{ form.website.label }}
+            {{ form.website() }}
+        </div>
+
+        <h2>{{ form.about.label }}</h2>
+        {{ form.about(class="comment", rows="10") }}
+        <div class="form-info">
+            Please write a short description about you and your gamedev history.
+        </div>
+    </div>
+
+    <div class="span8">
+        <div class="row-fluid">
+            <div class="span6">
+                <h2>Notification settings</h2>
+                <div>
+                    {{ form.notify_new_jam() }}         {{ form.notify_new_jam.label }}<br />
+                    {{ form.notify_jam_start() }}       {{ form.notify_jam_start.label }}<br />
+                    {{ form.notify_jam_finish() }}      {{ form.notify_jam_finish.label }}<br />
+                    {{ form.notify_game_comment() }}    {{ form.notify_game_comment.label }}<br />
+                    {{ form.notify_team_changes() }}    {{ form.notify_team_changes.label }}<br />
+                    {{ form.notify_game_changes() }}    {{ form.notify_game_changes.label }}<br />
+                    {{ form.notify_team_invitation() }} {{ form.notify_team_invitation.label }}<br /><br />
+                    {{ form.notify_newsletter() }}      {{ form.notify_newsletter.label }}
+                </div>
+                <div class="field"></div>
+                <div class="field">
+                    {{ form.pm_mode.label }}
+                    {{ form.pm_mode() }}
+
+                </div>
+                <div class="form-info">
+                    SHOW ADDRESS - your address is shown publicly /
+                    EMAIL FORM - users cannot see your email address, but
+                    you receive their message directly / DISABLED -
+                    users cannot contact you
+                </div>
+
+            </div>
+
+            <div class="span6">
+                <h2>Change password</h2>
+                <p>
+                    Leave these fields empty to keep the old password.
+                </p>
+
+                <div class="field">
+                    {{ form.old_password.label }} {{ form.old_password() }}
+                </div>
+
+                <div class="field">
+                    {{ form.new_password.label }} {{ form.new_password() }}
+                </div>
+
+                <div class="field">
+                    {{ form.new_password2.label }} {{ form.new_password2() }}
+                </div>
+
+                <h2>Change eMail address</h2>
+                <p>
+                    If you edit your address here, you have to verify your account
+                    again. You will be logged out after submitting this form.
+                </p>
+
+                <div class="field">
+                    {{ form.email.label }} {{ form.email() }}
+                </div>
+
+            </div>
+        </div>
+
+        <h2>GameDev Abilities</h2>
+        <div class="field">
+            <div style="display: inline-block;">
+                {{ form.ability_programmer() }} {{ form.ability_programmer.label }}
+                {{ form.ability_gamedesigner() }} {{ form.ability_gamedesigner.label }}
+                {{ form.ability_2dartist() }} {{ form.ability_2dartist.label }}
+                {{ form.ability_3dartist() }} {{ form.ability_3dartist.label }}
+                {{ form.ability_composer() }} {{ form.ability_composer.label }}
+                {{ form.ability_sounddesigner() }} {{ form.ability_sounddesigner.label }}
+            </div>
+        </div>
+        <div class="field">
+            {{ form.abilities_extra.label }} {{ form.abilities_extra(style="width: 400px") }}
+            <div class="form-info">e.g. "Java, Löve, Pixel-Graphics, Rigging, Ambient music"</div>
+        </div>
+    </div>
+</div>
+
+<p style="text-align: center">
+    <input type="reset" value="Reset" class="btn btn-inverse" />
+    <input type="submit" value="Save settings" class="btn btn-primary" />
+</p>
+
+</form>
+
+{% endblock %}
+

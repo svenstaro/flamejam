@@ -184,7 +184,7 @@ ul {
 }
 
 a.button.large,
-a#account {
+#account > a {
     background: -webkit-gradient(linear, left top, left bottom, from(#484848), to(#262626));
     border-radius: 4px;
     height: 32px;
@@ -200,14 +200,21 @@ a#account {
     box-shadow: 3px 3px 3px #000;
 }
 
-a.button.highlight {
-    background: -webkit-gradient(linear, left top, left bottom, from(#F90), to(#840));
-    border: 1px solid #960;
+#account > a:hover {
+    background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#444));
+    color: #222;
+}
+
+#account {
+    display: inline-block;
+    position: relative;
 }
 
 #account img {
     position: relative;
     left: -6px;
+    top: -1px;
+    border: 1px solid #222;
 }
 
 img {
@@ -363,7 +370,7 @@ ul.sidebar li.current a {
     outline: 0;
 }
 
-input.search {
+input[type="text"].search {
     height: 40px;
     border-radius: 4px;
     border: 1px solid #2b2b2b;
@@ -594,16 +601,29 @@ textarea {
 }
 
 textarea.comment {
-    width: 100%;
+    display: block;
+    width: 90%;
+    margin: auto;
 }
 
-form.block label {
+label {
+    color: #999;
+}
+
+form.block .field > label {
     width: 100px;
     display: inline-block;
     text-align: right;
-    color: #555;
     margin-right: 10px;
+    color: #555;
+    vertical-align: top;
+    margin-top: 7px;
 }
+
+p.form-buttons {
+    text-align: center;
+}
+
 
 form.block .field {
     margin-bottom: 20px;
@@ -611,7 +631,10 @@ form.block .field {
 
 form.block .field .form-info {
     margin-left: 113px;
-    margin-top: 2px;
+}
+
+form.block .form-info {
+    margin-top: 4px;
     color: #333;
 }
 

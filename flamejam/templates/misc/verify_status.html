@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block content %}
+<h1>Verify your account</h1>
+
+<p>
+  {{username}}'s account currently pending verification, please
+  confirm your email.
+</p>
+
+{% if submitted %}
+    <p style="color: red;">
+        Sorry, your validation failed. Make sure you are using the exact URL
+        sent to your email.
+    </p>
+{% endif %}
+
+<form action="{{ url_for('verify_send') }}" method="POST">
+  <input type="hidden" name="username" value="{{ username }}"></input>
+  <button type="submit">
+    Resend verification email
+  </button>
+</form>
+
+{% endblock %}
