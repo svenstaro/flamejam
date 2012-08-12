@@ -22,9 +22,19 @@
 
 <hr />
 
+{% if current_user %}
+
 <ul class="sidebar">
+    {% if current_user.getRegistration(jam) %}
     <li><a href="#">Your Team</a></li>
     <li><a href="#">Your Game</a></li>
-    <li><a href="#">Register for this jam</a></li>
+    <li><a href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister from this jam</a></li>
+    {% else %}
+    <li><a href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register for this jam</a></li>
+    {% endif %}
 </ul>
+{% else %}
+<p>Please <a href="{{ url_for('login') }}">log in or register</a> to participate in this jam.</p>
+{% endif %}
+
 {% endblock %}

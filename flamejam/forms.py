@@ -216,3 +216,9 @@ class SettingsForm(Form):
     notify_team_invitation = BooleanField("when someone invites me to a team")
 
     notify_newsletter = BooleanField("send me newsletters")
+
+class RegisterJamForm(Form):
+    show_in_finder = BooleanField("Show me in the team finder")
+
+class UnregisterJamForm(Form):
+    confirm = BooleanField("I understand that, please unregister me", validators = [Required()])

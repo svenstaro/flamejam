@@ -247,6 +247,52 @@ def jam_info(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('jam/jam_info.html', jam = jam)
 
+@app.route('/jams/<jam_slug>/register/', methods = ["POST", "GET"])
+@path("Jams", "Register")
+def jam_register(jam_slug):
+    require_login()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    user = get_current_user()
+
+    if jam.getStatus().code > JamStatusCode.RUNNING:
+        flash("You cannot register for a jam after it has finished.", "error")
+        return redirect(jam.url())
+
+    if user.getRegistration(jam):
+        flash("You are already registered for this jam.", "warning")
+        return redirect(jam.url())
+
+    form = RegisterJamForm()
+
+    if form.validate_on_submit():
+        user.joinJam(jam)
+        user.getRegistration(jam).show_in_finder = form.show_in_finder.data
+        db.session.commit()
+        flash("You are now registered for this jam.", "success")
+        return redirect(jam.url())
+
+    return render_template('jam/register.html', jam = jam, form = form)
+
+@app.route('/jams/<jam_slug>/unregister/', methods = ["POST", "GET"])
+@path("Jams", "Unregister")
+def jam_unregister(jam_slug):
+    require_login()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+
+    if jam.getStatus().code > JamStatusCode.RUNNING:
+        flash("You cannot unregister from a jam after it has finished.", "error")
+        return redirect(jam.url())
+
+    form = UnregisterJamForm()
+
+    if form.validate_on_submit():
+        get_current_user().leaveJam(jam)
+        db.session.commit()
+        flash("You are now unregistered from this jam.", "success")
+        return redirect(jam.url())
+
+    return render_template('jam/unregister.html', jam = jam, form = form)
+
 @app.route('/jams/<jam_slug>/games/')
 @path("Jams", "Games")
 def jam_games(jam_slug):

@@ -9,6 +9,10 @@ import time
 def formattime(s):
     return s.strftime("%Y-%m-%d %H:%M:%S")
 
+@app.template_filter()
+def nicedate(s):
+    return s.strftime("%A, %B %d, %Y - %H:%M")
+
 def _s(n, s):
     if n == 0:
         return ""

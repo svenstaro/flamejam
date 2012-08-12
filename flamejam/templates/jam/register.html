@@ -1,0 +1,53 @@
+{% extends "jam/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% set status = jam.getStatus() %}
+
+{% block content %}
+
+<h1>Register for {{ jam.title }}</h1>
+
+<form method="post" action="{{ url_for('jam_register', jam_slug = jam.slug) }}">
+{{ form.hidden_tag() }}
+{{ form_errors(form) }}
+
+<div class="row-fluid">
+    <div class="span3">
+    </div>
+    <div class="span6">
+        <h2>Confirm registration</h2>
+        <p>
+            By registering you tell us you plan to participate. Please
+            only register if you are free to join on the jam date, and
+            are <b style="color: red;">seriously planning</b> to do so. The time of the jam will be
+        </p>
+        <p style="font-size: 1.2em; font-weight: bold; text-align: center;">
+            {{ jam.start_time | nicedate }} UTC <small>to</small> <br />
+            {{ jam.end_time | nicedate }} UTC <br />
+            <small>({{ jam.duration }} hours)</small>
+        </p>
+        <p>
+            After registering, you will have your <b style="color: red;">own team</b>,
+            in which you can invite other users. When you leave your team,
+            it is deleted.
+        </p>
+        <p>
+            Your registration is non-binding. You can <b style="color: red;">unregister</b>
+            again prior to the jam, but your team will be deleted, if no other users
+            are left in the team.
+        </p>
+        <p>
+            {{ form.show_in_finder() }}
+            {{ form.show_in_finder.label }}
+            <span class="form-info">(can be changed in the jam sidebar)</span>
+        </p>
+        <p>
+            <input type="submit" class="btn btn-primary" value="I understand, register now" />
+        </p>
+    </div>
+    <div class="span3">
+    </div>
+</div>
+</form>
+
+{% endblock %}

@@ -193,7 +193,13 @@ class User(db.Model):
         db.session.commit()
 
     def leaveJam(self, jam):
-        pass #TODO
+        # leave team
+        if self.getTeam(jam):
+            self.getTeam(jam).userLeave(self) #  will destroy the team if then empty
+
+        # delete registration
+        if self.getRegistration(jam):
+            db.session.delete(self.getRegistration(jam))
 
 class JamStatusCode(object):
     ANNOUNCED   = 0
@@ -316,10 +322,12 @@ class Registration(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey("team.id"))
     jam_id = db.Column(db.Integer, db.ForeignKey("jam.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    show_in_finder = db.Column(db.Boolean)
 
     def __init__(self, user, jam):
         self.user = user
         self.jam = jam
+        self.show_in_finder = True
 
 class DevlogPost(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -372,13 +380,17 @@ class Team(db.Model):
         if not r:
             # register user, but do not create automatic team, we don't need
             # that anyway
+            print("USER NOT IN JAM")
             user.joinJam(self.jam, False)
         elif r in self.registrations:
+            print("USER ALREADY IN TEAM")
             return # user is already in this team
         elif r.team and r.team != self:
+            print("LEAVING OTHER TEAM")
             r.team.userLeave(user)
 
-        self.registrations.append(r)
+        r.team = self
+        print("SET TEAM")
         db.session.commit()
 
     def userLeave(self, user):
@@ -389,10 +401,20 @@ class Team(db.Model):
 
         if self.isSingleTeam:
             # only user in team, we can destroy this team
-            db.session.delete(self)
+            self.destroy()
 
         r.team = None
         db.session.commit()
+
+    def destroy(self):
+        # also destroy all the games, invitations and devlog posts
+        for game in self.games:
+            game.destroy()
+        for invitation in self.invitations:
+            db.session.delete(invitation)
+        for post in self.devlog_posts:
+            db.session.delete(post)
+        db.session.delete(self)
 
     def getInvitation(self, user):
         return Invitation.query.filter_by(user_id = user.id, team_id = self.id).first()
@@ -435,6 +457,20 @@ class Game(db.Model):
 
     def __repr__(self):
         return '<Game %r>' % self.title
+
+    def destroy(self):
+        # destroy all ratings, rating skips, comments, packages, screenshots
+        for rating in self.ratings:
+            db.session.delete(rating)
+        for skip in self.rating_skips:
+            db.session.delete(skip)
+        for comment in self.comments:
+            db.session.delete(comment)
+        for package in self.packages:
+            db.session.delete(package)
+        for screenshot in self.screenshots:
+            db.session.delete(screenshots)
+        db.session.delete(self)
 
     def url(self, action = "", **values):
         return url_for("show_game", jam_slug = self.jam.slug, game_slug = self.slug, action = action, **values)

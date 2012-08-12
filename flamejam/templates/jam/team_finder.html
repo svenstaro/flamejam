@@ -1,4 +1,5 @@
 {% extends "jam/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block title %}Team Finder « {{ jam.title }}{% endblock %}
 
@@ -21,8 +22,10 @@
         </p>
 
         <h2>Filter settings</h2>
+        {{ form_errors(form) }}
         <div class="row-fluid">
             <form method="post">
+            {{ form.hidden_tag() }}
             <div class="span6">
                 {{ form.need_programmer() }} {{ form.need_programmer.label() }}<br />
                 {{ form.need_gamedesigner() }} {{ form.need_gamedesigner.label() }}<br />

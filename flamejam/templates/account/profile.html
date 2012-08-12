@@ -79,6 +79,12 @@
     </div>
     <div class="span4">
         <h2>Games</h2>
+
+        {% for team in user.teams %}
+        {% for game in team.games %}
+{{ game.title }}
+        {% endfor %}
+        {% endfor %}
     </div>
     <div class="span4">
         <h2>Stats</h2>
