@@ -394,12 +394,13 @@ def rate_entries(jam_slug, action = None):
         score_story = rate_form.score_story.data
         score_technical = rate_form.score_technical.data
         score_controls = rate_form.score_controls.data
+        score_humor = rate_form.score_humor.data
         score_overall = rate_form.score_overall.data
         note = rate_form.note.data
 
         # create new rating
         new_rating = Rating(score_gameplay, score_graphics, score_audio, score_innovation,
-                score_story, score_technical, score_controls, score_overall,
+                score_story, score_technical, score_controls, score_humor, score_overall,
                 note, entry, get_current_user())
         db.session.add(new_rating)
         db.session.commit()

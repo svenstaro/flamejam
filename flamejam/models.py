@@ -370,6 +370,7 @@ class Rating(db.Model):
     score_story = db.Column(db.SmallInteger)
     score_technical = db.Column(db.SmallInteger)
     score_controls = db.Column(db.SmallInteger)
+    score_humor = db.Column(db.SmallInteger)
     score_overall = db.Column(db.SmallInteger)
     text = db.Column(db.Text)
     posted = db.Column(db.DateTime)
@@ -377,7 +378,7 @@ class Rating(db.Model):
     participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
 
     def __init__(self, score_gameplay, score_graphics, score_audio, score_innovation,
-        score_story, score_technical, score_controls, score_overall, text, entry, participant):
+        score_story, score_technical, score_controls, score_humor, score_overall, text, entry, participant):
         self.score_gameplay = score_gameplay
         self.score_graphics = score_graphics
         self.score_audio = score_audio
@@ -385,6 +386,7 @@ class Rating(db.Model):
         self.score_story = score_story
         self.score_technical = score_technical
         self.score_controls = score_controls
+        self.score_humor = score_humor
         self.score_overall = score_overall
         self.text = text
         self.entry = entry
@@ -402,7 +404,8 @@ class Rating(db.Model):
             + self.score_story
             + self.score_technical
             + self.score_controls
-            + self.score_overall) * 1.0 / 8.0
+            + self.score_humor
+            + self.score_overall) * 1.0 / 9.0
 
 
 class RatingSkip(db.Model):

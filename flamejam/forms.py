@@ -153,6 +153,7 @@ class RateEntry(Form):
     score_story = IntegerField("Story rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
     score_technical = IntegerField("Technical rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
     score_controls = IntegerField("Controls rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
+    score_humor = IntegerField("Humor rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
     score_overall = IntegerField("Overall rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
     note = TextField("Additional notes", validators=[Optional()])
 
