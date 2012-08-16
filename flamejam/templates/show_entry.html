@@ -116,8 +116,9 @@
         <th class="score"><span class="icon-16 icon-16-story"         title="story"></span></th>
         <th class="score"><span class="icon-16 icon-16-technical"     title="technical"></span></th>
         <th class="score"><span class="icon-16 icon-16-controls"      title="controls"></span></th>
+        <th class="score"><span class="icon-16 icon-16-humor"         title="humor"></span></th>
         <th class="score"><span class="icon-16 icon-16-rating"        title="overall"></span></th>
-        <th class="score"><span class="icon-16 icon-16-average"        title="average"></span></th>
+        <th class="score"><span class="icon-16 icon-16-average"       title="average"></span></th>
         <th>Notes</th>
     </tr>
 {% if entry.jam.getStatus().code != 4 %}
@@ -134,6 +135,7 @@
         <td class="score">{{ rating.score_story }}</td>
         <td class="score">{{ rating.score_technical }}</td>
         <td class="score">{{ rating.score_controls }}</td>
+        <td class="score">{{ rating.score_humor }}</td>
         <td class="score">{{ rating.score_overall }}</td>
         <td class="score">{{ "%.2f" % rating.getAverage() }}</td>
         <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
@@ -154,6 +156,7 @@
         <td class="score">{{ "%.2f" % a["story"]     }}</td>
         <td class="score">{{ "%.2f" % a["technical"] }}</td>
         <td class="score">{{ "%.2f" % a["controls"]  }}</td>
+        <td class="score">{{ "%.2f" % a["humor"]  }}</td>
         <td class="score">{{ "%.2f" % a["overall"]   }}</td>
         <td class="score">{{ "%.2f" % a["average"]   }}</td>
         <td></td>
@@ -168,6 +171,7 @@
         <td class="score">{{ rating.score_story }}</td>
         <td class="score">{{ rating.score_technical }}</td>
         <td class="score">{{ rating.score_controls }}</td>
+        <td class="score">{{ rating.score_humor }}</td>
         <td class="score">{{ rating.score_overall }}</td>
         <td class="score">{{ "%.2f" % rating.getAverage() }}</td>
         <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>

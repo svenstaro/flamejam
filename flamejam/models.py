@@ -264,7 +264,7 @@ class Entry(db.Model):
         return url_for("show_entry", jam_slug = self.jam.slug, entry_slug = self.slug, action = action, **values)
 
     def getAverageRating(self):
-        categories = ["gameplay", "graphics","audio","innovation","story","technical", "controls", "overall"]
+        categories = ["gameplay", "graphics","audio","innovation","story","technical", "controls", "humor", "overall"]
         r = {"average": 0}
 
         for c in categories:
