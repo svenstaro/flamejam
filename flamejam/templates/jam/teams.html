@@ -9,11 +9,17 @@
 {% if jam.teams.all() | length == 0 %}
     <p>There are no teams yet.</p>
 {% else %}
-    <ul class="teams">
+    <table class="teams">
     {% for team in jam.teams %}
-        <li>
+        <tr><th style="white-space: nowrap;">
             <a href="{{ team.url() }}">{{ team.name }}</a>
-        </li>
+        </th><td>
+            <ul class="users">
+            {% for member in team.members %}
+            <li>{{ member.getLink() }}</li>
+            {% endfor %}
+            </ul>
+        </td></tr>
     {% endfor %}
     </ul>
 {% endif %}

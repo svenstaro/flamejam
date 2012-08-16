@@ -712,19 +712,19 @@ input[type="text"] {
     width: 200px;
 }
 
-table.teamfinder {
+table.teams {
     border-collapse: collapse;
     border: 1px solid #444;
 }
 
-table.teamfinder th,
-table.teamfinder td {
+table.teams th,
+table.teams td {
     padding: 8px 12px;
     background: #222;
     border: 1px solid #444;
     border-width: 1px 0;
 }
 
-table.teamfinder th {
+table.teams th {
     background: #111;
 }
