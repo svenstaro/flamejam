@@ -50,6 +50,14 @@
 <ul class="sidebar">
     {% if r %}
     <li><a href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister from this jam</a></li>
+    <li><a href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}">
+        {% if r.show_in_finder %}
+        Hide me in the team finder
+        {% else %}
+        Show me in the team finder
+        {% endif %}
+    </a></li>
+
     {% else %}
     <li><a href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register for this jam</a></li>
     {% endif %}
@@ -60,7 +68,7 @@
     -->
 </ul>
 {% else %}
-<p>Please <a href="{{ url_for('login') }}">log in or register</a> to participate in this jam.</p>
+    <p>Please <a href="{{ url_for('login') }}">log in or register</a> to participate in this jam.</p>
 {% endif %}
 
 {% endblock %}

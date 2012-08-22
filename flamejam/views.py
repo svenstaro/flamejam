@@ -305,6 +305,16 @@ def jam_participants(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('jam/participants.html', jam = jam)
 
+@app.route('/jams/<jam_slug>/team_finder/toggle/')
+def jam_toggle_show_in_finder(jam_slug):
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    r = get_current_user().getRegistration(jam)
+    if not r: abort(404)
+    r.show_in_finder = not r.show_in_finder
+    db.session.commit()
+    flash("You are now %s in the team finder for the jam \"%s\"." % ("shown" if r.show_in_finder else "hidden", jam.title), "success")
+    return redirect(jam.url())
+
 @app.route('/jams/<jam_slug>/team_finder/', methods=("GET", "POST"))
 @path("Jams", "Team Finder")
 def jam_team_finder(jam_slug):
@@ -316,6 +326,8 @@ def jam_team_finder(jam_slug):
         if (not form.show_teamed.data) and r.team and (not r.team.isSingleTeam):
             continue # don't show teamed people
 
+        if not r.show_in_finder:
+            continue
 
         matches = 0
 
@@ -908,6 +920,7 @@ def settings():
                 flash("Could not find the location you entered.", "error")
         if not form.location.data:
             user.location = ""
+            user.location_flag = "unknown"
 
         if form.old_password.data and form.new_password.data and form.new_password2.data:
             if user.password != sha512((form.old_password.data + app.config['SECRET_KEY']).encode('utf-8')).hexdigest():
