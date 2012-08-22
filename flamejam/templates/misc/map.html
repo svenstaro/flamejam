@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Map
+{% endblock %}
+
+{% block head %}
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer_compiled.js"></script>
+
+    <script type="text/javascript">
+        var locations = [
+            {% for user in users if user.location_coords %}
+            ["{{ user.username }}", "{{ user.location_coords }}", "{{ user.getAvatar(24) }}"],
+            {% endfor %}
+        ];
+    </script>
+
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/map.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+
+<h1>Showing
+    {% if mode == "users" %}all users
+    {% elif mode == "user" %}user {{ extra.username }}
+    {% elif mode == "team" %}members of {{ extra.name }} <small>({{ extra.jam.title }})</small>
+    {% elif mode == "jam" %}participants of jam {{ extra.title }}
+    {% endif %}
+
+    {% if users | length > 1 and users | length != x or True %}
+    <small>{{ x }} out of {{ users | length }} ha{% if x == 1 %}s{% else %}ve{% endif %} a location set</small>
+    {% endif %}
+
+    {% if mode == "user" %}<a class="btn btn-primary" href="{{ extra.url() }}">View Profile</a>
+    {% elif mode == "jam" %}<a class="btn btn-primary" href="{{ extra.url() }}">Jam Info</a>
+    {% elif mode == "team" %}<a class="btn btn-primary" href="{{ extra.url() }}">Team Page</a>
+    {% endif %}
+</h1>
+
+<div id="map_canvas"></div>
+
+{% endblock %}

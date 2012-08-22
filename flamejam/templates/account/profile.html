@@ -31,7 +31,7 @@
                 <th>Location</th>
                 <td>
                     {{ user.getLocation() }}
-                    <a href="#TODO:map view">Map »</a>
+                    <a href="{{ url_for('map', mode = 'user', id = user.id) }}">Map »</a>
                 </td>
             </tr>
             {% endif %}

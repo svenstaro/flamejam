@@ -26,6 +26,7 @@
         <table class="details">
             <tr><th>Participants</th><td>
                 {{ team.members | length }} member{{ "" if team.members | length == 1 else "s" }}
+                <a href="{{ url_for('map', mode = 'team', id = team.id) }}">Map »</a>
             </td></tr>
 
             <tr><th>Founded by</th><td>

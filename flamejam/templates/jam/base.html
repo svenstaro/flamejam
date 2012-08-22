@@ -48,6 +48,7 @@
 <h1>Toolbox</h1>
 
 <ul class="sidebar">
+    <li><a href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Participant Map</a></li>
     {% if r %}
     <li><a href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister from this jam</a></li>
     <li><a href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}">

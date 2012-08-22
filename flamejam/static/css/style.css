@@ -756,3 +756,9 @@ table.teams td {
 table.teams th {
     background: #111;
 }
+
+#map_canvas {
+    width: 100%;
+    height: 600px;
+    background: #333;
+}

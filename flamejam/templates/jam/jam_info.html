@@ -45,7 +45,9 @@
             <tr style="height: 10px;"></tr>
             <tr>
                 <th>Participants</th>
-                <td>{{ jam.registrations.count() }} users</td>
+                <td>{{ jam.registrations.count() }} users
+                    <a href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Map »</a>
+                </td>
             </tr>
             <tr>
                 <th>Teams</th>

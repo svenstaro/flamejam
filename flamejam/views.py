@@ -202,6 +202,32 @@ def logout():
     flash("You were logged out.", "success")
     return redirect(url_for('index'))
 
+@app.route("/map")
+@app.route("/map/<mode>")
+@app.route("/map/<mode>/<int:id>")
+def map(mode = "users", id = 0):
+    users = []
+    extra = None
+    if mode == "jam":
+        extra = Jam.query.filter_by(id = id).first_or_404()
+        users = extra.participants
+    elif mode == "user":
+        extra = User.query.filter_by(id = id).first_or_404()
+        users = [extra]
+    elif mode == "team":
+        extra = Team.query.filter_by(id = id).first_or_404()
+        users = extra.members
+    else:
+        mode = "users"
+        users = User.query.all()
+
+    x = 0
+    for user in users:
+        if user.location_coords:
+            x += 1
+
+    return render_template("misc/map.html", users = users, mode = mode, extra = extra, x = x)
+
 @app.route('/new_jam', methods=("GET", "POST"))
 @path("Admin", "New Jam")
 def new_jam():
@@ -911,15 +937,19 @@ def settings():
         user.notify_newsletter = form.notify_newsletter.data
 
         if user.location != form.location.data and form.location.data:
-            new_loc, new_flag = findLocation(form.location.data)
+            new_loc, new_coords, new_flag = findLocation(form.location.data)
             if new_loc:
-                user.location = new_loc
+                user.location = form.location.data
+                user.location_display = new_loc
+                user.location_coords = new_coords
                 user.location_flag = new_flag
                 flash("Location was set to: " + new_loc, "success")
             else:
                 flash("Could not find the location you entered.", "error")
         if not form.location.data:
             user.location = ""
+            user.location_display = ""
+            user.location_coords = ""
             user.location_flag = "unknown"
 
         if form.old_password.data and form.new_password.data and form.new_password2.data:

@@ -62,6 +62,9 @@
                 <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
             </tr>
             {% endfor %}
+            {% if not results %}
+            <tr><td colspan="5">Sorry, there were no results.</td></tr>
+            {% endif %}
         </table>
     </div>
 </div>
