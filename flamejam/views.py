@@ -399,9 +399,12 @@ def invitation(id, action = ""):
 
     if action == "accept":
         invitation.accept()
+        flash("You have accepted the invitation.", "success")
+        return redirect(invitation.team.url())
     elif action == "decline":
         invitation.decline()
-
+        flash("You have declined the invitation.", "success")
+        return redirect(invitation.team.url())
     else:
         return render_template("jam/invitation.html", invitation = invitation)
 
