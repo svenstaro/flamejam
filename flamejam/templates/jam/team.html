@@ -27,17 +27,28 @@
                 {{ team.members[0].getLink() }}
             </td></tr>
 
+            {% if team.wip %}
             <tr><th>Working on</th><td>
-                side-scrolling platform shooter
+                {{ team.wip }}
             </td></tr>
+            {% endif %}
 
+            ustream
+            own3d
+
+            {% if team.livestreams %}
             <tr><th>Livestream</th><td>
-                <a href="#">LiveStream 1</a>
+                {% for line in team.livestreams.splitlines() %}
+                <a href="{{ line }}">LiveStream {{ loop.index }}</a><br />
+                {% endfor %}
             </td></tr>
+            {% endif %}
 
+            {% if team.irc %}
             <tr><th>IRC Channel</th><td>
-                irc.freenode.net#jammers
+                {{ team.irc }}
             </td></tr>
+            {% endif %}
         </table>
 
         <h2>Users in this team</h2>
@@ -49,6 +60,9 @@
     </div>
     <div class="span{{ '5' if games else '8' }}">
         <h2>Devlog</h2>
+        <p>
+            There are no devlog entries yet.
+        </p>
     </div>
     {% if games %}
     <div class="span3">
