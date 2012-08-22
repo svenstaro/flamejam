@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h1>List of jams</h1>
+
+<p>
+    Quick filter: <input type="text" placeholder="Start typing..." id="filter" data-filter=".jam-row" />
+</p>
+
+
+<table>
+    <tr>
+        <th>Title / Theme</th>
+        <th>Status</th>
+        <th>Announced</th>
+        <th>Start Time</th>
+        <th>Duration</th>
+        <th>Flags</th>
+        <th></th>
+    </tr>
+{% for jam in jams %}
+    <tr class="jam-row">
+        <td>
+            <b>{{ jam.title }}</b><br />
+            {{ jam.theme or "n/a" }}
+        </td>
+        <td>
+            <b style="font-size: 0.8em; color: gray;">{{ ["ANNOUNCED", "REGISTRATIONS", "RUNNING", "PACKAGING", "RATING", "FINISHED"][jam.getStatus().code] }}</b>
+        </td>
+        <td>{{ jam.announced | humantime }}</td>
+        <td>{{ jam.start_time | formattime }}</td>
+        <td>
+            <b>{{ jam.duration }}h</b>
+            + {{ jam.packaging_duration }}h
+            + {{ jam.rating_duration }}h
+        </td>
+        <td>
+            <b style="font-size: 0.8em; color: orange;">RESTRICTIONS</b><br />
+            <b style="font-size: 0.8em; color: green;">TEAMS</b><br />
+        </td>
+        <td>
+            <a href="{{ url_for('admin_jam', id = jam.id) }}">More »</a>
+        </td>
+    </tr>
+{% endfor %}
+</table>
+
+</form>
+
+{% endblock %}

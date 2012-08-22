@@ -104,7 +104,7 @@
                 <th>Notes</th>
             </tr>
 
-        {% if game.jam.getStatus().code != 4 %}
+        {% if game.jam.getStatus().code != 5 %}
 
             {# check if the user has rated this game #}
             {% set rating = game.ratings.filter_by(user = current_user).first() %}
@@ -161,7 +161,7 @@
         {% endif %}
         </table>
 
-        {% if game.ratings.filter_by(user = current_user).first() and game.jam.getStatus().code == 3 %}
+        {% if game.ratings.filter_by(user = current_user).first() and game.jam.getStatus().code == 4 %}
             <p><a href="{{ url_for('reset_vote', jam_slug = game.jam.slug, game_slug = game.slug) }}">Click here if you want to reset your vote for this game</a>. You will have
             to start the voting process again to be prompted for your vote for
             this game.</p>

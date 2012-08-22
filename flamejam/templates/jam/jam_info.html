@@ -5,9 +5,9 @@
 {% block title %}{{ jam.title }}{% endblock %}
 
 {% block center %}
-    {% set s = ["Announced", "In Progress", "Packaging", "Rating", "Finished"][status.code] %}
+    {% set s = ["Announced", "Registrations", "In Progress", "Packaging", "Rating", "Finished"][status.code] %}
     <div class="center-status" title="{{ status }}">
-        {% if status.code == 1 %}
+        {% if status.code == 2 %}
                 <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
                     <div class="mini-countdown" time="{{ jam.end_time }}">
                         <div class="time">{{ (jam.end_time - current_datetime) | countdowndelta }}</div>
@@ -20,7 +20,7 @@
 
 {% block content %}
 
-<h1>{{ jam.title }}<small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme and jam.getStatus().code > 0 else "Theme not announced" }}</small></h1>
+<h1>{{ jam.title }}<small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme and jam.getStatus().code > 1 else "Theme not announced" }}</small></h1>
 
 <div class="row-fluid">
     <div class="span5">
@@ -30,7 +30,7 @@
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.duration }} hours</td></tr>
             <tr><th>Max team size</th><td>{{ jam.team_limit or "Unlimited" }}</td></tr>
-            {% if status.code == 1 %}
+            {% if status.code == 2 %}
             <tr><th>Time left</th><td>
                 <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
                     <div class="mini-countdown" time="{{ jam.end_time }}">
@@ -39,7 +39,7 @@
                 </a>
             </td></tr>
             {% endif %}
-            {% if status.code == 2 or status.code == 3 %}
+            {% if status.code == 3 or status.code == 4 %}
             <tr><th>Rating deadline</th><td>{{ jam.rating_end | humantime }}</td></tr>
             {% endif %}
             <tr style="height: 10px;"></tr>
@@ -59,7 +59,7 @@
             </tr>
         </table>
 
-        {% if jam.getStatus().code == 4 %}
+        {% if jam.getStatus().code == 5 %}
         <h2>Winners</h2>
             {% if jam.games.count() > 1  %}
                 <ul class="games-winners">

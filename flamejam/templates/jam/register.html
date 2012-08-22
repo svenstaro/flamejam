@@ -1,8 +1,6 @@
 {% extends "jam/base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% set status = jam.getStatus() %}
-
 {% block subbreadcrumb %}
     <li><a href="#">Register</a></li>
 {% endblock %}
@@ -27,6 +25,7 @@
         </p>
         <p style="font-size: 1.2em; font-weight: bold; text-align: center;">
             {{ jam.start_time | nicedate }} UTC <small>to</small> <br />
+
             {{ jam.end_time | nicedate }} UTC <br />
             <small>({{ jam.duration }} hours)</small>
         </p>

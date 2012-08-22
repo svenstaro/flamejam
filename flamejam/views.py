@@ -493,6 +493,7 @@ def delete_jam(jam_slug):
 @path("Jams", "Edit")
 def edit_jam(jam_slug):
     require_admin()
+    return # INVALID STUFF HERE
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
     if not 0 <= jam.getStatus().code <= 1:
@@ -553,6 +554,7 @@ def countdown(jam_slug):
 @path("Jams", "New Game")
 def new_game(jam_slug):
     require_login()
+    return # INVALID STUFF HERE
 
     error = None
     form = SubmitEditGame()
@@ -591,6 +593,7 @@ def new_game(jam_slug):
 @path("Jams", "Rate")
 def rate_games(jam_slug, action = None):
     require_login()
+    return # INVALID STUFF HERE
 
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
@@ -1217,7 +1220,14 @@ def admin_user(username):
 @app.route("/admin/jams")
 def admin_jams():
     require_admin()
-    return render_template("admin/index.html")
+    return render_template("admin/jams.html", jams = Jam.query.all())
+
+
+@app.route("/admin/jams/<int:id>")
+def admin_jam(id):
+    require_admin()
+    jam = Jam.query.filter_by(id = id).first_or_404()
+    return render_template("admin/jam.html", jam = jam)
 
 @app.route("/admin/announcements")
 def admin_announcements():

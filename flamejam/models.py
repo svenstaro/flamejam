@@ -216,11 +216,12 @@ class User(db.Model):
             db.session.delete(self.getRegistration(jam))
 
 class JamStatusCode(object):
-    ANNOUNCED   = 0
-    RUNNING     = 1
-    PACKAGING   = 2
-    RATING      = 3
-    FINISHED    = 4
+    ANNOUNCED    = 0
+    REGISTRATION = 1
+    RUNNING      = 2
+    PACKAGING    = 3
+    RATING       = 4
+    FINISHED     = 5
 
 class JamStatus(object):
     def __init__(self, code, time):
@@ -232,6 +233,8 @@ class JamStatus(object):
         d = filters.humandelta(datetime.utcnow(), self.time)
         if self.code == JamStatusCode.ANNOUNCED:
             return "Announced for {0}".format(t)
+        elif self.code == JamStatusCode.REGISTRATION:
+            return "Registrations until {0}".format(t)
         elif self.code == JamStatusCode.RUNNING:
             return "Running until {0} ({1} left)".format(t, d)
         elif self.code == JamStatusCode.PACKAGING:
@@ -255,6 +258,7 @@ class Jam(db.Model):
     registrations = db.relationship("Registration", backref = "jam", lazy = "dynamic")
     teams = db.relationship("Team", backref = "jam", lazy = "dynamic")
 
+    registration_duration = db.Column(db.Integer) # hours
     packaging_duration = db.Column(db.Integer) # hours
     rating_duration = db.Column(db.Integer) # hours
     duration = db.Column(db.Integer) # hours
@@ -264,6 +268,7 @@ class Jam(db.Model):
         self.slug = get_slug(title)
         self.start_time = start_time
         self.duration = duration
+        self.registration_duration = 24 * 14
         self.packaging_duration = 24 * 1
         self.rating_duration = 24 * 5
         self.announced = datetime.utcnow()
@@ -289,13 +294,19 @@ class Jam(db.Model):
     def rating_end(self):
         return self.packaging_deadline + timedelta(hours = self.rating_duration)
 
+    @property
+    def registration_start(self):
+        return self.start_time - timedelta(hours = self.registration_duration)
+
     def __repr__(self):
         return '<Jam %r>' % self.slug
 
     def getStatus(self):
         now = datetime.utcnow()
-        if self.start_time > now:
+        if self.registration_start > now:
             return JamStatus(JamStatusCode.ANNOUNCED, self.start_time)
+        elif self.start_time > now:
+            return JamStatus(JamStatusCode.REGISTRATION, self.start_time)
         elif self.end_time > now:
             return JamStatus(JamStatusCode.RUNNING, self.end_time)
         elif self.packaging_deadline > now:

@@ -105,11 +105,18 @@ class NewJam(Form):
     duration = IntegerField("Duration, in hours", validators=[NumberRange(min = 1), Required()], default = 48)
     team_jam = BooleanField("Team Jam", default = False)
 
-class EditJam(Form):
-    title = TextField("Jam title", validators=[Required(), Length(max=128)])
-    theme = TextField("Theme", validators=[Required(), Length(max=128)])
+class JamDetailsForm(Form):
+    title = TextField("Title", validators=[Required(), Length(max=128)])
+    theme = TextField("Theme", validators=[Length(max=128)])
+    team_limit = IntegerField("Team size limit", validators=[Required(), NumberRange(min = 0)])
     start_time = DateTimeField("Start time", format="%Y-%m-%d %H:%M", validators=[Required()])
-    email = BooleanField("Send everyone an email about this change", default = True)
+
+    registration_duration = IntegerField("Registration duration", validators=[Required(), NumberRange(min = 0)])
+    packaging_duration = IntegerField("Packaging duration", validators=[Required(), NumberRange(min = 0)])
+    rating_duration = IntegerField("Rating duration", validators=[Required(), NumberRange(min = 0)])
+    duration = IntegerField("Duration", validators=[Required(), NumberRange(min = 0)])
+
+    email = BooleanField("Send announcement email", default = True)
 
 class SubmitEditGame(Form):
     title = TextField("Game title", validators=[Required(), Length(max=128)])
