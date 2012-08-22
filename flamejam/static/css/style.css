@@ -362,6 +362,7 @@ ul.sidebar {
 
 ul.sidebar li {
     padding: 0;
+    position: relative;
 }
 
 ul.sidebar li a {
@@ -378,6 +379,26 @@ ul.sidebar li a:hover {
 
 ul.sidebar li.current a {
     background: #020202;
+}
+
+ul.sidebar li span.notify {
+    position: absolute;
+    height: 12px;
+    margin-top: -6px;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 13px;
+    color: #111;
+    font-weight: bold;
+    font-size: 7pt;
+    top: 50%;
+    padding: 0 4px 0 3px;
+    right: 3px;
+    background: #333;
+}
+
+ul.sidebar li span.notify.active {
+    background: #F90;
 }
 
 #page {

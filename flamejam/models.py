@@ -380,17 +380,13 @@ class Team(db.Model):
         if not r:
             # register user, but do not create automatic team, we don't need
             # that anyway
-            print("USER NOT IN JAM")
             user.joinJam(self.jam, False)
         elif r in self.registrations:
-            print("USER ALREADY IN TEAM")
             return # user is already in this team
         elif r.team and r.team != self:
-            print("LEAVING OTHER TEAM")
             r.team.userLeave(user)
 
         r.team = self
-        print("SET TEAM")
         db.session.commit()
 
     def userLeave(self, user):
