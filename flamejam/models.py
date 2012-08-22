@@ -24,11 +24,14 @@ def findLocation(loc):
         city = ""
         state = ""
         region = ""
+        flag = ""
 
         for comp in c:
             if comp["types"][0] == "locality": city = comp["long_name"]
             elif comp["types"][0] == "administrative_area_level_1": region = comp["long_name"]
-            elif comp["types"][0] == "country": state = comp["long_name"]
+            elif comp["types"][0] == "country":
+                state = comp["long_name"]
+                flag = comp["short_name"].lower()
 
         first = state
 
@@ -37,7 +40,7 @@ def findLocation(loc):
 
         if city:
             first += ", " + city
-        return first
+        return first, flag
 #    except:
 #        return None
 
@@ -74,6 +77,7 @@ class User(db.Model):
     ability_sounddesigner = db.Column(db.Boolean)
     abilities_extra = db.Column(db.String(128))
     location = db.Column(db.String(128))
+    location_flag = db.Column(db.String(16), default = "unknown")
     real_name = db.Column(db.String(128))
     about = db.Column(db.Text)
     website = db.Column(db.String(128))
@@ -141,6 +145,9 @@ class User(db.Model):
 
     def getAvatar(self, size = 32):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=retro".format(md5(self.email.lower()).hexdigest(), size)
+
+    def getLocation(self):
+        return Markup('<span class="flag %s"></span> %s' % (self.location_flag, self.location or "n/a"))
 
     def getLink(self, class_ = ""):
         if self.is_deleted:
@@ -422,7 +429,7 @@ class Team(db.Model):
         return Invitation.query.filter_by(user_id = user.id, team_id = self.id).first()
 
     def inviteUser(self, user, sender): # sender: which user sent the invitation
-        from flamejam.mail import *
+        from flamejam.mail import Mail
 
         if self.getInvitation(user): i = self.getInvitation(user) # already invited
         else: i = Invitation(self, user)

@@ -326,7 +326,7 @@ def jam_team_finder(jam_slug):
         if form.need_composer.data and u.ability_composer: matches += 1
         if form.need_sounddesigner.data and u.ability_sounddesigner: matches += 1
 
-        #if matches == 0: continue
+        if matches == 0: continue
 
         l.append((r, matches))
 
@@ -899,9 +899,10 @@ def settings():
         user.notify_newsletter = form.notify_newsletter.data
 
         if user.location != form.location.data and form.location.data:
-            new_loc = findLocation(form.location.data)
+            new_loc, new_flag = findLocation(form.location.data)
             if new_loc:
                 user.location = new_loc
+                user.location_flag = new_flag
                 flash("Location was set to: " + new_loc, "success")
             else:
                 flash("Could not find the location you entered.", "error")

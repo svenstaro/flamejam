@@ -28,7 +28,7 @@
         <td>{{ user.real_name or "n/a" }}</td>
         <td><a href="mailto:{{ user.email}}">{{ user.email }}</a></td>
         <td>{{ user.registered | formattime }}</td>
-        <td>{{ user.location or "n/a" }}</td>
+        <td>{{ user.getLocation() }}</td>
         <td>
             {% if user.is_admin %}
                 <b style="font-size: 0.8em; color: red;">ADMIN</b>

@@ -57,7 +57,7 @@
             <tr>
                 <td>{{ r.user.getLink() }}</td>
                 <td>{{ r.user.abilities | join(', ') }}<br />{{ r.user.abilities_extra }}</td>
-                <td>{{ r.location or "n/a" }}</td>
+                <td>{{ r.user.getLocation() }}</td>
                 <td>{{ "Yes" if r.team and not r.team.isSingleTeam else "No" }}</td>
                 <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
             </tr>
