@@ -348,6 +348,11 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     jam_id = db.Column(db.Integer, db.ForeignKey("jam.id"))
     name = db.Column(db.String(80))
+
+    wip = db.Column(db.String(128))
+    livestreams = db.Column(db.Text) # list of livestreams, one URL per file
+    irc = db.Column(db.String(128))
+
     registrations = db.relationship("Registration", backref = "team", lazy = "dynamic")
     devlog_posts = db.relationship("DevlogPost", backref = "team", lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "team", lazy = "dynamic")
@@ -373,8 +378,8 @@ class Team(db.Model):
     def isSingleTeam(self):
         return self.registrations.count() == 1
 
-    def url(self):
-        return url_for("jam_team", jam_slug = self.jam.slug, team_id = self.id)
+    def url(self, **values):
+        return url_for("jam_team", jam_slug = self.jam.slug, team_id = self.id, **values)
 
     def userJoin(self, user):
         r = user.getRegistration(self.jam)
@@ -417,10 +422,19 @@ class Team(db.Model):
         return Invitation.query.filter_by(user_id = user.id, team_id = self.id).first()
 
     def inviteUser(self, user, sender): # sender: which user sent the invitation
-        if self.getInvitation(user): return # already invited
-        db.session.add(Invitation(self, user))
-        # TODO: send email
+        from flamejam.mail import *
+
+        if self.getInvitation(user): i = self.getInvitation(user) # already invited
+        else: i = Invitation(self, user)
+        db.session.add(i)
         db.session.commit()
+
+        # send email
+        m = Mail("BaconGameJam Team Invitation")
+        m.render("emails/invitation.html", team = self, sender = sender, recipient = user, invitation = i)
+        m.addRecipient(user)
+        m.send()
+        return i
 
 class Invitation(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -430,6 +444,18 @@ class Invitation(db.Model):
     def __init__(self, team, user):
         self.team = team
         self.user = user
+
+    def url(self, **values):
+        return url_for("invitation", id = self.id, _external = True, **values)
+
+    def accept(self):
+        self.team.userJoin(self.user)
+        db.session.delete(self)
+        db.session.commit()
+
+    def decline(self):
+        db.session.delete(self)
+        db.session.commit()
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -466,7 +492,7 @@ class Game(db.Model):
         for package in self.packages:
             db.session.delete(package)
         for screenshot in self.screenshots:
-            db.session.delete(screenshots)
+            db.session.delete(screenshot)
         db.session.delete(self)
 
     def url(self, action = "", **values):

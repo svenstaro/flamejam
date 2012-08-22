@@ -334,6 +334,77 @@ def jam_team(jam_slug, team_id):
     team = Team.query.filter_by(id = team_id, jam_id = jam.id).first_or_404()
     return render_template('jam/team.html', jam = jam, team = team)
 
+
+@app.route('/jams/<jam_slug>/team/')
+@path("Jams", "Team")
+def jam_current_team(jam_slug):
+    require_login()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    user = get_current_user()
+    r = user.getRegistration(jam)
+    if r:
+        return redirect(r.team.url())
+    else:
+        return redirect(jam.url())
+
+@app.route('/jams/<jam_slug>/team/settings', methods = ["POST", "GET"])
+@path("Jams", "Team")
+def team_settings(jam_slug):
+    require_login()
+
+    settings_form = TeamSettingsForm()
+    invite_form = InviteForm()
+
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    r = get_current_user().getRegistration(jam)
+    if not r or not r.team: abort(404)
+    team = r.team
+
+    if settings_form.validate_on_submit():
+        team.name = settings_form.name.data
+        team.wip = settings_form.wip.data
+        team.livestreams = settings_form.livestreams.data
+        team.irc = settings_form.irc.data
+        db.session.commit()
+        flash("The team settings were saved.", "success")
+        return redirect(team.url())
+    elif invite_form.validate_on_submit():
+        user = User.query.filter_by(username = invite_form.username.data, is_deleted = False).first()
+        if not user:
+            flash("Could not find user: %s" % invite_form.username.data, "error")
+        elif user.inTeam(team):
+            flash("User %s is already in this team." % user.username, "warning")
+       # elif team.getInvitation(user):
+       #     flash("User %s is already invited." % user.username, "warning")
+        else:
+            i = team.inviteUser(user, get_current_user())
+            flash("Invited user %s." % user.username, "success")
+            return render_template("emails/invitation.html", team = team, sender = get_current_user(), recipient = user, invitation = i)
+
+        return redirect(request.url)
+    elif request.method == "GET":
+        settings_form.name.data = team.name
+        settings_form.wip.data = team.wip
+        settings_form.livestreams.data = team.livestreams
+        settings_form.irc.data = team.irc
+
+    return render_template('jam/team_settings.html', team = team, invite_form = invite_form, settings_form = settings_form)
+
+@app.route('/invitations/<int:id>', methods = ["POST", "GET"])
+@app.route('/invitations/<int:id>/<action>', methods = ["POST", "GET"])
+@path("Invitation")
+def invitation(id, action = ""):
+    invitation = Invitation.query.filter_by(id = id).first_or_404()
+    require_user(invitation.user)
+
+    if action == "accept":
+        invitation.accept()
+    elif action == "decline":
+        invitation.decline()
+
+    else:
+        return render_template("jam/invitation.html", invitation = invitation)
+
 @app.route('/jams/<jam_slug>/delete', methods=("GET", "POST"))
 @path("Jams", "Delete")
 def delete_jam(jam_slug):

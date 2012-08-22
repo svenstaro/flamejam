@@ -10,19 +10,8 @@
 
 {% block content %}
 
-<div class="error-page">
-{% if error.code == 404 %}
-    <div class="title">This is not the page you're looking for...</div>
-    <div class="text">... 'cos I couldn't find it either.</div>
-{% elif error.code == 403 %}
-    <div class="title">Quick! Look somewhere else...</div>
-    <div class="text">... this page is not for your eyes.</div>
-{% else %}
-    <div class="title">{{ error.code }}: {{ error.name }}</div>
-    <div class="text">Something went wrong. Sorry!</div>
-{% endif %}
+<div class="error-page" style="text-align: center; color: #222;">
+    <div style="font-size: 200pt;">{{ error.code }}</div>
+    <div style="font-size: 40pt; font-weight: bold;">{{ error.name }}</div>
 </div>
-<p style="font-size: 8pt; color: #666; text-align: right;">
-Error {{ error.code }} - {{ error.name }}
-</p>
 {% endblock %}

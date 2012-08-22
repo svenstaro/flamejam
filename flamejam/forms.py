@@ -66,7 +66,7 @@ class UsernameValidator(object):
         self.message_username = message_username
 
     def __call__(self, form, field):
-        u = models.Participant.query.filter_by(username = field.data).first()
+        u = models.User.query.filter_by(username = field.data).first()
         if not u:
             raise ValidationError(self.message_username)
 
@@ -222,3 +222,12 @@ class RegisterJamForm(Form):
 
 class UnregisterJamForm(Form):
     confirm = BooleanField("I understand that, please unregister me", validators = [Required()])
+
+class TeamSettingsForm(Form):
+    name = TextField("Team Name", validators=[Required()])
+    wip = TextField("Working on")
+    livestreams = TextAreaField("Livestreams")
+    irc = TextField("IRC Channel")
+
+class InviteForm(Form):
+    username = TextField("Username", validators=[Required()])

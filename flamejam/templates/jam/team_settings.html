@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block content %}
+
+<h1>Team settings</h1>
+
+<div class="row-fluid">
+    <div class="span5">
+        <form action="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" method="post" class="block">
+        {{ settings_form.hidden_tag() }}
+        {{ form_errors(settings_form) }}
+
+        <h2>Team Settings</h2>
+
+        <div class="field">
+            {{ settings_form.name.label }}
+            {{ settings_form.name() }}
+        </div>
+
+        <div class="field">
+            {{ settings_form.wip.label }}
+            {{ settings_form.wip() }}
+            <div class="form-info">e.g. "sidescrolling platform shooter"</div>
+        </div>
+
+        <div class="field">
+            {{ settings_form.livestreams.label }}
+            {{ settings_form.livestreams(rows = 5, cols = 39) }}
+            <div class="form-info">Enter one URL per row</div>
+        </div>
+
+        <div class="field">
+            {{ settings_form.irc.label }}
+            {{ settings_form.irc() }}
+            <div class="form-info">e.g. "baconteam#irc.freenode.net"</div>
+        </div>
+
+        <p style="text-align: center">
+            <input type="reset" value="Reset" class="btn btn-inverse" />
+            <input type="submit" value="Save settings" class="btn btn-primary" />
+        </p>
+        </form>
+    </div>
+
+    <div class="span4">
+        <form action="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" method="post" class="block">
+        {{ invite_form.hidden_tag() }}
+        {{ form_errors(invite_form) }}
+
+        <h2>Invite a user</h2>
+        <p>
+            The user will receive an email with a link to the invitation.
+        </p>
+
+        <p>
+            {{ invite_form.username( style="vertical-align: bottom;") }}
+            <input type="submit" value="Invite" class="btn btn-primary" style="vertical-align: bottom;"/>
+        </p>
+
+        {% if team.invitations.all() %}
+        <h2>Invited users</h2>
+        <ul class="users">
+            {% for invitation in team.invitations %}
+            <li>{{ invitation.user.getLink() }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        </form>
+    </div>
+
+    <div class="span3">
+        <h2>Game settings</h2>
+        <p>
+            Please go to the game settings page:
+        </p>
+        <ul>
+            {% for game in team.games %}
+            <li><a href="#TODO">{{ game.title }}</a></li>
+            {% endfor %}
+        </ul>
+        <p>
+            Settings made here will be lost unless applied before
+            switching to the game settings.
+        </p>
+    </div>
+</div>
+
+
+{% endblock %}
+
