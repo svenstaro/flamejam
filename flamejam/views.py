@@ -363,7 +363,7 @@ def team_settings(jam_slug):
     if settings_form.validate_on_submit():
         team.name = settings_form.name.data
         team.wip = settings_form.wip.data
-        team.livestreams = settings_form.livestreams.data
+        team.livestreams = settings_form.livestreams.data.strip()
         team.irc = settings_form.irc.data
         db.session.commit()
         flash("The team settings were saved.", "success")
