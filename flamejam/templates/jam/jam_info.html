@@ -26,7 +26,7 @@
     <div class="span5">
         <h2>Jam Details</h2>
         <table class="details">
-            <tr><th>Announced</th><td>{{ jam.announced | humantime }} by {{ jam.author.getLink() }}</a></td></tr>
+            <tr><th>Announced</th><td>{{ jam.announced | humantime }}</a></td></tr>
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.duration }} hours</td></tr>
             <tr><th>Max team size</th><td>{{ jam.team_limit or "Unlimited" }}</td></tr>

@@ -586,22 +586,28 @@ ul.users {
 
 ul.users li {
     display: inline-block;
+    font-size: 1.2em;
 }
 
-ul.users li a.user {
+ul.users li .user {
     display: inline-block;
     background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#222));
     padding: 4px;
     width: 100px;
     margin: 2px 0;
     border-radius: 2px;
-    font-size: 1.2em;
     color: #AAA;
 }
 
 ul.users li a.user:hover {
     color: #CCC;
     background: -webkit-gradient(linear, left top, left bottom, from(#444), to(#333));
+}
+
+.user.deleted {
+    color: #A33 !important;
+    font-size: 0.9em !important;
+    font-weight: bold;
 }
 
 ul.screenshots {

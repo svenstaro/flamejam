@@ -57,10 +57,10 @@ class User(db.Model):
     new_email = db.Column(db.String(256), unique=True)
     is_admin = db.Column(db.Boolean, default=False)
     is_verified = db.Column(db.Boolean)
+    is_deleted = db.Column(db.Boolean, default = False)
     registered = db.Column(db.DateTime)
     ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
     comments = db.relationship('Comment', backref='user', lazy = "dynamic")
-    jams = db.relationship('Jam', backref='author', lazy = "dynamic")
     rating_skips = db.relationship('RatingSkip', backref='user', lazy = "dynamic")
     devlog_posts = db.relationship("DevlogPost", backref = "author", lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
@@ -143,6 +143,9 @@ class User(db.Model):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=retro".format(md5(self.email.lower()).hexdigest(), size)
 
     def getLink(self, class_ = ""):
+        if self.is_deleted:
+            return Markup('<span class="user deleted">[DELETED]</span>')
+
         s = 16
         if self.is_admin:
             class_ += " admin"
@@ -238,7 +241,6 @@ class Jam(db.Model):
     start_time = db.Column(db.DateTime) # The jam starts at this moment
     team_limit = db.Column(db.Integer) # 0 = no limit
     games = db.relationship('Game', backref="jam", lazy = "dynamic")
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     registrations = db.relationship("Registration", backref = "jam", lazy = "dynamic")
     teams = db.relationship("Team", backref = "jam", lazy = "dynamic")
 
@@ -246,7 +248,7 @@ class Jam(db.Model):
     rating_duration = db.Column(db.Integer) # hours
     duration = db.Column(db.Integer) # hours
 
-    def __init__(self, title, author, start_time, duration = 48, team_limit = 0, theme = ''):
+    def __init__(self, title, start_time, duration = 48, team_limit = 0, theme = ''):
         self.title = title
         self.slug = get_slug(title)
         self.start_time = start_time
@@ -255,7 +257,6 @@ class Jam(db.Model):
         self.rating_duration = 24 * 5
         self.announced = datetime.utcnow()
         self.theme = theme
-        self.author = author
         self.team_limit = team_limit
 
     @property

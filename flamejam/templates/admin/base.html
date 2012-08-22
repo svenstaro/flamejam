@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>BaconGameJamAdmin</title>
+        <link href="{{ url_for('static', filename = 'css/admin.css') }}" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    </head>
+    <body>
+        <div id="header">
+            <ul>
+                <li><a href="{{ url_for('index') }}">« Show Site</a></li>
+                <li><a href="{{ url_for('admin_users') }}">Users</a></li>
+                <li><a href="{{ url_for('admin_jams') }}">Jams</a></li>
+                <li><a href="{{ url_for('admin_announcements') }}">Announcements</a></li>
+            </ul>
+        </div>
+        <div id="content">
+            <ul id="flashes">
+            {% for category, message in get_flashed_messages(with_categories = True) %}
+                <li class="{{ category if category and category != 'message' else 'info' }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+
+            {% block content %} {% endblock %}
+        </div>
+    </body>
+</html>

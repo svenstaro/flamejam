@@ -80,7 +80,7 @@ def login():
                 )
 
         m = Mail("Welcome to Bacon Game Jam, " + username)
-        m.addRecipients(new_user)
+        m.addRecipient(new_user)
         m.render("emails/verification.html", recipient = new_user)
         m.send()
 
@@ -106,7 +106,7 @@ def reset_request():
         db.session.commit()
 
         m = Mail("Welcome to Bacon Game Jam, " + user.username)
-        m.addRecipients(user.email)
+        m.addRecipient(user)
         m.render("emails/reset_password.html", recipient = user)
         m.send()
 
@@ -152,7 +152,7 @@ def verify_send():
 
     m = Mail("Welcome to Bacon Game Jam, " + username)
     m.render("emails/verification.html", recipient = user)
-    m.addRecipients(user.new_email)
+    m.addRecipientEmail(user.new_email)
     m.send()
 
     flash("Verification has been resent, check your email", "success")
@@ -390,10 +390,10 @@ def edit_jam(jam_slug):
         else:
             # inform users about change
             if form.email.data:
-                users = User.query.filter_by(receive_emails=True).all()
+                users = User.query.filter_by(is_deleted = False, receive_emails=True).all()
                 m = Mail("BaconGameJam: Jam \"%s\" changed" % changes["title"][1])
                 m.render("emails/jam_changed.html", jam = jam, changes = changes, recipient = user)
-                m.addRecipients(users)
+                m.addRecipient(users)
                 m.send()
                 flash("Email notifications have been sent.", "info")
 
@@ -767,7 +767,7 @@ def profile():
 @app.route('/users/<username>/')
 @path("Profile")
 def show_user(username):
-    user = User.query.filter_by(username = username).first_or_404()
+    user = User.query.filter_by(is_deleted = False, username = username).first_or_404()
     return render_template("account/profile.html", user = user)
 
 @app.route('/settings', methods = ["POST", "GET"])
@@ -822,7 +822,7 @@ def settings():
             user.is_verified = False
 
             m = Mail("Please verify your new eMail address")
-            m.addRecipients(user.new_email)
+            m.addRecipientEmail(user.new_email)
             m.render("emails/verification.html", recipient = user, email_changed = True)
             m.send()
 
@@ -876,7 +876,7 @@ def search():
         Game.description.like("%"+q+"%"),
         Game.title.like("%"+q+"%"))).all()
 
-    users = User.query.filter(
+    users = User.query.filter_by(is_deleted = False).filter(
         User.username.like("%"+q+"%")).all()
 
     j = len(jams)
@@ -950,7 +950,7 @@ def statistics():
     finished_games.sort(cmp = gameCompare)
     stats["best_games"] = finished_games[:3]
 
-    user_most_games = User.query.all()
+    user_most_games = User.query.filter_by(is_deleted = False).all()
     user_most_games.sort(cmp = userTotalGameCompare)
     stats["user_most_games"] = user_most_games[:3]
 
@@ -1024,3 +1024,62 @@ def invalid_email(exception):
 def login_required(exception):
     flash(exception.message, "error")
     return redirect(url_for('login', next = exception.next))
+
+
+
+
+
+
+# ADMIN PANEL
+
+@app.route("/admin")
+def admin_index():
+    return redirect(url_for('admin_users'))
+
+@app.route("/admin/users")
+def admin_users():
+    require_admin()
+    users = User.query.all()
+    return render_template("admin/users.html", users = users)
+
+@app.route("/admin/users/form", methods = ["POST"])
+def admin_users_form():
+    require_admin()
+
+    users = []
+    for field in request.form:
+        print field
+        if field[:5] == "user-" and request.form[field] == "on":
+            i = field[5:]
+            users.append(User.query.filter_by(id = i).first_or_404())
+
+    for user in users:
+        if request.form["submit"] == "Toggle Deleted":
+            user.is_deleted = not user.is_deleted
+        if request.form["submit"] == "Toggle Admin":
+            user.is_admin = not user.is_admin
+
+    db.session.commit()
+
+    flash(str(len(users)) + " users were deleted", "success")
+
+    return redirect(url_for("admin_users"))
+
+@app.route("/admin/users/<username>")
+@app.route("/admin/user/<username>")
+def admin_user(username):
+    require_admin()
+    user = User.query.filter_by(username = username).first_or_404()
+    return render_template("admin/user.html", user = user)
+
+@app.route("/admin/jams")
+def admin_jams():
+    require_admin()
+    return render_template("admin/index.html")
+
+@app.route("/admin/announcements")
+def admin_announcements():
+    require_admin()
+    return render_template("admin/index.html")
+
+

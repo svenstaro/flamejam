@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h1>User: {{ user.username }}</h1>
+
+<h2>Merge Accounts</h2>
+
+<form>
+<p>
+    Merge this account ({{ user.username }}) into
+    <input type="text" />
+</p>
+<p>
+    The settings on this account will be lost, the games, registrations,
+    comments and other content associated with this account will be transfered
+    to the other account.
+</p>
+<p>
+    <input type="submit" value="Merge" />
+</p>
+</form>
+
+{% endblock %}

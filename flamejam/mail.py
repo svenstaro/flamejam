@@ -9,20 +9,22 @@ class Mail(object):
         self.content = ""
         self.subject = subject
 
-    def addRecipients(self, recipients):
-        self.addRecipient(recipients)
-
     def addRecipient(self, recipient):
         t = type(recipient)
         if t is list:
             for r in recipient:
                 self.addRecipients(r)
         elif t is User:
-            self.addRecipient(recipient.email)
-        elif t is str or str(recipient):
-            self.recipients.append(str(recipient))
+            if not t.is_deleted:
+                self.addRecipientEmail(recipient.email)
         else:
-            raise Exception("Only User objects, email address strings or lists of these are allowed.")
+            raise Exception("Only User objects or lists of these are allowed.")
+
+    def addRecipientEmail(self, string):
+        if string is str or str(string):
+            self.recipients.append(str(string))
+        else:
+            raise Exception("Only strings are allowed.")
 
     def setContent(self, content):
         self.content = content
