@@ -3,6 +3,11 @@
 
 {% block title %}Team Finder « {{ jam.title }}{% endblock %}
 
+{% block subbreadcrumb %}
+    <li><a href="#">Team Finder</a></li>
+{% endblock %}
+
+
 {% block content %}
 
 <h1>Team Finder</h1>
@@ -22,10 +27,10 @@
         </p>
 
         <h2>Filter settings</h2>
+        <form method="post">
+        {{ form.hidden_tag() }}
         {{ form_errors(form) }}
         <div class="row-fluid">
-            <form method="post">
-            {{ form.hidden_tag() }}
             <div class="span6">
                 {{ form.need_programmer() }} {{ form.need_programmer.label() }}<br />
                 {{ form.need_gamedesigner() }} {{ form.need_gamedesigner.label() }}<br />
@@ -39,8 +44,8 @@
                 <p>{{ form.order.label() }}: {{ form.order() }}</p>
                 <p><input type="submit" class="btn btn-primary" value="Apply filter" /></p>
             </div>
-            </form>
         </div>
+        </form>
 
     </div>
     <div class="span8">
@@ -51,10 +56,10 @@
             {% for r, m in results %}
             <tr>
                 <td>{{ r.user.getLink() }}</td>
-                <td>TODO</td>
-                <td>TODO</td>
+                <td>{{ r.user.abilities | join(', ') }}<br />{{ r.user.abilities_extra }}</td>
+                <td>{{ r.location or "n/a" }}</td>
                 <td>{{ "Yes" if r.team and not r.team.isSingleTeam else "No" }}</td>
-                <td><a href="#">Invite</a></td>
+                <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
             </tr>
             {% endfor %}
         </table>

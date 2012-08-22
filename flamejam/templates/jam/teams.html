@@ -2,6 +2,11 @@
 
 {% block title %}Teams of {{ jam.title }}{% endblock %}
 
+{% block subbreadcrumb %}
+    <li><a href="#">Team list</a></li>
+{% endblock %}
+
+
 {% block content %}
 
 <h1>Teams <small>{{ jam.teams.all() | length }} teams</small></h1>

@@ -168,12 +168,12 @@ class WriteComment(Form):
 
 
 class TeamFinderFilter(Form):
-    need_programmer = BooleanField("Programmer")
-    need_gamedesigner = BooleanField("Game Designer")
-    need_2dartist = BooleanField("2D Artist")
-    need_3dartist = BooleanField("3D Artist")
-    need_composer = BooleanField("Composer")
-    need_sounddesigner = BooleanField("Sound Designer")
+    need_programmer = BooleanField("Programmer", default = True)
+    need_gamedesigner = BooleanField("Game Designer", default = True)
+    need_2dartist = BooleanField("2D Artist", default = True)
+    need_3dartist = BooleanField("3D Artist", default = True)
+    need_composer = BooleanField("Composer", default = True)
+    need_sounddesigner = BooleanField("Sound Designer", default = True)
 
     show_teamed = BooleanField("Show people with team")
     order = SelectField("Sort by", choices = [

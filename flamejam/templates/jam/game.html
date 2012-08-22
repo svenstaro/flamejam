@@ -4,6 +4,10 @@
 
 {% block title %}{{ game.jam.title }} » {{ game.title }}{% endblock %}
 
+{% block subbreadcrumb %}
+    <li><a href="{{ game.url() }}">{{ game.title }}</a></li>
+{% endblock %}
+
 {% block content %}
 
 <h1>{{ game.title }} <small>for <a href="{{ game.jam.url() }}">{{ game.jam.title }}</a></small></h1>

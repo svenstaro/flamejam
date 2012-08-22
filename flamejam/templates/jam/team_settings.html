@@ -1,5 +1,12 @@
-{% extends "base.html" %}
+{% set jam = team.jam %}
+{% extends "jam/base.html" %}
 {% from "_formhelpers.html" import form_errors %}
+
+{% block subbreadcrumb %}
+    <li><a href="{{ team.url() }}">{{ team.name }}</a></li>
+    <li><a href="#">Settings</a></li>
+{% endblock %}
+
 
 {% block content %}
 

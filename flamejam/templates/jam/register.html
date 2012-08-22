@@ -3,6 +3,10 @@
 
 {% set status = jam.getStatus() %}
 
+{% block subbreadcrumb %}
+    <li><a href="#">Register</a></li>
+{% endblock %}
+
 {% block content %}
 
 <h1>Register for {{ jam.title }}</h1>

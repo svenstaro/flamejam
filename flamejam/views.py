@@ -316,8 +316,26 @@ def jam_team_finder(jam_slug):
         if (not form.show_teamed.data) and r.team and (not r.team.isSingleTeam):
             continue # don't show teamed people
 
+
         matches = 0
+
+        if form.need_programmer.data and u.ability_programmer: matches += 1
+        if form.need_gamedesigner.data and u.ability_gamedesigner: matches += 1
+        if form.need_2dartist.data and u.ability_2dartist: matches += 1
+        if form.need_3dartist.data and u.ability_3dartist: matches += 1
+        if form.need_composer.data and u.ability_composer: matches += 1
+        if form.need_sounddesigner.data and u.ability_sounddesigner: matches += 1
+
+        #if matches == 0: continue
+
         l.append((r, matches))
+
+    if form.order.data == "abilities":
+        l.sort(key = lambda pair: pair[1], reverse = True)
+    elif form.order.data == "location":
+        l.sort(key = lambda pair: pair[0].user.location)
+    else: # username
+        l.sort(key = lambda pair: pair[0].user.username)
 
     return render_template('jam/team_finder.html', jam = jam, form = form, results = l)
 
@@ -354,6 +372,7 @@ def team_settings(jam_slug):
 
     settings_form = TeamSettingsForm()
     invite_form = InviteForm()
+    invite_username = None
 
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     r = get_current_user().getRegistration(jam)
@@ -369,24 +388,29 @@ def team_settings(jam_slug):
         flash("The team settings were saved.", "success")
         return redirect(team.url())
     elif invite_form.validate_on_submit():
-        user = User.query.filter_by(username = invite_form.username.data, is_deleted = False).first()
-        if not user:
-            flash("Could not find user: %s" % invite_form.username.data, "error")
-        elif user.inTeam(team):
-            flash("User %s is already in this team." % user.username, "warning")
-       # elif team.getInvitation(user):
-       #     flash("User %s is already invited." % user.username, "warning")
-        else:
-            i = team.inviteUser(user, get_current_user())
-            flash("Invited user %s." % user.username, "success")
-            return render_template("emails/invitation.html", team = team, sender = get_current_user(), recipient = user, invitation = i)
-
-        return redirect(request.url)
+        invite_username = invite_form.username.data
     elif request.method == "GET":
         settings_form.name.data = team.name
         settings_form.wip.data = team.wip
         settings_form.livestreams.data = team.livestreams
         settings_form.irc.data = team.irc
+
+    if "invite" in request.args:
+        invite_username = request.args["invite"]
+
+    if invite_username:
+        user = User.query.filter_by(username = invite_username, is_deleted = False).first()
+        if not user:
+            flash("Could not find user: %s" % invite_username, "error")
+        elif user.inTeam(team):
+            flash("User %s is already in this team." % invite_username, "warning")
+        elif team.getInvitation(user):
+            flash("User %s is already invited." % user.username, "warning")
+        else:
+            i = team.inviteUser(user, get_current_user())
+            flash("Invited user %s." % invite_username, "success")
+
+        return redirect(team.url())
 
     return render_template('jam/team_settings.html', team = team, invite_form = invite_form, settings_form = settings_form)
 
