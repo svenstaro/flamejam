@@ -755,6 +755,7 @@ table.teams td {
 
 table.teams th {
     background: #111;
+    text-align: left;
 }
 
 #map_canvas {

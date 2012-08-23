@@ -28,13 +28,15 @@
         <div class="field">
             {{ settings_form.wip.label }}
             {{ settings_form.wip() }}
-            <div class="form-info">e.g. "sidescrolling platform shooter"</div>
+            <div class="form-info">Technology / Game Mechanism</div>
+            <div class="form-info">e.g. "XNA sidescrolling platform shooter"</div>
         </div>
 
         <div class="field">
             {{ settings_form.livestreams.label }}
             {{ settings_form.livestreams(rows = 5, cols = 39) }}
             <div class="form-info">Enter one URL per row</div>
+            <div class="form-info">Don't forget the "http://"</div>
         </div>
 
         <div class="field">

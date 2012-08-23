@@ -36,15 +36,10 @@ a:hover {
 
 .countdown {
     position: relative;
-    left: -450px;
-    top: -150px;
-    width: 900px;
-    height: 300px;
-
-    background: #333;
-    background: -webkit-gradient(linear, left top, left bottom, from(#222), to(#333));
-    background: -moz-linear-gradient(top, #222, #333);
-    border: 10px solid #111;
+    left: -600px;
+    top: -250px;
+    width: 1200px;
+    height: 500px;
 }
 
 .text {
@@ -62,11 +57,11 @@ a:hover {
     font-size: 14pt;
 }
 
-.time .digit {
+.time-digits .digit {
     display: inline-block;
     width: 100px;
     height: 100px;
-    background: url("gfx/countdown.png");
+    background: url("../gfx/countdown.png");
     /* alternative transition
     -webkit-transition: background 0.4s linear;
     -moz-transition: background 0.4s linear;
@@ -75,32 +70,56 @@ a:hover {
     -moz-transition: background 0.1s ease-in;
 }
 
-.time.red .digit {
-    background: url("gfx/countdown-red.png");
+.time-digits.red .digit {
+    background: url("../gfx/countdown-red.png");
 }
 
-.time .digit.n0 { background-position: 0px -000px; }
-.time .digit.n1 { background-position: 0px -100px; }
-.time .digit.n2 { background-position: 0px -200px; }
-.time .digit.n3 { background-position: 0px -300px; }
-.time .digit.n4 { background-position: 0px -400px; }
-.time .digit.n5 { background-position: 0px -500px; }
-.time .digit.n6 { background-position: 0px -600px; }
-.time .digit.n7 { background-position: 0px -700px; }
-.time .digit.n8 { background-position: 0px -800px; }
-.time .digit.n9 { background-position: 0px -900px; }
+.time-digits .digit.n0 { background-position: 0px -000px; }
+.time-digits .digit.n1 { background-position: 0px -100px; }
+.time-digits .digit.n2 { background-position: 0px -200px; }
+.time-digits .digit.n3 { background-position: 0px -300px; }
+.time-digits .digit.n4 { background-position: 0px -400px; }
+.time-digits .digit.n5 { background-position: 0px -500px; }
+.time-digits .digit.n6 { background-position: 0px -600px; }
+.time-digits .digit.n7 { background-position: 0px -700px; }
+.time-digits .digit.n8 { background-position: 0px -800px; }
+.time-digits .digit.n9 { background-position: 0px -900px; }
 
 
-.time .colon {
+.time-digits .colon {
     display: inline-block;
     width: 30px;
     height: 100px;
-    background: url("gfx/countdown-colon.png");
+    background: url("../gfx/countdown-colon.png");
 }
 
-.time.red .colon {
+.time-digits.red .colon {
     background-position: 30px 0px;
 }
 
-.red .time {
+.time {
+    font-family: "McLaren", Arial;
+    font-size: 150pt;
+}
+
+.time .char {
+    display: inline-block;
+    width: 0.65em;
+    text-align: right;
+}
+
+.time .char.colon {
+    width: 0.2em;
+}
+
+@media (max-width:1200px) {
+    .time {
+        font-size: 100pt;
+    }
+}
+
+@media (max-width:800px) {
+    .time {
+        font-size: 60pt;
+    }
 }

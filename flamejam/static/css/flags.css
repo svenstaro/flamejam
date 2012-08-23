@@ -1,6 +1,6 @@
 .flag {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: top;
     width: 16px;
     height: 11px;
     background: url("../gfx/flags/unknown.png") center center no-repeat;

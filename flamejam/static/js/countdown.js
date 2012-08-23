@@ -66,16 +66,17 @@ function countdown() {
 
         if(times[1] < 1) {
             // less than 1 hour
-            $(this).find(".time").addClass("red");
+            $(this).find(".time-digits, .time").addClass("red");
         } else {
-            $(this).find(".time").removeClass("red");
+            $(this).find(".time-digits, .time").removeClass("red");
         }
 
-        if(! $(this).hasClass("countdown")) {
-            $(this).find(".time").text(times.join(":"));
+        var chars = times.join(":");
+        var html = "";
+        for(var i = 0; i < chars.length; ++i) {
+            html += '<span class="char' + (chars[i] == ":" ? " colon" : "") + '">' + chars[i] + '</span>';
         }
-        /*$(this).attr("time", times.join(":"));
-        */
+        $(this).find(".time").html(html);
     });
 
     setTimeout(countdown, 1000);

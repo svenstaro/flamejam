@@ -182,7 +182,9 @@ class TeamFinderFilter(Form):
     need_composer = BooleanField("Composer", default = True)
     need_sounddesigner = BooleanField("Sound Designer", default = True)
 
-    show_teamed = BooleanField("Show people with team")
+    show_teamed = BooleanField("people with a team")
+    show_empty = BooleanField("people w/o abilities set", default = True)
+
     order = SelectField("Sort by", choices = [
         ("abilities", "Ability match"),
         ("username", "Username"),

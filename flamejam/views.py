@@ -364,7 +364,7 @@ def jam_team_finder(jam_slug):
         if form.need_composer.data and u.ability_composer: matches += 1
         if form.need_sounddesigner.data and u.ability_sounddesigner: matches += 1
 
-        if matches == 0: continue
+        if matches == 0 and not form.show_empty.data: continue
 
         l.append((r, matches))
 
@@ -548,7 +548,7 @@ def edit_jam(jam_slug):
 @path("Jams", "Countdown")
 def countdown(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('countdown.html', jam = jam)
+    return render_template('misc/countdown.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/new_game', methods=("GET", "POST"))
 @path("Jams", "New Game")

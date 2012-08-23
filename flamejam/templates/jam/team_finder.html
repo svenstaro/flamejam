@@ -40,7 +40,11 @@
                 {{ form.need_sounddesigner() }} {{ form.need_sounddesigner.label() }}
             </div>
             <div class="span6">
-                <p>{{ form.show_teamed() }} {{ form.show_teamed.label() }}</p>
+                <p>
+                    Show...<br />
+                    {{ form.show_teamed() }} {{ form.show_teamed.label() }}<br />
+                    {{ form.show_empty() }} {{ form.show_empty.label() }}
+                </p>
                 <p>{{ form.order.label() }}: {{ form.order() }}</p>
                 <p><input type="submit" class="btn btn-primary" value="Apply filter" /></p>
             </div>
@@ -56,7 +60,10 @@
             {% for r, m in results %}
             <tr>
                 <td>{{ r.user.getLink() }}</td>
-                <td>{{ r.user.abilities | join(', ') }}<br />{{ r.user.abilities_extra }}</td>
+                {% set a = r.user.abilities | join(', ') %}
+                {% if a %}{% set a = a + "<br />" %}{% endif %}
+                {% set a = a  + (r.user.abilities_extra or "") %}
+                <td>{{ a | safe or "n/a" }}</td>
                 <td>{{ r.user.getLocation() }}</td>
                 <td>{{ "Yes" if r.team and not r.team.isSingleTeam else "No" }}</td>
                 <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
