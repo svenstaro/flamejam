@@ -93,6 +93,10 @@ p, ul {
     padding: 0;
 }
 
+ul ul {
+    margin-left: 20px;
+}
+
 ul {
     padding-left: 1.5em;
     list-style: square;
@@ -762,4 +766,67 @@ table.teams th {
     width: 100%;
     height: 600px;
     background: #333;
+}
+
+.devlog-post {
+    border: 1px solid #444;
+}
+
+.devlog-post .title {
+    background: #222;
+    padding: 10px;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.devlog-post .title .number {
+    color: #777;
+    font-size: 0.8em;
+}
+
+.devlog-post .content {
+    border: 1px solid #444;
+    border-width: 1px 0;
+    background: #111;
+    padding: 10px;
+}
+
+.devlog-post .meta {
+    background: #222;
+    padding: 10px;
+}
+
+#content .devlog-post .content h1,
+#content .devlog-post .content h2,
+#content .devlog-post .content h3 {
+    font-weight: bold;
+    color: #FFF;
+    background: none;
+    margin: 5px 0;
+    padding: 0;
+}
+
+#content .devlog-post .content h1 {
+    font-size: 2em;
+    color: #666;
+    font-weight: normal;
+}
+
+#content .devlog-post .content h2 {
+    font-size: 1.4em;
+}
+
+#content .devlog-post .content h3 {
+    font-size: 1em;
+}
+
+#content .devlog-post .content hr {
+    border: none;
+    border-bottom: 2px solid #333;
+}
+
+#content .devlog-post .content img {
+    max-width: 90%;
+    display: block;
+    margin: 10px auto;
 }

@@ -390,6 +390,39 @@ def jam_team(jam_slug, team_id):
     team = Team.query.filter_by(id = team_id, jam_id = jam.id).first_or_404()
     return render_template('jam/team.html', jam = jam, team = team)
 
+@app.route('/jams/<jam_slug>/team/devlog/', methods = ["POST", "GET"])
+@app.route('/jams/<jam_slug>/team/devlog/<int:edit_id>', methods = ["POST", "GET"])
+@path("Jams", "Team", "Write devlog")
+def jam_devlog(jam_slug, edit_id = 0):
+    require_login()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    r = get_current_user().getRegistration(jam)
+    if not r or not r.team: abort(403)
+
+    form = DevlogForm()
+    mode = "create"
+
+    if edit_id:
+        p = DevlogPost.query.filter_by(id = edit_id).first_or_404()
+        if p.team != r.team: abort(403)
+        mode = "edit"
+
+    if form.validate_on_submit():
+        if mode == "edit":
+            p.title = form.title.data
+            p.content = form.text.data
+        else:
+            p = DevlogPost(r.team, get_current_user(), form.title.data, form.text.data)
+            db.session.add(p)
+        db.session.commit()
+        flash("Your post was successfully saved.", "success")
+        return redirect(r.team.url())
+    elif mode == "edit" and request.method == "GET":
+        form.title.data = p.title
+        form.text.data = p.content
+
+    return render_template('jam/write_devlog.html', jam = jam, team = r.team, form = form, mode = mode, edit_id = edit_id)
+
 
 @app.route('/jams/<jam_slug>/team/')
 @path("Jams", "Team")

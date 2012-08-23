@@ -10,7 +10,7 @@
     {% if user.real_name %}<small>{{ user.real_name }}</small>{% endif %}
 
     {% if current_user and current_user == user %}
-    <a href="{{ url_for('settings') }}" class="btn btn-primary btn-large" style="margin-left: 20px;">Profile settings</a>
+    <a href="{{ url_for('settings') }}" class="btn btn-primary" style="margin-left: 20px;">Profile settings</a>
     {% endif %}
 </h1>
 
@@ -79,12 +79,22 @@
     </div>
     <div class="span4">
         <h2>Games</h2>
+        <ul class="games" style="text-align: center;">
+        {% for r in user.registrations %}
+        {% for game in r.team.games %}
+        <li><a href="{{ game.url() }}">
+            {% set s = game.screenshots[-1] %}
+            {% if s %}
+            <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
+            {% else %}
+            <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
+            {% endif %}
 
-        {% for team in user.teams %}
-        {% for game in team.games %}
-{{ game.title }}
+            <span>{{ game.title }}</span>
+        </a></li>
         {% endfor %}
         {% endfor %}
+        </ul>
     </div>
     <div class="span4">
         <h2>Stats</h2>

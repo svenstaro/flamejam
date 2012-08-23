@@ -31,7 +31,7 @@
 
 <ul class="sidebar">
     <li><a href="{{ r.team.url() }}">Team Page</a></li>
-    <li><a href="#TODO">Write Devlog</a></li>
+    <li><a href="{{ url_for('jam_devlog', jam_slug = jam.slug) }}">Write Devlog</a></li>
     {% for g in r.team.games %}
     <li>
         <a href="#">{{ g.title }}</a>

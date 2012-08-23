@@ -1,4 +1,12 @@
-{% extends "base.html" %}
+{% if mode == "jam" %}
+    {% set jam = extra %}
+    {% extends "jam/base.html" %}
+{% elif mode == "team" %}
+    {% set jam = extra.jam %}
+    {% extends "jam/base.html" %}
+{% else %}
+    {% extends "base.html" %}
+{% endif %}
 
 {% block title %}
     Map

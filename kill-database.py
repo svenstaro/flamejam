@@ -4,7 +4,7 @@
 #
 
 from flamejam import db
-from flamejam.models import Announcement, User, Jam, Game, Rating, Comment, GameScreenshot
+from flamejam.models import Announcement, User, Jam, Game, Rating, Comment, GameScreenshot, DevlogPost
 from datetime import datetime, timedelta
 
 # Kill everything and recreate tables
@@ -63,6 +63,20 @@ pablo.joinJam(loljam)
 
 aTeam = paul.getTeam(rgj3)
 aTeam.userJoin(pablo)
+
+# Make devlog post
+
+db.session.add(DevlogPost(aTeam, paul, "Sugar and spice",
+"""... and everything nice.
+
+---
+
+    // our super duper mega fail program
+    int main() {
+        return 1;
+    }
+
+![Rainbow Dash is best Pony!](http://i.imgur.com/nnKnB.png)"""))
 
 # Make games
 best_game = Game(paddy.getTeam(rgj3), "Bessy the Best Game")
