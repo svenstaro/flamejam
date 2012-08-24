@@ -81,7 +81,7 @@ def login():
 
         m = Mail("Welcome to Bacon Game Jam, " + username)
         m.addRecipient(new_user)
-        m.render("emails/verification.html", recipient = new_user)
+        m.render("emails/account/verification.html", recipient = new_user)
         m.send()
 
         db.session.add(new_user)
@@ -107,7 +107,7 @@ def reset_request():
 
         m = Mail("Welcome to Bacon Game Jam, " + user.username)
         m.addRecipient(user)
-        m.render("emails/reset_password.html", recipient = user)
+        m.render("emails/account/reset_password.html", recipient = user)
         m.send()
 
         flash("Your password has been reset, check your email.", "success")
@@ -151,7 +151,7 @@ def verify_send():
 
 
     m = Mail("Welcome to Bacon Game Jam, " + username)
-    m.render("emails/verification.html", recipient = user)
+    m.render("emails/account/verification.html", recipient = user)
     m.addRecipientEmail(user.new_email)
     m.send()
 
@@ -227,40 +227,6 @@ def map(mode = "users", id = 0):
             x += 1
 
     return render_template("misc/map.html", users = users, mode = mode, extra = extra, x = x)
-
-@app.route('/new_jam', methods=("GET", "POST"))
-@path("Admin", "New Jam")
-def new_jam():
-    require_admin()
-
-    form = NewJam()
-    if form.validate_on_submit():
-        title = form.title.data
-        new_slug = get_slug(title)
-        if Jam.query.filter_by(slug = new_slug).first():
-            flash("A jam with a similar title already exists.", "error")
-        else:
-            start_time = form.start_time.data
-            new_jam = Jam(title, get_current_user(), start_time)
-            new_jam.theme = form.theme.data
-            new_jam.end_time = start_time + timedelta(hours = form.duration.data)
-            new_jam.team_jam = form.team_jam.data
-            db.session.add(new_jam)
-            db.session.commit()
-            flash("New jam added.", "success")
-
-            # Send out mails to all interested users.
-            users = User.query.filter_by(receive_emails=True).all()
-            for user in users:
-                m = Mail("BaconGameJam: Jam \"%s\" announced" % title)
-                m.render("emails/jam_announced.html", jam = new_jam, recipient = user)
-                m.addRecipient(user)
-                m.send()
-            flash("Email notifications have been sent.", "info")
-
-            #return render_template("emails/jam_announced.html", jam = new_jam, recipient = get_current_user())
-            return redirect(new_jam.url())
-    return render_template('new_jam.html', form = form)
 
 @app.route('/jams/')
 @path("Jams")
@@ -521,61 +487,6 @@ def delete_jam(jam_slug):
         return redirect('/')
 
     return render_template('delete_jam.html', jam = jam)
-
-@app.route('/jams/<jam_slug>/edit', methods=("GET", "POST"))
-@path("Jams", "Edit")
-def edit_jam(jam_slug):
-    require_admin()
-    return # INVALID STUFF HERE
-    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-
-    if not 0 <= jam.getStatus().code <= 1:
-        # editing only during the jam and before
-        flash("The jam is over, you cannot edit it anymore.", "warning")
-        return redirect(jam.url())
-
-    form = EditJam()
-    if form.validate_on_submit():
-        # remember what has changed
-        changes = {}
-        changes["theme"] = [jam.theme != form.theme.data, jam.theme]
-        changes["title"] = [jam.title != form.title.data, jam.title]
-        changes["start_time"] = [jam.start_time != form.start_time.data, jam.start_time]
-
-        title_changed = jam.title != form.title.data
-        start_time_changed = jam.start_time != form.start_time.data
-
-        # change the options
-        jam.theme = form.theme.data
-        jam.title = form.title.data
-        jam.start_time = form.start_time.data
-        db.session.commit()
-
-        changed = (changes["theme"][0] or
-            changes["title"][0] or
-            changes["start_time"][0])
-
-        if not changed:
-            flash("Nothing has changed. Keep moving!", "info")
-        else:
-            # inform users about change
-            if form.email.data:
-                users = User.query.filter_by(is_deleted = False, receive_emails=True).all()
-                m = Mail("BaconGameJam: Jam \"%s\" changed" % changes["title"][1])
-                m.render("emails/jam_changed.html", jam = jam, changes = changes, recipient = user)
-                m.addRecipient(users)
-                m.send()
-                flash("Email notifications have been sent.", "info")
-
-            flash("The jam has been changed.", "success")
-        return redirect(jam.url())
-
-    elif request.method != "POST":
-        form.title.data = jam.title
-        form.theme.data = jam.theme
-        form.start_time.data = jam.start_time
-
-    return render_template('edit_jam.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/countdown', methods=("GET", "POST"))
 @path("Jams", "Countdown")
@@ -1001,7 +912,7 @@ def settings():
 
             m = Mail("Please verify your new eMail address")
             m.addRecipientEmail(user.new_email)
-            m.render("emails/verification.html", recipient = user, email_changed = True)
+            m.render("emails/account/verification.html", recipient = user, email_changed = True)
             m.send()
 
             logout = True
@@ -1256,15 +1167,66 @@ def admin_jams():
     return render_template("admin/jams.html", jams = Jam.query.all())
 
 
-@app.route("/admin/jams/<int:id>")
-def admin_jam(id):
+@app.route("/admin/jams/<int:id>", methods = ["POST", "GET"])
+@app.route("/admin/jams/create/", methods = ["POST", "GET"])
+def admin_jam(id = 0):
     require_admin()
-    jam = Jam.query.filter_by(id = id).first_or_404()
-    return render_template("admin/jam.html", jam = jam)
+    mode = "create"
+    jam = None
+
+    if id != 0:
+        jam = Jam.query.filter_by(id = id).first_or_404()
+        mode = "edit"
+
+    form = JamDetailsForm()
+
+    if form.validate_on_submit():
+        slug_jam = Jam.query.filter_by(slug = get_slug(form.title.data.strip())).first()
+        if slug_jam and slug_jam != jam:
+            flash("A jam with a similar title already exists (slug conflict).", "error")
+        else:
+            if mode == "create":
+                jam = Jam("", datetime.utcnow())
+                db.session.add(jam)
+
+            jam.title = form.title.data.strip()
+            jam.slug = get_slug(jam.title)
+
+            jam.theme = form.theme.data.strip()
+            jam.team_limit = form.team_limit.data
+            jam.start_time = form.start_time.data
+            jam.registration_duration = form.registration_duration.data
+            jam.packaging_duration = form.packaging_duration.data
+            jam.rating_duration = form.rating_duration.data
+            jam.duration = form.duration.data
+            jam.description = form.description.data.strip()
+            jam.restrictions = form.restrictions.data.strip()
+
+            db.session.commit()
+            flash("Jam settings have been saved.", "success")
+            return redirect(url_for("admin_jam", id = jam.id))
+    elif request.method == "GET" and mode == "edit":
+        form.title.data = jam.title
+        form.theme.data = jam.theme
+        form.team_limit.data = jam.team_limit
+        form.start_time.data = jam.start_time
+        form.registration_duration.data = jam.registration_duration
+        form.packaging_duration.data = jam.packaging_duration
+        form.rating_duration.data = jam.rating_duration
+        form.duration.data = jam.duration
+        form.description.data = jam.description
+        form.restrictions.data = jam.restrictions
+
+    return render_template("admin/jam.html", id = id, mode = mode, jam = jam, form = form)
 
 @app.route("/admin/announcements")
 def admin_announcements():
     require_admin()
-    return render_template("admin/index.html")
+    return render_template("admin/announcements.html", announcements = Announcement.query.all())
+
+@app.route("/admin/announcement")
+def admin_announcement():
+    require_admin()
+    return render_template("admin/announcement.html")
 
 

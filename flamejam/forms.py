@@ -98,25 +98,19 @@ class NewPassword(Form):
 class VerifyForm(Form):
     pass
 
-class NewJam(Form):
-    title = TextField("Jam title", validators=[Required(), Length(max=128)])
-    theme = TextField("Theme", validators=[Required(), Length(max=128)])
-    start_time = DateTimeField("Start time", format="%Y-%m-%d %H:%M", validators=[Required()])
-    duration = IntegerField("Duration, in hours", validators=[NumberRange(min = 1), Required()], default = 48)
-    team_jam = BooleanField("Team Jam", default = False)
-
 class JamDetailsForm(Form):
     title = TextField("Title", validators=[Required(), Length(max=128)])
     theme = TextField("Theme", validators=[Length(max=128)])
-    team_limit = IntegerField("Team size limit", validators=[Required(), NumberRange(min = 0)])
+    team_limit = IntegerField("Team size limit", validators=[NumberRange(min = 0)])
     start_time = DateTimeField("Start time", format="%Y-%m-%d %H:%M", validators=[Required()])
 
-    registration_duration = IntegerField("Registration duration", validators=[Required(), NumberRange(min = 0)])
-    packaging_duration = IntegerField("Packaging duration", validators=[Required(), NumberRange(min = 0)])
-    rating_duration = IntegerField("Rating duration", validators=[Required(), NumberRange(min = 0)])
-    duration = IntegerField("Duration", validators=[Required(), NumberRange(min = 0)])
+    registration_duration = IntegerField("Registration duration", validators=[Required(), NumberRange(min = 0)], default = 14 * 24)
+    packaging_duration = IntegerField("Packaging duration", validators=[Required(), NumberRange(min = 0)], default = 24)
+    rating_duration = IntegerField("Rating duration", validators=[Required(), NumberRange(min = 0)], default = 24 * 5)
+    duration = IntegerField("Duration", validators=[Required(), NumberRange(min = 0)], default = 24 * 2)
 
-    email = BooleanField("Send announcement email", default = True)
+    description = TextAreaField("Description")
+    restrictions = TextAreaField("Restrictions")
 
 class SubmitEditGame(Form):
     title = TextField("Game title", validators=[Required(), Length(max=128)])

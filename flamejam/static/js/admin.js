@@ -12,13 +12,18 @@ function setCheckboxRowStatus(r) {
     updateCheckedCount();
 }
 
-function filter() {
-    var q = $(this).val();
+function filter(v) {
+    var q = v.val();
 
-    $($(this).attr("data-filter")).each(function() {
+    $(v.attr("data-filter")).each(function() {
         $(this).filter(":contains('" + q + "')").show();
         $(this).filter(":not(:contains('" + q + "'))").hide();
     });
+}
+
+function updateDays(d) {
+    var h = d.parent(".field").find("input").val();
+    d.text("= " + (Math.round(h / 24 * 20) / 20) + " days");
 }
 
 $(document).ready(function() {
@@ -38,6 +43,17 @@ $(document).ready(function() {
 
     // --------------------------------------------------------------
 
-    $("#filter").keyup(filter).change(filter);
+    $("#filter").keyup(function() { filter($(this)); }).change(function() { filter($(this)); });
     filter($("#filter"));
+
+    // --------------------------------------------------------------
+    $(".field .days").each(function() {
+        var d = $(this);
+        d.parent(".field").find("input").change(function() {
+            updateDays(d);
+        }).keyup(function() {
+            updateDays(d);
+        });
+        updateDays(d);
+    });
 });

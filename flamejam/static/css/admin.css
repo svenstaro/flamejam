@@ -1,4 +1,5 @@
-@import url("grid.css");
+@import url("flags.css");
+@import url("bootstrap.min.css");
 
 body {
     color: #333;
@@ -80,7 +81,9 @@ td {
     background: #FF9;
 }
 
-input[type="text"] {
+textarea,
+input[type="text"],
+input[type="number"] {
     border: 1px solid #CCC;
     border-radius: 4px;
     padding: 5px;
@@ -107,6 +110,12 @@ input[type="text"] {
     border: 1px solid #CCC;
 }
 
+p.error, p.info, p.success, p.warning {
+    border-width: 1px;
+    border-style: solid;
+    padding: 5px;
+}
+
 .error {
     border-color: #F00 !important;
     color: #F00 !important;
@@ -131,3 +140,25 @@ input[type="text"] {
     background: #FF8 !important;
 }
 
+form .field {
+    margin-bottom: 20px;
+}
+
+form .field label {
+    display: block;
+    font-weight: bold;
+}
+
+form .field textarea,
+form .field input {
+    width: 100%;
+}
+
+form .field textarea.half,
+form .field input.half {
+    width: 50%;
+}
+
+.form-info {
+    color: #888;
+}

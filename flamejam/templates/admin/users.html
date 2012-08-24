@@ -23,8 +23,13 @@
     </tr>
 {% for user in users %}
     <tr class="checkbox-toggle user-row">
-        <td><input type="checkbox" name="user-{{ user.id }}" /></td>
-        <td>{{ user.username }}</td>
+        <td>
+            <img src="{{ user.getAvatar(16) }}" style="vertical-align: middle; width: 16px; height: 16px; background: #CCC; margin-left: -9px; margin-right: 10px; border: 1px solid #FFF; box-shadow: 0 0 0 1px #AAA;"/>
+            <input type="checkbox" name="user-{{ user.id }}" style="vertical-align: middle;"/>
+        </td>
+        <td>
+            {{ user.username }}
+        </td>
         <td>{{ user.real_name or "n/a" }}</td>
         <td><a href="mailto:{{ user.email}}">{{ user.email }}</a></td>
         <td>{{ user.registered | formattime }}</td>
@@ -43,7 +48,7 @@
     </tr>
 {% endfor %}
 <tr>
-    <th colspan="8">
+    <th colspan="9">
         <input type="submit" name="submit" value="Toggle Deleted" />
         <input type="submit" name="submit" value="Toggle Admin" />
         <span id="table-count">0</span> users selected

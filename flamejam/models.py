@@ -257,11 +257,17 @@ class Jam(db.Model):
     games = db.relationship('Game', backref="jam", lazy = "dynamic")
     registrations = db.relationship("Registration", backref = "jam", lazy = "dynamic")
     teams = db.relationship("Team", backref = "jam", lazy = "dynamic")
+    announcements = db.relationship("Announcement", backref = "jam", lazy = "dynamic")
+
+    description = db.Column(db.Text)
+    restrictions = db.Column(db.Text)
 
     registration_duration = db.Column(db.Integer) # hours
     packaging_duration = db.Column(db.Integer) # hours
     rating_duration = db.Column(db.Integer) # hours
     duration = db.Column(db.Integer) # hours
+
+    last_notification_sent = db.Column(db.Integer, default = -1) # last notification that was sent, e.g. 0 = announcement, 1 = registration, (see status codes)
 
     def __init__(self, title, start_time, duration = 48, team_limit = 0, theme = ''):
         self.title = title
@@ -461,7 +467,7 @@ class Team(db.Model):
 
         # send email
         m = Mail("BaconGameJam Team Invitation")
-        m.render("emails/invitation.html", team = self, sender = sender, recipient = user, invitation = i)
+        m.render("emails/jam/invitation.html", team = self, sender = sender, recipient = user, invitation = i)
         m.addRecipient(user)
         m.send()
         return i
@@ -703,8 +709,13 @@ class Comment(db.Model):
 
 class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    text = db.Column(db.Text)
+    subject = db.Column(db.String(128))
+    message = db.Column(db.Text)
     posted = db.Column(db.DateTime)
+    context = db.Column(db.Enum("new_jam", "registration_start", "jam_start",
+        "packaging_start", "rating_start", "jam_finished", "newsletter"),
+        default = "newsletter")
+    jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
 
     def __init__(self, text):
         self.text = text
@@ -712,3 +723,51 @@ class Announcement(db.Model):
 
     def __repr__(self):
         return '<Announcement %r>' % self.id
+
+    def sendMail(self):
+        users = []
+
+        if self.context == "newsletter":
+            users = User.query.filter_by(notify_newsletter = True).all()
+        elif self.jam:
+            if self.context in ("new_jam", "registration_start"):
+                users = User.query.filter_by(notify_new_jam = True).all()
+            elif self.context in ("jam_start", "packaging_start", "rating_start"):
+                users = User.query.filter_by(notify_jam_start = True).all()
+            elif self.context == "jam_finished":
+                users = User.query.filter_by(notify_jam_finish = True).all()
+
+            u2 = []
+            for user in users:
+                if user.getRegistration(self.jam):
+                    u2.append(user)
+            users = u2
+        else:
+            raise Error('Announcement needs a jam or context "newsletter".')
+
+        """
+        if self.context == "new_jam":
+        elif self.context == "registration_start":
+        elif self.context == "jam_start":
+        elif self.context == "packaging_start":
+        elif self.context == "rating_start":
+        elif self.context == "jam_finished":
+        elif self.context == "newsletter":
+        """
+
+        for user in users:
+            m = Mail(self.subject)
+            m.render("emails/announcements/%s.html" % self.context, jam = self.jam, subject = self.subject, message = self.message)
+            m.addRecipient(user)
+            m.send()
+
+
+
+        """notify_new_jam = db.Column(db.Boolean, default = True)
+    notify_jam_start = db.Column(db.Boolean, default = True)
+    notify_jam_finish = db.Column(db.Boolean, default = True)
+    notify_game_comment = db.Column(db.Boolean, default = True)
+    notify_team_changes = db.Column(db.Boolean, default = True)
+    notify_game_changes = db.Column(db.Boolean, default = True)
+    notify_team_invitation = db.Column(db.Boolean, default = True)
+    notify_newsletter = db.Column(db.Boolean, default = True)"""

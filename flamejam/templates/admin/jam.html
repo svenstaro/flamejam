@@ -1,60 +1,180 @@
 {% extends "admin/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block content %}
+
+{% if mode == "create" %}
+<h1>Announce a new jam</h1>
+
+{% else %}
 <h1>Jam details: {{ jam.title }}</h1>
 
 <h2>Edit details</h2>
 
+<p class="warning">
+    Editing some values may screw up data associated with the jam. Please
+    think before editing these values, especially after jam start.
+</p>
 
-title = TextField("Title", validators=[Required(), Length(max=128)])
-theme = TextField("Theme", validators=[Length(max=128)])
-team_limit = IntegerField("Team size limit", validators=[Required(), NumberRange(min = 0)])
-start_time = DateTimeField("Start time", format="%Y-%m-%d %H:%M", validators=[Required()])
-packaging_duration = IntegerField("Packaging duration", validators=[Required(), NumberRange(min = 0)])
-rating_duration = IntegerField("Rating duration", validators=[Required(), NumberRange(min = 0)])
-duration = IntegerField("Duration", validators=[Required(), NumberRange(min = 0)])
+{% endif %}
 
-email = BooleanField("Send announcement email", default = True)
+<form method="POST">
 
+    {{ form.hidden_tag() }}
+    {{ form_errors(form) }}
+
+    <div class="row-fluid">
+        <div class="span3">
+            <div class="field">
+                {{ form.title.label }}
+                {{ form.title() }}
+            </div>
+
+            <div class="field">
+                {{ form.theme.label }}
+                {{ form.theme() }}
+                <div class="form-info">Will not be shown before thes start date.</div>
+            </div>
+
+            <div class="field">
+                {{ form.team_limit.label }}
+                {{ form.team_limit(class="half") }}
+            </div>
+
+            <div class="field">
+                {{ form.start_time.label }}
+                {{ form.start_time() }}
+                <div class="form-info"><code>YYYY-MM-DD HH:MM</code></div>
+            </div>
+        </div>
+        <div class="span3">
+            <div class="field">
+                {{ form.registration_duration.label }}
+                {{ form.registration_duration(class="half") }}
+                <span class="form-info">hours</span>
+                <span class="form-info days">= ? days</span>
+            </div>
+
+            <div class="field">
+                {{ form.duration.label }}
+                {{ form.duration(class="half") }}
+                <span class="form-info">hours</span>
+                <span class="form-info days">= ? days</span>
+            </div>
+
+            <div class="field">
+                {{ form.packaging_duration.label }}
+                {{ form.packaging_duration(class="half") }}
+                <span class="form-info">hours</span>
+                <span class="form-info days">= ? days</span>
+            </div>
+
+            <div class="field">
+                {{ form.rating_duration.label }}
+                {{ form.rating_duration(class="half") }}
+                <span class="form-info">hours</span>
+                <span class="form-info days">= ? days</span>
+            </div>
+            {% if mode == "edit" %}
+            <p class="info">
+                NOTICE: When you make changes about the times / durations, you may need to send
+                the notifications manually below.
+            </p>
+            {% endif %}
+        </div>
+        <div class="span6">
+            <div class="field">
+                {{ form.description.label }}
+                {{ form.description(rows = 5) }}
+            </div>
+
+            <div class="field">
+                {{ form.restrictions.label }}
+                {{ form.restrictions(rows = 5) }}
+            </div>
+
+            <div style="text-align: right;">
+                <input type="submit" value="Save settings" class="btn btn-large">
+            </div>
+        </div>
+    </div>
+</form>
+
+{% if mode == "edit" %}
 <h2>Jam Notifications</h2>
 
+<p>
+    Notifications should be sent automatically when the status changes.
+    If not, please use the following table to check wich notifications
+    should be sent and (re)send them manually.
+</p>
+
+{% set status = jam.getStatus() %}
+
+{% macro activeStatus(s) %}
+     {% if status.code > s %}
+     <td><b style="font-size: 0.8em; color: gray;">DONE</b></td>
+     {% elif status.code == s %}
+     <td><b style="font-size: 0.8em; color: green;">ACTIVE</b></td>
+     {% else %}
+     <td><b style="font-size: 0.8em; color: gray;">WAITING</b></td>
+     {% endif %}
+{% endmacro %}
+
+{% set status = jam.getStatus() %}
+{% macro sentStatus(s) %}
+     {% if jam.last_notification_sent >= s %}
+     <td><b style="font-size: 0.8em; color: green;">SENT</b></td>
+     {% else %}
+     <td><b style="font-size: 0.8em; color: {% if status.code >= s %}red{% else %}gray{% endif %};">NOT SENT</b></td>
+     {% endif %}
+{% endmacro %}
+
+{% macro notificationStatus(s) %}
+    {{ activeStatus(s) }}
+    {{ sentStatus(s) }}
+
+    <td>
+        {% if s == jam.last_notification_sent + 1 and status.code >= s %}
+            <a href="#">Send now</a>
+        {% endif %}
+    </td>
+
+{% endmacro %}
+
 <table>
-    <tr><th>Notification type</th><th>Status</th><th></th></tr>
+    <tr><th>Notification type</th><th>Active phase</th><th>Status</th><th></th></tr>
     <tr>
         <td>Announcement</td>
-        <td><b style="font-size: 0.8em; color: green;">SENT</b></td>
-        <td></td>
+        {{ notificationStatus(0) }}
     </tr>
 
     <tr>
         <td>Registrations open</td>
-        <td><b style="font-size: 0.8em; color: green;">SENT</b></td>
-        <td></td>
+        {{ notificationStatus(1) }}
     </tr>
 
     <tr>
         <td>Jam start</td>
-        <td><b style="font-size: 0.8em; color: gray;">NOT SENT</b></td>
-        <td><a href="#">Send now</a></td>
+        {{ notificationStatus(2) }}
     </tr>
 
     <tr>
-        <td>Jam finish / Packaging start</td>
-        <td><b style="font-size: 0.8em; color: gray;">NOT SENT</b></td>
-        <td></td>
+        <td>Packaging start</td>
+        {{ notificationStatus(3) }}
     </tr>
 
     <tr>
-        <td>Packaging finish / Voting start</td>
-        <td><b style="font-size: 0.8em; color: gray;">NOT SENT</b></td>
-        <td></td>
+        <td>Rating start</td>
+        {{ notificationStatus(4) }}
     </tr>
 
     <tr>
-        <td>Voting finish / Winners</td>
-        <td><b style="font-size: 0.8em; color: gray;">NOT SENT</b></td>
-        <td></td>
+        <td>Finished</td>
+        {{ notificationStatus(5) }}
     </tr>
 </table>
+
+{% endif %}
 
 {% endblock %}

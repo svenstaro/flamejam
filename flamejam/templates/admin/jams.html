@@ -4,11 +4,18 @@
 <h1>List of jams</h1>
 
 <p>
-    Quick filter: <input type="text" placeholder="Start typing..." id="filter" data-filter=".jam-row" />
+
 </p>
 
 
 <table>
+    <tr>
+        <td colspan="8">
+            <b style="margin-right: 10px;">Quick filter</b> <input type="text" placeholder="Start typing..." id="filter" data-filter=".jam-row" />
+
+            <a href="{{ url_for('admin_jam') }}" style="float: right; margin-top: 2px;" class="btn">Create a jam</a>
+        </td>
+    </tr>
     <tr>
         <th>Title / Theme</th>
         <th>Status</th>
@@ -16,6 +23,7 @@
         <th>Start Time</th>
         <th>Duration</th>
         <th>Flags</th>
+        <th></th>
         <th></th>
     </tr>
 {% for jam in jams %}
@@ -35,9 +43,15 @@
             + {{ jam.rating_duration }}h
         </td>
         <td>
+            {% if jam.restrictions %}
             <b style="font-size: 0.8em; color: orange;">RESTRICTIONS</b><br />
+            {% endif %}
+
+            {% if jam.team_limit != 1 %}
             <b style="font-size: 0.8em; color: green;">TEAMS</b><br />
+            {% endif %}
         </td>
+        <td><a href="{{ jam.url() }}">Jam page</a></td>
         <td>
             <a href="{{ url_for('admin_jam', id = jam.id) }}">More »</a>
         </td>

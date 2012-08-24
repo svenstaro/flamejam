@@ -3,7 +3,7 @@
         <ul class="form-errors">
             {% for field_name in form.errors %}
                 {% for error in form.errors[field_name] %}
-                    <li>{{ error }}</li>
+                    <li>{{ form[field_name].label }}: {{ error }}</li>
                 {% endfor %}
             {% endfor %}
         </ul>

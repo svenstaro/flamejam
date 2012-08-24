@@ -23,7 +23,7 @@
 <h1>{{ jam.title }}<small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme and jam.getStatus().code > 1 else "Theme not announced" }}</small></h1>
 
 <div class="row-fluid">
-    <div class="span5">
+    <div class="span4">
         <h2>Jam Details</h2>
         <table class="details">
             <tr><th>Announced</th><td>{{ jam.announced | humantime }}</a></td></tr>
@@ -59,6 +59,16 @@
             </tr>
         </table>
 
+        {% if jam.description %}
+        <h2>Description</h2>
+        {{ jam.description | markdown }}
+        {% endif %}
+
+        {% if jam.restrictions %}
+        <h2>Restrictions</h2>
+        {{ jam.restrictions | markdown }}
+        {% endif %}
+
         {% if jam.getStatus().code == 5 %}
         <h2>Winners</h2>
             {% if jam.games.count() > 1  %}
@@ -82,7 +92,7 @@
         {% endif %}
 
     </div>
-    <div class="span7">
+    <div class="span8">
         <h2>Jam Events</h2>
         <p>
             EVENT TIMELINE HERE!
