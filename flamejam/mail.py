@@ -1,4 +1,4 @@
-from flamejam import app
+from flamejam import app, mail
 from flamejam.models import Participant
 from flask.ext.mail import Message
 from flask import render_template
