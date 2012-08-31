@@ -22,25 +22,39 @@ function countdown() {
         if(t == null) {
             return;
         }
-        
-        var end_utc = new Date(t);
+
+        var end_utc = new Date(t + " UTC");
         if (isNaN(end_utc.getTime())) {
-                end_utc = new Date(t.split(".")[0].replace(/-/g, "/"));
+            end_utc = new Date(t.split(".")[0].replace(/-/g, "/") + " UTC");
         }
 
-	var now_utc = new Date();
-	var diff_msec = new Date(end_utc - now_utc);
+        var now_utc = new Date();
+        var now_utc = new Date();
+        var diff_msec = new Date(end_utc - now_utc);
 
         if(diff_msec < 0) {
             return;
         }
-        var diff = new Date(diff_msec);
+
+        var ds = Math.floor(diff_msec / 1000);
+        var ms = diff_msec - ds * 1000;
+
+        var days = Math.floor(ds / 60 / 60 / 24);
+        ds = ds - days * 60 * 60 *  24;
+
+        var hours = Math.floor(ds / 60 / 60);
+        ds = ds - hours * 60 * 60;
+
+        var minutes = Math.floor(ds / 60);
+        ds = ds - minutes * 60;
+
+        var seconds = ds;
 
         var times = new Array(
-            diff.getDate() - 1,
-            diff.getHours(),
-            diff.getMinutes(),
-            diff.getSeconds()
+            days,
+            hours,
+            minutes,
+            seconds
             );
 
         times[0] = leadingZero(times[0], 2);
