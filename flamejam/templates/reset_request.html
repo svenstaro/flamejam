@@ -7,14 +7,17 @@
 
     <form action="{{ url_for('reset_request') }}" method="post">
         {{ form.hidden_tag() }}
-        <div class="box" style="width: 400px; margin: 0 auto;">
+        <div class="box" style="width: 500px; margin: 0 auto;">
             <h4>Reset</h4>
             <div class="box-content">
                 {{ form_errors(form) }}
                 <table class="details">
                     <tr>
                         <th>{{ form.username.label }}</th>
-                        <td>{{ form.username(class="text-input", style="width: 275px;") }}</td>
+                        <td>{{ form.username(class="text-input", style="width: 375px;") }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">{{ form.captcha }}</td>
                     </tr>
                 </table>
             </div>
