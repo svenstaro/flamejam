@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+
+<h1>{{ subject }}</h1>
+
+{{ message | markdown }}
+
+{% endblock %}

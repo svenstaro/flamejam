@@ -1,10 +1,34 @@
 {% extends "admin/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block content %}
-<h1>Write announcement</h1>
-
-<form action="{{ url_for('admin_announcement') }}" method="post">
-
-</form>
+<div class="row-fluid">
+    <div class="span6">
+        <h1>Write announcement</h1>
+        <form action="{{ url_for('admin_announcement') }}" method="post">
+            {{ form.hidden_tag() }}
+            {{ form_errors(form) }}
+            <div class="field">
+                {{ form.subject.label }}
+                {{ form.subject(id="announcement-subject", class="announcement-input") }}
+            </div>
+            <div class="field">
+                {{ form.message.label }}
+                {{ form.message(rows = 10, id="announcement-message", class="announcement-input") }}
+            </div>
+            <div style="text-align: right;">
+                <span style="margin-right: 10px;">Parsed with markdown</span>
+                <input type="submit" class="btn btn-large" value="Send Announcement Now" />
+            </div>
+        </form>
+    </div>
+    <div class="span6">
+        <h3>Preview</h3>
+        <div id="announcement-preview"></div>
+        <script>
+            setInterval("updatePreview()", 2000);
+        </script>
+    </div>
+</div>
 
 {% endblock %}

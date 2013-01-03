@@ -162,3 +162,9 @@ form .field input.half {
 .form-info {
     color: #888;
 }
+
+#announcement-preview {
+    border: 2px solid #CCC;
+    padding: 20px;
+    background: #FFF;
+}

@@ -239,3 +239,8 @@ class InviteForm(Form):
 class DevlogForm(Form):
     title = TextField("Title", validators=[Required()])
     text = TextAreaField("Content", validators=[Required()])
+
+class AdminWriteAnnouncement(Form):
+    subject = TextField("Subject", validators=[Required()])
+    message = TextAreaField("Content", validators=[Required()])
+

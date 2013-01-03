@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = 'lolsecret'
 app.config.from_pyfile('../flamejam.cfg', silent=True)
 app.config.from_pyfile('../recaptcha.cfg', silent=True)
 db = SQLAlchemy(app)
-Markdown(app, safe_mode="escape")
+markdown_object = Markdown(app, safe_mode="escape")
 
 import flamejam.filters
 import flamejam.views

@@ -717,8 +717,8 @@ class Announcement(db.Model):
         default = "newsletter")
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
 
-    def __init__(self, text):
-        self.text = text
+    def __init__(self, message):
+        self.message = message
         self.posted = datetime.utcnow()
 
     def __repr__(self):
@@ -745,29 +745,11 @@ class Announcement(db.Model):
         else:
             raise Error('Announcement needs a jam or context "newsletter".')
 
-        """
-        if self.context == "new_jam":
-        elif self.context == "registration_start":
-        elif self.context == "jam_start":
-        elif self.context == "packaging_start":
-        elif self.context == "rating_start":
-        elif self.context == "jam_finished":
-        elif self.context == "newsletter":
-        """
+        # new_jam, registration_start, jam_start, packaging_start, rating_start, jam_finished, newsletter
 
+        from flamejam.mail import Mail
         for user in users:
-            m = Mail(self.subject)
-            m.render("emails/announcements/%s.html" % self.context, jam = self.jam, subject = self.subject, message = self.message)
+            m = Mail(("BaconGameJam Newsletter - " if self.context == "newsletter" else "") + self.subject)
+            m.render("emails/announcements/%s.html" % self.context, recipient = user, jam = self.jam, subject = self.subject, message = self.message)
             m.addRecipient(user)
             m.send()
-
-
-
-        """notify_new_jam = db.Column(db.Boolean, default = True)
-    notify_jam_start = db.Column(db.Boolean, default = True)
-    notify_jam_finish = db.Column(db.Boolean, default = True)
-    notify_game_comment = db.Column(db.Boolean, default = True)
-    notify_team_changes = db.Column(db.Boolean, default = True)
-    notify_game_changes = db.Column(db.Boolean, default = True)
-    notify_team_invitation = db.Column(db.Boolean, default = True)
-    notify_newsletter = db.Column(db.Boolean, default = True)"""

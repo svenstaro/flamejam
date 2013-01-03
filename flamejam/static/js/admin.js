@@ -1,3 +1,28 @@
+// http://stackoverflow.com/a/2196683/402551
+// Thanks, Nick Craver!
+jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function(arg) {
+    return function( elem ) {
+        return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+    };
+});
+
+function parseMarkdown(input, callback) {
+    $.ajax({
+        type: "POST",
+        url: "/ajax/markdown",
+        cache: false,
+        data: "input=" + input,
+        success: callback
+    });
+}
+
+function updatePreview() {
+    parseMarkdown('# ' + $("#announcement-subject").val() + "\n\n" + $("#announcement-message").val(),
+        function(data) {
+            $("#announcement-preview").html(data);
+        });
+}
+
 function updateCheckedCount() {
     var l = $("#checkbox-toggle-table").find(":checkbox:checked").length;
     $("#table-count").text(l);
@@ -16,8 +41,8 @@ function filter(v) {
     var q = v.val();
 
     $(v.attr("data-filter")).each(function() {
-        $(this).filter(":contains('" + q + "')").show();
-        $(this).filter(":not(:contains('" + q + "'))").hide();
+        $(this).filter(":Contains('" + q + "')").show();
+        $(this).filter(":not(:Contains('" + q + "'))").hide();
     });
 }
 
@@ -56,4 +81,6 @@ $(document).ready(function() {
         });
         updateDays(d);
     });
+
+    $(".announcement-input").change(updatePreview);
 });

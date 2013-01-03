@@ -1222,11 +1222,25 @@ def admin_jam(id = 0):
 @app.route("/admin/announcements")
 def admin_announcements():
     require_admin()
+
     return render_template("admin/announcements.html", announcements = Announcement.query.all())
 
-@app.route("/admin/announcement")
+@app.route("/admin/announcement", methods = ["GET", "POST"])
 def admin_announcement():
     require_admin()
-    return render_template("admin/announcement.html")
+
+    form = AdminWriteAnnouncement()
+
+    if form.validate_on_submit():
+        announcement = Announcement(form.message.data)
+        announcement.subject = form.subject.data
+        announcement.context = "newsletter"
+        announcement.sendMail()
+        flash("Your announcement has been sent to the users.")
+
+    return render_template("admin/announcement.html", form = form)
 
 
+@app.route("/ajax/markdown", methods = ["POST"])
+def ajax_markdown():
+    return str(markdown_object(request.form["input"]))
