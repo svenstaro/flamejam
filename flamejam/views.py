@@ -710,7 +710,7 @@ def show_game(jam_slug, game_slug, action=None):
         return redirect(url_for('show_game', jam_slug = jam_slug, game_slug = game_slug))
 
     if action == "edit":
-        require_user(game.user)
+        require_user(game.team.members)
         error = ""
         edit_form = SubmitEditGame()
         if edit_form.validate_on_submit():
@@ -734,7 +734,7 @@ def show_game(jam_slug, game_slug, action=None):
         return render_template('edit_game.html', game = game, form = edit_form, error = error)
 
     if action == "add_screenshot":
-        require_user(game.user)
+        require_user(game.team.members)
 
         screen_form = GameAddScreenshot()
         if screen_form.validate_on_submit():
@@ -747,7 +747,7 @@ def show_game(jam_slug, game_slug, action=None):
         return render_template("add_screenshot.html", game = game, form = screen_form)
 
     if action == "add_package":
-        require_user(game.user)
+        require_user(game.team.members)
 
         package_form = GameAddPackage()
         if package_form.validate_on_submit():
@@ -760,7 +760,7 @@ def show_game(jam_slug, game_slug, action=None):
         return render_template("add_package.html", game = game, form = package_form)
 
     if action == "add_team_member":
-        require_user(game.user)
+        require_user(game.team.members)
 
         jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
         if jam.team_jam == False:
@@ -791,7 +791,7 @@ def show_game(jam_slug, game_slug, action=None):
         return render_template("add_team_member.html", game = game, form = team_form)
 
     if action == "remove_screenshot":
-        require_user(game.user)
+        require_user(game.team.members)
 
         remove_id = request.args.get("remove_id", "")
         s = GameScreenshot.query.filter_by(game_id = game.id, id = remove_id).first_or_404()
@@ -801,7 +801,7 @@ def show_game(jam_slug, game_slug, action=None):
         return redirect(game.url())
 
     if action == "remove_package":
-        require_user(game.user)
+        require_user(game.team.members)
 
         remove_id = request.args.get("remove_id", "")
         s = GamePackage.query.filter_by(game_id = game.id, id = remove_id).first_or_404()
@@ -811,7 +811,7 @@ def show_game(jam_slug, game_slug, action=None):
         return redirect(game.url())
 
     if action == "remove_team_member":
-        require_user(game.user)
+        require_user(game.team.members)
 
         jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
         if jam.team_jam == False:
@@ -827,7 +827,7 @@ def show_game(jam_slug, game_slug, action=None):
         return redirect(game.url())
 
     if action == "quit":
-        require_user(list(game.team))
+        require_user(game.team.members)
 
         jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
         if jam.team_jam == False:
@@ -1013,7 +1013,7 @@ def statistics():
     for jam in Jam.query.all():
         users = 0
         for game in jam.games:
-            teamsize = len(game.team) + 1 # for the author
+            teamsize = len(game.team.members) # for the author
             users += teamsize
 
             if teamsize > biggest_team_size:

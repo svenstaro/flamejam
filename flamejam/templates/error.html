@@ -10,8 +10,8 @@
 
 {% block content %}
 
-<div class="error-page" style="text-align: center; color: #222;">
+<div class="error-page error-{{ error.code }}" style="text-align: center; color: #222;">
     <div style="font-size: 200pt;">{{ error.code }}</div>
-    <div style="font-size: 40pt; font-weight: bold;">{{ error.name }}</div>
+    <div style="font-size: 40pt; font-weight: bold;">{{ "NOPE!!!" if error.code == 403 else error.name }}</div>
 </div>
 {% endblock %}

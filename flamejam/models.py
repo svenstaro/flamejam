@@ -19,7 +19,7 @@ import random
 def findLocation(loc):
 #    try:
         r = requests.get("http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false&language=en" % loc)
-        c = r.json["results"][0]
+        c = r.json()["results"][0]
         a = c["address_components"]
 
         city = ""
