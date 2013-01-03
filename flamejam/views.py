@@ -105,7 +105,7 @@ def reset_request():
         user.token = randint(0, sys.maxint)
         db.session.commit()
 
-        m = Mail("Welcome to Bacon Game Jam, " + user.username)
+        m = Mail("Reset your BGJ-Password")
         m.addRecipient(user)
         m.render("emails/account/reset_password.html", recipient = user)
         m.send()

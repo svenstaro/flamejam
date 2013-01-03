@@ -90,6 +90,7 @@ class UserRegistration(Form):
 
 class ResetPassword(Form):
     username = TextField("Username", validators=[UsernameValidator()])
+    captcha = RecaptchaField()
 
 class NewPassword(Form):
     password = PasswordField("Password", validators=[Length(min=8, message = "Please enter a password of at least 8 characters.")])
