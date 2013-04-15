@@ -10,7 +10,14 @@
 
 {% block content %}
 
-<h1>{{ game.title }} <small>for <a href="{{ game.jam.url() }}">{{ game.jam.title }}</a></small></h1>
+<h1>
+    {{ game.title }}
+    <small style="margin-right: 20px;">for <a href="{{ game.jam.url() }}">{{ game.jam.title }}</a></small>
+
+    {% if current_user and current_user.inTeam(game.team) %}
+        <a href="{{ game.url('edit') }}" class="btn btn-primary btn-normal">Edit game</a>
+    {% endif %}
+</h1>
 
 <div class="modal hide" id="downloadModal">
     <div class="modal-header">
@@ -59,15 +66,6 @@
         <h2>Toolbox</h2>
         <div class="toolbox">
             <a class="btn btn-primary btn-mini" data-toggle="modal" href="#downloadModal">Download</a>
-        {% if current_user and current_user.inTeam(game.team) %}
-            <a href="{{ game.url('edit') }}" class="btn btn-inverse btn-mini">Edit game</a>
-            {% if game.jam.team_jam %}
-                <p><a href="{{ game.url('add_team_member') }}" class="btn btn-inverse btn-mini">Add team member</a>
-            {% endif %}
-            <a href="{{ game.url('add_screenshot') }}" class="btn btn-inverse btn-mini">Add screenshot</a>
-            <a href="{{ game.url('add_package') }}" class="btn btn-inverse btn-mini">Add package</a>
-            <a href="{{ game.url('quit') }}" class="btn btn-inverse btn-mini">Quit the team</a>
-        {% endif %}
         </div>
     </div>
 </div>

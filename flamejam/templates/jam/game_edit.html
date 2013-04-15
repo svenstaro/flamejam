@@ -1,0 +1,41 @@
+{% set jam = game.jam %}
+{% set team = game.team %}
+{% extends "jam/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block subbreadcrumb %}
+    <li><a href="{{ game.url() }}">{{ game.title }}</a></li>
+    <li><a href="#">Edit</a></li>
+{% endblock %}
+
+
+{% block content %}
+
+<h1>Edit Game</h1>
+
+<div class="row-fluid">
+    <div class="span8">
+        <form action="{{ url_for('show_game', jam_slug = game.jam.slug, game_slug = game.slug, action = 'edit') }}" method="post" class="block">
+        {{ form.hidden_tag() }}
+        {{ form_errors(form) }}
+
+        <h2>Game Settings</h2>
+
+        <div class="field">
+            {{ form.name.label() }}
+            {{ form.name() }}
+        <div class="field">
+
+        <div class="field">
+            {{ form.description(rows = 20, style="width: 100%;") }}
+        </div>
+
+        <p style="text-align: center">
+            <input type="reset" value="Reset" class="btn btn-inverse" />
+            <input type="submit" value="Save settings" class="btn btn-primary" />
+        </p>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

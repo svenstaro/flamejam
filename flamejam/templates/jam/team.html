@@ -11,10 +11,16 @@
 
 <h1>
     {{ team.name }}
-    <small>for {{ jam.title }}</small>
+    <small style="margin-right: 20px;">for {{ jam.title }}</small>
 
     {% if current_user and current_user.inTeam(team) %}
-    <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" class="btn btn-primary" style="margin-left: 20px;">Team settings</a>
+        <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" class="btn btn-primary btn-normal">Team settings</a>
+
+    {% if team.jam.team_jam %}
+        <p><a href="#" class="btn btn-inverse btn-normal">Invite member</a>
+    {% endif %}
+
+        <a href="#" class="btn btn-inverse btn-normal">Quit the team</a>
     {% endif %}
 </h1>
 

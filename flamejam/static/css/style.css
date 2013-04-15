@@ -573,6 +573,7 @@ table.details {
 table.details th,
 table.details td {
     padding: 4px 8px;
+    vertical-align: top;
 }
 
 table.details th {

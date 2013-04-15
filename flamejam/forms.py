@@ -113,15 +113,15 @@ class JamDetailsForm(Form):
     description = TextAreaField("Description")
     restrictions = TextAreaField("Restrictions")
 
-class SubmitEditGame(Form):
-    title = TextField("Game title", validators=[Required(), Length(max=128)])
+class GameEditForm(Form):
+    name = TextField("Game title", validators=[Required(), Length(max=128)])
     description = TextAreaField("Description", validators=[Required()])
 
-class GameAddScreenshot(Form):
+class GameAddScreenshotForm(Form):
     url = TextField("URL", validators = [Required(), URL()])
     caption = TextField("Caption", validators = [Required()])
 
-class GameAddTeamMember(Form):
+class GameAddTeamMemberForm(Form):
     username = TextField("Username:", validators = [Required(), UsernameExists()])
 
 from models import game_package_type_string
@@ -243,4 +243,3 @@ class DevlogForm(Form):
 class AdminWriteAnnouncement(Form):
     subject = TextField("Subject", validators=[Required()])
     message = TextAreaField("Content", validators=[Required()])
-

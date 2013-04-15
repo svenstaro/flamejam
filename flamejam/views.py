@@ -519,7 +519,7 @@ def new_game(jam_slug):
             return redirect(game.url())
 
     if form.validate_on_submit():
-        title = form.title.data
+        title = form.name.data
         new_slug = models.get_slug(title)
         description = form.description.data
         if Game.query.filter_by(slug = new_slug, jam = jam).first():
@@ -712,9 +712,9 @@ def show_game(jam_slug, game_slug, action=None):
     if action == "edit":
         require_user(game.team.members)
         error = ""
-        edit_form = SubmitEditGame()
+        edit_form = GameEditForm()
         if edit_form.validate_on_submit():
-            title = edit_form.title.data
+            title = edit_form.name.data
             new_slug = models.get_slug(title)
             description = edit_form.description.data
             old_game = Game.query.filter_by(slug = new_slug, jam = jam).first()
@@ -728,10 +728,10 @@ def show_game(jam_slug, game_slug, action=None):
                 flash("Your changes have been saved.", "success")
                 return redirect(game.url())
         elif request.method != "POST":
-            edit_form.title.data = game.title
+            edit_form.name.data = game.title
             edit_form.description.data = game.description
 
-        return render_template('edit_game.html', game = game, form = edit_form, error = error)
+        return render_template('jam/game_edit.html', game = game, form = edit_form, error = error)
 
     if action == "add_screenshot":
         require_user(game.team.members)
