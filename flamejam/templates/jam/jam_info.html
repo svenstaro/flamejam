@@ -22,10 +22,25 @@
 
 <h1>{{ jam.title }}<small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme and jam.getStatus().code > 1 else "Theme not announced" }}</small></h1>
 
+{% set r = current_user.getRegistration(jam) if current_user else None %}
+    {% if r %}
+    <a class="btn" href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister from this jam</a>
+    <a class="btn" href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}">
+        {% if r.show_in_finder %}
+        Hide me in the team finder
+        {% else %}
+        Show me in the team finder
+        {% endif %}
+    </a>
+
+    {% else %}
+    <a class="btn" href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register for this jam</a>
+    {% endif %}
+
 <div class="row-fluid">
     <div class="span4">
         <h2>Jam Details</h2>
-        <table class="details">
+        <table class="details full">
             <tr><th>Announced</th><td>{{ jam.announced | humantime }}</a></td></tr>
             <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.duration }} hours</td></tr>
@@ -42,7 +57,7 @@
             {% if status.code == 3 or status.code == 4 %}
             <tr><th>Rating deadline</th><td>{{ jam.rating_end | humantime }}</td></tr>
             {% endif %}
-            <tr style="height: 10px;"></tr>
+
             <tr>
                 <th>Participants</th>
                 <td>{{ jam.registrations.count() }} users
@@ -99,7 +114,7 @@
         </p>
 
         <div>
-            <a href="#" class="btn btn-inverse">more …</a>
+            <a href="#" class="btn">more …</a>
         </div>
     </div>
 </div>

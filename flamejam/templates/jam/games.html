@@ -8,25 +8,41 @@
 
 {% block content %}
 
-<h1>Games <small>This list is randomly shuffled while ratings are hidden.</small></h1>
+<h1>Games</h1>
+
+<div class="alert alert-info">This list is randomly shuffled while ratings are hidden.</div>
 
 {% if jam.games.all() | length == 0 %}
     <p>There are no games yet.</p>
 {% else %}
-    <ul class="games">
+    <table class="tabular full">
+        <tr class="sorters">
+            <th></th>
+            <th>Game Title</th>
+            <th>Team</th>
+            <th>Members</th>
+            <th>Screenshots</th>
+            <th class="nosort">Download</th>
+            <th>Rating</th>
+            <th></th>
+        </tr>
         {% for game in jam.getShuffledGames() %}
-        <li><a href="{{ game.url() }}">
-
-            {% set s = game.screenshots[-1] %}
-            {% if s %}
-            <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
-            {% else %}
-            <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
-            {% endif %}
-
-            <span>{{ game.title }}</span>
-        </a></li>
+        <tr>
+            <td>{{ loop.index }}</th>
+            <td><a href="{{ game.url() }}">{{ game.title }}</a></th>
+            <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
+            <td data-value="{{ game.team.members | length }}">
+                {% for m in game.team.members %}
+                <a href="{{ m.url() }}">{{ m.username }}</a>
+                {% endfor %}
+            </th>
+            <td>{{ game.screenshots.count() }}</th>
+            <td><a href="#">Linux</a> | <a href="#">MacOS X</a> </th>
+            <td>n/a</td>
+            <td></td>
+        </tr>
         {% endfor %}
+    </table>
     </ul>
 {% endif %}
 

@@ -32,127 +32,76 @@
     </head>
     <body>
         <div id="header">
-            <div id="top-navigation">
+            <div class="padding">
+                <div class="top-navigation">
+                    <ul>
+                        <li><a href="{{ url_for('rules') }}">Rules</a></li>
+                        <li><a href="{{ url_for('faq') }}">Help</a></li>
+                        <li><a href="{{ url_for('subreddit') }}">r/bacongamejam</a></li>
+                        <li><a href="{{ url_for('contact') }}#irc">IRC</a></li>
+                        <li><a href="{{ url_for('statistics') }}">Stats</a></li>
+                        <li><a href="{{ url_for('map') }}">Map</a></li>
+                        <li><a href="{{ url_for('announcements') }}">Announcements</a></li>
+                        {% if current_user %}
+                            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                        {% endif %}
+                    </ul>
 
-                <ul>
-                    <li><a href="{{ url_for('rules') }}">Rules</a></li>
-                    <li><a href="{{ url_for('faq') }}">Help</a></li>
-                    <li><a href="{{ url_for('subreddit') }}">r/bacongamejam</a></li>
-                    <li><a href="{{ url_for('contact') }}#irc">IRC</a></li>
-                    <li><a href="{{ url_for('statistics') }}">Stats</a></li>
-                    <li><a href="{{ url_for('map') }}">Map</a></li>
-                    <li><a href="{{ url_for('announcements') }}">Announcements</a></li>
                     {% if current_user %}
-                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                    {% endif %}
-                </ul>
-
-                <div id="account">
-                    {% if current_user %}
-                    <a href="{{ url_for('profile') }}">
-                        <img class="avatar" src="{{ current_user.getAvatar(24) }}" width="24" height="24" />
-                        {{ current_user.username }}
-                    </a>
-
+                        <a href="{{ url_for('profile') }}" class="btn btn-small" id="account">
+                            <img class="avatar" src="{{ current_user.getAvatar(16) }}" width="16" height="16" />
+                            {{ current_user.username }}
+                        </a>
                     {% else %}
-                    <a href="{{ url_for('login') }}">Login / Signup</a>
+                        <a href="{{ url_for('login') }}" class="btn btn-small">Login / Signup</a>
                     {% endif %}
                 </div>
 
-
-            </div>
-
-            <div id="title">
-                <a href="{{ url_for('home') }}">
-                    <div id="logo"></div>
-                    BaconGameJam
-                </a>
+                <div id="title">
+                    <a href="{{ url_for('home') }}">
+                        <div id="logo"></div>
+                        BaconGameJam
+                    </a>
+                </div>
             </div>
         </div>
         <div id="navigation">
-            <div class="right">
-                <form action="{{ url_for('search') }}">
-                    <input class="search" type="text" placeholder="Search..." name="q" />
-                </form>
-            </div>
+            <div class="padding">
+                <div class="right">
+                    <form action="{{ url_for('search') }}">
+                        <input class="text search" type="text" placeholder="Search..." name="q" />
+                    </form>
+                </div>
 
-            <div class="left">
-                <ul class="breadcrumb">
-                    {% if getPath(request.endpoint) %}
-                        {% for p in getPath(request.endpoint) if p.link %}
-                            <li><a href="{{ p.link }}">{{ p }}</a></li>
-                        {% endfor %}
-                    {% endif %}
-                    {% block breadcrumb %}{% endblock %}
-                </ul>
-            </div>
+                <div class="left">
+                    {% block menu %}
+                        Current Jam: <a href="{{ current_jam.url() }}">{{ current_jam.title }}</a>
+                    {% endblock %}
+                </div>
 
-            <div class="center">
-                {% block  center %}
-
-                {% endblock %}
+                <div class="center">
+                    {% block  center %}
+                    {% endblock %}
+                </div>
             </div>
         </div>
         <div id="content">
-            <div id="sidebar"><div class="padding">
-                {% block sidebar %}
-    {% if active_jams %}
-        {% for jam in all_jams if jam.start_time > current_datetime %}
-            <h1><a href="{{ jam.url() }}">{{ jam.title }}</a></h1>
-            starts in {{ current_datetime | humandelta(jam.start_time) }}
-            <hr />
-        {% endfor %}
+            <div class="padding">
 
-        {% for jam in all_jams if jam.start_time < current_datetime < jam.end_time %}
-            <h1><a href="{{ jam.url() }}">{{ jam.title }}</a></h1>
-            ends in {{ current_datetime | humandelta(jam.end_time) }}
-            <hr />
-        {% endfor %}
+            {% for category, message in get_flashed_messages(with_categories = True) %}
+                <div class="alert alert-{{ category if category and category != 'message' else 'info' }}">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
 
-        {% for jam in all_jams if jam.end_time < current_datetime < jam.packaging_deadline %}
-            <h1><a href="{{ jam.url() }}">{{ jam.title }}</a></h1>
-            packaging ends in {{ current_datetime | humandelta(jam.packaging_deadline) }}
-            <hr />
-        {% endfor %}
-
-        {% for jam in all_jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
-            <h1><a href="{{ jam.url() }}">{{ jam.title }}</a></h1>
-            rating for another {{ current_datetime | humandelta(jam.rating_end) }}
-            <hr />
-        {% endfor %}
-    {% else %}
-        <h1>No Active Jams</h1>
-    {% endif %}
-
-    {% if inactive_jams %}
-        <h1>{{ inactive_jams }} previous jam{% if inactive_jams != 1 %}s{% endif %}</h2>
-        <ul class="sidebar">
-        {% for jam in all_jams if jam.rating_end < current_datetime %}
-            <li>
-                <a href="{{ jam.url() }}">{{ jam.title }}</a>
-
-            </li>
-        {% endfor %}
-    {% else %}
-        <h1>No previous Jams</h1>
-    {% endif %}
-
-                {% endblock %}
-            </div></div>
-            <div id="page"><div class="padding">
-                {% block content %}
-                     NO CONTENT!
-                {% endblock %}
-            </div></div>
+            {% block content %}
+                 NO CONTENT!
+            {% endblock %}
+            </div>
         </div>
         <div id="footer">
+            {% include "footer.html" %}
         </div>
-
-
-        <ul id="flashes">
-            {% for category, message in get_flashed_messages(with_categories = True) %}
-                <li class="{{ category if category and category != 'message' else 'info' }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
     </body>
 </html>

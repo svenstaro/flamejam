@@ -15,34 +15,26 @@ from flamejam.forms import *
 from flamejam.login import *
 from flamejam.mail import *
 
-@app.route('/')
-@path("Index")
-def index():
+def get_current_jam():
     for jam in Jam.query.all():
         if jam.getStatus().code == JamStatusCode.RUNNING:
-            return redirect(jam.url())
-    return redirect(url_for("home"))
+            return jam
+    return None
 
 @app.context_processor
 def inject():
-    jams = Jam.query.all()
-    active_count = 0
-    inactive_count = 0
-    for jam in jams:
-        if jam.getStatus().code == JamStatusCode.FINISHED:
-            inactive_count += 1
-        else:
-            active_count += 1
-    return dict(all_jams = jams, active_jams = active_count, inactive_jams = inactive_count)
+    return dict(current_jam = get_current_jam())
 
+@app.route('/')
+def index():
+    jam = get_current_jam()
+    return redirect(jam.url() if jam else url_for("home"))
 
 @app.route("/home")
-@path("Home")
 def home():
-    return render_template('index.html')
+    return render_template("index.html", all_jams = Jam.query.all())
 
 @app.route('/login', methods=['GET', 'POST'])
-@path("Login")
 def login():
     if get_current_user():
         flash("You are already logged in.", "info")
@@ -92,7 +84,6 @@ def login():
     return render_template('account/login.html', login_form = login_form, register_form = register_form)
 
 @app.route('/reset', methods=['GET', 'POST'])
-@path("Reset")
 def reset_request():
     if get_current_user():
         flash("You are already logged in.", "info")
@@ -114,7 +105,6 @@ def reset_request():
     return render_template('reset_request.html', form=form, error=error)
 
 @app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
-@path("Reset")
 def reset_verify(username, token):
     user = user.query.filter_by(username=username).first_or_404()
     if user.token == None:
@@ -137,7 +127,6 @@ def reset_verify(username, token):
 
 
 @app.route('/verify/', methods=["POST", "GET"])
-@path("Verify")
 def verify_send():
     if request.method == 'GET':
         return redirect(url_for('index'))
@@ -159,7 +148,6 @@ def verify_send():
     return redirect(url_for('verify_status', username=username))
 
 @app.route('/verify/<username>', methods=["GET"])
-@path("Verify")
 def verify_status(username):
     submitted = request.args.get('submitted', None)
     user = User.query.filter_by(username = username).first_or_404()
@@ -171,7 +159,6 @@ def verify_status(username):
     return render_template('misc/verify_status.html', submitted=submitted, username=username)
 
 @app.route('/verify/<username>/<verification>', methods=["GET"])
-@path("Verify")
 def verify(username, verification):
 
     user = User.query.filter_by(username = username).first_or_404()
@@ -194,7 +181,6 @@ def verify(username, verification):
         return redirect(url_for('verify_status', username=username, submitted=True))
 
 @app.route('/logout')
-@path("Logout")
 def logout():
     require_login()
 
@@ -229,18 +215,15 @@ def map(mode = "users", id = 0):
     return render_template("misc/map.html", users = users, mode = mode, extra = extra, x = x)
 
 @app.route('/jams/')
-@path("Jams")
 def jams():
     return render_template("misc/search.html", jams = Jam.query.all())
 
 @app.route('/jams/<jam_slug>/', methods=("GET", "POST"))
-@path("Jams", "Show")
 def jam_info(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('jam/jam_info.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/register/', methods = ["POST", "GET"])
-@path("Jams", "Register")
 def jam_register(jam_slug):
     require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -266,7 +249,6 @@ def jam_register(jam_slug):
     return render_template('jam/register.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/unregister/', methods = ["POST", "GET"])
-@path("Jams", "Unregister")
 def jam_unregister(jam_slug):
     require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -286,13 +268,11 @@ def jam_unregister(jam_slug):
     return render_template('jam/unregister.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/games/')
-@path("Jams", "Games")
 def jam_games(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('jam/games.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/participants/')
-@path("Jams", "Participants")
 def jam_participants(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('jam/participants.html', jam = jam)
@@ -308,7 +288,6 @@ def jam_toggle_show_in_finder(jam_slug):
     return redirect(jam.url())
 
 @app.route('/jams/<jam_slug>/team_finder/', methods=("GET", "POST"))
-@path("Jams", "Team Finder")
 def jam_team_finder(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     form = TeamFinderFilter()
@@ -343,14 +322,7 @@ def jam_team_finder(jam_slug):
 
     return render_template('jam/team_finder.html', jam = jam, form = form, results = l)
 
-@app.route('/jams/<jam_slug>/teams/')
-@path("Jams", "Teams")
-def jam_teams(jam_slug):
-    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('jam/teams.html', jam = jam)
-
-@app.route('/jams/<jam_slug>/teams/<int:team_id>/')
-@path("Jams", "Team")
+@app.route('/jams/<jam_slug>/team/<int:team_id>/')
 def jam_team(jam_slug, team_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     team = Team.query.filter_by(id = team_id, jam_id = jam.id).first_or_404()
@@ -358,7 +330,6 @@ def jam_team(jam_slug, team_id):
 
 @app.route('/jams/<jam_slug>/team/devlog/', methods = ["POST", "GET"])
 @app.route('/jams/<jam_slug>/team/devlog/<int:edit_id>', methods = ["POST", "GET"])
-@path("Jams", "Team", "Write devlog")
 def jam_devlog(jam_slug, edit_id = 0):
     require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -391,7 +362,6 @@ def jam_devlog(jam_slug, edit_id = 0):
 
 
 @app.route('/jams/<jam_slug>/team/')
-@path("Jams", "Team")
 def jam_current_team(jam_slug):
     require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -403,7 +373,6 @@ def jam_current_team(jam_slug):
         return redirect(jam.url())
 
 @app.route('/jams/<jam_slug>/team/settings', methods = ["POST", "GET"])
-@path("Jams", "Team")
 def team_settings(jam_slug):
     require_login()
 
@@ -453,7 +422,6 @@ def team_settings(jam_slug):
 
 @app.route('/invitations/<int:id>', methods = ["POST", "GET"])
 @app.route('/invitations/<int:id>/<action>', methods = ["POST", "GET"])
-@path("Invitation")
 def invitation(id, action = ""):
     invitation = Invitation.query.filter_by(id = id).first_or_404()
     require_user(invitation.user)
@@ -470,7 +438,6 @@ def invitation(id, action = ""):
         return render_template("jam/invitation.html", invitation = invitation)
 
 @app.route('/jams/<jam_slug>/delete', methods=("GET", "POST"))
-@path("Jams", "Delete")
 def delete_jam(jam_slug):
     require_admin()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -489,13 +456,11 @@ def delete_jam(jam_slug):
     return render_template('delete_jam.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/countdown', methods=("GET", "POST"))
-@path("Jams", "Countdown")
 def countdown(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('misc/countdown.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/new_game', methods=("GET", "POST"))
-@path("Jams", "New Game")
 def new_game(jam_slug):
     require_login()
     return # INVALID STUFF HERE
@@ -534,7 +499,6 @@ def new_game(jam_slug):
 
 @app.route('/jams/<jam_slug>/rate')
 @app.route('/jams/<jam_slug>/rate/<action>', methods=("GET", "POST"))
-@path("Jams", "Rate")
 def rate_games(jam_slug, action = None):
     require_login()
     return # INVALID STUFF HERE
@@ -681,7 +645,6 @@ def rate_games(jam_slug, action = None):
         return redirect(jam.url())
 
 @app.route('/jams/<jam_slug>/<game_slug>/reset_vote')
-@path("Jams", "Rate", "Reset Vote")
 def reset_vote(jam_slug, game_slug):
     require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -694,7 +657,6 @@ def reset_vote(jam_slug, game_slug):
 
 @app.route('/jams/<jam_slug>/<game_slug>/')
 @app.route('/jams/<jam_slug>/<game_slug>/<action>', methods=("GET", "POST"))
-@path("Jams", "Show Game")
 def show_game(jam_slug, game_slug, action=None):
     comment_form = WriteComment()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
@@ -842,19 +804,16 @@ def show_game(jam_slug, game_slug, action=None):
     return render_template('jam/game.html', game=game, form = comment_form)
 
 @app.route('/profile')
-@path("Profile")
 def profile():
     require_login()
     return render_template("account/profile.html", user = get_current_user())
 
 @app.route('/users/<username>/')
-@path("Profile")
 def show_user(username):
     user = User.query.filter_by(is_deleted = False, username = username).first_or_404()
     return render_template("account/profile.html", user = user)
 
 @app.route('/settings', methods = ["POST", "GET"])
-@path("Profile", "Settings")
 def settings():
     require_login()
     form = SettingsForm()
@@ -952,7 +911,6 @@ def settings():
     return render_template('account/settings.html', form = form)
 
 @app.route("/search")
-@path("Search")
 def search():
     q = request.args.get("q", "")
     if not q:
@@ -982,19 +940,16 @@ def search():
     return render_template("misc/search.html", q = q, jams = jams, games = games, users = users)
 
 @app.route('/contact')
-@path("Contact")
 def contact():
     return render_template('misc/contact.html')
 
 @app.route('/rules')
 @app.route('/rulez')
-@path("Rules")
 def rules():
     return render_template('misc/rules.html')
 
 @app.route('/stats')
 @app.route('/statistics')
-@path("Statistics")
 def statistics():
     # collect all the data
     stats = {}
@@ -1072,44 +1027,37 @@ def statistics():
     return render_template('misc/statistics.html', stats = stats)
 
 @app.route('/announcements')
-@path("Announcements")
 def announcements():
     announcements = Announcement.query.order_by(Announcement.posted.desc())
     return render_template('announcements.html', announcements = announcements)
 
 @app.route('/faq')
 @app.route('/faq/<page>')
-@path("FAQ")
 def faq(page = ""):
     if page.lower() == "packaging":
         return render_template('misc/faq_packaging.html')
     return render_template('misc/faq.html')
 
 @app.route('/links')
-@path("Links")
 def links():
     return render_template('misc/links.html')
 
 @app.route('/subreddit')
-@path("Subreddit")
 def subreddit():
     return redirect("http://www.reddit.com/r/bacongamejam")
 
 @app.errorhandler(404)
 @app.errorhandler(403)
 @app.errorhandler(500)
-@path("Error")
 def error(error):
     return render_template("error.html", error = error), error.code
 
 @app.errorhandler(smtplib.SMTPRecipientsRefused)
-@path("Error")
 def invalid_email(exception):
     flash("Invalid email address.", "error")
     return redirect(url_for('login'))
 
 @app.errorhandler(flamejam.login.LoginRequired)
-@path("Error")
 def login_required(exception):
     flash(exception.message, "error")
     return redirect(url_for('login', next = exception.next))

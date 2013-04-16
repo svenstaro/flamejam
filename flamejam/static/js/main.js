@@ -48,9 +48,44 @@ function clearFlashes() {
     $("#flashes li").slideUp(200);
 }
 
+function sortValue(x) {
+    if(x.attr("data-value")) {
+        return x.attr("data-value").toLowerCase();
+    }
+    return x.text().toLowerCase();
+}
+
 $(document).ready(function() {
     $("input.slider").step_slider();
     $(".refresh").click(function() { location.reload(true); });
 
     setTimeout("clearFlashes()", 5000);
+
+    $(".sorters th, .sorters td").click(function() {
+        var pAsc = $(this).hasClass("asc");
+        var pDesc = $(this).hasClass("desc");
+
+        var asc = (!pAsc && !pDesc) || (pDesc && !pAsc);
+        var desc = !asc;
+
+        var row = $(this).parent();
+        var table = row.parent();
+
+        table.find("th, td").removeClass("asc").removeClass("desc");
+        $(this).addClass(desc ? "desc" : "asc");
+
+        var index = $(this).index();
+
+        var list = table.find("tr:not(.sorters)").get();
+
+        list.sort(function(a, b) {
+            return sortValue($(a).find("td").eq(index)).localeCompare(sortValue($(b).find("td").eq(index)));
+        });
+
+        if(desc) list.reverse();
+
+        for (var i = 0; i < list.length; i++) {
+            list[i].parentNode.appendChild(list[i]);
+        }
+    })
 });

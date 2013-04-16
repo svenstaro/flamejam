@@ -50,6 +50,7 @@ def get_slug(s):
     s = s.lower()
     s = re.sub(r"[\s_+]+", "-", s)
     s = re.sub("[^a-z0-9\-]", "", s)
+    s = re.sub("-+", "-", s)
     return s
 
 
@@ -359,11 +360,13 @@ class Registration(db.Model):
     jam_id = db.Column(db.Integer, db.ForeignKey("jam.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     show_in_finder = db.Column(db.Boolean, default = True)
+    registered = db.Column(db.DateTime)
 
     def __init__(self, user, jam, show_in_finder = True):
         self.user = user
         self.jam = jam
         self.show_in_finder = show_in_finder
+        self.registered = datetime.utcnow()
 
 class DevlogPost(db.Model):
     id = db.Column(db.Integer, primary_key = True)

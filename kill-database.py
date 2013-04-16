@@ -98,16 +98,12 @@ db.session.add(test_game)
 
 # Add screenshots
 s1 = GameScreenshot("http://2.bp.blogspot.com/_gx7OZdt7Uhs/SwwanX_-API/AAAAAAAADAM/vbZbIPERdhs/s1600/Star-Wars-Wallpaper-star-wars-6363340-1024-768.jpg", "Awesome cover art", space_game)
-s2 = GameScreenshot("http://celebritywonder.ugo.com/wp/Hayden_Christensen_in_Star_Wars:_Episode_III_-_Revenge_of_the_Sith_Wallpaper_1_1280.jpg", "Close combat during final showdown", space_game)
-s3 = GameScreenshot("http://www.new-dream.de/image/wallpaper/film/star-wars/star-wars-03.jpg", "Nice open-space battle", space_game)
-s4 = GameScreenshot("http://images.psxextreme.com/wallpapers/ps3/star_wars___battle_1182.jpg", "Sample vehicles", space_game)
-s5 = GameScreenshot("http://sethspopcorn.com/wp-content/uploads/2010/10/CloneTrooper.jpg", "Character selection screen", space_game)
+s2 = GameScreenshot("http://images.psxextreme.com/wallpapers/ps3/star_wars___battle_1182.jpg", "Sample vehicles", space_game)
+s3 = GameScreenshot("http://sethspopcorn.com/wp-content/uploads/2010/10/CloneTrooper.jpg", "Character selection screen", space_game)
 
 db.session.add(s1)
 db.session.add(s2)
 db.session.add(s3)
-db.session.add(s4)
-db.session.add(s5)
 
 # Make ratings
 rating1 = Rating(3, 5, 1, 7, 3, 1, 5, 2, "cool stuff", best_game, peter)

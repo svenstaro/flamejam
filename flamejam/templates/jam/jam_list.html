@@ -1,0 +1,36 @@
+<ul class="jamlist">
+{% for jam in all_jams if jam.start_time > current_datetime %}
+<li>
+    <a href="{{ jam.url() }}">{{ jam.title }}</a>
+    <small>starts in {{ current_datetime | humandelta(jam.start_time) }}</small>
+</li>
+{% endfor %}
+
+{% for jam in all_jams if jam.start_time < current_datetime < jam.end_time %}
+<li>
+    <a href="{{ jam.url() }}">{{ jam.title }}</a>
+    <small>ends in {{ current_datetime | humandelta(jam.end_time) }}</small>
+</li>
+{% endfor %}
+
+{% for jam in all_jams if jam.end_time < current_datetime < jam.packaging_deadline %}
+<li>
+    <a href="{{ jam.url() }}">{{ jam.title }}</a>
+    <small>packaging ends in {{ current_datetime | humandelta(jam.packaging_deadline) }}</small>
+</li>
+{% endfor %}
+
+{% for jam in all_jams if jam.packaging_deadline < current_datetime < jam.rating_end%}
+<li>
+    <a href="{{ jam.url() }}">{{ jam.title }}</a>
+    <small>rating for another {{ current_datetime | humandelta(jam.rating_end) }}</small>
+</li>
+{% endfor %}
+
+{% for jam in all_jams if jam.rating_end < current_datetime %}
+<li>
+    <a href="{{ jam.url() }}">{{ jam.title }}</a>
+    <small>finished {{ current_datetime | humandelta(jam.end_time) }} ago</small>
+</li>
+{% endfor %}
+</ul>
