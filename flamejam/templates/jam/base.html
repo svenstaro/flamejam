@@ -1,77 +1,22 @@
 {% extends "base.html" %}
 
-{% block breadcrumb %}
-    <li><a href="{{ jam.url() }}">{{ jam.title }}</a></li>
-    {% block subbreadcrumb %}{% endblock %}
-{% endblock %}
+{% block menu %}
+<b>{{ jam.title }}</b>
 
-{% block sidebar %}
-<h1>{{ jam.title }}</h1>
-
-{% macro jamMenu(endpoint, label) %}
-    <li{% if endpoint == request.endpoint %} class="current"{% endif %}><a href="{{ url_for(endpoint, jam_slug = jam.slug) }}">{{ label }}</a></li>
+{% macro jamMenu(endpoint, label, is_url = False) %}
+    {% if is_url %}
+        <li{% if endpoint == request.url %} class="current"{% endif %}><a href="{{ endpoint }}">{{ label }}</a></li>
+    {% else %}
+        <li{% if endpoint == request.endpoint %} class="current"{% endif %}><a href="{{ url_for(endpoint, jam_slug = jam.slug) }}">{{ label }}</a></li>
+    {% endif %}
 {% endmacro %}
 
-<ul class="sidebar">
-    {{ jamMenu("jam_info", "Info") }}
+{% set r = current_user.getRegistration(jam) if current_user else None %}
+
+<ul class="menu">
+    {{ jamMenu("jam_info", "Overview") }}
     {{ jamMenu("jam_games", "Games") }}
     {{ jamMenu("jam_participants", "Participants") }}
-    {{ jamMenu("jam_teams", "Team List") }}
-    {{ jamMenu("jam_team_finder", "Team Finder") }}
+    {% if r %}{{ jamMenu(r.team.url(), "Your Team", True) }}{% endif %}
 </ul>
-
-<hr />
-
-{% if current_user %}
-
-{% set r = current_user.getRegistration(jam) %}
-
-{% if r %}
-<h1><small>({{ r.team.name }})</small> Your team</h1>
-
-<ul class="sidebar">
-    <li><a href="{{ r.team.url() }}">Team Page</a></li>
-    <li><a href="{{ url_for('jam_devlog', jam_slug = jam.slug) }}">Write Devlog</a></li>
-    {% for g in r.team.games %}
-    <li>
-        <a href="{{ g.url() }}">{{ g.title }}</a>
-        <!-- <span class="notify active">1</span>-->
-    </li>
-    {% endfor %}
-    {% if not r.team.games.all() %}
-    <li><a href="#TODO">Upload game</a></li>
-    {% endif %}
-</ul>
-
-<hr />
-
-{% endif %}
-
-<h1>Toolbox</h1>
-
-<ul class="sidebar">
-    <li><a href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Participant Map</a></li>
-    {% if r %}
-    <li><a href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister from this jam</a></li>
-    <li><a href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}">
-        {% if r.show_in_finder %}
-        Hide me in the team finder
-        {% else %}
-        Show me in the team finder
-        {% endif %}
-    </a></li>
-
-    {% else %}
-    <li><a href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register for this jam</a></li>
-    {% endif %}
-<!--    <li title="3 people invited you">
-        <a href="#TODO">Invitations</a>
-        <span class="notify active">3</span>
-    </li>
-    -->
-</ul>
-{% else %}
-    <p>Please <a href="{{ url_for('login') }}">log in or register</a> to participate in this jam.</p>
-{% endif %}
-
 {% endblock %}

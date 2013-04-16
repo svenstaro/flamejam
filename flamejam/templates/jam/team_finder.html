@@ -13,7 +13,7 @@
 <h1>Team Finder</h1>
 
 <div class="row-fluid">
-    <div class="span4">
+    <div class="span6">
         <h2>How it works</h2>
         <p>
             You can use this list to find other people who are not in a
@@ -22,58 +22,57 @@
         </p>
         <p>
             If you want to join an existing team, browse them on the
-            <a href="{{ url_for('jam_teams', jam_slug = jam.slug) }}">teams page</a>
+            <a href="{{ url_for('jam_participants', jam_slug = jam.slug) }}">participants page</a>
             and contact any member via mail asking for an invitation.
         </p>
-
+    </div>
+    <div class="span6">
         <h2>Filter settings</h2>
         <form method="post">
         {{ form.hidden_tag() }}
         {{ form_errors(form) }}
         <div class="row-fluid">
             <div class="span6">
-                {{ form.need_programmer() }} {{ form.need_programmer.label() }}<br />
-                {{ form.need_gamedesigner() }} {{ form.need_gamedesigner.label() }}<br />
-                {{ form.need_2dartist() }} {{ form.need_2dartist.label() }}<br />
-                {{ form.need_3dartist() }} {{ form.need_3dartist.label() }}<br />
-                {{ form.need_composer() }} {{ form.need_composer.label() }}<br />
-                {{ form.need_sounddesigner() }} {{ form.need_sounddesigner.label() }}
+                <label class="checkbox">{{ form.need_programmer() }} {{ form.need_programmer.label.text }}</label>
+                <label class="checkbox">{{ form.need_gamedesigner() }} {{ form.need_gamedesigner.label.text }}</label>
+                <label class="checkbox">{{ form.need_2dartist() }} {{ form.need_2dartist.label.text }}</label>
+                <label class="checkbox">{{ form.need_3dartist() }} {{ form.need_3dartist.label.text }}</label>
+                <label class="checkbox">{{ form.need_composer() }} {{ form.need_composer.label.text }}</label>
+                <label class="checkbox">{{ form.need_sounddesigner() }} {{ form.need_sounddesigner.label.text }}</label>
             </div>
             <div class="span6">
                 <p>
                     Show...<br />
-                    {{ form.show_teamed() }} {{ form.show_teamed.label() }}<br />
-                    {{ form.show_empty() }} {{ form.show_empty.label() }}
+                    <label class="checkbox">{{ form.show_teamed() }} {{ form.show_teamed.label.text }}</label>
+                    <label class="checkbox">{{ form.show_empty() }} {{ form.show_empty.label.text }}</label>
                 </p>
                 <p>{{ form.order.label() }}: {{ form.order() }}</p>
                 <p><input type="submit" class="btn btn-primary" value="Apply filter" /></p>
             </div>
         </div>
         </form>
-
-    </div>
-    <div class="span8">
-        <h2>Participants</h2>
-
-        <table class="teams">
-            <tr><th>Username</th><th>Abilities</th><th>Location</th><th>Has team</th><th>Invite</th></tr>
-            {% for r, m in results %}
-            <tr>
-                <td>{{ r.user.getLink() }}</td>
-                {% set a = r.user.abilities | join(', ') %}
-                {% if a %}{% set a = a + "<br />" %}{% endif %}
-                {% set a = a  + (r.user.abilities_extra or "") %}
-                <td>{{ a | safe or "n/a" }}</td>
-                <td>{{ r.user.getLocation() }}</td>
-                <td>{{ "Yes" if r.team and not r.team.isSingleTeam else "No" }}</td>
-                <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
-            </tr>
-            {% endfor %}
-            {% if not results %}
-            <tr><td colspan="5">Sorry, there were no results.</td></tr>
-            {% endif %}
-        </table>
     </div>
 </div>
+
+<h2>Participants</h2>
+
+<table class="teams">
+    <tr><th>Username</th><th>Abilities</th><th>Location</th><th>Has team</th><th>Invite</th></tr>
+    {% for r, m in results %}
+    <tr>
+        <td>{{ r.user.getLink() }}</td>
+        {% set a = r.user.abilities | join(', ') %}
+        {% if a %}{% set a = a + "<br />" %}{% endif %}
+        {% set a = a  + (r.user.abilities_extra or "") %}
+        <td>{{ a | safe or "n/a" }}</td>
+        <td>{{ r.user.getLocation() }}</td>
+        <td>{{ "Yes" if r.team and not r.team.isSingleTeam else "No" }}</td>
+        <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
+    </tr>
+    {% endfor %}
+    {% if not results %}
+    <tr><td colspan="5">Sorry, there were no results.</td></tr>
+    {% endif %}
+</table>
 {% endblock %}
 

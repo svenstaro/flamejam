@@ -66,6 +66,9 @@
     </div>
 
     <div class="span4">
+        <h1>Current and past jams</h1>
+        {% include "jam/jam_list.html" %}
+
         <h1>Notify me about jams!</h1>
         <p>
             We have no mailing list, but you can <a href="{{ url_for('login') }}">sign up</a> as a member

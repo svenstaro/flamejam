@@ -42,14 +42,14 @@
             <div class="span6">
                 <h2>Notification settings</h2>
                 <div>
-                    {{ form.notify_new_jam() }}         {{ form.notify_new_jam.label }}<br />
-                    {{ form.notify_jam_start() }}       {{ form.notify_jam_start.label }}<br />
-                    {{ form.notify_jam_finish() }}      {{ form.notify_jam_finish.label }}<br />
-                    {{ form.notify_game_comment() }}    {{ form.notify_game_comment.label }}<br />
-                    {{ form.notify_team_changes() }}    {{ form.notify_team_changes.label }}<br />
-                    {{ form.notify_game_changes() }}    {{ form.notify_game_changes.label }}<br />
-                    {{ form.notify_team_invitation() }} {{ form.notify_team_invitation.label }}<br /><br />
-                    {{ form.notify_newsletter() }}      {{ form.notify_newsletter.label }}
+                    <label class="checkbox">{{ form.notify_new_jam() }}         {{ form.notify_new_jam.label.text }}</label>
+                    <label class="checkbox">{{ form.notify_jam_start() }}       {{ form.notify_jam_start.label.text }}</label>
+                    <label class="checkbox">{{ form.notify_jam_finish() }}      {{ form.notify_jam_finish.label.text }}</label>
+                    <label class="checkbox">{{ form.notify_game_comment() }}    {{ form.notify_game_comment.label.text }}</label>
+                    <label class="checkbox">{{ form.notify_team_changes() }}    {{ form.notify_team_changes.label.text }}</label>
+                    <label class="checkbox">{{ form.notify_game_changes() }}    {{ form.notify_game_changes.label.text }}</label>
+                    <label class="checkbox">{{ form.notify_team_invitation() }} {{ form.notify_team_invitation.label.text }}</label>
+                    <label class="checkbox">{{ form.notify_newsletter() }}      {{ form.notify_newsletter.label.text }}</label>
                 </div>
                 <div class="field"></div>
                 <div class="field">
@@ -100,12 +100,12 @@
         <h2>GameDev Abilities</h2>
         <div class="field">
             <div style="display: inline-block;">
-                {{ form.ability_programmer() }} {{ form.ability_programmer.label }}
-                {{ form.ability_gamedesigner() }} {{ form.ability_gamedesigner.label }}
-                {{ form.ability_2dartist() }} {{ form.ability_2dartist.label }}
-                {{ form.ability_3dartist() }} {{ form.ability_3dartist.label }}
-                {{ form.ability_composer() }} {{ form.ability_composer.label }}
-                {{ form.ability_sounddesigner() }} {{ form.ability_sounddesigner.label }}
+                <label class="checkbox inline">{{ form.ability_programmer() }} {{ form.ability_programmer.label.text }}</label>
+                <label class="checkbox inline">{{ form.ability_gamedesigner() }} {{ form.ability_gamedesigner.label.text }}</label>
+                <label class="checkbox inline">{{ form.ability_2dartist() }} {{ form.ability_2dartist.label.text }}</label>
+                <label class="checkbox inline">{{ form.ability_3dartist() }} {{ form.ability_3dartist.label.text }}</label>
+                <label class="checkbox inline">{{ form.ability_composer() }} {{ form.ability_composer.label.text }}</label>
+                <label class="checkbox inline">{{ form.ability_sounddesigner() }} {{ form.ability_sounddesigner.label.text }}</label>
             </div>
         </div>
         <div class="field">
