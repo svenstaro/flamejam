@@ -3,11 +3,11 @@
 {% block menu %}
 <b>{{ jam.title }}</b>
 
-{% macro jamMenu(endpoint, label, is_url = False) %}
+{% macro jamMenu(endpoint, label, is_url = False, force_current = False) %}
     {% if is_url %}
-        <li{% if endpoint == request.url %} class="current"{% endif %}><a href="{{ endpoint }}">{{ label }}</a></li>
+        <li{% if endpoint == request.url or force_current %} class="current"{% endif %}><a href="{{ endpoint }}">{{ label }}</a></li>
     {% else %}
-        <li{% if endpoint == request.endpoint %} class="current"{% endif %}><a href="{{ url_for(endpoint, jam_slug = jam.slug) }}">{{ label }}</a></li>
+        <li{% if endpoint == request.endpoint or force_current %} class="current"{% endif %}><a href="{{ url_for(endpoint, jam_slug = jam.slug) }}">{{ label }}</a></li>
     {% endif %}
 {% endmacro %}
 
@@ -17,6 +17,6 @@
     {{ jamMenu("jam_info", "Overview") }}
     {{ jamMenu("jam_games", "Games") }}
     {{ jamMenu("jam_participants", "Participants") }}
-    {% if r %}{{ jamMenu(r.team.url(), "Your Team", True) }}{% endif %}
+    {% if r %}{{ jamMenu(r.team.url(), "Your Team", True, r.team == team or (game and r.team == game.team)) }}{% endif %}
 </ul>
 {% endblock %}

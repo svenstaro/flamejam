@@ -50,6 +50,7 @@ def get_slug(s):
     s = s.lower()
     s = re.sub(r"[\s_+]+", "-", s)
     s = re.sub("[^a-z0-9\-]", "", s)
+    s = re.sub("-+", "-", s)
     return s
 
 
