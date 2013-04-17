@@ -82,6 +82,13 @@ class Team(db.Model):
             db.session.delete(post)
         db.session.delete(self)
 
+    @property
+    def numberMembersAndInvitations(self):
+        return len(self.members) + self.invitations.count()
+
+    def canInvite(self, user):
+        return user in self.members and (self.jam.team_limit == 0 or self.jam.team_limit > self.numberMembersAndInvitations)
+
     def getInvitation(self, user):
         return Invitation.query.filter_by(user_id = user.id, team_id = self.id).first()
 

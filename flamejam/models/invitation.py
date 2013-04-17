@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flamejam import app, db
+from flask import url_for
 
 class Invitation(db.Model):
     id = db.Column(db.Integer, primary_key = True)

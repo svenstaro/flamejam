@@ -2,14 +2,7 @@
 {% extends "jam/base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% block subbreadcrumb %}
-    <li><a href="{{ team.url() }}">{{ team.name }}</a></li>
-    <li><a href="#">Settings</a></li>
-{% endblock %}
-
-
 {% block content %}
-
 <h1>Team settings</h1>
 
 <div class="row-fluid">
@@ -53,27 +46,40 @@
     </div>
 
     <div class="span4">
-        <form action="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" method="post" class="block">
-        {{ invite_form.hidden_tag() }}
-        {{ form_errors(invite_form) }}
+        <h2>Team members</h2>
+        <ul>
+        {% for member in team.members %}
+            <li>{{ member.getLink() }}</li>
+        {% endfor %}
+        {% for invitation in team.invitations %}
+            <li>{{ invitation.user.getLink() }} <a href="{{ url_for('invitation', id = invitation.id, action = 'revoke') }}" style="color: red; font-size: 0.8em;">Revoke invitation</a></li>
+        {% endfor %}
 
-        <h2>Invite a user</h2>
-        <p>
-            The user will receive an email with a link to the invitation.
-        </p>
+        <hr />
 
-        <p>
-            {{ invite_form.username( style="vertical-align: bottom;") }}
-            <input type="submit" value="Invite" class="btn btn-primary" style="vertical-align: bottom;"/>
-        </p>
-
-        {% if team.invitations.all() %}
-        <h2>Invited users</h2>
-        <ul class="users">
-            {% for invitation in team.invitations %}
-            <li>{{ invitation.user.getLink() }}</li>
-            {% endfor %}
-        </ul>
+        {% if not team.canInvite(current_user) %}
+            <div class="alert alert-error">
+                {% if team.jam.team_limit == 1 %}
+                    This is no team jam. You cannot invite other users.
+                {% else %}
+                    This team is full. You can not invite further users.
+                {% endif %}
+            </div>
+        {% else %}
+            <form action="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" method="post" class="block inline">
+                <div class="field input-append">
+                    {{ invite_form.hidden_tag() }}
+                    {{ form_errors(invite_form) }}
+                    {{ invite_form.username() }}
+                    <input type="submit" value="Invite user" class="btn btn-primary"/>
+                </div>
+            </form>
+            <p>
+                The user will receive an email with a link to the invitation.
+                {% if team.jam.team_limit != 0 %}
+                <b>You can invite {{ team.jam.team_limit - team.numberMembersAndInvitations}}
+                more users</b> (Team Limit {{ team.jam.team_limit }}).{% endif %}
+            </p>
         {% endif %}
         </form>
     </div>
@@ -81,13 +87,15 @@
     <div class="span3">
         <h2>Game settings</h2>
         <p>
-            Please go to the game settings page:
+            {% if team.game %}
+                Please go to the <a href="{{ url_for('edit_game', jam_slug = jam.slug, game_slug = game.slug) }}">
+                game settings</a> page.
+            {% else %}
+                You have to <a href="{{ url_for('create_game', jam_slug = jam.slug) }}">
+                create a game</a> first, then edit it on the game
+                settings page.
+            {% endif %}
         </p>
-        <ul>
-            {% for game in team.games %}
-            <li><a href="#TODO">{{ game.title }}</a></li>
-            {% endfor %}
-        </ul>
         <p>
             Settings made here will be lost unless applied before
             switching to the game settings.

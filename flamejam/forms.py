@@ -232,6 +232,9 @@ class RegisterJamForm(Form):
 class UnregisterJamForm(Form):
     confirm = BooleanField("I understand that, please unregister me", validators = [Required()])
 
+class LeaveTeamForm(Form):
+    confirm = BooleanField("I understand that, and want to leave the team", validators = [Required()])
+
 class TeamSettingsForm(Form):
     name = TextField("Team Name", validators=[Required()])
     wip = TextField("Working on")

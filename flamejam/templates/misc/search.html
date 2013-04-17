@@ -18,8 +18,7 @@
         <ul>
             {% for jam in jams %}
             <li>
-                <a href="{{ jam.url() }}">{{ jam.title }}</a>
-                {% if jam.theme and jam.getStatus().code > 1 %}<span class="theme">{{ jam.theme }}</span>{% endif %}
+                {{ jam.getLink() }}
             </li>
             {% endfor %}
         </ul>
@@ -30,7 +29,7 @@
     </div>
     <div class="span4">
 
-        <h2>{{ games | length }} Entr{{ "y" if games | length == 1 else "ies" }}</h2>
+        <h2>{{ games | length }} Game{{ "s" if games | length >= 1 else "" }}</h2>
         {% if games %}
         <ul class="games mini">
             {% for game in games %}

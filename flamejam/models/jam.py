@@ -4,7 +4,7 @@ from flamejam import app, db
 from flamejam.utils import get_slug
 from flamejam.filters import formattime, humandelta
 from datetime import datetime, timedelta
-from flask import url_for
+from flask import url_for, Markup
 from random import shuffle
 
 class Jam(db.Model):
@@ -95,6 +95,16 @@ class Jam(db.Model):
         e = list(self.games.all())
         shuffle(e)
         return e
+
+    @property
+    def showTheme(self):
+        return self.getStatus().code >= JamStatusCode.RUNNING and self.theme
+
+    def getLink(self):
+        s = '<a href="%s">%s</a>' % (self.url(), self.title)
+        if self.showTheme:
+            s += ' <span class="theme">%s</span>' % self.theme
+        return Markup(s)
 
 class JamStatusCode(object):
     ANNOUNCED    = 0

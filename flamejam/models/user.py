@@ -148,9 +148,13 @@ class User(db.Model):
         db.session.commit() # need to commit so the team does not register us automatically
 
         if generateTeam:
-            t = Team(self, jam)
-            db.session.add(t)
+            self.generateTeam(jam)
+        else:
+            db.session.commit()
 
+    def generateTeam(self, jam):
+        t = Team(self, jam)
+        db.session.add(t)
         db.session.commit()
 
     def leaveJam(self, jam):

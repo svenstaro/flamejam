@@ -31,6 +31,7 @@ rgj2 = Jam("BaconGameJam 2", datetime.utcnow() - timedelta(days=2))
 rgj3 = Jam("BaconGameJam 3", datetime.utcnow())
 loljam = Jam("Test Jam", datetime.utcnow() - timedelta(days=3))
 rgj4 = Jam("BaconGameJam 4", datetime.utcnow() + timedelta(days=14))
+rgj4.team_limit = 4
 
 rgj1.theme = "Bacon"
 rgj2.theme = "Zombies"

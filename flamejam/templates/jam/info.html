@@ -6,7 +6,7 @@
 <h1>
     {{ jam.title }}
 
-    <small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme and jam.getStatus().code > 1 else "Theme not announced" }}</small>
+    <small>{{ ("Theme: \"" + jam.theme + "\"") if jam.showTheme else "Theme not announced" }}</small>
 
     {% set r = current_user.getRegistration(jam) if current_user else None %}
     <div class="pull-right">

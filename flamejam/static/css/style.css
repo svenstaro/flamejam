@@ -95,8 +95,12 @@ ul {
     height: 50px;
     line-height: 50px;
     background: #ABCDEF;
-    background-image: -webkit-linear-gradient(0deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-    background-size: 60px 60px;
+    background-image: linear-gradient(to right,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.00) 50%,
+        rgba(255, 255, 255, 0.00) 100%);
+    background-size: 32px 32px;
 }
 
 #footer {
@@ -375,33 +379,6 @@ table.details {
     border-width: 2px 0;
 }
 
-ul.users {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    text-align: left;
-}
-
-ul.users li {
-    display: inline-block;
-    font-size: 1.2em;
-}
-
-ul.users li .user {
-    display: inline-block;
-    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#222));
-    padding: 4px;
-    width: 100px;
-    margin: 2px 0;
-    border-radius: 2px;
-    color: #AAA;
-}
-
-ul.users li a.user:hover {
-    color: #CCC;
-    background: -webkit-gradient(linear, left top, left bottom, from(#444), to(#333));
-}
-
 .user.deleted {
     color: #A33 !important;
     font-size: 0.9em !important;
@@ -513,11 +490,15 @@ form.block .field {
 
 form.block .field .form-info {
     margin-left: 113px;
+    font-size: 0.8em;
+    line-height: 1.3em;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #888;
 }
 
 form.block .form-info {
     margin-top: 4px;
-    color: #333;
 }
 
 table.teams {

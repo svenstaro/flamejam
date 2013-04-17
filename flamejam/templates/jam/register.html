@@ -40,9 +40,11 @@
             are left in the team.
         </p>
         <p>
-            {{ form.show_in_finder() }}
-            {{ form.show_in_finder.label }}
-            <span class="form-info">(can be changed in the jam sidebar)</span>
+            <label class="checkbox">
+                {{ form.show_in_finder() }}
+                {{ form.show_in_finder.label.text }}
+                <span class="form-info">(can be changed on the jam page)</span>
+            </label>
         </p>
         <p>
             <input type="submit" class="btn btn-primary" value="I understand, register now" />

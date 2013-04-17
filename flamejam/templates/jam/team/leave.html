@@ -1,16 +1,10 @@
 {% extends "jam/base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% block subbreadcrumb %}
-    <li><a href="#">Unregister</a></li>
-{% endblock %}
-
-
 {% block content %}
+<h1>Leave team {{ team.name }}</h1>
 
-<h1>Unregister from {{ jam.title }}</h1>
-
-<form method="post" action="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">
+<form method="post">
 {{ form.hidden_tag() }}
 {{ form_errors(form) }}
 
@@ -18,19 +12,17 @@
     <div class="span3">
     </div>
     <div class="span6">
-        <h2>Confirm unregistration</h2>
+        <h2>Confirmation</h2>
         <p>
-            You are in the process of unregistering from this game jam.
-        </p>
-        <p>
-            Notice that you will leave your current team. If there is no
+            You are in the process of leaving your team. If there is no
             user left in that team, it is <b style="color: red;">PERMANENTLY DELETED</b>,
             including all games, devlog posts, invitations and other team-related
             data.
         </p>
         <p>
-            You can register again, but the data will be gone. You may have to
-            enter everything again.
+            You will still be registered for the jam, and you can still be invited
+            to other teams via the participant list. You will have your <b>own team</b>
+            with its own page, to which you can invite other people, too.
         </p>
         <p>
             <label class="checkbox">
@@ -39,7 +31,7 @@
             </label>
         </p>
         <p>
-            <input type="submit" class="btn btn-primary" value="I understand, unregister now" />
+            <input type="submit" class="btn btn-primary" value="I understand, leave the team" />
         </p>
     </div>
     <div class="span3">

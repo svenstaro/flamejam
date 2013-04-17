@@ -13,15 +13,18 @@
     {{ team.name }}
     <small style="margin-right: 20px;">for {{ jam.title }}</small>
 
+    <div class="pull-right">
     {% if current_user and current_user.inTeam(team) %}
+        {% if team.canInvite(current_user) %}
+            <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" class="btn btn-normal">Invite a member</a>
+        {% elif team.jam.team_limit > 1 %}
+            <small>Team is full</small>
+        {% endif %}
+
+        <a href="{{ url_for('leave_team', jam_slug = jam.slug) }}" class="btn btn-normal">Quit the team</a>
         <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" class="btn btn-primary btn-normal">Team settings</a>
-
-    {% if team.jam.team_jam %}
-        <p><a href="#" class="btn btn-normal">Invite member</a>
     {% endif %}
-
-        <a href="#" class="btn btn-normal">Quit the team</a>
-    {% endif %}
+    </div>
 </h1>
 
 {% set games = team.games.all() %}

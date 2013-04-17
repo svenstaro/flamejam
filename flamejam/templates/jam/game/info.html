@@ -26,8 +26,7 @@
                 {{ game.team.name }} <a href="{{ game.team.url() }}">show »</a>
                 </td></tr>
 
-            <tr><th>Jam</th><td><a href="{{ game.jam.url() }}">{{ game.jam.title }}</a>
-                {% if game.jam.theme %}<span class="theme">{{ game.jam.theme }}</span>{% endif %}</td></tr>
+            <tr><th>Jam</th><td>{{ game.jam.getLink() }}</td></tr>
 
             <tr><th>Submitted</th><td>{{ game.created | humantime }}</td></tr>
         </table>

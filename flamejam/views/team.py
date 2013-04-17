@@ -1,7 +1,7 @@
 from flamejam import app, db
-from flamejam.models import Jam, Team, DevlogPost, Invitation
+from flamejam.models import Jam, Team, DevlogPost, Invitation, JamStatusCode
 from flamejam.login import *
-from flamejam.forms import DevlogForm, TeamSettingsForm, InviteForm
+from flamejam.forms import DevlogForm, TeamSettingsForm, InviteForm, LeaveTeamForm
 from flask import render_template, url_for, redirect, flash
 
 @app.route('/jams/<jam_slug>/team/<int:team_id>/')
@@ -87,6 +87,10 @@ def team_settings(jam_slug):
         invite_username = request.args["invite"]
 
     if invite_username:
+        if not team.canInvite(get_current_user()):
+            flash("You cannot invite someone right now.", "error")
+            abort(403)
+
         user = User.query.filter_by(username = invite_username, is_deleted = False).first()
         if not user:
             flash("Could not find user: %s" % invite_username, "error")
@@ -98,7 +102,7 @@ def team_settings(jam_slug):
             i = team.inviteUser(user, get_current_user())
             flash("Invited user %s." % invite_username, "success")
 
-        return redirect(team.url())
+        return redirect(url_for("team_settings", jam_slug = team.jam.slug))
 
     return render_template('jam/team/edit.html', team = team, invite_form = invite_form, settings_form = settings_form)
 
@@ -106,16 +110,52 @@ def team_settings(jam_slug):
 @app.route('/invitations/<int:id>/<action>', methods = ["POST", "GET"])
 def invitation(id, action = ""):
     invitation = Invitation.query.filter_by(id = id).first_or_404()
-    require_user(invitation.user)
 
     if action == "accept":
+        require_user(invitation.user)
         invitation.accept()
         flash("You have accepted the invitation.", "success")
         return redirect(invitation.team.url())
     elif action == "decline":
+        require_user(invitation.user)
         invitation.decline()
         flash("You have declined the invitation.", "success")
         return redirect(invitation.team.url())
+    elif action == "revoke":
+        require_user(invitation.team.members)
+        db.session.delete(invitation)
+        db.session.commit()
+        flash("You have revoked the invitation for %s." % invitation.user.username, "success")
+        return redirect(url_for("team_settings", jam_slug = invitation.team.jam.slug))
     else:
+        require_user(invitation.user)
         return render_template("jam/invitation.html", invitation = invitation)
+
+@app.route("/jams/<jam_slug>/leave-team/", methods = ("POST", "GET"))
+def leave_team(jam_slug):
+    require_login()
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    user = get_current_user()
+    r = user.getRegistration(jam)
+
+    if not r or not r.team:
+        flash("You are in no team.", "info")
+        return redirect(jam.url())
+
+    if jam.getStatus().code > JamStatusCode.PACKAGING:
+        flash("You cannot change the team after packaging is finished.", "error")
+        return redirect(jam.url())
+
+    team = r.team
+    form = LeaveTeamForm()
+
+    if form.validate_on_submit():
+        team.userLeave(user)
+        user.generateTeam(jam)
+        db.session.commit()
+        flash("You are now unregistered from this jam.", "success")
+        return redirect(jam.url())
+
+    return render_template("jam/team/leave.html", jam = jam, form = form, team = team)
+
 
