@@ -31,7 +31,7 @@
         <h2>Jam Details</h2>
         <table class="details full">
             <tr><th>Announced</th><td>{{ jam.announced | humantime }}</a></td></tr>
-            <tr><th>Time of jam</th><td>{{ jam.start_time | formattime }} / {{ jam.start_time | humantime }}</td></tr>
+            <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.duration }} hours</td></tr>
             <tr><th>Max team size</th><td>{{ jam.team_limit or "Unlimited" }}</td></tr>
             {% if status.code == 2 %}
@@ -77,24 +77,20 @@
 
         {% if jam.getStatus().code == 5 %}
         <h2>Winners</h2>
-            {% if jam.games.count() > 1  %}
-                <ul>
+        {% if jam.games.count() > 1  %}
+            <ol>
                 {% for game in jam.getTopGames()[:3] %}
-                <li class="place-{{ loop.index }}"><a href="{{ game.url() }}">
-                    {% set s = game.screenshots[-1] %}
-                    {% if s %}
-                    <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
-                    {% else %}
-                    <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
-                    {% endif %}
-
-                    <div class="star"></div>
-                </a></li>
+                    <li>
+                        <a href="{{ game.team.url() }}">{{ game.team.name }}</a> with
+                        <b><a href="{{ game.url() }}">{{ game.title }}</a></b>
+                        ({{ "%.1f" | format(game.getTotalScore()) }})
+                    </li>
                 {% endfor %}
-                </ul>
-            {% else %}
-                <p>There were no games :(</p>
-            {% endif %}
+            </ol>
+            <p><a class="btn btn-small" href="{{ url_for('jam_games', jam_slug = jam.slug) }}">Show ALL THE GAMES!</a></p>
+        {% else %}
+            <p>There were no games :(</p>
+        {% endif %}
         {% endif %}
 
     </div>

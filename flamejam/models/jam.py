@@ -3,6 +3,7 @@
 from flamejam import app, db
 from flamejam.utils import get_slug
 from flamejam.filters import formattime, humandelta
+from flamejam.models import Game
 from datetime import datetime, timedelta
 from flask import url_for, Markup
 from random import shuffle
@@ -88,7 +89,8 @@ class Jam(db.Model):
 
     def getTopGames(self):
         e = list(self.games.all())
-        e.sort(cmp = gameCompare)
+        #e.sort(key = lambda g: g.getTotalScore(), reverse = True)
+        e.sort(key = Game.getTotalScore, reverse = True)
         return e
 
     def getShuffledGames(self):

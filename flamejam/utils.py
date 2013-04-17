@@ -42,7 +42,16 @@ def hashPassword(pw):
 
 def get_current_jam():
     from flamejam.models import Jam, JamStatusCode
+    next = None
+    previous = None
     for jam in Jam.query.all():
         if jam.getStatus().code == JamStatusCode.RUNNING:
             return jam
-    return None
+        elif jam.getStatus().code <= JamStatusCode.RUNNING:
+            if not next or next.start_time > jam.start_time:
+                next = jam
+        else:
+            if not previous or previous.end_time < jam.end_time:
+                previous = jam
+
+    return next or previous

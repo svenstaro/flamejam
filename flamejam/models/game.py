@@ -81,13 +81,5 @@ class Game(db.Model):
 
     def getRank(self):
         jam_games = list(self.jam.games.all())
-        jam_games.sort(cmp = gameCompare)
+        jam_games.sort(key = Game.getTotalScore, reverse = True)
         return jam_games.index(self) + 1
-
-    @staticmethod
-    def compare(a, b):
-        return a.getTotalScore() < b.getTotalScore()
-
-    @staticmethod
-    def compareTime(a, b):
-        return a.created < b.created

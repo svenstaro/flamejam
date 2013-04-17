@@ -91,16 +91,16 @@
     </div>
     <div class="span6">
         <h2>Games created</h2>
-        <ul>
         {% if not user.games %}
             <p><i>This user has not made any games yet.</i></p>
         {% else %}
-            {% for game in user.games %}
-                <li>
-                    <b>{{ game.jam.getLink() }}</b><br />
-                    <a href="{{ game.url() }}"><span>{{ game.title }}</span></a>
-                </li>
-            {% endfor %}
+            <ul>
+                {% for game in user.games %}
+                    <li>
+                        <b>{{ game.jam.getLink() }}</b><br />
+                        <a href="{{ game.url() }}"><span>{{ game.title }}</span></a>
+                    </li>
+                {% endfor %}
             </ul>
         {% endif %}
     </div>

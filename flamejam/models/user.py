@@ -39,7 +39,7 @@ class User(db.Model):
     about = db.Column(db.Text)
     website = db.Column(db.String(128))
 
-    pm_mode = db.Column(db.Enum("email", "form", "disabled"), default = "formG")
+    pm_mode = db.Column(db.Enum("email", "form", "disabled"), default = "form")
 
     notify_new_jam = db.Column(db.Boolean, default = True)
     notify_jam_start = db.Column(db.Boolean, default = True)
@@ -88,7 +88,10 @@ class User(db.Model):
             if r.team:
                 for game in r.team.games:
                     g.append(game)
-        g.sort(Game.compareTime)
+
+        import operator
+        g.sort(key = operator.attrgetter("created"))
+
         return g
 
     def __repr__(self):
@@ -170,12 +173,5 @@ class User(db.Model):
             db.session.delete(self.getRegistration(jam))
 
 
-    @staticmethod
-    def totalGameCompare(left, right):
-        x = len(right.games) - len(left.games)
-        if x > 0:
-            return 1
-        elif x < 0:
-            return -1
-        else:
-            return 0
+    def numberOfGames(self):
+        return len(self.games)

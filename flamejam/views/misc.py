@@ -106,13 +106,13 @@ def statistics():
     all_games = Game.query.all()
     finished_games = []
     for game in all_games:
-      if game.jam.getStatus() == JamStatusCode.FINISHED:
-        finished_games.append(game)
-    finished_games.sort(cmp = Game.compare)
+        if game.jam.getStatus() == JamStatusCode.FINISHED:
+            finished_games.append(game)
+    finished_games.sort(key = Game.getTotalScore, reverse = True)
     stats["best_games"] = finished_games[:3]
 
     user_most_games = User.query.filter_by(is_deleted = False).all()
-    user_most_games.sort(cmp = User.totalGameCompare)
+    user_most_games.sort(key = User.numberOfGames, reverse = True)
     stats["user_most_games"] = user_most_games[:3]
 
     if stats["total_jams"]: # against division by zero

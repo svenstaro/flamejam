@@ -1,5 +1,7 @@
 from flamejam import app
 from flamejam.models import User, Jam
+from flamejam.login import *
+from flamejam.forms import JamDetailsForm
 from flask import render_template, redirect, url_for
 
 @app.route("/admin")

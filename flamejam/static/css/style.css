@@ -318,34 +318,36 @@ ol.steps {
     list-style: none;
     margin: 0;
     padding: 0;
+    text-align: left;
 }
 
 ol.steps li a span {
     position: absolute;
     top: 50%;
     left: 0.2em;
-    margin-top: -0.5em;
+    margin-top: -0.25em;
     font-size: 1.5em;
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(0, 0, 0, 0.25);
 }
 
 ol.steps li a {
     position: relative;
-    width: 80%;
+    width: 70%;
     color: #666;
     display: block;
     padding: 10px;
-    padding-left: 30px;
+    padding-left: 40px;
     margin: 5px auto;
+    border: 1px solid #DDD;
     background: #EEE;
-    border: 1px solid #222;
-    box-shadow: 4px 4px 8px #000;
+    border-radius: 4px;
 }
 
 ol.steps li a:hover {
-    color: #999;
-    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#222));
-    border-color: #333;
+    /*color: #999;
+    background: #F6F6F6;
+    border-color: #EEE;*/
+    text-decoration: none;
 }
 
 ol.steps li small {
