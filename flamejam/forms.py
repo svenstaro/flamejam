@@ -124,26 +124,26 @@ class GameAddScreenshotForm(Form):
 class GameAddTeamMemberForm(Form):
     username = TextField("Username:", validators = [Required(), UsernameExists()])
 
-from models import game_package_type_string
+from models import GamePackage
 
-class GameAddPackage(Form):
+class GameAddPackageForm(Form):
     url = TextField("URL", validators = [Required()])
     type = SelectField("Type", choices = [
-        ("web",          game_package_type_string("web")),
-        ("linux",        game_package_type_string("linux")),
-        ("linux32",      game_package_type_string("linux32")),
-        ("linux64",      game_package_type_string("linux64")),
-        ("windows",      game_package_type_string("windows")),
-        ("windows64",    game_package_type_string("windows64")),
-        ("mac",          game_package_type_string("mac")),
-        ("source",       game_package_type_string("source")),
-        ("git",          game_package_type_string("git")),
-        ("svn",          game_package_type_string("svn")),
-        ("hg",           game_package_type_string("hg")),
-        ("combi",        game_package_type_string("combi")),
-        ("love",         game_package_type_string("love")),
-        ("blender",      game_package_type_string("blender")),
-        ("unknown",      game_package_type_string("unknown"))])
+        ("web",          GamePackage.typeString("web")),
+        ("linux",        GamePackage.typeString("linux")),
+        ("linux32",      GamePackage.typeString("linux32")),
+        ("linux64",      GamePackage.typeString("linux64")),
+        ("windows",      GamePackage.typeString("windows")),
+        ("windows64",    GamePackage.typeString("windows64")),
+        ("mac",          GamePackage.typeString("mac")),
+        ("source",       GamePackage.typeString("source")),
+        ("git",          GamePackage.typeString("git")),
+        ("svn",          GamePackage.typeString("svn")),
+        ("hg",           GamePackage.typeString("hg")),
+        ("combi",        GamePackage.typeString("combi")),
+        ("love",         GamePackage.typeString("love")),
+        ("blender",      GamePackage.typeString("blender")),
+        ("unknown",      GamePackage.typeString("unknown"))])
 
 class RateGame(Form):
     game_id = HiddenField(validators = [Required(), NumberRange(min = 1)])

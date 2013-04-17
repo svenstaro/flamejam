@@ -16,20 +16,17 @@ app.config.from_pyfile('../recaptcha.cfg', silent=True)
 db = SQLAlchemy(app)
 markdown_object = Markdown(app, safe_mode="escape")
 
+from flamejam.utils import *
 import flamejam.filters
 import flamejam.views
 import flamejam.models
 import flamejam.login
 
 @app.context_processor
-def inject_announcement():
+def inject():
     a = flamejam.models.Announcement.query.order_by(flamejam.models.Announcement.posted.desc()).first()
-    return dict(last_announcement = a)
+    return dict(last_announcement = a,
+        current_user = flamejam.login.get_current_user(),
+        current_datetime = datetime.utcnow(),
+        current_jam = get_current_jam())
 
-@app.context_processor
-def inject_user():
-    return dict(current_user = flamejam.login.get_current_user())
-
-@app.context_processor
-def inject_time():
-    return dict(current_datetime = datetime.utcnow())

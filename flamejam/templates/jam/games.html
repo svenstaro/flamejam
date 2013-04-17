@@ -23,7 +23,7 @@
             <th>Members</th>
             <th>Screenshots</th>
             <th class="nosort">Download</th>
-            <th>Rating</th>
+            <th>Rating (you)</th>
             <th></th>
         </tr>
         {% for game in jam.getShuffledGames() %}
@@ -38,7 +38,27 @@
             </th>
             <td>{{ game.screenshots.count() }}</th>
             <td><a href="#">Linux</a> | <a href="#">MacOS X</a> </th>
-            <td>n/a</td>
+            <td>
+                {% if jam.getStatus().code <= 3 %}
+                    n/a <!-- before rating -->
+                {% else  %}
+                    {% if jam.getStatus().code >= 5 %}
+                        {{ game.getAverageRating() }}
+                    {% else %}
+                        n/a
+                    {% endif %}
+                    &ndash;
+
+                    {% set r = current_user.ratings.filter_by(game = game).first() if current_user else None %}
+                    {% if r %}
+                        {{ r.getAverage() }}
+                    {% elif jam.getStatus().code == 4 %}
+                        <a href="#">rate now</a>
+                    {% else %}
+                        n/a
+                    {% endif %}
+                {% endif %}
+            </td>
             <td></td>
         </tr>
         {% endfor %}
