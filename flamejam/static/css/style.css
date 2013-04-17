@@ -672,5 +672,5 @@ span.icon-16-average    { background-image: url("../gfx/icons/average.png"); }
     margin: 3px 0;
 }
 
-.theme:after  { content: "»";}
-.theme:before { content: "«";}
+.theme:after  { content: "»"; margin-left:  1px; }
+.theme:before { content: "«"; margin-right: 1px;}

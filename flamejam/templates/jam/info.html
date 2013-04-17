@@ -31,15 +31,17 @@
         <h2>Jam Details</h2>
         <table class="details full">
             <tr><th>Announced</th><td>{{ jam.announced | humantime }}</a></td></tr>
-            <tr><th>Time of jam</th><td>{{ jam.start_time | humantime }}</td></tr>
+            <tr><th>Time of jam</th><td>{{ jam.start_time | formattime }} / {{ jam.start_time | humantime }}</td></tr>
             <tr><th>Duration</th><td>{{ jam.duration }} hours</td></tr>
             <tr><th>Max team size</th><td>{{ jam.team_limit or "Unlimited" }}</td></tr>
             {% if status.code == 2 %}
             <tr><th>Time left</th><td>
-                <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
-                    <div class="mini-countdown" time="{{ jam.end_time }}">
-                        <div class="time">{{ (jam.end_time - current_datetime) | countdowndelta }}</div>
-                    </div>
+                <span class="mini-countdown" time="{{ jam.end_time }}">
+                    <span class="time">{{ (jam.end_time - current_datetime) | countdowndelta }}</span>
+                </span>
+
+                <a href="{{ url_for('countdown', jam_slug = jam.slug) }}" class="pull-right">
+                    Countdown
                 </a>
             </td></tr>
             {% endif %}
@@ -50,7 +52,7 @@
             <tr>
                 <th>Participants</th>
                 <td>{{ jam.registrations.count() }} users
-                    <a class="btn btn-mini" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Map</a>
+                    <a class="pull-right" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Show map</a>
                 </td>
             </tr>
             <tr>
@@ -76,7 +78,7 @@
         {% if jam.getStatus().code == 5 %}
         <h2>Winners</h2>
             {% if jam.games.count() > 1  %}
-                <ul class="games-winners">
+                <ul>
                 {% for game in jam.getTopGames()[:3] %}
                 <li class="place-{{ loop.index }}"><a href="{{ game.url() }}">
                     {% set s = game.screenshots[-1] %}

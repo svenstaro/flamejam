@@ -2,7 +2,7 @@
 
 from flamejam import app, db
 from flamejam.utils import hashPassword
-from flamejam.models import Registration, Team
+from flamejam.models import Registration, Team, Game
 from flask import url_for, Markup
 from datetime import datetime
 from hashlib import md5
@@ -88,6 +88,7 @@ class User(db.Model):
             if r.team:
                 for game in r.team.games:
                     g.append(game)
+        g.sort(Game.compareTime)
         return g
 
     def __repr__(self):

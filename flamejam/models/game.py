@@ -87,3 +87,7 @@ class Game(db.Model):
     @staticmethod
     def compare(a, b):
         return a.getTotalScore() < b.getTotalScore()
+
+    @staticmethod
+    def compareTime(a, b):
+        return a.created < b.created

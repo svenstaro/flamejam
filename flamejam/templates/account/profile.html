@@ -58,7 +58,11 @@
                     {% if user.pm_mode == "email" %}
                     <a href="mailto:{{ user.email }}">{{ user.email }}</a>
                     {% else %}
-                    <a href="#TODO:contact-form">[hidden]</a>
+                        {% if user == current_user %}
+                            [hidden]
+                        {% else %}
+                            [<a href="{{ url_for('contact_user', username = user.username) }}">hidden</a>]
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>
