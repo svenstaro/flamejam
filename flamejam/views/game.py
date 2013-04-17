@@ -11,6 +11,9 @@ def create_game(jam_slug):
     if not r or not r.team:
         flash("You cannot create a game without being registered for the jam.", category = "error")
         return redirect(jam.url())
+    if r.team.game:
+        flash("You already have a game.")
+        return redirect(r.team.game.url())
 
     enabled = (JamStatusCode.RUNNING <= jam.getStatus().code <= JamStatusCode.PACKAGING)
 
