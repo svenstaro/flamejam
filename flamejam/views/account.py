@@ -42,10 +42,10 @@ def login():
                 False  # is verified
                 )
 
-        m = Mail("Welcome to Bacon Game Jam, " + username)
-        m.addRecipient(new_user)
-        m.render("emails/account/verification.html", recipient = new_user)
-        m.send()
+        mail.send_message(subject="Welcome to Bacon Game Jam, " + username,
+                          recipients=[new_user.email],
+                          html=render_template("emails/account/verification.html",
+                                               recipient = new_user))
 
         db.session.add(new_user)
         db.session.commit()
@@ -67,10 +67,10 @@ def reset_request():
         user.token = randint(0, sys.maxint)
         db.session.commit()
 
-        m = Mail("Reset your BGJ-Password")
-        m.addRecipient(user)
-        m.render("emails/account/reset_password.html", recipient = user)
-        m.send()
+        mail.send_message(subject="Reset your BGJ-Password",
+                          recipient=[user.email],
+                          html=render_template("emails/account/reset_password.html",
+                                               recipient = user))
 
         flash("Your password has been reset, check your email.", "success")
     return render_template('reset_request.html', form=form, error=error)
@@ -109,11 +109,9 @@ def verify_send():
         flash("%s's account is already validated." % user.username.capitalize(), "info")
         return redirect(url_for('index'))
 
-
-    m = Mail("Welcome to Bacon Game Jam, " + username)
-    m.render("emails/account/verification.html", recipient = user)
-    m.addRecipientEmail(user.new_email)
-    m.send()
+    mail.send_message(subject="Welcome to Bacon Game Jam, " + username,
+                      recipients=[user.new_email],
+                      html=render_template("emails/account/verification.html", recipient = user))
 
     flash("Verification has been resent, check your email", "success")
     return redirect(url_for('verify_status', username=username))

@@ -43,9 +43,9 @@ class Announcement(db.Model):
 
         # new_jam, registration_start, jam_start, packaging_start, rating_start, jam_finished, newsletter
 
-        from flamejam.mail import Mail
         for user in users:
-            m = Mail(("BaconGameJam Newsletter - " if self.context == "newsletter" else "") + self.subject)
-            m.render("emails/announcements/%s.html" % self.context, recipient = user, jam = self.jam, subject = self.subject, message = self.message)
-            m.addRecipient(user)
-            m.send()
+            mail.send_message(subject=("BaconGameJam Newsletter - " if self.context == "newsletter" else "") + self.subject,
+                              recipients=[user.email],
+                              html=render_template("emails/announcements/%s.html" % self.context,
+                                                   recipient = user, jam = self.jam,
+                                                   subject = self.subject, message = self.message))
