@@ -1,7 +1,7 @@
 from flamejam import app, db
 from flamejam.login import *
 from flamejam.models import User
-from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm
+from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm, ContactUserForm
 from flask import render_template, redirect, flash, url_for
 from smtplib import SMTPRecipientsRefused
 
@@ -166,6 +166,21 @@ def profile():
 def show_user(username):
     user = User.query.filter_by(is_deleted = False, username = username).first_or_404()
     return render_template("account/profile.html", user = user)
+
+@app.route('/users/<username>/contact/', methods = ("POST", "GET"))
+def contact_user(username):
+    require_login()
+    user = User.query.filter_by(is_deleted = False, username = username).first_or_404()
+    if user == get_current_user() or user.pm_mode == "disabled":
+        abort(403)
+
+    form = ContactUserForm()
+
+    if form.validate_on_submit():
+        # TODO: Send email
+        pass
+
+    return render_template("account/contact.html", user = user, form = form)
 
 @app.route('/settings', methods = ["POST", "GET"])
 def settings():

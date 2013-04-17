@@ -658,3 +658,19 @@ span.icon-16-technical  { background-image: url("../gfx/icons/technical.png"); }
 span.icon-16-controls   { background-image: url("../gfx/icons/controls.png"); }
 span.icon-16-rating     { background-image: url("../gfx/icons/rating.png"); }
 span.icon-16-average    { background-image: url("../gfx/icons/average.png"); }
+
+#recaptcha_widget_div, #recaptcha-area {
+    width: 450px;
+    display: inline-block;
+}
+
+.form-errors label {
+    display: inline !important;
+}
+.alert.mini {
+    padding: 0 3px;
+    margin: 3px 0;
+}
+
+.theme:after  { content: "»";}
+.theme:before { content: "«";}

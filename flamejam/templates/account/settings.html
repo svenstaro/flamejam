@@ -7,7 +7,12 @@
 {{ form.hidden_tag() }}
 {{ form_errors(form) }}
 
-<h1>Profile settings</h1>
+<h1>
+    Profile settings
+    <div class="pull-right">
+        <a class="btn" href="{{ current_user.url() }}">&laquo; Back to Profile</a>
+    </div>
+</h1>
 
 <div class="row-fluid">
     <div class="span4">

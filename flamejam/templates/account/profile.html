@@ -9,14 +9,22 @@
     {{ user.username }}
     {% if user.real_name %}<small>{{ user.real_name }}</small>{% endif %}
 
-    {% if current_user and current_user == user %}
-    <a href="{{ url_for('settings') }}" class="btn btn-primary" style="margin-left: 20px;">Profile settings</a>
-    {% endif %}
+    <div class="pull-right">
+        {% if current_user and current_user == user %}
+            <a href="{{ url_for('settings') }}" class="btn btn-primary">Profile settings</a>
+        {% elif current_user %}
+            {% if user.pm_mode == "form" %}
+                <a href="{{ url_for('contact_user', username = user.username) }}" class="btn">Send mail</a>
+            {% elif user.pm_mode == "email" %}
+                <a href="mailto:{{ user.email }}" class="btn">Send mail</a>
+            {% endif %}
+        {% endif %}
+    </div>
 </h1>
 
 
 <div class="row-fluid">
-    <div class="span4">
+    <div class="span6">
         <h2>Personal data</h2>
         <table class="details">
             <tr>
@@ -31,7 +39,7 @@
                 <th>Location</th>
                 <td>
                     {{ user.getLocation() }}
-                    <a href="{{ url_for('map', mode = 'user', id = user.id) }}">Map »</a>
+                    <a href="{{ url_for('map', mode = 'user', id = user.id) }}" class="pull-right">Show map</a>
                 </td>
             </tr>
             {% endif %}
@@ -77,27 +85,20 @@
         <h2>About</h2>
         {{ (user.about or "*This user has not written a description about themselves.*" ) | markdown }}
     </div>
-    <div class="span4">
-        <h2>Games</h2>
-        <ul class="games" style="text-align: center;">
-        {% for r in user.registrations %}
-        {% for game in r.team.games %}
-        <li><a href="{{ game.url() }}">
-            {% set s = game.screenshots[-1] %}
-            {% if s %}
-            <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
-            {% else %}
-            <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
-            {% endif %}
-
-            <span>{{ game.title }}</span>
-        </a></li>
-        {% endfor %}
-        {% endfor %}
-        </ul>
-    </div>
-    <div class="span4">
-        <h2>Stats</h2>
+    <div class="span6">
+        <h2>Games created</h2>
+        <ul>
+        {% if not user.games %}
+            <p><i>This user has not made any games yet.</i></p>
+        {% else %}
+            {% for game in user.games %}
+                <li>
+                    <b>{{ game.jam.getLink() }}</b><br />
+                    <a href="{{ game.url() }}"><span>{{ game.title }}</span></a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 </div>
 

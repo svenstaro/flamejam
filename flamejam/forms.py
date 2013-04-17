@@ -99,6 +99,10 @@ class NewPassword(Form):
 class VerifyForm(Form):
     pass
 
+class ContactUserForm(Form):
+    message = TextAreaField("Message", validators=[Required()])
+    captcha = RecaptchaField("Captcha")
+
 class JamDetailsForm(Form):
     title = TextField("Title", validators=[Required(), Length(max=128)])
     theme = TextField("Theme", validators=[Length(max=128)])

@@ -101,7 +101,7 @@ class Jam(db.Model):
         return self.getStatus().code >= JamStatusCode.RUNNING and self.theme
 
     def getLink(self):
-        s = '<a href="%s">%s</a>' % (self.url(), self.title)
+        s = '<a class="jam" href="%s">%s</a>' % (self.url(), self.title)
         if self.showTheme:
             s += ' <span class="theme">%s</span>' % self.theme
         return Markup(s)

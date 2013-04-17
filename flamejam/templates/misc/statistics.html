@@ -74,13 +74,13 @@
                         {% endif %}
                         </td></tr>
                     <tr><th>User with most games</th><td>
-                        {% if not stats['user_most_games'] or stats["user_most_games"][0].getTotalGameCount() == 0 %}
+                        {% if not stats['user_most_games'] or not stats["user_most_games"][0].games %}
                             Nobody has games yet.
                         {% else %}
                         {% for n in [0,1,2] if stats['user_most_games'][n] %}
                         <div style="margin-bottom: 5px;">
                             {{ stats["user_most_games"][n].getLink() }}
-                            with {{ stats["user_most_games"][n].getTotalGameCount() }} games
+                            with {{ stats["user_most_games"][n].games | length }} games
                         </div>
                         {% endfor %}
                         {% endif %}

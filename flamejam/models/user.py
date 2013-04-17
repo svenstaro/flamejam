@@ -39,7 +39,7 @@ class User(db.Model):
     about = db.Column(db.Text)
     website = db.Column(db.String(128))
 
-    pm_mode = db.Column(db.Enum("email", "form", "disabled"), default = "form")
+    pm_mode = db.Column(db.Enum("email", "form", "disabled"), default = "formG")
 
     notify_new_jam = db.Column(db.Boolean, default = True)
     notify_jam_start = db.Column(db.Boolean, default = True)
@@ -81,12 +81,14 @@ class User(db.Model):
                 i += 1
         return i
 
-    def getTotalGameCount(self):
-        i = 0
+    @property
+    def games(self):
+        g = []
         for r in self.registrations:
             if r.team:
-                i += r.team.games.count()
-        return i
+                for game in r.team.games:
+                    g.append(game)
+        return g
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -169,7 +171,7 @@ class User(db.Model):
 
     @staticmethod
     def totalGameCompare(left, right):
-        x = right.getTotalGameCount() - left.getTotalGameCount()
+        x = len(right.games) - len(left.games)
         if x > 0:
             return 1
         elif x < 0:
