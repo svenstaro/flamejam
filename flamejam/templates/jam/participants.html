@@ -8,9 +8,11 @@
 
 {% block content %}
 
-<h1>Participants <small>{{ jam.registrations.all() | length }} people are registered</small></h1>
+<h1>Participants <small>{{ jam.registrations.all() | length }} people are registered</small>
 
-<p><a class="btn" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Participant Map</a></p>
+    <a class="btn btn-primary pull-right" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Participant Map</a>
+
+</h1>
 
 {% if jam.registrations.all() | length == 0 %}
     <p>There are no participants yet.</p>

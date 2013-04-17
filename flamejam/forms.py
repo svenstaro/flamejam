@@ -33,7 +33,7 @@ class MatchesRegex(object):
         self.message = message
 
     def __call__(self, form, field):
-        if re.search(self.regex, field.data):
+        if not re.search(self.regex, field.data):
             raise ValidationError(self.message.format(self.regex))
 
 class UsernameExists(object):
@@ -78,7 +78,7 @@ class UserLogin(Form):
 
 class UserRegistration(Form):
     username = TextField("Username", validators=[
-        MatchesRegex("[^0-9a-zA-Z\-_]", "Your username contains invalid characters. Only use alphanumeric characters, dashes and underscores."),
+        Not(MatchesRegex("[^0-9a-zA-Z\-_]"), message = "Your username contains invalid characters. Only use alphanumeric characters, dashes and underscores."),
         Not(UsernameExists(), message = "That username already exists."),
         Length(min=3, max=80, message="You have to enter a username of 3 to 80 characters length.")])
     password = PasswordField("Password", validators=[Length(min=8, message = "Please enter a password of at least 8 characters.")])
@@ -113,9 +113,14 @@ class JamDetailsForm(Form):
     description = TextAreaField("Description")
     restrictions = TextAreaField("Restrictions")
 
+class GameCreateForm(Form):
+    title = TextField("Game title", validators=[Required(), Length(max=128)])
+
 class GameEditForm(Form):
-    name = TextField("Game title", validators=[Required(), Length(max=128)])
+    title = TextField("Game title", validators=[Required(), Length(max=128)])
     description = TextAreaField("Description", validators=[Required()])
+    technology = TextAreaField("Technlogoy used")
+    help = TextAreaField("Help / Controls")
 
 class GameAddScreenshotForm(Form):
     url = TextField("URL", validators = [Required(), URL()])
@@ -127,7 +132,7 @@ class GameAddTeamMemberForm(Form):
 from models import GamePackage
 
 class GameAddPackageForm(Form):
-    url = TextField("URL", validators = [Required()])
+    url = TextField("URL", validators = [Required(), URL()])
     type = SelectField("Type", choices = [
         ("web",          GamePackage.typeString("web")),
         ("linux",        GamePackage.typeString("linux")),

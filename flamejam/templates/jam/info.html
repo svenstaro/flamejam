@@ -1,41 +1,30 @@
 {% extends "jam/base.html" %}
 
-{% set status = jam.getStatus() %}
-
 {% block title %}{{ jam.title }}{% endblock %}
 
-{% block center %}
-    {% set s = ["Announced", "Registrations", "In Progress", "Packaging", "Rating", "Finished"][status.code] %}
-    <div class="center-status" title="{{ status }}">
-        {% if status.code == 2 %}
-                <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
-                    <div class="mini-countdown" time="{{ jam.end_time }}">
-                        <div class="time">{{ (jam.end_time - current_datetime) | countdowndelta }}</div>
-                    </div>
-                </a>
-        {% endif %}
-        {{s}}
-    </div>
-{% endblock %}
-
 {% block content %}
+<h1>
+    {{ jam.title }}
 
-<h1>{{ jam.title }}<small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme and jam.getStatus().code > 1 else "Theme not announced" }}</small></h1>
+    <small>{{ ("Theme: \"" + jam.theme + "\"") if jam.theme and jam.getStatus().code > 1 else "Theme not announced" }}</small>
 
-{% set r = current_user.getRegistration(jam) if current_user else None %}
-    {% if r %}
-    <a class="btn" href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister from this jam</a>
-    <a class="btn" href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}">
-        {% if r.show_in_finder %}
-        Hide me in the team finder
+    {% set r = current_user.getRegistration(jam) if current_user else None %}
+    <div class="pull-right">
+        {% if r %}
+        <a class="btn" href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister</a>
+        <a class="btn" href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}">
+            {% if r.show_in_finder %}
+                Hide me in the team finder
+            {% else %}
+                Show me in the team finder
+            {% endif %}
+        </a>
+
         {% else %}
-        Show me in the team finder
+        <a class="btn btn-primary" href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register</a>
         {% endif %}
-    </a>
-
-    {% else %}
-    <a class="btn" href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register for this jam</a>
-    {% endif %}
+    </div>
+</h1>
 
 <div class="row-fluid">
     <div class="span4">
@@ -61,7 +50,7 @@
             <tr>
                 <th>Participants</th>
                 <td>{{ jam.registrations.count() }} users
-                    <a href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Map »</a>
+                    <a class="btn btn-mini" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Map</a>
                 </td>
             </tr>
             <tr>
@@ -108,14 +97,13 @@
 
     </div>
     <div class="span8">
-        <h2>Jam Events</h2>
-        <p>
-            EVENT TIMELINE HERE!
-        </p>
+        <h2>Description</h2>
+        {{ (jam.description or "*This jam has no description.*") | markdown }}
 
-        <div>
-            <a href="#" class="btn">more …</a>
-        </div>
+        {% if jam.restrictions %}
+            <h2>Restriction</h2>
+            {{ jam.restrictions | markdown }}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

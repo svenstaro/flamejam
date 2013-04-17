@@ -1,5 +1,6 @@
 from flamejam import app, db
-from flamejam.models import Jam
+from flamejam.models import Jam, JamStatusCode
+from flamejam.login import *
 from flamejam.forms import RegisterJamForm, UnregisterJamForm, TeamFinderFilter
 from flask import render_template, url_for, redirect, flash
 
@@ -10,7 +11,7 @@ def jams():
 @app.route('/jams/<jam_slug>/', methods=("GET", "POST"))
 def jam_info(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('jam/jam_info.html', jam = jam)
+    return render_template('jam/info.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/countdown', methods=("GET", "POST"))
 def countdown(jam_slug):

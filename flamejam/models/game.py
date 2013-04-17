@@ -2,6 +2,7 @@
 
 from flamejam import app, db
 from flamejam.utils import get_slug
+from flamejam.models.gamescreenshot import GameScreenshot
 from flask import url_for
 from datetime import datetime
 
@@ -9,8 +10,11 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128))
     slug = db.Column(db.String(128))
-    description = db.Column(db.Text)
     created = db.Column(db.DateTime)
+    description = db.Column(db.Text)
+    technology = db.Column(db.Text)
+    help = db.Column(db.Text)
+
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
     ratings = db.relationship('Rating', backref = 'game', lazy = "dynamic")
@@ -40,8 +44,12 @@ class Game(db.Model):
             db.session.delete(screenshot)
         db.session.delete(self)
 
-    def url(self, action = "", **values):
-        return url_for("show_game", jam_slug = self.jam.slug, game_slug = self.slug, action = action, **values)
+    def url(self, **values):
+        return url_for("show_game", jam_slug = self.jam.slug, game_slug = self.slug, **values)
+
+    @property
+    def screenshotsOrdered(self):
+        return self.screenshots.order_by(GameScreenshot.index)
 
     def getAverageRating(self):
         categories = ["gameplay", "graphics","audio","innovation","story","technical", "controls", "overall"]

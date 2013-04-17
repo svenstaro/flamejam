@@ -35,6 +35,10 @@ class Team(db.Model):
         return m
 
     @property
+    def game(self):
+        return self.games[0] if self.games.count() else None
+
+    @property
     def isSingleTeam(self):
         return self.registrations.count() == 1
 

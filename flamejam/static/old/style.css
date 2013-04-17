@@ -607,32 +607,9 @@ a.repo-url:hover {
 	color: #FF4500;
 }
 
-
-span.icon-16 {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background-position: center center;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-}
-
-span.icon-16-fun        { background-image: url("gfx/icons/fun.png"); }
-span.icon-16-gameplay   { background-image: url("gfx/icons/gameplay.png"); }
-span.icon-16-graphics   { background-image: url("gfx/icons/graphics.png"); }
-span.icon-16-audio      { background-image: url("gfx/icons/audio.png"); }
-span.icon-16-innovation { background-image: url("gfx/icons/innovation.png"); }
-span.icon-16-story      { background-image: url("gfx/icons/story.png"); }
-span.icon-16-technical  { background-image: url("gfx/icons/technical.png"); }
-span.icon-16-controls   { background-image: url("gfx/icons/controls.png"); }
-span.icon-16-rating     { background-image: url("gfx/icons/rating.png"); }
-span.icon-16-average    { background-image: url("gfx/icons/average.png"); }
-
-
 span.icon-16-pending    { background-image: url("gfx/icons/pending.png"); }
 span.icon-16-rated      { background-image: url("gfx/icons/rated.png"); }
 span.icon-16-skipped    { background-image: url("gfx/icons/skipped.png"); }
-
 
 table.ratings {
     border-collapse: collapse;

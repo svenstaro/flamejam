@@ -1,0 +1,34 @@
+{% extends "jam/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block title %}{{ jam.title }} » Create game{% endblock %}
+
+{% block content %}
+<h1>Create Game</h1>
+
+{% if enabled %}
+    <p>Please enter the title of your game. You will be able to set more details
+    later, as well as upload images and packages.</p>
+
+    <hr />
+
+    <form method="POST" class="block">
+        {{ form.hidden_tag() }}
+        {{ form_errors(form) }}
+
+        <div class="field input-append">
+            {{ form.title.label() }}
+            {{ form.title() }}
+            <input type="submit" class="btn btn-primary" value="Create">
+        </div>
+    </form>
+{% else %}
+    <div class="alert alert-error">
+        Sorry, but you cannot currently create games for this jam. This functions
+        is only possible during the jam and the packaging phase. If you're late
+        and missed the deadline, you may ask an administrator, they may make an
+        exception.
+    </div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% set jam = game.jam %}
+{% extends "jam/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block content %}
+
+<h1>Edit Game</h1>
+
+<div class="row-fluid">
+    <div class="span8">
+        <form method="post" class="block">
+        {{ form.hidden_tag() }}
+        {{ form_errors(form) }}
+
+        <h2>Game Settings</h2>
+
+        <div class="field">
+            {{ form.title.label() }}
+            {{ form.title(class="span8") }}
+        </div>
+
+        <div class="field">
+            {{ form.description.label() }}
+            {{ form.description(rows = 8, class="span10") }}
+        </div>
+
+        <div class="field">
+            {{ form.technology.label() }}
+            {{ form.technology(rows = 4, class="span10") }}
+        </div>
+
+        <div class="field">
+            {{ form.help.label() }}
+            {{ form.help(rows = 6, class="span10") }}
+        </div>
+
+        <p style="text-align: center">
+            <input type="reset" value="Reset" class="btn"/>
+            <input type="submit" value="Save settings" class="btn btn-primary" />
+        </p>
+        </form>
+    </div>
+    <div class="span4">
+        <h2>Packages</h2>
+        {% if not game.packages.count() %}
+            <p><i>There are no packages yet.</i></p>
+        {% else %}
+            <ul>
+            {% for package in game.packages %}
+                <li>{{ package.getLink() }} <a href="{{ url_for('game_package_edit', id = package.id, action = 'delete') }}" class="btn btn-mini">&times;</a></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form class="form-inline" method="post">
+            <h3>Add a package</h3>
+            {{ package_form.hidden_tag() }}
+            {{ form_errors(package_form) }}
+            {{ package_form.type(size="1", class="span5") }}
+            {{ package_form.url(placeholder = "Download URL", class="span5") }}
+            <input type="submit" class="btn btn-primary span2" value="Add"/>
+        </form>
+
+        <hr />
+
+        <h2>Screenshots</h2>
+
+        {% if not game.screenshots.count() %}
+            <p><i>There are no screenshots yet.</i></p>
+        {% else %}
+            <table class="screenshots-mini tabular small full">
+            {% for screenshot in game.screenshotsOrdered %}
+                <tr>
+                    <td width="48"><img src="{{ screenshot.url }}"/></td>
+                    <td>
+                        <a class="btn btn-mini" href="{{ url_for('game_screenshot_edit', id = screenshot.id, action = 'up') }}">↑</a>
+                        <a class="btn btn-mini" href="{{ url_for('game_screenshot_edit', id = screenshot.id, action = 'down') }}">↓</a>
+                        <a class="btn btn-mini" href="{{ url_for('game_screenshot_edit', id = screenshot.id, action = 'delete') }}">&times;</a>
+                        <span style="margin-left: 5px; vertical-align: -2px;">{{ screenshot.caption }}</span>
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        {% endif %}
+
+        <form class="form-inline" method="post">
+            <h3>Add a screenshot</h3>
+            {{ package_form.hidden_tag() }}
+            {{ form_errors(package_form) }}
+            <p>{{ screenshot_form.url(placeholder = "Image URL", class="span12") }}</p>
+            <p>{{ screenshot_form.caption(placeholder = "Caption", class="span10") }}<input type="submit" class="btn btn-primary span2" value="Add" style="margin-left: 8px;"/></p>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

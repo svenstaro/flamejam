@@ -8,7 +8,7 @@ from flask import render_template, url_for, redirect, flash
 def jam_team(jam_slug, team_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     team = Team.query.filter_by(id = team_id, jam_id = jam.id).first_or_404()
-    return render_template('jam/team.html', jam = jam, team = team)
+    return render_template('jam/team/info.html', jam = jam, team = team)
 
 @app.route('/jams/<jam_slug>/team/devlog/', methods = ["POST", "GET"])
 @app.route('/jams/<jam_slug>/team/devlog/<int:edit_id>', methods = ["POST", "GET"])
@@ -40,7 +40,7 @@ def jam_devlog(jam_slug, edit_id = 0):
         form.title.data = p.title
         form.text.data = p.content
 
-    return render_template('jam/write_devlog.html', jam = jam, team = r.team, form = form, mode = mode, edit_id = edit_id)
+    return render_template('jam/team/devlog.html', jam = jam, team = r.team, form = form, mode = mode, edit_id = edit_id)
 
 
 @app.route('/jams/<jam_slug>/team/')
@@ -100,7 +100,7 @@ def team_settings(jam_slug):
 
         return redirect(team.url())
 
-    return render_template('jam/team_settings.html', team = team, invite_form = invite_form, settings_form = settings_form)
+    return render_template('jam/team/edit.html', team = team, invite_form = invite_form, settings_form = settings_form)
 
 @app.route('/invitations/<int:id>', methods = ["POST", "GET"])
 @app.route('/invitations/<int:id>/<action>', methods = ["POST", "GET"])

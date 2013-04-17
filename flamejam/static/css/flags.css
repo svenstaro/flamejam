@@ -1,8 +1,9 @@
 .flag {
     display: inline-block;
-    vertical-align: top;
+    vertical-align: middle;
     width: 16px;
     height: 11px;
+    margin-right: 2px;
     background: url("../gfx/flags/unknown.png") center center no-repeat;
 }
 

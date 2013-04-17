@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 
+{% set status = jam.getStatus() %}
+{% block center %}
+    {% set s = ["Announced", "Registrations", "In Progress", "Packaging", "Rating", "Finished"][status.code] %}
+    <div class="center-status" title="{{ status }}">
+        {% if status.code == 2 %}
+            <a href="{{ url_for('countdown', jam_slug = jam.slug) }}">
+                <div class="mini-countdown" time="{{ jam.end_time }}">
+                    <div class="time">{{ (jam.end_time - current_datetime) | countdowndelta }}</div>
+                </div>
+            </a>
+        {% else %}
+            {{ s }}
+        {% endif %}
+    </div>
+{% endblock %}
+
 {% block menu %}
 <b>{{ jam.title }}</b>
 
@@ -17,6 +33,12 @@
     {{ jamMenu("jam_info", "Overview") }}
     {{ jamMenu("jam_games", "Games") }}
     {{ jamMenu("jam_participants", "Participants") }}
-    {% if r %}{{ jamMenu(r.team.url(), "Your Team", True, r.team == team or (game and r.team == game.team)) }}{% endif %}
+    {% if r %}
+    {{ jamMenu(r.team.url(), "Your Team", True, r.team == team) }}
+    {% set hasGame = r.team and r.team.game %}
+    {% if hasGame or jam.getStatus().code < 5 %}
+    {{ jamMenu(r.team.game.url() if hasGame else url_for("create_game", jam_slug = jam.slug), "Your Game" if hasGame else "Create Game", True, r.team.game == game or request.endpoint == "create_game") }}
+    {% endif %}
+    {% endif %}
 </ul>
 {% endblock %}

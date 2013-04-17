@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flamejam import app, db
+from flask import Markup
 
 class GamePackage(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -27,6 +28,9 @@ class GamePackage(db.Model):
         self.url = url
         self.type = type
         self.game = game
+
+    def getLink(self):
+        return Markup('<a href="%s">%s</a>' % (self.url, GamePackage.typeString(self.type)))
 
     def __repr__(self):
         return "<GamePackage %r>" % self.id

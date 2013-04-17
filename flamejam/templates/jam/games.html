@@ -10,11 +10,13 @@
 
 <h1>Games</h1>
 
-<div class="alert alert-info">This list is randomly shuffled while ratings are hidden.</div>
-
 {% if jam.games.all() | length == 0 %}
     <p>There are no games yet.</p>
 {% else %}
+    {% if jam.getStatus().code <= 4 %}
+        <div class="alert alert-info">This list is randomly shuffled while ratings are hidden.</div>
+    {% endif %}
+
     <table class="tabular full">
         <tr class="sorters">
             <th></th>
@@ -26,7 +28,8 @@
             <th>Rating (you)</th>
             <th></th>
         </tr>
-        {% for game in jam.getShuffledGames() %}
+        {% set games = (jam.getShuffledGames() if jam.getStatus().code <= 4 else jam.getTopGames()) %}
+        {% for game in games %}
         <tr>
             <td>{{ loop.index }}</th>
             <td><a href="{{ game.url() }}">{{ game.title }}</a></th>
