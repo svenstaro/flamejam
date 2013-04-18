@@ -1,0 +1,24 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+Howdy, {{ recipient.username }}!
+
+You have been invited to the team {{ team.name }} by your fellow baconeer
+{{ sender.username }}. This is a team for the game jam {{ team.jam.title }}.
+
+You can accept or decline that invitation by using the following link:
+
+{{ invitation.url(_external = True) }}
+
+You can see details about the team, including a list of members, on the team
+details page:
+
+{{ team.url(_external = True)}}
+
+Please notice that by accepting the invitation you will leave your current
+team. If you were the last member of that team, *it will be deleted*, including
+all games, comments and other team-related data.
+
+If you are not yet registered for this jam, you will be registered when
+accepting the invitation.
+{% endblock %}

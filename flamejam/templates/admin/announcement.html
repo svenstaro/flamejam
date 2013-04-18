@@ -17,17 +17,9 @@
                 {{ form.message(rows = 10, id="announcement-message", class="announcement-input") }}
             </div>
             <div style="text-align: right;">
-                <span style="margin-right: 10px;">Parsed with markdown</span>
                 <input type="submit" class="btn btn-large" value="Send Announcement Now" />
             </div>
         </form>
-    </div>
-    <div class="span6">
-        <h3>Preview</h3>
-        <div id="announcement-preview"></div>
-        <script>
-            setInterval("updatePreview()", 2000);
-        </script>
     </div>
 </div>
 

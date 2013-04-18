@@ -1,0 +1,21 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+Hello {{ recipient.username }}!
+
+You receive this notification because a new game jam was announced
+on bacongamejam.org. We'd love to see you participating, so mark
+the date in your calendar and create a great game!
+
+Some jam info
+> Title:      {{ jam.title }}
+> Theme:      {{ jam.theme if jam.showTheme else "TBA" }}
+> Starting:   {{ jam.start_time }}
+> Ending:     {{ jam.end_time }}
+> Duration:   {{ jam.start_time | humandelta(jam.end_time) }}
+
+We hope to see you participating in this jam. To find out more about the jam,
+visit the details page:
+
+{{ jam.url(_external = True) }}
+{% endblock %}

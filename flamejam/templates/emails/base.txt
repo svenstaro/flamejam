@@ -1,0 +1,10 @@
+{% block content %} {% endblock %}
+
+The BaconGameJam Team
+
+------------------------------------
+You received this email to {{ recipient.email }} because you subscribed to email
+notifications on bacongamejam.org. If you don't want to receive further emails,
+you can turn these off on your profile page. Your username is {{ recipient.username }}.
+
+All times are UTC/GMT.

@@ -1,0 +1,15 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+You received a message on BaconGameJam from {{ sender.username }}. Below is
+this message. Note that this message is not sent from the BaconGameJam staff
+but another user of the website. We are not responsible for it. You can reply
+via eMail to <{{ sender.email }}>.
+
+====== MESSAGE START ======
+{{ message }}
+====== MESSAGE END ======
+
+If you don't want other users to be able to send you such messages, turn off the
+"Allow PM" option on your profile settings page.
+{% endblock %}

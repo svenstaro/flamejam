@@ -1,0 +1,13 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+Hello, {{ recipient.username }}.
+
+As promised, the packaging period for {{ jam.title }} is over, and now the
+rating has begun. You can vote on any game from its info page, or directly
+from the games list of the jam:
+
+{{ url_for('jam_games', jam_slug = jam.slug, _external = True) }}
+
+After rating, you will receive an email with the results.
+{% endblock %}

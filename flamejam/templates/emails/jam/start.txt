@@ -1,0 +1,21 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+Dear {{ recipient.username }},
+
+{{ jam.title }} just started, and you are part of it! You know the drill -- you
+now have exactly {{ jam.start_time | humandelta(jam.end_time) }} to create a game. And here is what
+you probably have been waiting for -- this jam's theme:
+
+***{{ jam.theme }}***
+
+Just to remind you, the deadline is {{ jam.end_time }}.
+{% if jam.team_limit != 1 %}
+You can still form a team on the website by inviting other users from the
+participants list or the team settings page, or by being invited to their teams.
+{% endif %}
+We wish you the best of luck in creating something awesome. To find out more
+about the jam, visit the details page:
+
+{{ jam.url(_external = True) }}
+{% endblock %}

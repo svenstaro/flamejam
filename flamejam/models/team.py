@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flamejam import app, db
+from flamejam import app, db, mail
 from flamejam.models import Invitation
 from flask import url_for, render_template
 
@@ -95,7 +95,6 @@ class Team(db.Model):
         db.session.add(i)
         db.session.commit()
 
-        c = render_template("emails/jam/invitation.html", team = self, sender = sender, recipient = user, invitation = i)
-        print c
-        #TODO
+        body = render_template("emails/invitation.txt", team=self, sender=sender, recipient=user, invitation=i)
+        mail.send_message(subject="You have been invited to " + self.name, recipient=[user.email], body=body)
 

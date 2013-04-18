@@ -1,0 +1,15 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+HEY, {{ recipient.username }}, STOP THERE, RIGHT NOW!
+
+{{ jam.title }} is over, and now it's packaging time.
+Make sure to create a game entry on the website until {{ jam.packaging_deadline | formattime }},
+upload your game somewhere, create some screenshots, and link to all of that
+from the game page.
+
+{{ jam.url(_external = True) }}
+
+After packaging, you will receive another notification, reminding you to vote on
+all the beautiful games...
+{% endblock %}

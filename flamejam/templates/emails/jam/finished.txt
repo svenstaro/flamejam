@@ -1,0 +1,19 @@
+{% extends "emails/base.html" %}
+
+{% block content %}
+Hello {{ recipient.username }}!
+
+Finally, {{ jam.title }} is over. So without further ado, here are the top rated
+games!
+
+{% for game in games %}{{ loop.index }}: {{ game.title }}
+   by {{ game.team.name }}
+   with an average score of {{ game.score }}
+{% endfor %}
+
+To view (and play) all the games, visit the jam page:
+
+{{ jam.url(_external = True) }}
+
+We hope to see you participating in the next jam, too. We'll keep you updated!
+{% endblock %}
