@@ -150,8 +150,7 @@ ul {
 }
 
 .top-navigation a {
-    color: #4477CC;
-    text-decoration: none;
+    box-shadow: none;
 }
 
 .top-navigation a:hover {

@@ -108,7 +108,7 @@ def statistics():
     for game in all_games:
         if game.jam.getStatus() == JamStatusCode.FINISHED:
             finished_games.append(game)
-    finished_games.sort(key = Game.getTotalScore, reverse = True)
+    finished_games.sort(key = Game.score.fget, reverse = True)
     stats["best_games"] = finished_games[:3]
 
     user_most_games = User.query.filter_by(is_deleted = False).all()

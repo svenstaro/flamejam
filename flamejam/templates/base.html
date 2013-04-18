@@ -34,20 +34,18 @@
         <div id="header">
             <div class="padding">
                 <div class="top-navigation">
-                    <ul>
-                        <li><a href="{{ url_for('jams') }}">Jams</a></li>
-                        <li><a href="{{ url_for('rules') }}">Rules</a></li>
-                        <li><a href="{{ url_for('faq') }}">Help</a></li>
-                        <li><a href="{{ url_for('subreddit') }}">r/bacongamejam</a></li>
-                        <li><a href="{{ url_for('contact') }}#irc">IRC</a></li>
-                        <li><a href="{{ url_for('statistics') }}">Stats</a></li>
-                        <li><a href="{{ url_for('map') }}">Map</a></li>
-                        <li><a href="{{ url_for('announcements') }}">Announcements</a></li>
-                        {% if current_user.is_authenticated() %}
-                            <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                        {% endif %}
-                    </ul>
+                    <div class="btn-group">
+                        <a class="btn btn-mini" href="{{ url_for('jams') }}">Jams</a>
+                        <a class="btn btn-mini" href="{{ url_for('rules') }}">Rules</a>
+                        <a class="btn btn-mini" href="{{ url_for('faq') }}">Help</a>
+                        <a class="btn btn-mini" href="{{ url_for('subreddit') }}">r/bacongamejam</a>
+                        <a class="btn btn-mini" href="{{ url_for('contact') }}#irc">IRC</a>
+                        <a class="btn btn-mini" href="{{ url_for('statistics') }}">Stats</a>
+                        <a class="btn btn-mini" href="{{ url_for('map') }}">Map</a>
+                        <a class="btn btn-mini" href="{{ url_for('announcements') }}">Announcements</a>
+                    </div>
 
+                    <div class="btn-group">
                     {% if current_user.is_anonymous() %}
                         <a href="{{ url_for('login') }}" class="btn btn-small">Login / Signup</a>
                     {% else %}
@@ -55,7 +53,9 @@
                             <img class="avatar" src="{{ current_user.getAvatar(16) }}" width="16" height="16" />
                             {{ current_user.username }}
                         </a>
+                        <a class="btn btn-small" href="{{ url_for('logout') }}"><i class="icon-off"></i></a><
                     {% endif %}
+                    </div>
                 </div>
 
                 <div id="main-title">
