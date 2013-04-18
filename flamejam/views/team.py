@@ -2,7 +2,7 @@ from flamejam import app, db
 from flamejam.models import Jam, Team, DevlogPost, Invitation, JamStatusCode
 from flamejam.forms import DevlogForm, TeamSettingsForm, InviteForm, LeaveTeamForm
 from flask import render_template, url_for, redirect, flash
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 
 @app.route('/jams/<jam_slug>/team/<int:team_id>/')
 def jam_team(jam_slug, team_id):
@@ -57,12 +57,15 @@ def jam_current_team(jam_slug):
 @app.route('/jams/<jam_slug>/team/settings', methods = ["POST", "GET"])
 @login_required
 def team_settings(jam_slug):
-
     settings_form = TeamSettingsForm()
     invite_form = InviteForm()
     invite_username = None
 
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    if jam.getStatus().code >= JamStatusCode.RATING:
+        alert("The jam rating has started, so changes to the team are locked.", "error")
+        return redirect(jam.url())
+
     r = current_user.getRegistration(jam)
     if not r or not r.team: abort(404)
     team = r.team
@@ -111,6 +114,10 @@ def team_settings(jam_slug):
 def invitation(id, action = ""):
     invitation = Invitation.query.filter_by(id = id).first_or_404()
 
+    if invitation.team.jam.getStatus().code >= JamStatusCode.RATING:
+        alert("The jam rating has started, so changes to the team are locked.", "error")
+        return redirect(invitation.team.url())
+
     if action == "accept":
         require_user(invitation.user)
         invitation.accept()
@@ -135,6 +142,11 @@ def invitation(id, action = ""):
 @login_required
 def leave_team(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+
+    if jam.getStatus().code >= JamStatusCode.RATING:
+        alert("The jam rating has started, so changes to the team are locked.", "error")
+        return redirect(jam.url())
+
     user = current_user
     r = user.getRegistration(jam)
 

@@ -3,13 +3,14 @@ from flamejam.models import Jam, Game, User, Comment, GamePackage, \
     GameScreenshot, JamStatusCode, Rating
 from flamejam.forms import WriteComment, GameEditForm, GameAddScreenshotForm, \
     GameAddPackageForm, GameAddTeamMemberForm, GameCreateForm, RateGameForm
-from flask import render_template, url_for, redirect, flash
-from flask.ext.login import login_required
+from flask import render_template, url_for, redirect, flash, request
+from flask.ext.login import login_required, current_user
 
 @app.route("/jams/<jam_slug>/create-game/", methods = ("GET", "POST"))
 @login_required
 def create_game(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+
     r = current_user.getRegistration(jam)
     if not r or not r.team:
         flash("You cannot create a game without being registered for the jam.", category = "error")
@@ -35,7 +36,7 @@ def edit_game(jam_slug, game_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     game = jam.games.filter_by(slug = game_slug).first_or_404()
 
-    if not current_user in game.team.members:
+    if not game or not current_user in game.team.members:
         abort(403)
 
     form = GameEditForm(request.form, obj = game)

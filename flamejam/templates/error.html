@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}[{{ error.code }}] {{ error.name }}{% endblock %}
+{% block title %}[{{ code }}] {{ error.name }}{% endblock %}
 
 {# Add font for error displaying #}
 {% block head %}
@@ -10,8 +10,8 @@
 
 {% block content %}
 
-<div class="error-page error-{{ error.code }}" style="text-align: center; color: #222;">
-    <div style="font-size: 200pt;">{{ error.code }}</div>
-    <div style="font-size: 40pt; font-weight: bold;">{{ "NOPE!!!" if error.code == 403 else error.name }}</div>
+<div class="error-page error-{{ code }}" style="text-align: center; color: #222;">
+    <div style="font-size: 200pt;">{{ code }}</div>
+    <div style="font-size: 40pt; font-weight: bold;">{{ "NOPE!!!" if code == 403 else error.name }}</div>
 </div>
 {% endblock %}
