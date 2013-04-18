@@ -1,7 +1,7 @@
 from flamejam import app, db
-from flamejam.models import Jam, Team, DevlogPost, Invitation, JamStatusCode
+from flamejam.models import Jam, Team, DevlogPost, Invitation, JamStatusCode, User
 from flamejam.forms import DevlogForm, TeamSettingsForm, InviteForm, LeaveTeamForm
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, request
 from flask.ext.login import login_required, current_user
 
 @app.route('/jams/<jam_slug>/team/<int:team_id>/')
@@ -111,6 +111,7 @@ def team_settings(jam_slug):
 
 @app.route('/invitations/<int:id>', methods = ["POST", "GET"])
 @app.route('/invitations/<int:id>/<action>', methods = ["POST", "GET"])
+@login_required
 def invitation(id, action = ""):
     invitation = Invitation.query.filter_by(id = id).first_or_404()
 
@@ -119,23 +120,23 @@ def invitation(id, action = ""):
         return redirect(invitation.team.url())
 
     if action == "accept":
-        require_user(invitation.user)
+        if current_user != invitation.user: abort(403)
         invitation.accept()
         flash("You have accepted the invitation.", "success")
         return redirect(invitation.team.url())
     elif action == "decline":
-        require_user(invitation.user)
+        if current_user != invitation.user: abort(403)
         invitation.decline()
         flash("You have declined the invitation.", "success")
         return redirect(invitation.team.url())
     elif action == "revoke":
-        require_user(invitation.team.members)
+        if current_user not in invitation.team.members: abort(403)
         db.session.delete(invitation)
         db.session.commit()
         flash("You have revoked the invitation for %s." % invitation.user.username, "success")
         return redirect(url_for("team_settings", jam_slug = invitation.team.jam.slug))
     else:
-        require_user(invitation.user)
+        if current_user != invitation.user: abort(403)
         return render_template("jam/invitation.html", invitation = invitation)
 
 @app.route("/jams/<jam_slug>/leave-team/", methods = ("POST", "GET"))

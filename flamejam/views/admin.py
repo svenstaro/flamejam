@@ -1,7 +1,9 @@
-from flamejam import app, admin_permission
-from flamejam.models import User, Jam
-from flamejam.forms import JamDetailsForm
-from flask import render_template, redirect, url_for
+from flamejam import app, db, admin_permission
+from flamejam.utils import get_slug
+from flamejam.models import User, Jam, Announcement
+from flamejam.forms import JamDetailsForm, AdminWriteAnnouncement
+from flask import render_template, redirect, url_for, request, flash
+from datetime import datetime
 
 @app.route("/admin")
 def admin_index():
@@ -31,7 +33,7 @@ def admin_users_form():
 
     db.session.commit()
 
-    flash(str(len(users)) + " users were deleted", "success")
+    flash(str(len(users)) + " users were changed", "success")
 
     return redirect(url_for("admin_users"))
 

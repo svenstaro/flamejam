@@ -3,10 +3,6 @@
 
 {% block title %}Games of {{ jam.title }}{% endblock %}
 
-{% block subbreadcrumb %}
-    <li><a href="#">Games</a></li>
-{% endblock %}
-
 {% block content %}
 
 <h1>Games</h1>
@@ -28,16 +24,25 @@
         {% set games = jam.gamesByScore if showRatings else jam.gamesByTotalRatings %}
         {% for game in games %}
         <tr>
-            <td>{{ loop.index }}</th>
-            <td><a href="{{ game.url() }}">{{ game.title }}</a></th>
+            <td>{{ loop.index }}</td>
+            <td><a href="{{ game.url() }}">{{ game.title }}</a></td>
             <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
             <td data-value="{{ game.team.members | length }}">
                 {% for m in game.team.members %}
-                <a href="{{ m.url() }}">{{ m.username }}</a>
+                <a href="{{ m.url() }}">{{ m.username }}</a>{{ "," if not loop.last else "" }}
                 {% endfor %}
-            </th>
-            <td>{{ game.screenshots.count() }}</th>
-            <td><a href="#">Linux</a> | <a href="#">MacOS X</a> </th>
+            </td>
+            <td>{{ game.screenshots.count() }}</td>
+            <td>
+                {% if game.packages.count() %}
+                    {% for p in game.packages %}
+                        {{ p.getLinkShort() }}
+                        {{ "|" if not loop.last else "" }}
+                    {% endfor %}
+                {% else %}
+                    <i>no packages submitted</i>
+                {% endif %}
+            </td>
             <td>
                 {% if jam.getStatus().code <= 3 %}
                     n/a <!-- before rating -->
