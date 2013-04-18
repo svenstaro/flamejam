@@ -30,10 +30,7 @@
 
             <td data-value="{{ r.user.username }}">{{ r.user.getLink() }}</td>
 
-            {% set a = r.user.abilities | join(', ') %}
-            {% if a %}{% set a = a + "<br />" %}{% endif %}
-            {% set a = a  + (r.user.abilities_extra or "") %}
-            <td>{{ a | safe or "n/a" }}</td>
+            <td>{{ r.user.abilityString("<br />") | safe or "n/a" }}</td>
 
             <td>{{ r.user.getLocation() }}</td>
 

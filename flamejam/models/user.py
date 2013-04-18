@@ -144,6 +144,12 @@ class User(db.Model):
             a.append("Sound Design")
         return a
 
+    def abilityString(self, sep = ", "):
+        a = ", ".join(self.abilities)
+        if self.abilities_extra:
+            a += sep + self.abilities_extra
+        return a
+
     def getRegistration(self, jam):
         return Registration.query.filter_by(user_id = self.id, jam_id = jam.id).first()
 
