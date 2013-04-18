@@ -1,8 +1,8 @@
-from flamejam import app, db
+from flamejam import app, db, mail
 from flamejam.models import User
 from flamejam.utils import hashPassword
 from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm, ContactUserForm
-from flask import render_template, redirect, flash, url_for, current_app, session, request
+from flask import render_template, redirect, flash, url_for, current_app, session, request, abort
 from smtplib import SMTPRecipientsRefused
 from flask.ext.login import login_required, login_user, logout_user, current_user
 from flask.ext.principal import AnonymousIdentity, Identity, UserNeed, identity_changed, identity_loaded, Permission, RoleNeed
@@ -191,8 +191,11 @@ def contact_user(username):
     form = ContactUserForm()
 
     if form.validate_on_submit():
-        # TODO: Send email
-        pass
+        message = form.message.data
+        mail.send_message(subject="BaconGameJam: New message from " + current_user.username,
+                          recipients=[user.email],
+                          html=render_template("emails/account/message.html",
+                                               recipient=user, message=message))
 
     return render_template("account/contact.html", user = user, form = form)
 

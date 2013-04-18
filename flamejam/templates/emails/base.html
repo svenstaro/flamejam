@@ -80,6 +80,7 @@
             </div>
 
             <div id="email_note">
+                {% block note %}
                 <p>
                     You received this email to <i>{{ recipient.email }}</i> because you subscribed to email
                     notifications on <a href="{{ url_for('index', _external=True) }}">bacongamejam.org</a>.
@@ -90,6 +91,7 @@
                 <p>
                     All times are <a href="http://www.worldtimeserver.com/current_time_in_UTC.aspx" target="_blank">UTC/GMT</a>.
                 </p>
+                {% endblock %}
             </div>
         </div>
     </body>
