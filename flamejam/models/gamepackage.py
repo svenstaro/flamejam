@@ -3,6 +3,24 @@
 from flamejam import app, db
 from flask import Markup
 
+PACKAGE_TYPES = {
+    "web":           ("Web link (Flash etc.)", "Web"),
+    "linux":         ("Binaries: Linux 32/64-bit", "Linux"),
+    "linux32":       ("Binaries: Linux 32-bit", "Linux32"),
+    "linux64":       ("Binaries: Linux 64-bit", "Linux64"),
+    "windows":       ("Binaries: Windows", "Windows"),
+    "windows64":     ("Binaries: Windows 64-bit", "Windows64"),
+    "mac":           ("Binaries: MacOS Application", "MacOS"),
+    "source":        ("Source: package", "Source"),
+    "git":           ("Source: Git repository", "git"),
+    "svn":           ("Source: SVN repository", "svn"),
+    "hg":            ("Source: HG repository", "hg"),
+    "combi":         ("Combined package: Linux + Windows + Source (+ more, optional)", "Combined"),
+    "love":          ("Love package", ".love"),
+    "blender":       ("Blender file", ".blend"),
+    "unknown":       ("Other", "other")
+}
+
 class GamePackage(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     url = db.Column(db.String(256))
@@ -32,31 +50,23 @@ class GamePackage(db.Model):
     def getLink(self):
         return Markup('<a href="%s">%s</a>' % (self.url, GamePackage.typeString(self.type)))
 
+    def getLinkShort(self):
+        return Markup('<a href="%s">%s</a>' % (self.url, GamePackage.typeStringShort(self.type)))
+
     def __repr__(self):
         return "<GamePackage %r>" % self.id
 
-    def typeString(self):
-        return Game.typeString(self.type)
-
     @staticmethod
     def typeString(type):
-        if type == "web":           return "Web link (Flash etc.)"
-        if type == "linux":         return "Binaries: Linux 32/64-bit"
-        if type == "linux32":       return "Binaries: Linux 32-bit"
-        if type == "linux64":       return "Binaries: Linux 64-bit"
-        if type == "windows":       return "Binaries: Windows"
-        if type == "windows64":     return "Binaries: Windows 64-bit"
-        if type == "mac":           return "Binaries: MacOS Application"
-        if type == "source":        return "Source: package"
-        if type == "git":           return "Source: Git repository"
-        if type == "svn":           return "Source: SVN repository"
-        if type == "hg":            return "Source: HG repository"
-        if type == "combi":         return "Combined package: Linux + Windows + Source (+ more, optional)"
-        if type == "love":          return "Love package"
-        if type == "blender":       return "Blender file"
-        if type == "unknown":       return "Other"
+        if type in PACKAGE_TYPES:
+            return PACKAGE_TYPES[type][0]
+        return "Unknown"
 
-        return "Unknown type"
+    @staticmethod
+    def typeStringShort(type):
+        if type in PACKAGE_TYPES:
+            return PACKAGE_TYPES[type][1]
+        return "Unknown"
 
     @staticmethod
     def compare(left, right):

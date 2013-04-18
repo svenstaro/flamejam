@@ -2,11 +2,6 @@
 
 {% block title %}{{ team.name }}{% endblock %}
 
-{% block subbreadcrumb %}
-    <li><a href="{{ team.url }}">{{ team.name }}</a></li>
-{% endblock %}
-
-
 {% block content %}
 
 <h1>
@@ -87,36 +82,6 @@
         </a></li>
         {% endfor %}
         </ul>
-        {% endif %}
-    </div>
-    <div class="span8">
-        <h2>
-            Devlog
-            {% if current_user.is_authenticated() and current_user.inTeam(team) %}
-            <div style="float: right;"><a href="{{ url_for('jam_devlog', jam_slug = jam.slug) }}" class="btn btn-primary btn-mini">Write Post</a></div>
-            {% endif %}
-        </h2>
-        {% if not team.devlog_posts.all() %}
-        <p>
-            There are no devlog entries yet.
-        </p>
-        {% else %}
-        {% for p in team.devlog_posts %}
-            <div class="devlog-post">
-                <div class="title">
-                    <span class="number">#{{ team.devlog_posts.count() - loop.index + 1 }}</span>
-                    {{ p.title }}
-                </div>
-                <div class="content">{{ p.content | markdown }}</div>
-                <div class="meta">
-                    <spanclass="time">{{ p.posted | humantime }}</span> by
-                    <span class="author">{{ p.author.getLink() }}</span>
-                    {% if current_user.is_authenticated() and current_user.inTeam(team) %}
-                        <div style="float: right;"><a href="{{ url_for('jam_devlog', jam_slug = jam.slug, edit_id = p.id) }}" class="btn btn-primary btn-mini">Edit</a></div>
-                    {% endif %}
-                </div>
-            </div>
-        {% endfor %}
         {% endif %}
     </div>
 </div>

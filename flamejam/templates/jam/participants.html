@@ -2,10 +2,6 @@
 
 {% block title %}Participants of {{ jam.title }}{% endblock %}
 
-{% block subbreadcrumb %}
-    <li><a href="#">Participants</a></li>
-{% endblock %}
-
 {% block content %}
 
 <h1>Participants <small>{{ jam.registrations.all() | length }} people are registered</small>

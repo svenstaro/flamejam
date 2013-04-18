@@ -2,7 +2,7 @@ from flamejam import app, db
 from flamejam.models import Jam, JamStatusCode
 from flamejam.forms import RegisterJamForm, UnregisterJamForm, TeamFinderFilter
 from flask import render_template, url_for, redirect, flash
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 
 @app.route('/jams/')
 def jams():

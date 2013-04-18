@@ -1,7 +1,9 @@
-from flamejam import app, admin_permission
+from flamejam import app, db, admin_permission
+from flamejam.utils import get_slug
 from flamejam.models import User, Jam
-from flamejam.forms import JamDetailsForm
-from flask import render_template, redirect, url_for
+from flamejam.forms import JamDetailsForm, AdminWriteAnnouncement
+from flask import render_template, redirect, url_for, request, flash
+from datetime import datetime
 
 @app.route("/admin")
 def admin_index():
@@ -31,7 +33,7 @@ def admin_users_form():
 
     db.session.commit()
 
-    flash(str(len(users)) + " users were deleted", "success")
+    flash(str(len(users)) + " users were changed", "success")
 
     return redirect(url_for("admin_users"))
 
@@ -99,21 +101,13 @@ def admin_jam(id = 0):
 
     return render_template("admin/jam.html", id = id, mode = mode, jam = jam, form = form)
 
-@app.route("/admin/announcements")
-@admin_permission.require()
-def admin_announcements():
-    return render_template("admin/announcements.html", announcements = Announcement.query.all())
-
 @app.route("/admin/announcement", methods = ["GET", "POST"])
 @admin_permission.require()
 def admin_announcement():
     form = AdminWriteAnnouncement()
 
     if form.validate_on_submit():
-        announcement = Announcement(form.message.data)
-        announcement.subject = form.subject.data
-        announcement.context = "newsletter"
-        announcement.sendMail()
+        # TODO
         flash("Your announcement has been sent to the users.")
 
     return render_template("admin/announcement.html", form = form)

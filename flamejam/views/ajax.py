@@ -1,4 +1,5 @@
-from flamejam import app
+from flamejam import app, markdown_object
+from flask import request
 
 @app.route("/ajax/markdown", methods = ["POST"])
 def ajax_markdown():

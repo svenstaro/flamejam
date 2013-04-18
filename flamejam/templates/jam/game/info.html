@@ -41,6 +41,10 @@
             <h2>Technology used</h2>
             {{ game.technology | markdown }}
         {% endif %}
+        {% if game.help %}
+            <h2>Help / Controls</h2>
+            {{ game.help | markdown }}
+        {% endif %}
     </div>
     <div class="span4">
         <h2>Download</h2>
@@ -56,6 +60,8 @@
         {% endif %}
     </div>
 </div>
+
+<hr />
 
 <div class="row-fluid">
     <div class="span8">
@@ -73,12 +79,12 @@
         {% endif %}
 
         {% set status = game.jam.getStatus().code %}
+        <h2>Feedback</h2>
         {% if status >= 4 %}
             {% set rating = game.ratings.filter_by(user_id = current_user.get_id()).first() %}
             {% set categories = game.ratingCategories + ["overall"] %}
             {% set cols = (categories | length) + 2 %}
 
-            <h2>Feedback</h2>
 
             {% if status == 4 %}
                 <p class="alert alert-info">The voting for this jam is not over, so other people's ratings are hidden.</p>
@@ -130,6 +136,8 @@
                     {% endif %}
                 {% endif %}
             </table>
+        {% else %}
+        <p>Rating has not yet started.</p>
         {% endif %}
     </div>
     <div class="span4">
@@ -161,7 +169,7 @@
         {% endif %}
 
         {% if current_user.is_authenticated() %}
-            <form action="#TODO:new_comment" method="POST">
+            <form method="POST">
                     {{ form_errors(form) }}
                     {{ form.hidden_tag() }}
                     {{ form.text(class="comment", rows = 4) }}

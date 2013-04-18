@@ -3,10 +3,6 @@
 
 {% block title %}Invitation to {{ invitation.team.name }}{% endblock %}
 
-{% block subbreadcrumb %}
-    <li><a href="#">Invitation</a></li>
-{% endblock %}
-
 {% block content %}
 
 <h1>Invitation to {{ invitation.team.name }}</h1>
@@ -25,7 +21,7 @@
         <p>
             Notice that you will leave your current team (<a href="{{ current_team.url() }}">{{ current_team.name }}</a>).
             If there is no user left in that team, it is <b style="color: red;">PERMANENTLY DELETED</b>,
-            including all games, devlog posts, invitations and other team-related
+            including all games, invitations and other team-related
             data.
         </p>
         {% else %}

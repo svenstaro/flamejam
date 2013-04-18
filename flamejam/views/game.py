@@ -1,15 +1,17 @@
 from flamejam import app, db
+from flamejam.utils import get_slug
 from flamejam.models import Jam, Game, User, Comment, GamePackage, \
     GameScreenshot, JamStatusCode, Rating
 from flamejam.forms import WriteComment, GameEditForm, GameAddScreenshotForm, \
     GameAddPackageForm, GameAddTeamMemberForm, GameCreateForm, RateGameForm
-from flask import render_template, url_for, redirect, flash
-from flask.ext.login import login_required
+from flask import render_template, url_for, redirect, flash, request
+from flask.ext.login import login_required, current_user
 
 @app.route("/jams/<jam_slug>/create-game/", methods = ("GET", "POST"))
 @login_required
 def create_game(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+
     r = current_user.getRegistration(jam)
     if not r or not r.team:
         flash("You cannot create a game without being registered for the jam.", category = "error")
@@ -35,7 +37,7 @@ def edit_game(jam_slug, game_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     game = jam.games.filter_by(slug = game_slug).first_or_404()
 
-    if not current_user in game.team.members:
+    if not game or not current_user in game.team.members:
         abort(403)
 
     form = GameEditForm(request.form, obj = game)
@@ -111,11 +113,19 @@ def game_screenshot_edit(id, action):
     db.session.commit()
     return redirect(url_for("edit_game", jam_slug = s.game.jam.slug, game_slug = s.game.slug))
 
-@app.route('/jams/<jam_slug>/<game_slug>/')
+@app.route('/jams/<jam_slug>/<game_slug>/', methods = ("POST", "GET"))
 def show_game(jam_slug, game_slug):
     comment_form = WriteComment()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     game = Game.query.filter_by(slug = game_slug).filter_by(jam = jam).first_or_404()
+
+    if current_user.is_authenticated() and comment_form.validate_on_submit():
+        comment = Comment(comment_form.text.data, game, current_user)
+        db.session.add(comment)
+        db.session.commit()
+        flash("Your comment has been posted.", "success")
+        return redirect(game.url())
+
     return render_template('jam/game/info.html', game = game, form = comment_form)
 
 @app.route("/jams/<jam_slug>/<game_slug>/rate/", methods = ("GET", "POST"))

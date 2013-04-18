@@ -5,7 +5,7 @@ from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPasswo
 from flask import render_template, redirect, flash, url_for, current_app, session, request, abort
 from smtplib import SMTPRecipientsRefused
 from flask.ext.login import login_required, login_user, logout_user, current_user
-from flask.ext.principal import AnonymousIdentity, Identity, UserNeed, identity_changed, identity_loaded, Permission, RoleNeed
+from flask.ext.principal import AnonymousIdentity, Identity, UserNeed, identity_changed, identity_loaded, Permission, RoleNeed, PermissionDenied
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -298,8 +298,10 @@ def settings():
 @app.errorhandler(404)
 @app.errorhandler(403)
 @app.errorhandler(500)
+@app.errorhandler(PermissionDenied)
 def error(error):
-    return render_template("error.html", error = error), error.code
+    code = error.code if hasattr(error, "code") else 403
+    return render_template("error.html", error = error, code = code), code or 403
 
 @app.errorhandler(SMTPRecipientsRefused)
 def invalid_email(exception):
