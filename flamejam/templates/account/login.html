@@ -18,6 +18,10 @@
                 {{ login_form.password.label }}
                 {{ login_form.password(class="password-input", style="width: 275px;") }}
             </div>
+            <div class="field">
+                {{ login_form.remember_me.label }}
+                {{ login_form.remember_me(class="checkbox-input", style="width: 275px;") }}
+            </div>
             <p class="form-buttons">
                 <input type="submit" class="btn btn-primary" value="Login">
                 <a href="{{ url_for('reset_request') }}">Forgot your password?</a>

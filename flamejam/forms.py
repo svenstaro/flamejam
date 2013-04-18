@@ -75,6 +75,7 @@ class UsernameValidator(object):
 class UserLogin(Form):
     username = TextField("Username", validators=[LoginValidator("password")])
     password = PasswordField("Password", validators = [])
+    remember_me = BooleanField("Remember me", default = False)
 
 class UserRegistration(Form):
     username = TextField("Username", validators=[
