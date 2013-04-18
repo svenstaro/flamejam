@@ -6,7 +6,6 @@ from flamejam.models import Registration, Team, Game
 from flask import url_for, Markup
 from datetime import datetime
 from hashlib import md5
-from flask.ext.principal import identity_loaded, Permission, RoleNeed
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -196,15 +195,3 @@ def load_user(user_id):
         return user
     else:
         return None
-
-# we need this so Flask Principal knows what to do when a user is loaded
-@identity_loaded.connect_via(app)
-def on_identity_loaded(sender, identity):
-    # Set the identity user object
-    identity.user = current_user
-
-    # Add the UserNeed to the identity
-    identity.provides.add(UserNeed(self.id))
-
-    if current_user.is_admin:
-        identity.provides.add(RoleNeed('admin'))

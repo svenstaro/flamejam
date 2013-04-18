@@ -3,7 +3,7 @@ from datetime import *
 from flask.ext.mail import Mail
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.markdown import Markdown
-from flask.ext.principal import Principal, identity_loaded, Permission, RoleNeed
+from flask.ext.principal import Principal, Permission, RoleNeed
 from flask.ext.login import LoginManager, current_user
 
 app = Flask(__name__)

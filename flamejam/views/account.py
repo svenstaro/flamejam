@@ -1,11 +1,11 @@
 from flamejam import app, db
-from flamejam.login import *
 from flamejam.models import User
+from flamejam.utils import hashPassword
 from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm, ContactUserForm
-from flask import render_template, redirect, flash, url_for
+from flask import render_template, redirect, flash, url_for, current_app, session, request
 from smtplib import SMTPRecipientsRefused
-from flask.ext.login import login_required, login_user, logout_user
-from flask.ext.principal import AnonymousIdentity, Identity
+from flask.ext.login import login_required, login_user, logout_user, current_user
+from flask.ext.principal import AnonymousIdentity, Identity, UserNeed, identity_changed, identity_loaded, Permission, RoleNeed
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -62,6 +62,20 @@ def logout():
                           identity=AnonymousIdentity())
 
     return redirect(url_for('index'))
+
+# we need this so Flask Principal knows what to do when a user is loaded
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender, identity):
+    # Set the identity user object
+    identity.user = current_user
+
+    # Add the UserNeed to the identity
+    if hasattr(current_user, 'id'):
+        identity.provides.add(UserNeed(current_user.id))
+
+    if hasattr(current_user, 'is_admin'):
+        if current_user.is_admin:
+            identity.provides.add(RoleNeed('admin'))
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset_request():
