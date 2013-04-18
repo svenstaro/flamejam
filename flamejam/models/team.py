@@ -14,7 +14,6 @@ class Team(db.Model):
     irc = db.Column(db.String(128))
 
     registrations = db.relationship("Registration", backref = "team", lazy = "dynamic")
-    devlog_posts = db.relationship("DevlogPost", backref = "team", lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "team", lazy = "dynamic")
     games = db.relationship("Game", backref = "team", lazy = "dynamic")
 
@@ -73,13 +72,11 @@ class Team(db.Model):
         db.session.commit()
 
     def destroy(self):
-        # also destroy all the games, invitations and devlog posts
+        # also destroy all the games, invitations
         for game in self.games:
             game.destroy()
         for invitation in self.invitations:
             db.session.delete(invitation)
-        for post in self.devlog_posts:
-            db.session.delete(post)
         db.session.delete(self)
 
     @property

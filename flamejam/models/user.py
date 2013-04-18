@@ -20,7 +20,6 @@ class User(db.Model):
     registered = db.Column(db.DateTime)
     ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
     comments = db.relationship('Comment', backref='user', lazy = "dynamic")
-    devlog_posts = db.relationship("DevlogPost", backref = "author", lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
     registrations = db.relationship("Registration", backref = "user", lazy = "dynamic")
 

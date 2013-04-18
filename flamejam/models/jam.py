@@ -19,7 +19,6 @@ class Jam(db.Model):
     games = db.relationship('Game', backref="jam", lazy = "dynamic")
     registrations = db.relationship("Registration", backref = "jam", lazy = "dynamic")
     teams = db.relationship("Team", backref = "jam", lazy = "dynamic")
-    announcements = db.relationship("Announcement", backref = "jam", lazy = "dynamic")
 
     description = db.Column(db.Text)
     restrictions = db.Column(db.Text)

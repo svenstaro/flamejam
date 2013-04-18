@@ -4,7 +4,7 @@
 #
 
 from flamejam import db
-from flamejam.models import Announcement, User, Jam, Game, Rating, Comment, GameScreenshot, DevlogPost
+from flamejam.models import User, Jam, Game, Rating, Comment, GameScreenshot
 from datetime import datetime, timedelta
 
 # Kill everything and recreate tables
@@ -64,20 +64,6 @@ pablo.joinJam(loljam)
 aTeam = paul.getTeam(rgj3)
 aTeam.userJoin(pablo)
 
-# Make devlog post
-
-db.session.add(DevlogPost(aTeam, paul, "Sugar and spice",
-"""... and everything nice.
-
----
-
-    // our super duper mega fail program
-    int main() {
-        return 1;
-    }
-
-![Rainbow Dash is best Pony!](http://i.imgur.com/nnKnB.png)"""))
-
 # Make games
 best_game = Game(paddy.getTeam(rgj3), "Bessy the Best Game")
 best_game.description = "Simply the best game"
@@ -132,21 +118,6 @@ db.session.add(comment2)
 db.session.add(comment3)
 db.session.add(comment4)
 db.session.add(comment5)
-
-# Make announcements
-ann1 = Announcement("New game jam now.")
-ann2 = Announcement("Game jam is over.")
-ann3 = Announcement("Voting is over.")
-ann4 = Announcement("New game jam announced.")
-ann5 = Announcement("Game jam started.")
-
-# Add announcements
-
-db.session.add(ann1)
-db.session.add(ann2)
-db.session.add(ann3)
-db.session.add(ann4)
-db.session.add(ann5)
 
 # Commmit it all
 db.session.commit()

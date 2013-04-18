@@ -143,11 +143,6 @@ def statistics():
 
     return render_template('misc/statistics.html', stats = stats)
 
-@app.route('/announcements')
-def announcements():
-    announcements = Announcement.query.order_by(Announcement.posted.desc())
-    return render_template('announcements.html', announcements = announcements)
-
 @app.route('/faq')
 @app.route('/faq/<page>')
 def faq(page = ""):

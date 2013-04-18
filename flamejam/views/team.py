@@ -1,6 +1,6 @@
 from flamejam import app, db
-from flamejam.models import Jam, Team, DevlogPost, Invitation, JamStatusCode, User
-from flamejam.forms import DevlogForm, TeamSettingsForm, InviteForm, LeaveTeamForm
+from flamejam.models import Jam, Team, Invitation, JamStatusCode, User
+from flamejam.forms import TeamSettingsForm, InviteForm, LeaveTeamForm
 from flask import render_template, url_for, redirect, flash, request
 from flask.ext.login import login_required, current_user
 
@@ -9,39 +9,6 @@ def jam_team(jam_slug, team_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     team = Team.query.filter_by(id = team_id, jam_id = jam.id).first_or_404()
     return render_template('jam/team/info.html', jam = jam, team = team)
-
-@app.route('/jams/<jam_slug>/team/devlog/', methods = ["POST", "GET"])
-@app.route('/jams/<jam_slug>/team/devlog/<int:edit_id>', methods = ["POST", "GET"])
-@login_required
-def jam_devlog(jam_slug, edit_id = 0):
-    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    r = current_user.getRegistration(jam)
-    if not r or not r.team: abort(403)
-
-    form = DevlogForm()
-    mode = "create"
-
-    if edit_id:
-        p = DevlogPost.query.filter_by(id = edit_id).first_or_404()
-        if p.team != r.team: abort(403)
-        mode = "edit"
-
-    if form.validate_on_submit():
-        if mode == "edit":
-            p.title = form.title.data
-            p.content = form.text.data
-        else:
-            p = DevlogPost(r.team, current_user, form.title.data, form.text.data)
-            db.session.add(p)
-        db.session.commit()
-        flash("Your post was successfully saved.", "success")
-        return redirect(r.team.url())
-    elif mode == "edit" and request.method == "GET":
-        form.title.data = p.title
-        form.text.data = p.content
-
-    return render_template('jam/team/devlog.html', jam = jam, team = r.team, form = form, mode = mode, edit_id = edit_id)
-
 
 @app.route('/jams/<jam_slug>/team/')
 @login_required

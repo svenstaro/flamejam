@@ -32,9 +32,7 @@ import flamejam.login
 
 @app.context_processor
 def inject():
-    a = flamejam.models.Announcement.query.order_by(flamejam.models.Announcement.posted.desc()).first()
-    return dict(last_announcement = a,
-        current_user = current_user,
+    return dict(current_user = current_user,
         current_datetime = datetime.utcnow(),
         current_jam = get_current_jam(),
         RATING_CATEGORIES = flamejam.models.rating.RATING_CATEGORIES)
