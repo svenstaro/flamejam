@@ -196,8 +196,8 @@ def contact_user(username):
 @app.route('/settings', methods = ["POST", "GET"])
 @login_required
 def settings():
-    form = SettingsForm()
     user = current_user
+    form = SettingsForm(obj=user)
     logout = False
 
     if form.validate_on_submit():
@@ -261,29 +261,6 @@ def settings():
             return redirect(url_for("logout"))
         else:
             return redirect(url_for("settings"))
-
-    elif request.method == "GET":
-        form.ability_programmer.data = user.ability_programmer
-        form.ability_gamedesigner.data = user.ability_gamedesigner
-        form.ability_2dartist.data = user.ability_2dartist
-        form.ability_3dartist.data = user.ability_3dartist
-        form.ability_composer.data = user.ability_composer
-        form.ability_sounddesigner.data = user.ability_sounddesigner
-        form.abilities_extra.data = user.abilities_extra
-        form.real_name.data = user.real_name
-        form.about.data = user.about
-        form.website.data = user.website
-        form.pm_mode.data = user.pm_mode
-        form.location.data = user.location
-        form.email.data = user.email
-        form.notify_new_jam.data = user.notify_new_jam
-        form.notify_jam_start.data = user.notify_jam_start
-        form.notify_jam_finish.data = user.notify_jam_finish
-        form.notify_game_comment.data = user.notify_game_comment
-        form.notify_team_changes.data = user.notify_team_changes
-        form.notify_game_changes.data = user.notify_game_changes
-        form.notify_team_invitation.data = user.notify_team_invitation
-        form.notify_newsletter.data = user.notify_newsletter
 
     return render_template('account/settings.html', form = form)
 
