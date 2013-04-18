@@ -75,6 +75,7 @@ class UsernameValidator(object):
 class UserLogin(Form):
     username = TextField("Username", validators=[LoginValidator("password")])
     password = PasswordField("Password", validators = [])
+    remember_me = BooleanField("Remember me", default = False)
 
 class UserRegistration(Form):
     username = TextField("Username", validators=[
@@ -176,7 +177,6 @@ class SkipRating(Form):
 
 class WriteComment(Form):
     text = TextAreaField("Comment", validators=[Required(), Length(max=65535)])
-
 
 class TeamFinderFilter(Form):
     need_programmer = BooleanField("Programmer", default = True)

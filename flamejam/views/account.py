@@ -15,8 +15,9 @@ def login():
     if login_form.validate_on_submit():
         username = login_form.username.data
         password = hashPassword(login_form.password.data)
+        remember_me = login_form.remember_me.data
         user = User.query.filter_by(username=username).first()
-        if login_user(user):
+        if login_user(user, remember_me):
             flash("You were logged in.", "success")
             return redirect(request.args.get("next") or url_for('index'))
 
