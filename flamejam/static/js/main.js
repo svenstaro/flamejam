@@ -12,6 +12,8 @@ function step_slider() {
         input: null,
         steps: null,
         stepcount: 1,
+        enabled: true,
+        value: 5,
         update: function(value) {
             if(value < 1) { value = 1; }
             if(value > this.stepcount) { value = this.stepcount; }
@@ -21,9 +23,20 @@ function step_slider() {
             }
             this.input.val(value);
         },
+        setEnabled: function(enabled) {
+            this.input.attr("disabled", !enabled);
+            this.checkbox.attr("checked", !enabled);
+            if(enabled) {
+                this.steps.removeClass("disabled");
+            } else {
+                this.steps.addClass("disabled");
+            }
+        },
         initialize: function(input, stepcount) {
             var object = this;
             this.input = input;
+            this.value = input.val();
+            this.checkbox = input.parent().parent().find(":checkbox");
             this.stepcount = stepcount;
             this.steps = $('<div class="step-slider"></div>');
             for (var i = 1; i <= this.stepcount; i += 1) {
@@ -36,7 +49,9 @@ function step_slider() {
             this.input.change(function() { object.update($(this).val()); return false; });
             this.input.keyup(function() { object.update($(this).val()); return false; });
             this.input.click(function() { object.update($(this).val()); return false; });
+            this.checkbox.change(function() { object.setEnabled(!$(this).attr("checked")); });
             this.update(this.input.val());
+            this.setEnabled(!this.checkbox.attr("checked"));
         },
         stepclick: function($$) {
             this.update(this.steps.find(".step-slider-step").index($$) + 1);

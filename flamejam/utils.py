@@ -3,6 +3,13 @@ import requests
 import re
 from hashlib import sha512
 
+def average(list):
+    return sum(list) / float(len(list))
+
+def average_non_zero(list):
+    list = [x for x in list if x != 0]
+    return average(list)
+
 def get_slug(s):
     s = s.lower()
     s = re.sub(r"[\s_+]+", "-", s)

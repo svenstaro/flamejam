@@ -155,25 +155,17 @@ class GameAddPackageForm(Form):
         ("blender",      GamePackage.typeString("blender")),
         ("unknown",      GamePackage.typeString("unknown"))])
 
-class RateGame(Form):
-    game_id = HiddenField(validators = [Required(), NumberRange(min = 1)])
-    score_gameplay = IntegerField("Gameplay rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
-    score_graphics = IntegerField("Graphics rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
-    score_audio = IntegerField("Audio rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
-    score_innovation = IntegerField("Innovation rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
-    score_story = IntegerField("Story rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
-    score_technical = IntegerField("Technical rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
-    score_controls = IntegerField("Controls rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
-    score_overall = IntegerField("Overall rating", validators=[Required(), NumberRange(min=1, max=10)], default = 5)
-    note = TextField("Additional notes", validators=[Optional()])
+class RateGameForm(Form):
+    score = IntegerField("Overall rating", validators=[Required(), NumberRange(min=0, max=10)], default = 5)
+    # score_CATEGORY = IntegerField("Category rating", validators=[Required(), NumberRange(min=0, max=10)], default = 5)
+    note = TextAreaField("Additional notes", validators=[Optional()])
 
-class SkipRating(Form):
-    game_id = HiddenField(validators = [Required(), NumberRange(min = 1)])
-    reason = SelectField("Reason to skip", choices = [
-        ("platform", "Platform not supported"),
-        ("uninteresting", "Not interested"),
-        ("crash", "Game crashed on start")
-    ])
+    def get(self, name):
+        return getattr(self, "score" if name in (None, "overall") else ("score_" + name))
+
+for x in models.rating.RATING_CATEGORIES:
+    setattr(RateGameForm, "score_" + x, IntegerField(x.capitalize() + " rating",
+        validators=[Required(), NumberRange(min=0, max=10)], default = 5))
 
 class WriteComment(Form):
     text = TextAreaField("Comment", validators=[Required(), Length(max=65535)])

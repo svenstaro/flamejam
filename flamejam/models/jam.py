@@ -87,15 +87,16 @@ class Jam(db.Model):
     def url(self, **values):
         return url_for('jam_info', jam_slug = self.slug, **values)
 
-    def getTopGames(self):
+    @property
+    def gamesByScore(self):
         e = list(self.games.all())
-        #e.sort(key = lambda g: g.getTotalScore(), reverse = True)
-        e.sort(key = Game.getTotalScore, reverse = True)
+        e.sort(key = Game.score.fget, reverse = True)
         return e
 
-    def getShuffledGames(self):
+    @property
+    def gamesByTotalRatings(self):
         e = list(self.games.all())
-        shuffle(e)
+        e.sort(key = Game.numberRatings.fget)
         return e
 
     @property

@@ -106,11 +106,11 @@ db.session.add(s2)
 db.session.add(s3)
 
 # Make ratings
-rating1 = Rating(3, 5, 1, 7, 3, 1, 5, 2, "cool stuff", best_game, peter)
-rating2 = Rating(10, 6, 1, 7, 6, 10, 10, 10, "adasdff", best_game, paul)
-rating3 = Rating(3, 5, 1, 5, 2, 2, 10, 3, "cadkak", space_game, paul)
-rating4 = Rating(9, 5, 6, 7, 3, 1, 1, 6, "fakpdak1", clone, paul)
-rating5 = Rating(3, 5, 8, 5, 3, 6, 4, 1, "madkm1njn", clone, paddy)
+rating1 = Rating(best_game, peter, "Cool stuff", 3)
+rating2 = Rating(best_game, paul, "", 10)
+rating3 = Rating(space_game, paul, "Awesome space action!", 3)
+rating4 = Rating(clone, paul, "Something something", 9)
+rating5 = Rating(clone, paddy, "", 3)
 
 # Add ratings
 db.session.add(rating1)

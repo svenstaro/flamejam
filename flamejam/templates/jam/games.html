@@ -1,4 +1,5 @@
 {% extends "jam/base.html" %}
+{% set showRatings = jam.getStatus().code > 4 %}
 
 {% block title %}Games of {{ jam.title }}{% endblock %}
 
@@ -13,10 +14,6 @@
 {% if jam.games.all() | length == 0 %}
     <p>There are no games yet.</p>
 {% else %}
-    {% if jam.getStatus().code <= 4 %}
-        <div class="alert alert-info">This list is randomly shuffled while ratings are hidden.</div>
-    {% endif %}
-
     <table class="tabular full">
         <tr class="sorters">
             <th></th>
@@ -28,7 +25,7 @@
             <th>Rating (you)</th>
             <th></th>
         </tr>
-        {% set games = (jam.getShuffledGames() if jam.getStatus().code <= 4 else jam.getTopGames()) %}
+        {% set games = jam.gamesByScore if showRatings else jam.gamesByTotalRatings %}
         {% for game in games %}
         <tr>
             <td>{{ loop.index }}</th>
@@ -45,8 +42,8 @@
                 {% if jam.getStatus().code <= 3 %}
                     n/a <!-- before rating -->
                 {% else  %}
-                    {% if jam.getStatus().code >= 5 %}
-                        {{ game.getAverageRating() }}
+                    {% if showRatings %}
+                        {{ "%.02f" % game.score }}
                     {% else %}
                         n/a
                     {% endif %}
@@ -54,11 +51,13 @@
 
                     {% set r = current_user.ratings.filter_by(game = game).first() if current_user.is_authenticated() else None %}
                     {% if r %}
-                        {{ r.getAverage() }}
-                    {% elif jam.getStatus().code == 4 %}
-                        <a href="#">rate now</a>
+                        {{ r.score }}
                     {% else %}
                         n/a
+                    {% endif %}
+
+                    {% if jam.getStatus().code == 4 and current_user not in game.team.members %}
+                        <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_slug = game.slug) }}">{{ "(edit)" if r else "rate now" }}</a>
                     {% endif %}
                 {% endif %}
             </td>
