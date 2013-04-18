@@ -158,3 +158,17 @@ def links():
 def subreddit():
     return redirect("http://www.reddit.com/r/bacongamejam")
 
+@app.route('/tick')
+def tick():
+    """
+    This function is meant to be called regularly by a cronjob.
+    Its purpose is to send out mails and do site maitenance even
+    when there are no visitors.
+
+    Your cronjob could look like this:
+    * * * * * /usr/bin/curl http://domain.tld/tick
+    """
+
+    # TODO Do some site maintenance here
+
+    return "tick" 
