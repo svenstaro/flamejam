@@ -419,9 +419,7 @@ ul.comments {
 
 ul.comments li {
     min-height: 32px;
-    border-bottom: 1px solid #111;
-    margin-bottom: 5px;
-    padding: 4px;
+    padding-bottom: 15px;
     margin: 0;
     position: relative;
 }
@@ -432,18 +430,22 @@ ul.comments li .icon {
     width: 32px;
     height: 32px;
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 4px;
+    left: 0;
+}
+
+ul.comments li .meta {
+    font-size: 0.9em;
 }
 
 ul.comments li .meta,
 ul.comments li .text {
-    margin-left: 40px;
+    margin-left: 38px;
 }
 
 ul.comments li .meta,
 ul.comments li .meta a {
-    color: #666;
+    color: #AAA;
 }
 
 .markdown p:first-child {

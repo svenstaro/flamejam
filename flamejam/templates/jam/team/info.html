@@ -27,7 +27,7 @@
 <div class="row-fluid">
     <div class="span4">
         <h2>Team Details</h2>
-        <table class="details">
+        <table class="details full">
             <tr><th>Participants</th><td>
                 {{ team.members | length }} member{{ "" if team.members | length == 1 else "s" }}
                 <a href="{{ url_for('map', mode = 'team', id = team.id) }}">Map »</a>
@@ -37,7 +37,7 @@
                 {{ team.members[0].getLink() }}
             </td></tr>
 
-            {% if team.wip %}
+            {% if team.wip and jam.getStatus().code == 2 %}
             <tr><th>Working on</th><td>
                 {{ team.wip }}
             </td></tr>
@@ -58,30 +58,31 @@
             {% endif %}
         </table>
 
+    </div>
+    <div class="span4">
         <h2>Users in this team</h2>
         <ul class="users">
             {% for member in team.members %}
-            <li>{{ member.getLink() }}</li>
+            <li>
+                {{ member.getLink() }}
+                {% set as = member.abilities|join(", ") %}
+                {{ ("(" + as + ")") if as else "" }}
+            </li>
             {% endfor %}
         </ul>
 
-        {% if games %}
-        <h2>Game{{ "" if games | length == 1 else "s" }}</h2>
-
-        <ul class="games" style="text-align: center;">
-        {% for game in games %}
-        <li><a href="{{ game.url() }}">
-            {% set s = game.screenshots[-1] %}
-            {% if s %}
-            <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
-            {% else %}
-            <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
-            {% endif %}
-
-            <span>{{ game.title }}</span>
-        </a></li>
-        {% endfor %}
-        </ul>
+        {% if current_user.is_authenticated() and current_user in team.members %}
+            <p><b>Note:</b> You can invite users from the <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}">team settings</a> page.</p>
+        {% endif %}
+    </div>
+    <div class="span4">
+        <h2>This team's Game</h2>
+        {% if team.game %}
+            <a href="{{ team.game.url() }}">
+                {{ team.game.title }}
+            </a>
+        {% else %}
+            <p><i>This team has not yet created a game.</i></p>
         {% endif %}
     </div>
 </div>
