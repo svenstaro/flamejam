@@ -60,7 +60,7 @@ def admin_jam(id = 0):
         jam = Jam.query.filter_by(id = id).first_or_404()
         mode = "edit"
 
-    form = JamDetailsForm()
+    form = JamDetailsForm(obj=jam)
 
     if form.validate_on_submit():
         slug_jam = Jam.query.filter_by(slug = get_slug(form.title.data.strip())).first()
@@ -71,33 +71,16 @@ def admin_jam(id = 0):
                 jam = Jam("", datetime.utcnow())
                 db.session.add(jam)
 
-            jam.title = form.title.data.strip()
+            form.populate_obj(jam)
+            jam.title.strip()
             jam.slug = get_slug(jam.title)
-
-            jam.theme = form.theme.data.strip()
-            jam.team_limit = form.team_limit.data
-            jam.start_time = form.start_time.data
-            jam.registration_duration = form.registration_duration.data
-            jam.packaging_duration = form.packaging_duration.data
-            jam.rating_duration = form.rating_duration.data
-            jam.duration = form.duration.data
-            jam.description = form.description.data.strip()
-            jam.restrictions = form.restrictions.data.strip()
+            jam.theme.strip()
+            jam.description.strip()
+            jam.restrictions.strip()
 
             db.session.commit()
             flash("Jam settings have been saved.", "success")
             return redirect(url_for("admin_jam", id = jam.id))
-    elif request.method == "GET" and mode == "edit":
-        form.title.data = jam.title
-        form.theme.data = jam.theme
-        form.team_limit.data = jam.team_limit
-        form.start_time.data = jam.start_time
-        form.registration_duration.data = jam.registration_duration
-        form.packaging_duration.data = jam.packaging_duration
-        form.rating_duration.data = jam.rating_duration
-        form.duration.data = jam.duration
-        form.description.data = jam.description
-        form.restrictions.data = jam.restrictions
 
     return render_template("admin/jam.html", id = id, mode = mode, jam = jam, form = form)
 

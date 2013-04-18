@@ -24,10 +24,6 @@ def jam_current_team(jam_slug):
 @app.route('/jams/<jam_slug>/team/settings', methods = ["POST", "GET"])
 @login_required
 def team_settings(jam_slug):
-    settings_form = TeamSettingsForm()
-    invite_form = InviteForm()
-    invite_username = None
-
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     if jam.getStatus().code >= JamStatusCode.RATING:
         alert("The jam rating has started, so changes to the team are locked.", "error")
@@ -37,21 +33,18 @@ def team_settings(jam_slug):
     if not r or not r.team: abort(404)
     team = r.team
 
+    settings_form = TeamSettingsForm(obj=team)
+    invite_form = InviteForm()
+    invite_username = None
+
     if settings_form.validate_on_submit():
-        team.name = settings_form.name.data
-        team.wip = settings_form.wip.data
-        team.livestreams = settings_form.livestreams.data.strip()
-        team.irc = settings_form.irc.data
+        settings_form.populate(team)
+        team.livestreams.strip()
         db.session.commit()
         flash("The team settings were saved.", "success")
         return redirect(team.url())
     elif invite_form.validate_on_submit():
         invite_username = invite_form.username.data
-    elif request.method == "GET":
-        settings_form.name.data = team.name
-        settings_form.wip.data = team.wip
-        settings_form.livestreams.data = team.livestreams
-        settings_form.irc.data = team.irc
 
     if "invite" in request.args:
         invite_username = request.args["invite"]
