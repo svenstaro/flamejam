@@ -31,21 +31,13 @@
 
         <h2>{{ games | length }} Game{{ "s" if games | length >= 1 else "" }}</h2>
         {% if games %}
-        <ul class="games mini">
-            {% for game in games %}
-            <li>
-                <a href="{{ game.url() }}">
-                    {% set s = game.screenshots[-1] %}
-                    {% if s %}
-                    <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
-                    {% else %}
-                    <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" />
-                    {% endif %}
-                    <span>{{ game.title }}</span>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
+            <ul>
+                {% for game in games %}
+                    <li>
+                        <a href="{{ game.url() }}"><span>{{ game.title }}</span></a>
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
         <p>No games matched.</p>
         {% endif %}

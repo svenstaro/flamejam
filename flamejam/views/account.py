@@ -51,7 +51,7 @@ def login():
 def logout():
     logout_user()
     flash("You were logged out.", "success")
-    
+
     # Remove session keys set by Flask-Principal
     for key in ('identity.name', 'identity.auth_type'):
         session.pop(key, None)
@@ -185,7 +185,7 @@ def contact_user(username):
 @login_required
 def settings():
     form = SettingsForm()
-    user =_current_user
+    user = current_user
     logout = False
 
     if form.validate_on_submit():
