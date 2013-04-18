@@ -1,7 +1,9 @@
 from flamejam import app, db
 from flamejam.login import *
-from flamejam.models import Jam, Game, User, Comment, GamePackage, GameScreenshot, JamStatusCode
-from flamejam.forms import WriteComment, GameEditForm, GameAddScreenshotForm, GameAddPackageForm, GameAddTeamMemberForm, GameCreateForm
+from flamejam.models import Jam, Game, User, Comment, GamePackage, \
+    GameScreenshot, JamStatusCode, Rating
+from flamejam.forms import WriteComment, GameEditForm, GameAddScreenshotForm, \
+    GameAddPackageForm, GameAddTeamMemberForm, GameCreateForm, RateGameForm
 from flask import render_template, url_for, redirect, flash
 
 @app.route("/jams/<jam_slug>/create-game/", methods = ("GET", "POST"))
@@ -200,3 +202,43 @@ def show_game(jam_slug, game_slug):
         return redirect(game.url())
     """
 
+@app.route("/jams/<jam_slug>/<game_slug>/rate/", methods = ("GET", "POST"))
+def rate_game(jam_slug, game_slug):
+    jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
+    game = jam.games.filter_by(slug = game_slug).first_or_404()
+    user = get_current_user()
+
+    form = RateGameForm()
+    if jam.getStatus().code != JamStatusCode.RATING:
+        flash("This jam is not in the rating phase. Sorry, but you cannot rate right now.", "error")
+        return redirect(game.url())
+
+    if user in game.team.members:
+        flash("You cannot rate on your own game. Go rate on one of these!", "warning")
+        return redirect(url_for("jam_games", jam_slug = jam.slug))
+
+    rating = game.ratings.filter_by(user = user).first()
+    if rating:
+        flash("You are editing your previous rating of this game.", "info")
+
+    if form.validate_on_submit():
+        new = rating == None
+        if not rating:
+            rating = Rating(game, user, form.note.data, form.score.data)
+            db.session.add(rating)
+        else:
+            rating.text = form.note.data
+
+        for c in ["overall"] + game.ratingCategories:
+            rating.set(c, form.get(c).data)
+
+        db.session.commit()
+        flash("Your rating has been " + ("submitted" if new else "updated") + ".", "success")
+        return redirect(url_for("jam_games", jam_slug = jam.slug))
+
+    elif rating:
+        for c in ["overall"] + game.ratingCategories:
+            form.get(c).data = rating.get(c)
+        form.note.data = rating.text
+
+    return render_template('jam/game/rate.html', jam = jam, game = game, form = form)

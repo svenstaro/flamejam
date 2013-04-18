@@ -28,5 +28,6 @@ def inject():
     return dict(last_announcement = a,
         current_user = flamejam.login.get_current_user(),
         current_datetime = datetime.utcnow(),
-        current_jam = get_current_jam())
+        current_jam = get_current_jam(),
+        RATING_CATEGORIES = flamejam.models.rating.RATING_CATEGORIES)
 

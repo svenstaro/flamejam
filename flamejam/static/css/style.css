@@ -658,8 +658,9 @@ span.icon-16-innovation { background-image: url("../gfx/icons/innovation.png"); 
 span.icon-16-story      { background-image: url("../gfx/icons/story.png"); }
 span.icon-16-technical  { background-image: url("../gfx/icons/technical.png"); }
 span.icon-16-controls   { background-image: url("../gfx/icons/controls.png"); }
-span.icon-16-rating     { background-image: url("../gfx/icons/rating.png"); }
+span.icon-16-overall    { background-image: url("../gfx/icons/overall.png"); }
 span.icon-16-average    { background-image: url("../gfx/icons/average.png"); }
+span.icon-16-humor      { background-image: url("../gfx/icons/fun.png"); }
 
 #recaptcha_widget_div, #recaptcha-area {
     width: 450px;
@@ -676,3 +677,53 @@ span.icon-16-average    { background-image: url("../gfx/icons/average.png"); }
 
 .theme:after  { content: "»"; margin-left:  1px; }
 .theme:before { content: "«"; margin-right: 1px;}
+
+
+.step-slider {
+    display: inline-block;
+    margin: 0 20px;
+    vertical-align: 1px;
+}
+
+.rating th, .rating td {
+    vertical-align: middle;
+}
+
+.rating .overall th,
+.rating .overall td,
+.rating .overall label {
+    #background: #9F9;
+    font-weight: bold;
+    font-size: 12pt;
+}
+.rating th {
+    padding-top: 10px !important;
+}
+
+.rating input {
+    margin-bottom: 0;
+}
+
+.step-slider-step {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url("../gfx/rating.png") left bottom;
+    font-size: 0;
+    margin: 0;
+    margin-right: 8px;
+    cursor: pointer;
+    opacity: 1;
+
+    transition:
+        background-position 0.5s ease-in-out,
+        opacity 0.3s ease-in-out
+}
+
+.disabled .step-slider-step {
+    opacity: 0;
+}
+
+.step-slider-step.on {
+    background-position: left top;
+}

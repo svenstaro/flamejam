@@ -1,0 +1,80 @@
+{% extends "jam/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block title %}Rating » {{ game.title }}{% endblock %}
+
+{% block content %}
+<h1>
+    Rating &ndash; {{ game.title }}
+
+    <div class="pull-right">
+        {% set rating = game.ratings.filter_by(user = current_user).first() %}
+
+        <a href="{{ url_for('jam_games', jam_slug = jam.slug) }}" class="btn">Game list</a>
+        <a href="{{ game.url() }}" class="btn btn-primary">Game Page</a>
+    </div>
+</h1>
+
+<div class="row-fluid">
+    <div class="span6">
+        <h2>Submit your rating</h2>
+
+        <form method="post">
+        <table class="details rating full">
+            <tr class="overall">
+                <th width="130">{{ form.get("overall").label }}</th>
+                <th><span title="overall" class="icon-16 icon-16-overall"></span></th>
+                <td>{{ form.get("overall")(class="input-mini slider", size=1, style="text-align: center;") }}</td>
+            </tr>
+        </table>
+
+        <h2>Additional feedback</h2>
+        {{ form.hidden_tag() }}
+            <table class="details rating full">
+                {% for category in game.ratingCategories %}
+                <tr class="{{ category }}">
+                    <th width="130">{{ form.get(category).label }}</th>
+                    <th><span title="{{ category }}" class="icon-16 icon-16-{{ category }}"></span></th>
+                    <td>{{ form.get(category)(class="input-mini slider", size=1, style="text-align: center;") }}</td>
+                </tr>
+                {% endfor %}
+
+                <tr>
+                    <th>{{ form.note.label }}</th><th></th>
+                    <td>
+                        {{ form.note(style="display: block; width: 312px;", rows=3) }}
+                        <div class="note">Optional, <b>not</b> parsed with markdown</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th></th><th></th>
+                    <td><input type="submit" value="Submit Rating" class="btn btn-primary" /></td>
+                </tr>
+            </table>
+            <p>
+            </p>
+        </form>
+    </div>
+    <div class="span6">
+        <h2>How the rating works</h2>
+        <p>
+            Here you can give up- and downvotes! <b>One point</b> is the worst and <b>ten points</b> the best you can give.
+        </p>
+        <p>
+            Only the <b>overall rating</b> score is counted for the game rank. The other
+            categories are feedback for the team of the game and may be used to filter out
+            games that perform well in a specific aspect of game design to be highlighted
+            seperately, but these values are not used in the average score.
+        </p>
+        <p>
+            The categories are selected by the creator of the game, and thus
+            may not be the same for every game.
+        </p>
+        <p>
+            Please note that you can edit your rating at any time during the
+            rating phase of the jam, but cannot reset it after first submitting.
+        </p>
+    </div>
+</div>
+
+{% endblock %}

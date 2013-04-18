@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from flamejam import app, db
-from flamejam.utils import get_slug
+from flamejam.utils import get_slug, average, average_non_zero
 from flamejam.models.gamescreenshot import GameScreenshot
+from flamejam.models.rating import RATING_CATEGORIES
 from flask import url_for
 from datetime import datetime
 
@@ -21,6 +22,8 @@ class Game(db.Model):
     comments = db.relationship('Comment', backref='game', lazy = "dynamic")
     packages = db.relationship('GamePackage', backref='game', lazy = "dynamic")
     screenshots = db.relationship('GameScreenshot', backref='game', lazy = "dynamic")
+
+    # score_CATEGORY_enabled = db.Column(db.Boolean, default = True)
 
     def __init__(self, team, title):
         self.team = team
@@ -51,35 +54,29 @@ class Game(db.Model):
     def screenshotsOrdered(self):
         return self.screenshots.order_by(GameScreenshot.index)
 
-    def getAverageRating(self):
-        categories = ["gameplay", "graphics","audio","innovation","story","technical", "controls", "overall"]
-        r = {"average": 0}
+    @property
+    def score(self):
+        return average([r.score for r in self.ratings]) or 0
 
-        for c in categories:
-            r[c] = 0
+    def feedbackAverage(self, category):
+        if category in (None, "overall"):
+            return self.score
+        return average_non_zero([r.get(category) for r in self.ratings])
 
-        ratings = len(self.ratings.all())
-        if ratings > 0:
-            for rating in self.ratings:
-                for c in categories:
-                    r[c] += getattr(rating, "score_" + c)
-                r["average"] += rating.getAverage()
-
-            for c in categories:
-                r[c] *= 1.0 / ratings
-            r["average"] *= 1.0 / ratings
-        return r
-
-    def getTotalScore(self):
-        s = 0
-        c = 0
-        av = self.getAverageRating()
-        for x in av:
-            s += av[x]
-            c += 1
-        return s * 1.0/ c
-
-    def getRank(self):
+    @property
+    def rank(self):
         jam_games = list(self.jam.games.all())
-        jam_games.sort(key = Game.getTotalScore, reverse = True)
+        jam_games.sort(key="score", reverse=True)
         return jam_games.index(self) + 1
+
+    @property
+    def numberRatings(self):
+        return self.ratings.count()
+
+    @property
+    def ratingCategories(self):
+        return [c for c in RATING_CATEGORIES if getattr(self, "score_" + c + "_enabled")]
+
+# Adds fields "dynamically" (which score categories are enabled?)
+for c in RATING_CATEGORIES:
+    setattr(Game, "score_" + c + "_enabled", db.Column(db.Boolean, default = True))
