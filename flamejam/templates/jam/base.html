@@ -27,7 +27,7 @@
     {% endif %}
 {% endmacro %}
 
-{% set r = current_user.getRegistration(jam) if current_user else None %}
+{% set r = current_user.getRegistration(jam) if current_user.is_authenticated() else None %}
 
 <ul class="menu">
     {{ jamMenu("jam_info", "Overview") }}

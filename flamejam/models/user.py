@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flamejam import app, db
+from flamejam import app, db, login_manager
 from flamejam.utils import hashPassword
 from flamejam.models import Registration, Team, Game
 from flask import url_for, Markup
 from datetime import datetime
 from hashlib import md5
+from flask.ext.principal import identity_loaded, Permission, RoleNeed
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -60,6 +61,21 @@ class User(db.Model):
         self.registered = datetime.utcnow()
         self.receive_emails = receive_emails
 
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+    def get_id(self):
+        return self.id
+
+    def is_active(self):
+        return self.is_verified
+
+    def is_anonymous(self):
+        return False
+
+    def is_authenticated(self):
+        return True
+
     def getVerificationHash(self):
         # combine a few properties, hash md5
         # take first 8 chars for simplicity
@@ -93,9 +109,6 @@ class User(db.Model):
         g.sort(key = operator.attrgetter("created"))
 
         return g
-
-    def __repr__(self):
-        return '<User %r>' % self.username
 
     def url(self, **values):
         return url_for('show_user', username = self.username, **values)
@@ -172,6 +185,26 @@ class User(db.Model):
         if self.getRegistration(jam):
             db.session.delete(self.getRegistration(jam))
 
-
     def numberOfGames(self):
         return len(self.games)
+
+# we need this so Flask-Login can load a user into a session
+@login_manager.user_loader
+def load_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user:
+        return user
+    else:
+        return None
+
+# we need this so Flask Principal knows what to do when a user is loaded
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender, identity):
+    # Set the identity user object
+    identity.user = current_user
+
+    # Add the UserNeed to the identity
+    identity.provides.add(UserNeed(self.id))
+
+    if current_user.is_admin:
+        identity.provides.add(RoleNeed('admin'))

@@ -10,9 +10,9 @@
     {% if user.real_name %}<small>{{ user.real_name }}</small>{% endif %}
 
     <div class="pull-right">
-        {% if current_user and current_user == user %}
+        {% if current_user.is_authenticated() and current_user == user %}
             <a href="{{ url_for('settings') }}" class="btn btn-primary">Profile settings</a>
-        {% elif current_user %}
+        {% elif current_user.is_authenticated() %}
             {% if user.pm_mode == "form" %}
                 <a href="{{ url_for('contact_user', username = user.username) }}" class="btn">Send mail</a>
             {% elif user.pm_mode == "email" %}

@@ -10,11 +10,11 @@
     {{ game.title }}
 
     <div class="pull-right">
-        {% set rating = game.ratings.filter_by(user = current_user).first() %}
+        {% set rating = game.ratings.filter_by(user_id = current_user.get_id()).first() %}
 
-        {% if current_user and current_user.inTeam(game.team) %}
+        {% if current_user.is_authenticated() and current_user.inTeam(game.team) %}
             <a href="{{ url_for('edit_game', jam_slug = game.jam.slug, game_slug = game.slug) }}" class="btn btn-primary btn-normal pull-right">Edit game</a>
-        {% elif current_user and jam.getStatus().code == 4 and not rating %}
+        {% elif current_user.is_authenticated() and jam.getStatus().code == 4 and not rating %}
             <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_slug = game.slug) }}" class="btn btn-primary">Rate Game</a>
         {% endif %}
     </div>
@@ -50,7 +50,7 @@
             {% endfor %}
         {% else %}
             <p>There are no packages available yet.</p>
-            {% if current_user in game.team.members %}
+            {% if current_user.is_authenticated() and current_user in game.team.members %}
                 <a href="{{ url_for('edit_game', jam_slug = game.jam.slug, game_slug = game.slug) }}" class="btn btn-mini">Upload a package</a>
             {% endif %}
         {% endif %}
@@ -74,7 +74,7 @@
 
         {% set status = game.jam.getStatus().code %}
         {% if status >= 4 %}
-            {% set rating = game.ratings.filter_by(user = current_user).first() if current_user else None %}
+            {% set rating = game.ratings.filter_by(user_id = current_user.get_id()).first() %}
             {% set categories = game.ratingCategories + ["overall"] %}
             {% set cols = (categories | length) + 2 %}
 
@@ -121,7 +121,7 @@
                             <td>{{ rating.text or "&mdash;" | safe }}</td>
                         </tr>
                         <tr><td colspan="{{ cols }}" style="text-align: center;"><a href="{{ url_for('rate_game', jam_slug = jam.slug, game_slug = game.slug) }}" class="btn btn-small">Edit my Rating</a></td></tr>
-                    {% elif current_user %}
+                    {% elif current_user.is_authenticated() %}
                         <tr><td colspan="{{ cols }}" style="text-align: center;"><a href="{{ url_for('rate_game', jam_slug = jam.slug, game_slug = game.slug) }}" class="btn btn-small">Rate Game</a></td></tr>
                     {% else %}
                         <tr><td colspan="{{ cols }}" style="text-align: center;">Please
@@ -160,21 +160,21 @@
         <p>No comments yet.</p>
         {% endif %}
 
-        {% if current_user %}
-        <form action="#TODO:new_comment" method="POST">
-                {{ form_errors(form) }}
-                {{ form.hidden_tag() }}
-                {{ form.text(class="comment", rows = 4) }}
-                <!-- <p>Please don't use the comments to judge the work before the voting period is over.
-                This shall allow everyone to rate this game freely and unbiased.</p>
-                <b>Parsed with markdown.</b> -->
-            <p style="text-align: right;">
-                <input type="submit" value="Post comment" class="btn btn-primary">
-            </p>
-        </div>
-        </form>
+        {% if current_user.is_authenticated() %}
+            <form action="#TODO:new_comment" method="POST">
+                    {{ form_errors(form) }}
+                    {{ form.hidden_tag() }}
+                    {{ form.text(class="comment", rows = 4) }}
+                    <!-- <p>Please don't use the comments to judge the work before the voting period is over.
+                    This shall allow everyone to rate this game freely and unbiased.</p>
+                    <b>Parsed with markdown.</b> -->
+                <p style="text-align: right;">
+                    <input type="submit" value="Post comment" class="btn btn-primary">
+                </p>
+            </div>
+            </form>
         {% else %}
-        <a href="{{ url_for('login', next = request.url) }}">Log in or register</a> to post a comment.
+            <a href="{{ url_for('login', next = request.url) }}">Log in or register</a> to post a comment.
         {% endif %}
     </div>
 </div>

@@ -4,18 +4,11 @@ from flamejam.models import User
 from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm, ContactUserForm
 from flask import render_template, redirect, flash, url_for
 from smtplib import SMTPRecipientsRefused
+from flask.ext.login import login_required, login_user, logout_user
+from flask.ext.principal import AnonymousIdentity, Identity
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if get_current_user():
-        flash("You are already logged in.", "info")
-        return redirect(url_for("index"))
-
-    next = request.args.get("next","")
-    if next:
-        # remember where we wanted to go
-        session["next"] = next
-
     login_form = UserLogin()
     register_form = UserRegistration()
 
@@ -23,24 +16,23 @@ def login():
         username = login_form.username.data
         password = hashPassword(login_form.password.data)
         user = User.query.filter_by(username=username).first()
-        if not login_as(user):
-            return redirect(url_for("verify_status", username=username))
-        elif "next" in session:
-            flash("You were logged in and redirected.", "success")
-            return redirect(session.pop("next"))
-        else:
+        if login_user(user):
             flash("You were logged in.", "success")
-            return redirect(url_for('index'))
+            return redirect(request.args.get("next") or url_for('index'))
+
+            # Tell Flask-Principal the identity changed
+            identity_changed.send(current_app._get_current_object(),
+                                  identity=Identity(user.id))
+        else:
+            flash("Login failed, user not validated", "error")
+            return redirect(url_for("verify_status", username=username))
+
     elif register_form.validate_on_submit():
         username = register_form.username.data.strip()
         password = register_form.password.data
         email = register_form.email.data
-        new_user = User(username,
-                password,
-                email,
-                False, # no admin
-                False  # is verified
-                )
+
+        new_user = User(username, password, email)
 
         mail.send_message(subject="Welcome to Bacon Game Jam, " + username,
                           recipients=[new_user.email],
@@ -54,9 +46,25 @@ def login():
         return redirect(url_for('verify_status', username = username))
     return render_template('account/login.html', login_form = login_form, register_form = register_form)
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("You were logged out.", "success")
+    
+    # Remove session keys set by Flask-Principal
+    for key in ('identity.name', 'identity.auth_type'):
+        session.pop(key, None)
+
+    # Tell Flask-Principal the user is anonymous
+    identity_changed.send(current_app._get_current_object(),
+                          identity=AnonymousIdentity())
+
+    return redirect(url_for('index'))
+
 @app.route('/reset', methods=['GET', 'POST'])
 def reset_request():
-    if get_current_user():
+    if current_user:
         flash("You are already logged in.", "info")
         return redirect(url_for("index"))
     error = None
@@ -129,7 +137,6 @@ def verify_status(username):
 
 @app.route('/verify/<username>/<verification>', methods=["GET"])
 def verify(username, verification):
-
     user = User.query.filter_by(username = username).first_or_404()
 
     if user.is_verified:
@@ -149,18 +156,10 @@ def verify(username, verification):
     else:
         return redirect(url_for('verify_status', username=username, submitted=True))
 
-@app.route('/logout')
-def logout():
-    require_login()
-
-    logout_now()
-    flash("You were logged out.", "success")
-    return redirect(url_for('index'))
-
 @app.route('/profile')
+@login_required
 def profile():
-    require_login()
-    return render_template("account/profile.html", user = get_current_user())
+    return render_template("account/profile.html", user = current_user)
 
 @app.route('/users/<username>/')
 def show_user(username):
@@ -168,10 +167,10 @@ def show_user(username):
     return render_template("account/profile.html", user = user)
 
 @app.route('/users/<username>/contact/', methods = ("POST", "GET"))
+@login_required
 def contact_user(username):
-    require_login()
     user = User.query.filter_by(is_deleted = False, username = username).first_or_404()
-    if user == get_current_user() or user.pm_mode == "disabled":
+    if user == current_user or user.pm_mode == "disabled":
         abort(403)
 
     form = ContactUserForm()
@@ -183,14 +182,13 @@ def contact_user(username):
     return render_template("account/contact.html", user = user, form = form)
 
 @app.route('/settings', methods = ["POST", "GET"])
+@login_required
 def settings():
-    require_login()
     form = SettingsForm()
-    user = get_current_user()
+    user =_current_user
     logout = False
 
     if form.validate_on_submit():
-        print "GO"
         user.ability_programmer = form.ability_programmer.data
         user.ability_gamedesigner = form.ability_gamedesigner.data
         user.ability_2dartist = form.ability_2dartist.data
@@ -289,9 +287,3 @@ def error(error):
 def invalid_email(exception):
     flash("Invalid email address.", "error")
     return redirect(url_for('login'))
-
-@app.errorhandler(flamejam.login.LoginRequired)
-def login_required(exception):
-    flash(exception.message, "error")
-    return redirect(url_for('login', next = exception.next))
-

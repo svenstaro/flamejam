@@ -12,7 +12,7 @@
     {{ team.name }}
     <small style="margin-right: 20px;">for {{ jam.title }}</small>
 
-    {% if current_user and current_user.inTeam(team) %}
+    {% if current_user.is_authenticated() and current_user.inTeam(team) %}
         <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" class="btn btn-primary btn-normal">Team settings</a>
 
     {% if team.jam.team_jam %}
@@ -67,28 +67,29 @@
         </ul>
 
         {% if games %}
-        <h2>Game{{ "" if games | length == 1 else "s" }}</h2>
+            <h2>Game{{ "" if games | length == 1 else "s" }}</h2>
 
-        <ul class="games" style="text-align: center;">
-        {% for game in games %}
-        <li><a href="{{ game.url() }}">
-            {% set s = game.screenshots[-1] %}
-            {% if s %}
-            <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
-            {% else %}
-            <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
-            {% endif %}
-
-            <span>{{ game.title }}</span>
-        </a></li>
-        {% endfor %}
-        </ul>
+            <ul class="games" style="text-align: center;">
+            {% for game in games %}
+                <li>
+                    <a href="{{ game.url() }}">
+                        {% set s = game.screenshots[-1] %}
+                        {% if s %}
+                            <img src="{{ s.url }}" title="{{ game.title }}: {{ s.caption }}" />
+                        {% else %}
+                            <img src="{{ url_for('static', filename = 'gfx/default-screenshot.png') }}" title="No screenshots submitted yet." />
+                        {% endif %}
+                        <span>{{ game.title }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+            </ul>
         {% endif %}
     </div>
     <div class="span8">
         <h2>
             Devlog
-            {% if current_user and current_user.inTeam(team) %}
+            {% if current_user.is_authenticated() and current_user.inTeam(team) %}
             <div style="float: right;"><a href="{{ url_for('jam_devlog', jam_slug = jam.slug) }}" class="btn btn-primary btn-mini">Write Post</a></div>
             {% endif %}
         </h2>
@@ -97,22 +98,22 @@
             There are no devlog entries yet.
         </p>
         {% else %}
-        {% for p in team.devlog_posts %}
-            <div class="devlog-post">
-                <div class="title">
-                    <span class="number">#{{ team.devlog_posts.count() - loop.index + 1 }}</span>
-                    {{ p.title }}
+            {% for p in team.devlog_posts %}
+                <div class="devlog-post">
+                    <div class="title">
+                        <span class="number">#{{ team.devlog_posts.count() - loop.index + 1 }}</span>
+                        {{ p.title }}
+                    </div>
+                    <div class="content">{{ p.content | markdown }}</div>
+                    <div class="meta">
+                        <span class="time">{{ p.posted | humantime }}</span> by
+                        <span class="author">{{ p.author.getLink() }}</span>
+                        {% if current_user.is_authenticated() and current_user.inTeam(team) %}
+                            <div style="float: right;"><a href="{{ url_for('jam_devlog', jam_slug = jam.slug, edit_id = p.id) }}" class="btn btn-primary btn-mini">Edit</a></div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="content">{{ p.content | markdown }}</div>
-                <div class="meta">
-                    <spanclass="time">{{ p.posted | humantime }}</span> by
-                    <span class="author">{{ p.author.getLink() }}</span>
-                    {% if current_user and current_user.inTeam(team) %}
-                        <div style="float: right;"><a href="{{ url_for('jam_devlog', jam_slug = jam.slug, edit_id = p.id) }}" class="btn btn-primary btn-mini">Edit</a></div>
-                    {% endif %}
-                </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
         {% endif %}
     </div>
 </div>

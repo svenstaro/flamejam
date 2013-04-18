@@ -1,3 +1,0 @@
-# reCAPTCHA API keys. Signup here: https://www.google.com/recaptcha/admin/create
-RECAPTCHA_PUBLIC_KEY = "{REPLACE ME}"
-RECAPTCHA_PRIVATE_KEY = "{REPLACE ME}"

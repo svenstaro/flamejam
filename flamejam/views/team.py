@@ -1,8 +1,8 @@
 from flamejam import app, db
 from flamejam.models import Jam, Team, DevlogPost, Invitation, JamStatusCode
-from flamejam.login import *
 from flamejam.forms import DevlogForm, TeamSettingsForm, InviteForm, LeaveTeamForm
 from flask import render_template, url_for, redirect, flash
+from flask.ext.login import login_required
 
 @app.route('/jams/<jam_slug>/team/<int:team_id>/')
 def jam_team(jam_slug, team_id):
@@ -12,10 +12,10 @@ def jam_team(jam_slug, team_id):
 
 @app.route('/jams/<jam_slug>/team/devlog/', methods = ["POST", "GET"])
 @app.route('/jams/<jam_slug>/team/devlog/<int:edit_id>', methods = ["POST", "GET"])
+@login_required
 def jam_devlog(jam_slug, edit_id = 0):
-    require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    r = get_current_user().getRegistration(jam)
+    r = current_user.getRegistration(jam)
     if not r or not r.team: abort(403)
 
     form = DevlogForm()
@@ -31,7 +31,7 @@ def jam_devlog(jam_slug, edit_id = 0):
             p.title = form.title.data
             p.content = form.text.data
         else:
-            p = DevlogPost(r.team, get_current_user(), form.title.data, form.text.data)
+            p = DevlogPost(r.team, current_user, form.title.data, form.text.data)
             db.session.add(p)
         db.session.commit()
         flash("Your post was successfully saved.", "success")
@@ -44,10 +44,10 @@ def jam_devlog(jam_slug, edit_id = 0):
 
 
 @app.route('/jams/<jam_slug>/team/')
+@login_required
 def jam_current_team(jam_slug):
-    require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    user = get_current_user()
+    user = current_user
     r = user.getRegistration(jam)
     if r:
         return redirect(r.team.url())
@@ -55,15 +55,15 @@ def jam_current_team(jam_slug):
         return redirect(jam.url())
 
 @app.route('/jams/<jam_slug>/team/settings', methods = ["POST", "GET"])
+@login_required
 def team_settings(jam_slug):
-    require_login()
 
     settings_form = TeamSettingsForm()
     invite_form = InviteForm()
     invite_username = None
 
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    r = get_current_user().getRegistration(jam)
+    r = current_user.getRegistration(jam)
     if not r or not r.team: abort(404)
     team = r.team
 
@@ -87,7 +87,7 @@ def team_settings(jam_slug):
         invite_username = request.args["invite"]
 
     if invite_username:
-        if not team.canInvite(get_current_user()):
+        if not team.canInvite(current_user):
             flash("You cannot invite someone right now.", "error")
             abort(403)
 
@@ -99,7 +99,7 @@ def team_settings(jam_slug):
         elif team.getInvitation(user):
             flash("User %s is already invited." % user.username, "warning")
         else:
-            i = team.inviteUser(user, get_current_user())
+            i = team.inviteUser(user, current_user)
             flash("Invited user %s." % invite_username, "success")
 
         return redirect(url_for("team_settings", jam_slug = team.jam.slug))
@@ -132,10 +132,10 @@ def invitation(id, action = ""):
         return render_template("jam/invitation.html", invitation = invitation)
 
 @app.route("/jams/<jam_slug>/leave-team/", methods = ("POST", "GET"))
+@login_required
 def leave_team(jam_slug):
-    require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    user = get_current_user()
+    user = current_user
     r = user.getRegistration(jam)
 
     if not r or not r.team:

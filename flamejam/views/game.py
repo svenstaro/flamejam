@@ -1,15 +1,16 @@
 from flamejam import app, db
-from flamejam.login import *
 from flamejam.models import Jam, Game, User, Comment, GamePackage, \
     GameScreenshot, JamStatusCode, Rating
 from flamejam.forms import WriteComment, GameEditForm, GameAddScreenshotForm, \
     GameAddPackageForm, GameAddTeamMemberForm, GameCreateForm, RateGameForm
 from flask import render_template, url_for, redirect, flash
+from flask.ext.login import login_required
 
 @app.route("/jams/<jam_slug>/create-game/", methods = ("GET", "POST"))
+@login_required
 def create_game(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    r = get_current_user().getRegistration(jam)
+    r = current_user.getRegistration(jam)
     if not r or not r.team:
         flash("You cannot create a game without being registered for the jam.", category = "error")
         return redirect(jam.url())
@@ -29,11 +30,13 @@ def create_game(jam_slug):
     return render_template("jam/game/create.html", jam = jam, enabled = enabled, form = form)
 
 @app.route("/jams/<jam_slug>/<game_slug>/edit/", methods = ("GET", "POST"))
+@login_required
 def edit_game(jam_slug, game_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     game = jam.games.filter_by(slug = game_slug).first_or_404()
 
-    require_user(game.team.members)
+    if not current_user in game.team.members:
+        abort(403)
 
     form = GameEditForm(request.form, obj = game)
     package_form = GameAddPackageForm()
@@ -71,12 +74,14 @@ def edit_game(jam_slug, game_slug):
         form = form, package_form = package_form, screenshot_form = screenshot_form)
 
 @app.route('/edit/package/<id>/<action>/')
+@login_required
 def game_package_edit(id, action):
     if not action in ("delete"):
         abort(404)
 
     p = GamePackage.query.filter_by(id = id).first_or_404()
-    require_user(p.game.team.members)
+    if not current_user in p.game.team.members:
+        abort(403)
 
     if action == "delete":
         db.session.delete(p)
@@ -84,12 +89,14 @@ def game_package_edit(id, action):
     return redirect(url_for("edit_game", jam_slug = p.game.jam.slug, game_slug = p.game.slug))
 
 @app.route('/edit/screenshot/<id>/<action>/')
+@login_required
 def game_screenshot_edit(id, action):
     if not action in ("up", "down", "delete"):
         abort(404)
 
     s = GameScreenshot.query.filter_by(id = id).first_or_404()
-    require_user(s.game.team.members)
+    if not current_user in s.game.team.members:
+        abort(403)
 
     if action == "up":
         s.move(-1)
@@ -111,120 +118,29 @@ def show_game(jam_slug, game_slug):
     game = Game.query.filter_by(slug = game_slug).filter_by(jam = jam).first_or_404()
     return render_template('jam/game/info.html', game = game, form = comment_form)
 
-    """
-    if action == "new_comment" and comment_form.validate_on_submit():
-        require_login()
-        text = comment_form.text.data
-        new_comment = Comment(text, game, get_current_user())
-        db.session.add(new_comment)
-        db.session.commit()
-        flash("Comment added", "success")
-        return redirect(url_for('show_game', jam_slug = jam_slug, game_slug = game_slug))
-
-    if action == "add_team_member":
-        require_user(game.team.members)
-
-        jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-        if jam.team_jam == False:
-            flash("This jam is not a team jam.", "error")
-            return redirect(game.url())
-
-        team_form = GameAddTeamMember()
-        if team_form.validate_on_submit():
-            member = User.query.filter_by(username = team_form.username.data).first_or_404()
-            if member == get_current_user():
-                flash("You cannot add yourself to the team.", "error")
-            elif not member:
-                flash("That username does not exist.", "error")
-            elif member in game.team:
-                flash("That user is already in the team.", "error")
-            elif member.getGameInJam(game.jam):
-                flash("That user has a game for this jam. Look here!", "error")
-                return redirect(member.getGameInJam(game.jam).url())
-            elif member.getTeamGameInJam(game.jam):
-                flash("That user is already part of a team for this jam. Look here!", "error")
-                return redirect(member.getTeamGameInJam(game.jam).url())
-            else:
-                game.team.append(member)
-                db.session.commit()
-                flash("%s has been added to the team." % member.username, "success")
-                return redirect(game.url())
-
-        return render_template("add_team_member.html", game = game, form = team_form)
-
-    if action == "remove_screenshot":
-        require_user(game.team.members)
-
-        remove_id = request.args.get("remove_id", "")
-        s = GameScreenshot.query.filter_by(game_id = game.id, id = remove_id).first_or_404()
-        db.session.delete(s)
-        db.session.commit()
-        flash("The screenshot has been removed.", "success")
-        return redirect(game.url())
-
-    if action == "remove_package":
-        require_user(game.team.members)
-
-        remove_id = request.args.get("remove_id", "")
-        s = GamePackage.query.filter_by(game_id = game.id, id = remove_id).first_or_404()
-        db.session.delete(s)
-        db.session.commit()
-        flash("The package has been removed.", "success")
-        return redirect(game.url())
-
-    if action == "remove_team_member":
-        require_user(game.team.members)
-
-        jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-        if jam.team_jam == False:
-            flash("This jam is not a team jam.", "error")
-            return redirect(game.url())
-
-        remove_id = request.args.get("remove_id", "0")
-        member = User.query.get(remove_id)
-        db.session.commit()
-        game.team.remove(member)
-        db.session.commit()
-        flash("%s has been removed from the team." % member.username, "success")
-        return redirect(game.url())
-
-    if action == "quit":
-        require_user(game.team.members)
-
-        jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-        if jam.team_jam == False:
-            flash("This jam is not a team jam.", "error")
-            return redirect(game.url())
-
-        game.team.remove(get_current_user())
-        db.session.commit()
-        flash("You have been removed from the team.", "success")
-        return redirect(game.url())
-    """
-
 @app.route("/jams/<jam_slug>/<game_slug>/rate/", methods = ("GET", "POST"))
+@login_required
 def rate_game(jam_slug, game_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     game = jam.games.filter_by(slug = game_slug).first_or_404()
-    user = get_current_user()
 
     form = RateGameForm()
     if jam.getStatus().code != JamStatusCode.RATING:
         flash("This jam is not in the rating phase. Sorry, but you cannot rate right now.", "error")
         return redirect(game.url())
 
-    if user in game.team.members:
+    if current_user in game.team.members:
         flash("You cannot rate on your own game. Go rate on one of these!", "warning")
         return redirect(url_for("jam_games", jam_slug = jam.slug))
 
-    rating = game.ratings.filter_by(user = user).first()
+    rating = game.ratings.filter_by(user = current_user).first()
     if rating:
         flash("You are editing your previous rating of this game.", "info")
 
     if form.validate_on_submit():
         new = rating == None
         if not rating:
-            rating = Rating(game, user, form.note.data, form.score.data)
+            rating = Rating(game, current_user, form.note.data, form.score.data)
             db.session.add(rating)
         else:
             rating.text = form.note.data

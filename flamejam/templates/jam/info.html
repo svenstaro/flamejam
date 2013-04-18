@@ -8,7 +8,7 @@
 
     <small>{{ ("Theme: \"" + jam.theme + "\"") if jam.showTheme else "Theme not announced" }}</small>
 
-    {% set r = current_user.getRegistration(jam) if current_user else None %}
+    {% set r = current_user.getRegistration(jam) if current_user.is_authenticated() else None %}
     <div class="pull-right">
         {% if r %}
         <a class="btn" href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister</a>

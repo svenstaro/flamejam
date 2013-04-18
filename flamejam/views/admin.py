@@ -1,6 +1,5 @@
-from flamejam import app
+from flamejam import app, admin_permission
 from flamejam.models import User, Jam
-from flamejam.login import *
 from flamejam.forms import JamDetailsForm
 from flask import render_template, redirect, url_for
 
@@ -9,15 +8,14 @@ def admin_index():
     return redirect(url_for('admin_users'))
 
 @app.route("/admin/users")
+@admin_permission.require()
 def admin_users():
-    require_admin()
     users = User.query.all()
     return render_template("admin/users.html", users = users)
 
 @app.route("/admin/users/form", methods = ["POST"])
+@admin_permission.require()
 def admin_users_form():
-    require_admin()
-
     users = []
     for field in request.form:
         print field
@@ -39,21 +37,20 @@ def admin_users_form():
 
 @app.route("/admin/users/<username>")
 @app.route("/admin/user/<username>")
+@admin_permission.require()
 def admin_user(username):
-    require_admin()
     user = User.query.filter_by(username = username).first_or_404()
     return render_template("admin/user.html", user = user)
 
 @app.route("/admin/jams")
+@admin_permission.require()
 def admin_jams():
-    require_admin()
     return render_template("admin/jams.html", jams = Jam.query.all())
-
 
 @app.route("/admin/jams/<int:id>", methods = ["POST", "GET"])
 @app.route("/admin/jams/create/", methods = ["POST", "GET"])
+@admin_permission.require()
 def admin_jam(id = 0):
-    require_admin()
     mode = "create"
     jam = None
 
@@ -103,15 +100,13 @@ def admin_jam(id = 0):
     return render_template("admin/jam.html", id = id, mode = mode, jam = jam, form = form)
 
 @app.route("/admin/announcements")
+@admin_permission.require()
 def admin_announcements():
-    require_admin()
-
     return render_template("admin/announcements.html", announcements = Announcement.query.all())
 
 @app.route("/admin/announcement", methods = ["GET", "POST"])
+@admin_permission.require()
 def admin_announcement():
-    require_admin()
-
     form = AdminWriteAnnouncement()
 
     if form.validate_on_submit():
