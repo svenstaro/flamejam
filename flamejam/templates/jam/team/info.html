@@ -14,7 +14,7 @@
     <small style="margin-right: 20px;">for {{ jam.title }}</small>
 
     <div class="pull-right">
-    {% if current_user and current_user.inTeam(team) %}
+    {% if current_user.is_authenticated() and current_user.inTeam(team) %}
         {% if team.canInvite(current_user) %}
             <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" class="btn btn-normal">Invite a member</a>
         {% elif team.jam.team_limit > 1 %}
@@ -92,7 +92,7 @@
     <div class="span8">
         <h2>
             Devlog
-            {% if current_user and current_user.inTeam(team) %}
+            {% if current_user.is_authenticated() and current_user.inTeam(team) %}
             <div style="float: right;"><a href="{{ url_for('jam_devlog', jam_slug = jam.slug) }}" class="btn btn-primary btn-mini">Write Post</a></div>
             {% endif %}
         </h2>
@@ -111,7 +111,7 @@
                 <div class="meta">
                     <spanclass="time">{{ p.posted | humantime }}</span> by
                     <span class="author">{{ p.author.getLink() }}</span>
-                    {% if current_user and current_user.inTeam(team) %}
+                    {% if current_user.is_authenticated() and current_user.inTeam(team) %}
                         <div style="float: right;"><a href="{{ url_for('jam_devlog', jam_slug = jam.slug, edit_id = p.id) }}" class="btn btn-primary btn-mini">Edit</a></div>
                     {% endif %}
                 </div>

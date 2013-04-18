@@ -43,18 +43,18 @@
                         <li><a href="{{ url_for('statistics') }}">Stats</a></li>
                         <li><a href="{{ url_for('map') }}">Map</a></li>
                         <li><a href="{{ url_for('announcements') }}">Announcements</a></li>
-                        {% if current_user %}
+                        {% if current_user.is_authenticated() %}
                             <li><a href="{{ url_for('logout') }}">Logout</a></li>
                         {% endif %}
                     </ul>
 
-                    {% if current_user %}
+                    {% if current_user.is_anonymous() %}
+                        <a href="{{ url_for('login') }}" class="btn btn-small">Login / Signup</a>
+                    {% else %}
                         <a href="{{ url_for('profile') }}" class="btn btn-small" id="account">
                             <img class="avatar" src="{{ current_user.getAvatar(16) }}" width="16" height="16" />
                             {{ current_user.username }}
                         </a>
-                    {% else %}
-                        <a href="{{ url_for('login') }}" class="btn btn-small">Login / Signup</a>
                     {% endif %}
                 </div>
 

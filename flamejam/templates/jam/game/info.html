@@ -13,7 +13,7 @@
 <h1>
     {{ game.title }}
 
-    {% if current_user and current_user.inTeam(game.team) %}
+    {% if current_user.is_authenticated() and current_user.inTeam(game.team) %}
         <a href="{{ url_for('edit_game', jam_slug = game.jam.slug, game_slug = game.slug) }}" class="btn btn-primary btn-normal pull-right">Edit game</a>
     {% endif %}
 </h1>
@@ -48,7 +48,7 @@
             {% endfor %}
         {% else %}
             <p>There are no packages available yet.</p>
-            {% if current_user in game.team.members %}
+            {% if current_user.is_authenticated() in game.team.members %}
                 <a href="{{ url_for('edit_game', jam_slug = game.jam.slug, game_slug = game.slug) }}" class="btn btn-mini">Upload a package</a>
             {% endif %}
         {% endif %}
@@ -94,7 +94,7 @@
         {% if game.jam.getStatus().code != 5 %}
 
             {# check if the user has rated this game #}
-            {% set rating = game.ratings.filter_by(user = current_user).first() %}
+            {% set rating = game.ratings.filter_by(user_id = current_user.get_id()).first() %}
             {% if rating %}
             <tr>
                 <td>{{ rating.user.getLink() }}</td>
@@ -109,7 +109,7 @@
                 <td class="score">{{ "%.2f" % rating.getAverage() }}</td>
                 <td>{% if rating.text %}{{ rating.text }}{% else %}---{% endif %}</td>
             </tr>
-            {% elif current_user %}
+            {% elif current_user.is_authenticated() %}
                 <tr><td colspan="11" style="text-align: center;"><a href="#TODO" class="btn btn-small">Rate Game</a></td></tr>
             {% endif %}
         {% elif game.ratings.all() %}
@@ -147,7 +147,7 @@
         {% endif %}
         </table>
 
-        {% if game.ratings.filter_by(user = current_user).first() and game.jam.getStatus().code == 4 %}
+        {% if game.ratings.filter_by(user_id = current_user.get_id()).first() and game.jam.getStatus().code == 4 %}
             <p><a href="{{ url_for('reset_vote', jam_slug = game.jam.slug, game_slug = game.slug) }}">Click here if you want to reset your vote for this game</a>. You will have
             to start the voting process again to be prompted for your vote for
             this game.</p>
@@ -181,7 +181,7 @@
         <p>No comments yet.</p>
         {% endif %}
 
-        {% if current_user %}
+        {% if current_user.is_authenticated() %}
         <form action="#TODO:new_comment" method="POST">
                 {{ form_errors(form) }}
                 {{ form.hidden_tag() }}

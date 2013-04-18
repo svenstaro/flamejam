@@ -52,7 +52,7 @@
                     {% endif %}
                     &ndash;
 
-                    {% set r = current_user.ratings.filter_by(game = game).first() if current_user else None %}
+                    {% set r = current_user.ratings.filter_by(game = game).first() if current_user.is_authenticated() else None %}
                     {% if r %}
                         {{ r.getAverage() }}
                     {% elif jam.getStatus().code == 4 %}

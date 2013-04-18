@@ -1,0 +1,24 @@
+# General app settings
+DEBUG = True
+TESTING = True
+SECRET_KEY = "SUPERSECRET"
+
+SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/flamejam.db'
+SQLALCHEMY_ECHO = False
+
+PENIS = True 
+# See http://packages.python.org/Flask-Mail/
+#MAIL_SERVER = "localhost"
+#MAIL_PORT = 25
+#MAIL_USE_TLS = False
+#MAIL_USE_SSL = False
+#MAIL_DEBUG = app.debug
+#MAIL_USERNAME = None
+#MAIL_PASSWORD = None
+#MAIL_DEFAULT_SENDER = None
+#MAIL_MAX_EMAILS = None
+#MAIL_SUPPRESS_SEND = app.testing
+
+# reCAPTCHA API keys. Signup here: https://www.google.com/recaptcha/admin/create
+RECAPTCHA_PUBLIC_KEY = "your-key"
+RECAPTCHA_PRIVATE_KEY = "your-key"

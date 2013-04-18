@@ -1,8 +1,8 @@
 from flamejam import app, db
 from flamejam.models import Jam, JamStatusCode
-from flamejam.login import *
 from flamejam.forms import RegisterJamForm, UnregisterJamForm, TeamFinderFilter
 from flask import render_template, url_for, redirect, flash
+from flask.ext.login import login_required
 
 @app.route('/jams/')
 def jams():
@@ -19,10 +19,10 @@ def countdown(jam_slug):
     return render_template('misc/countdown.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/register/', methods = ["POST", "GET"])
+@login_required
 def jam_register(jam_slug):
-    require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    user = get_current_user()
+    user = current_user
 
     if jam.getStatus().code > JamStatusCode.RUNNING:
         flash("You cannot register for a jam after it has finished.", "error")
@@ -44,8 +44,8 @@ def jam_register(jam_slug):
     return render_template('jam/register.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/unregister/', methods = ["POST", "GET"])
+@login_required
 def jam_unregister(jam_slug):
-    require_login()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
     if jam.getStatus().code > JamStatusCode.RUNNING:
@@ -55,7 +55,7 @@ def jam_unregister(jam_slug):
     form = UnregisterJamForm()
 
     if form.validate_on_submit():
-        get_current_user().leaveJam(jam)
+        current_user.leaveJam(jam)
         db.session.commit()
         flash("You are now unregistered from this jam.", "success")
         return redirect(jam.url())
@@ -75,7 +75,7 @@ def jam_participants(jam_slug):
 @app.route('/jams/<jam_slug>/team_finder/toggle/')
 def jam_toggle_show_in_finder(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    r = get_current_user().getRegistration(jam)
+    r = current_user.getRegistration(jam)
     if not r: abort(404)
     r.show_in_finder = not r.show_in_finder
     db.session.commit()
