@@ -194,6 +194,7 @@ def contact_user(username):
         message = form.message.data
         mail.send_message(subject="BaconGameJam: New message from " + current_user.username,
                           recipients=[user.email],
+                          reply_to=current_user.email,
                           html=render_template("emails/account/message.html",
                                                recipient=user, message=message))
 
