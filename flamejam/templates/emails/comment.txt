@@ -1,0 +1,15 @@
+{% extends "emails/base.txt" %}
+
+{% block content %}
+Hey, {{ recipient.username }}!
+
+{{ comment.user.username }} has posted a comment on your game {{ comment.game.name }}.
+You can read the full thread and reply to this comment on the game page:
+
+{{ comment.game.url(_external = True) }}
+
+====== COMMENT START ======
+{{ comment.text | markdown | striptags }}
+====== COMMENT END ======
+
+{% endblock %}

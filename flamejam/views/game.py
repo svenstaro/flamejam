@@ -123,6 +123,13 @@ def show_game(jam_slug, game_slug):
         comment = Comment(comment_form.text.data, game, current_user)
         db.session.add(comment)
         db.session.commit()
+
+        # notify the team
+        for user in game.team.members:
+            if user.notify_game_comment:
+                body = render_template("emails/comment.txt", recipient=user, comment=comment)
+                mail.send_message(subject=current_user.username + " commented on " + game.title, recipients=[user.email], body=body)
+
         flash("Your comment has been posted.", "success")
         return redirect(game.url())
 

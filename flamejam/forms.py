@@ -216,8 +216,6 @@ class SettingsForm(Form):
     notify_jam_start = BooleanField("when a jam I participate in starts")
     notify_jam_finish = BooleanField("when a jam I participate in finishes")
     notify_game_comment = BooleanField("when someone comments on a game of mine")
-    notify_team_changes = BooleanField("when another team member edits the team data")
-    notify_game_changes = BooleanField("when another team member edits the game data")
     notify_team_invitation = BooleanField("when someone invites me to a team")
 
     notify_newsletter = BooleanField("send me newsletters")

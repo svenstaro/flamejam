@@ -216,8 +216,6 @@ def settings():
         user.notify_jam_start = form.notify_jam_start.data
         user.notify_jam_finish = form.notify_jam_finish.data
         user.notify_game_comment = form.notify_game_comment.data
-        user.notify_team_changes = form.notify_team_changes.data
-        user.notify_game_changes = form.notify_game_changes.data
         user.notify_team_invitation = form.notify_team_invitation.data
         user.notify_newsletter = form.notify_newsletter.data
 
