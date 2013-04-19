@@ -168,7 +168,29 @@ def tick():
     * * * * * /usr/bin/curl http://domain.tld/tick
     """
 
-    for jam in Jam.query.all():
-        jam.sendAllNotifications()
+    msg = ""
 
-    return "tick"
+    # Send Notifications
+    for jam in Jam.query.all():
+        n = jam.sendAllNotifications()
+        if n >= 0:
+            msg += "sending notification " + str(n) + " on jam " + jam.slug + "\n"
+
+    # Delete unverified users
+    for user in User.query.filter_by(is_verified = False):
+        # new_mail is set on users that *changed* their address
+        if not user.new_email and user.registered < datetime.utcnow() - timedelta(days=7):
+            msg += "deleted user " + user.username + " for being unverified too long\n"
+            db.session.delete(user)
+
+    # Remove invitations after game rating has started
+    for jam in Jam.query.all():
+        if jam.getStatus().code >= JamStatusCode.RATING:
+            for team in jam.teams.all():
+                for i in team.invitations.all():
+                    msg += "deleted invitation " + str(i.id) + " on jam " + jam.slug + " - jam rating has started\n"
+                    db.session.delete(i)
+
+    db.session.commit()
+
+    return msg

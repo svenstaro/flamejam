@@ -110,11 +110,13 @@ class Jam(db.Model):
         return Markup(s)
 
     def sendAllNotifications(self):
+        last = -1
         for n in range(self.last_notification_sent + 1, self.getStatus().code + 1):
-            self.sendNotification(n)
+            if self.sendNotification(n): last = n
+        return last
 
     def sendNotification(self, n):
-        if not JamStatusCode.ANNOUNCED <= n <= JamStatusCode.FINISHED: return
+        if not JamStatusCode.ANNOUNCED <= n <= JamStatusCode.FINISHED: return False
 
         kwargs = {}
 
@@ -144,18 +146,21 @@ class Jam(db.Model):
             subject = "Rating for " + self.title + " finished - Winners"
             kwargs = { "games": self.gamesByScore[:3] }
 
-        from flamejam.models import User
-        users = User.query
         if n >= JamStatusCode.RUNNING and n != JamStatusCode.RATING:
-            users = self.users
-        users = users.filter("notify_" + notify)
+            users = [r.user for r in self.registrations]
+        else:
+            from flamejam.models import User
+            users = User.query.all()
 
         for user in users:
-            body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
-            mail.send_message(subject=app.config["LONG_NAME"] + ": " + subject, recipients=[user.email], body=body)
+            if getattr(user, "notify_" + notify):
+                body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
+                #mail.send_message(subject=app.config["LONG_NAME"] + ": " + subject, recipients=[user.email], body=body)
+                print body
 
         self.last_notification_sent = n
         db.session.commit()
+        return True
 
 
 class JamStatusCode(object):
