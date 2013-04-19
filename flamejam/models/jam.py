@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from flamejam import app, db
+from flamejam import app, db, mail
 from flamejam.utils import get_slug
 from flamejam.filters import formattime, humandelta
 from flamejam.models import Game
 from datetime import datetime, timedelta
-from flask import url_for, Markup
+from flask import url_for, Markup, render_template
 from random import shuffle
 
 class Jam(db.Model):
@@ -28,7 +28,8 @@ class Jam(db.Model):
     rating_duration = db.Column(db.Integer) # hours
     duration = db.Column(db.Integer) # hours
 
-    last_notification_sent = db.Column(db.Integer, default = -1) # last notification that was sent, e.g. 0 = announcement, 1 = registration, (see status codes)
+    # last notification that was sent, e.g. 0 = announcement, 1 = registration, (see status codes)
+    last_notification_sent = db.Column(db.Integer, default = -1)
 
     def __init__(self, title, start_time, duration = 48, team_limit = 0, theme = ''):
         self.title = title
@@ -107,6 +108,55 @@ class Jam(db.Model):
         if self.showTheme:
             s += ' <span class="theme">%s</span>' % self.theme
         return Markup(s)
+
+    def sendAllNotifications(self):
+        for n in range(self.last_notification_sent + 1, self.getStatus().code + 1):
+            self.sendNotification(n)
+
+    def sendNotification(self, n):
+        if not JamStatusCode.ANNOUNCED <= n <= JamStatusCode.FINISHED: return
+
+        kwargs = {}
+
+        if n == JamStatusCode.ANNOUNCED:
+            template = "announcement"
+            notify = "new_jam"
+            subject = "Jam announced: " + self.title
+        elif n == JamStatusCode.REGISTRATION:
+            template = "registration_start"
+            notify = "new_jam"
+            subject = "Registrations for " + self.title + " now open"
+        elif n == JamStatusCode.RUNNING:
+            template = "start"
+            notify = "jam_start"
+            subject = self.title + " starts now!"
+        elif n == JamStatusCode.PACKAGING:
+            template = "packaging_start"
+            notify = "jam_finish"
+            subject = self.title + " is over"
+        elif n == JamStatusCode.RATING:
+            template = "rating_start"
+            notify = "jam_finish"
+            subject = "Rating for " + self.title + " starts now"
+        elif n == JamStatusCode.FINISHED:
+            template = "finished"
+            notify = "jam_finish"
+            subject = "Rating for " + self.title + " finished - Winners"
+            kwargs = { "games": self.gamesByScore[:3] }
+
+        from flamejam.models import User
+        users = User.query
+        if n >= JamStatusCode.RUNNING and n != JamStatusCode.RATING:
+            users = self.users
+        users = users.filter("notify_" + notify)
+
+        for user in users:
+            body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
+            mail.send_message(subject=app.config["LONG_NAME"] + ": " + subject, recipients=[user.email], body=body)
+
+        self.last_notification_sent = n
+        db.session.commit()
+
 
 class JamStatusCode(object):
     ANNOUNCED    = 0

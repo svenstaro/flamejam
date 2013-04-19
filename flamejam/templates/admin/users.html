@@ -19,7 +19,6 @@
         <th>Location</th>
         <th>Flags</th>
         <th></th>
-        <th></th>
     </tr>
 {% for user in users %}
     <tr class="checkbox-toggle user-row">
@@ -44,11 +43,10 @@
             {% endif %}
         </td>
         <td><a href="{{ user.url() }}">Show Profile</a></td>
-        <td><a href="{{ url_for('admin_user', username = user.username) }}">Merge</a></td>
     </tr>
 {% endfor %}
 <tr>
-    <th colspan="9">
+    <th colspan="8">
         <input type="submit" name="submit" value="Toggle Deleted" />
         <input type="submit" name="submit" value="Toggle Admin" />
         <span id="table-count">0</span> users selected

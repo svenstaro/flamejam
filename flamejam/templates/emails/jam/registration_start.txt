@@ -1,0 +1,16 @@
+{% extends "emails/base.txt" %}
+
+{% block content %}
+Hello {{ recipient.username }}!
+
+You receive this notification because the registrations for {{ jam.title }}
+are now open. Please register, so we know how many participants to expect{% if jam.team_limit != 1 %}, and
+so you can form teams in advance{% endif %}.
+
+To register, simply visit the jam page (link below) and click the button on
+the top left:
+
+{{ jam.url(_external = True) }}
+
+We hope to see you participating in this jam!
+{% endblock %}

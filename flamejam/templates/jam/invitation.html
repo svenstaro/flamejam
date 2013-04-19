@@ -7,6 +7,7 @@
 
 <h1>Invitation to {{ invitation.team.name }}</h1>
 
+{% if current_user == invitation.user %}
 <div class="row-fluid">
     <div class="span3">
     </div>
@@ -42,6 +43,29 @@
     <div class="span3">
     </div>
 </div>
-</form>
-
+{% else %}
+<div class="well" style="max-width: 400px;">
+    <p>
+        This is the invitation for {{ invitation.user.getLink() }} to your team
+        <a href="{{ invitation.team.url() }}">{{ invitation.team.name }}</a>.
+    </p>
+    <p>
+        To accept this invitation, the user has to visit this page, where they will
+        be asked to confirm the invitation. This invitation is personalized, so only
+        the selected user can accept it, while logged in.
+    </p>
+    {% if not invitation.user.notify_team_invitation %}
+    <p>
+        <b>Since the user has disabled eMail notifications for Invitations, make
+            sure they receive this page's link some other way:</b>
+    </p>
+    {% endif %}
+    <p style="margin-left: 20px; font-weight: bold; font-size: 1.2em;">
+        <a href="{{ invitation.url() }}">{{ invitation.url() }}</a>
+    </p>
+    {% endif %}
+    <p>
+        <a href="{{ invitation.url(action='revoke') }}" class="btn btn-danger btn-normal">Revoke this invitation</a>
+    </p>
+</div>
 {% endblock %}

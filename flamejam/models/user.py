@@ -44,8 +44,6 @@ class User(db.Model):
     notify_jam_start = db.Column(db.Boolean, default = True)
     notify_jam_finish = db.Column(db.Boolean, default = True)
     notify_game_comment = db.Column(db.Boolean, default = True)
-    notify_team_changes = db.Column(db.Boolean, default = True)
-    notify_game_changes = db.Column(db.Boolean, default = True)
     notify_team_invitation = db.Column(db.Boolean, default = True)
     notify_newsletter = db.Column(db.Boolean, default = True)
 

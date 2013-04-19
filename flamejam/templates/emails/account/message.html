@@ -1,9 +1,0 @@
-{% extends "emails/base.html" %}
-
-{% block content %}
-<h2>{{ recipient.username }}<a href="{{ recipient.url(_external=True) }}"></a> sent you a message!</h2>
-
-<p>It reads:</p>
-<p>{{ message }}</p>
-{% endblock %}
-{% block note %}{% endblock %}

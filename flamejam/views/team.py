@@ -63,7 +63,11 @@ def team_settings(jam_slug):
             flash("User %s is already invited." % user.username, "warning")
         else:
             i = team.inviteUser(user, current_user)
-            flash("Invited user %s." % invite_username, "success")
+
+            if i:
+                flash("Invited user %s." % invite_username, "success")
+            else:
+                return redirect(url_for("invitation", id=i.id))
 
         return redirect(url_for("team_settings", jam_slug = team.jam.slug))
 
@@ -96,8 +100,9 @@ def invitation(id, action = ""):
         flash("You have revoked the invitation for %s." % invitation.user.username, "success")
         return redirect(url_for("team_settings", jam_slug = invitation.team.jam.slug))
     else:
-        if current_user != invitation.user: abort(403)
-        return render_template("jam/invitation.html", invitation = invitation)
+        if current_user != invitation.user and current_user not in invitation.team.members:
+            abort(403)
+        return render_template("jam/invitation.html", invitation=invitation)
 
 @app.route("/jams/<jam_slug>/leave-team/", methods = ("POST", "GET"))
 @login_required

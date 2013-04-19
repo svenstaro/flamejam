@@ -49,6 +49,14 @@ def admin_user(username):
 def admin_jams():
     return render_template("admin/jams.html", jams = Jam.query.all())
 
+@app.route("/admin/jams/<int:id>/send/<int:n>", methods = ["POST", "GET"])
+@admin_permission.require()
+def admin_jam_notification(id, n):
+    jam = Jam.query.filter_by(id = id).first_or_404()
+    jam.sendNotification(n)
+    flash("Notification sent.", "success")
+    return redirect(url_for("admin_jam", id = id))
+
 @app.route("/admin/jams/<int:id>", methods = ["POST", "GET"])
 @app.route("/admin/jams/create/", methods = ["POST", "GET"])
 @admin_permission.require()
@@ -90,7 +98,9 @@ def admin_announcement():
     form = AdminWriteAnnouncement()
 
     if form.validate_on_submit():
-        # TODO
+        for user in User.filter_by(notify_useletter = True).all():
+            body = render_template("emails/newsletter.txt", recipient=new_user, message=form.message.data)
+            mail.send_message(subject=app.config["LONG_NAME"] + " Newsletter: " + form.subject.data, recipients=[user.email], body=body)
         flash("Your announcement has been sent to the users.")
 
     return render_template("admin/announcement.html", form = form)

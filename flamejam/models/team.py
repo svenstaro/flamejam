@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flamejam import app, db
+from flamejam import app, db, mail
 from flamejam.models import Invitation
 from flask import url_for, render_template
 
@@ -90,12 +90,16 @@ class Team(db.Model):
         return Invitation.query.filter_by(user_id = user.id, team_id = self.id).first()
 
     def inviteUser(self, user, sender): # sender: which user sent the invitation
-        if self.getInvitation(user): i = self.getInvitation(user) # already invited
-        else: i = Invitation(self, user)
-        db.session.add(i)
-        db.session.commit()
+        if not user.notify_team_invitation:
+            return None
 
-        c = render_template("emails/jam/invitation.html", team = self, sender = sender, recipient = user, invitation = i)
-        print c
-        #TODO
+        if self.getInvitation(user):
+            i = self.getInvitation(user) # already invited
+        else:
+            i = Invitation(self, user)
+            db.session.add(i)
+            db.session.commit()
+            body = render_template("emails/invitation.txt", team=self, sender=sender, recipient=user, invitation=i)
+            mail.send_message(subject=app.config["LONG_NAME"] +": You have been invited to " + self.name, recipients=[user.email], body=body)
+        return i
 
