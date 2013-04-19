@@ -92,7 +92,7 @@ def admin_announcement():
     if form.validate_on_submit():
         for user in User.filter_by(notify_useletter = True).all():
             body = render_template("emails/newsletter.txt", recipient=new_user, message=form.message.data)
-            mail.send_message(subject="BaconGameJam Newsletter: " + form.subject.data, recipients=[user.email], body=body)
+            mail.send_message(subject=app.config["LONG_NAME"] + " Newsletter: " + form.subject.data, recipients=[user.email], body=body)
         flash("Your announcement has been sent to the users.")
 
     return render_template("admin/announcement.html", form = form)

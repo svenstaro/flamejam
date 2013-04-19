@@ -96,5 +96,5 @@ class Team(db.Model):
         db.session.commit()
 
         body = render_template("emails/invitation.txt", team=self, sender=sender, recipient=user, invitation=i)
-        mail.send_message(subject="You have been invited to " + self.name, recipient=[user.email], body=body)
+        mail.send_message(subject=app.config["LONG_NAME"] +": You have been invited to " + self.name, recipient=[user.email], body=body)
 

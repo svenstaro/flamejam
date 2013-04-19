@@ -36,7 +36,7 @@ def login():
         new_user = User(username, password, email)
 
         body = render_template("emails/account/verification.txt", recipient = new_user, email_changed = False)
-        mail.send_message(subject="Welcome to Bacon Game Jam, " + username, recipients=[new_user.email], body=body)
+        mail.send_message(subject="Welcome to " + app.config["LONG_NAME"] + ", " + username, recipients=[new_user.email], body=body)
 
         db.session.add(new_user)
         db.session.commit()
@@ -89,7 +89,7 @@ def reset_request():
         db.session.commit()
 
         body = render_template("emails/account/reset_password.txt", recipient=user)
-        mail.send_message(subject="Reset your BGJ-Password", recipient=[user.email], body=body)
+        mail.send_message(subject=app.config["LONG_NAME"] + ": Reset your password", recipient=[user.email], body=body)
 
         flash("Your password has been reset, check your email.", "success")
     return render_template('reset_request.html', form=form, error=error)
@@ -129,7 +129,7 @@ def verify_send():
         return redirect(url_for('index'))
 
     body=render_template("emails/account/verification.txt", recipient=user)
-    mail.send_message(subject="Welcome to Bacon Game Jam, " + username, recipients=[user.new_email], body=body)
+    mail.send_message(subject="Welcome to " + app.config["LONG_NAME"] + ", " + username, recipients=[user.new_email], body=body)
 
     flash("Verification has been resent, check your email", "success")
     return redirect(url_for('verify_status', username=username))
@@ -188,7 +188,7 @@ def contact_user(username):
     if form.validate_on_submit():
         message = form.message.data
         body = render_template("emails/account/message.txt", recipient=user, sender=current_user, message=message)
-        mail.send_message(subject="BaconGameJam: New message from " + current_user.username,
+        mail.send_message(subject=app.config["LONG_NAME"] + ": New message from " + current_user.username,
             recipients=[user.email], reply_to=current_user.email, body=body)
 
     return render_template("account/contact.html", user = user, form = form)
@@ -249,7 +249,7 @@ def settings():
             user.is_verified = False
 
             body = render_template("emails/account/verification.txt", recipient=user, email_changed = True)
-            mail.send_message(subject="Please verify your eMail, " + username, recipients=[user.email], body=body)
+            mail.send_message(subject=app.config["LONG_NAME"] + ": eMail verification", recipients=[user.email], body=body)
 
             logout = True
             flash("Your email address has changed. Please check your inbox for the verification.", "info")

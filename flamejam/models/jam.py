@@ -149,7 +149,7 @@ class Jam(db.Model):
 
         for user in users:
             body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=jam, **kwargs)
-            mail.send_message(subject=subject, recipient=[user.email], body=body)
+            mail.send_message(subject=app.config["LONG_NAME"] + ": " + subject, recipient=[user.email], body=body)
 
         self.last_notification_sent = n
         db.session.commit()
