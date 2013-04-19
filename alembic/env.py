@@ -1,11 +1,20 @@
 from __future__ import with_statement
+import os
+import sys
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 
+sys.path.append(os.getcwd())
+
+from flamejam import app, db
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# set the sqlalchemy url to the one defined for flask-sqlalchemy
+config.set_main_option('sqlalchemy.url', app.config['SQLALCHEMY_DATABASE_URI'])
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -15,7 +24,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = db.Model.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
