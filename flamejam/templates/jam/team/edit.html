@@ -52,7 +52,14 @@
             <li>{{ member.getLink() }}</li>
         {% endfor %}
         {% for invitation in team.invitations %}
-            <li>{{ invitation.user.getLink() }} <a href="{{ url_for('invitation', id = invitation.id, action = 'revoke') }}" style="color: red; font-size: 0.8em;">Revoke invitation</a></li>
+            <li>{{ invitation.user.getLink() }}
+                <span style="font-size: 0.8em;">
+                    (Invitation:
+                    <a href="{{ url_for('invitation', id = invitation.id) }}" style="color: green;">Show</a> /
+                    <a href="{{ url_for('invitation', id = invitation.id, action = 'revoke') }}" style="color: red;">Revoke</a>
+                    )
+                </span>
+            </li>
         {% endfor %}
 
         <hr />

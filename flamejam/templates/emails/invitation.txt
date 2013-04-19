@@ -8,12 +8,12 @@ You have been invited to the team {{ team.name }} by your fellow baconeer
 
 You can accept or decline that invitation by using the following link:
 
-{{ invitation.url(_external = True) }}
+{{ invitation.url() }}
 
 You can see details about the team, including a list of members, on the team
 details page:
 
-{{ team.url(_external = True)}}
+{{ team.url()}}
 
 Please notice that by accepting the invitation you will leave your current
 team. If you were the last member of that team, *it will be deleted*, including
