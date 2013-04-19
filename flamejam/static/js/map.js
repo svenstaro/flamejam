@@ -43,6 +43,12 @@ function addLocation(info) {
 }
 
 $(document).ready(function() {
+    // size and scrolling
+    var w = $(window), m = $("#map_canvas");
+    m.height(w.height() * 0.9);
+    $(window).scrollTop (m.offset().top  + m.height() / 2 - w.height() / 2);
+    $(window).scrollLeft(m.offset().left + m.width()  / 2 - w.width()  / 2);
+
     geocoder = new google.maps.Geocoder();
 
     options = {

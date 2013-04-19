@@ -102,5 +102,5 @@ $(document).ready(function() {
         for (var i = 0; i < list.length; i++) {
             list[i].parentNode.appendChild(list[i]);
         }
-    })
+    });
 });
