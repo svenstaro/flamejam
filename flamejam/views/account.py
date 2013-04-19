@@ -262,9 +262,9 @@ def settings():
 
     return render_template('account/settings.html', form = form)
 
+#@app.errorhandler(500)
 @app.errorhandler(404)
 @app.errorhandler(403)
-@app.errorhandler(500)
 @app.errorhandler(PermissionDenied)
 def error(error):
     code = error.code if hasattr(error, "code") else 403
