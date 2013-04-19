@@ -20,7 +20,7 @@ SQLALCHEMY_ECHO = False
 #MAIL_DEBUG = app.debug
 #MAIL_USERNAME = None
 #MAIL_PASSWORD = None
-MAIL_DEFAULT_SENDER = ("change me", "test@example.com")
+MAIL_DEFAULT_SENDER = "change me <test@example.com>"
 #MAIL_MAX_EMAILS = None
 #MAIL_SUPPRESS_SEND = app.testing
 
