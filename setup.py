@@ -7,7 +7,7 @@ setup(
     packages=['flamejam'],
     include_package_data=True,
     zip_safe=False,
-    install_requires=['Flask', 'flask-mail', 'flask-sqlalchemy', 'flask-wtf'
+    install_requires=['Flask', 'flask-mail', 'flask-sqlalchemy', 'flask-wtf',
                       'flask-login', 'flask-markdown', 'python-dateutil',
                       'scrypt', 'requests', 'alembic', 'flask-principal', 'fabric']
 )

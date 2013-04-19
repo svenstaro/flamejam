@@ -1,5 +1,13 @@
 recursive-include flamejam/templates *
 recursive-include flamejam/static *
 recursive-include alembic *
-include README.md LICENSE alembic.ini flamejam.cfg.default flamejam.wsgi.example
-include kill-database Makefile logo-v2.png logo-v2.svg runserver.py
+include README.md 
+include LICENSE 
+include alembic.ini 
+include flamejam.cfg.default 
+include flamejam.wsgi.example
+include kill-database.py 
+include Makefile 
+include logo-v2.png 
+include logo-v2.svg 
+include runserver.py

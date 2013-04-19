@@ -6,3 +6,6 @@ flamejam.db
 flamejam.cfg
 recaptcha.cfg
 .DS_Store
+build/
+dist/
+*.egg-info/
