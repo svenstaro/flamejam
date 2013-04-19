@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from flamejam import app, db
+from flamejam import app, db, mail
 from flamejam.utils import get_slug
 from flamejam.filters import formattime, humandelta
 from flamejam.models import Game
 from datetime import datetime, timedelta
-from flask import url_for, Markup
+from flask import url_for, Markup, render_template
 from random import shuffle
 
 class Jam(db.Model):
@@ -114,6 +114,8 @@ class Jam(db.Model):
             self.sendNotification(n)
 
     def sendNotification(self, n):
+        if not JamStatusCode.ANNOUNCED <= n <= JamStatusCode.FINISHED: return
+
         kwargs = {}
 
         if n == JamStatusCode.ANNOUNCED:
@@ -142,14 +144,15 @@ class Jam(db.Model):
             subject = "Rating for " + self.title + " finished - Winners"
             kwargs = { "games": self.gamesByScore[:3] }
 
+        from flamejam.models import User
         users = User.query
         if n >= JamStatusCode.RUNNING and n != JamStatusCode.RATING:
-            users = Jam.users
-        users = users.filter_by("notify_" + notify)
+            users = self.users
+        users = users.filter("notify_" + notify)
 
         for user in users:
-            body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=jam, **kwargs)
-            mail.send_message(subject=app.config["LONG_NAME"] + ": " + subject, recipient=[user.email], body=body)
+            body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
+            mail.send_message(subject=app.config["LONG_NAME"] + ": " + subject, recipients=[user.email], body=body)
 
         self.last_notification_sent = n
         db.session.commit()

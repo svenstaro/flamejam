@@ -49,6 +49,14 @@ def admin_user(username):
 def admin_jams():
     return render_template("admin/jams.html", jams = Jam.query.all())
 
+@app.route("/admin/jams/<int:id>/send/<int:n>", methods = ["POST", "GET"])
+@admin_permission.require()
+def admin_jam_notification(id, n):
+    jam = Jam.query.filter_by(id = id).first_or_404()
+    jam.sendNotification(n)
+    flash("Notification sent.", "success")
+    return redirect(url_for("admin_jam", id = id))
+
 @app.route("/admin/jams/<int:id>", methods = ["POST", "GET"])
 @app.route("/admin/jams/create/", methods = ["POST", "GET"])
 @admin_permission.require()

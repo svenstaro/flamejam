@@ -1,4 +1,4 @@
-{% extends "emails/base.html" %}
+{% extends "emails/base.txt" %}
 
 {% block content %}
 You received a message on BaconGameJam from {{ sender.username }}. Below is

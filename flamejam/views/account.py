@@ -89,7 +89,7 @@ def reset_request():
         db.session.commit()
 
         body = render_template("emails/account/reset_password.txt", recipient=user)
-        mail.send_message(subject=app.config["LONG_NAME"] + ": Reset your password", recipient=[user.email], body=body)
+        mail.send_message(subject=app.config["LONG_NAME"] + ": Reset your password", recipients=[user.email], body=body)
 
         flash("Your password has been reset, check your email.", "success")
     return render_template('reset_request.html', form=form, error=error)

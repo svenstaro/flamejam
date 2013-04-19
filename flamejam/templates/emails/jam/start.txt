@@ -1,4 +1,4 @@
-{% extends "emails/base.html" %}
+{% extends "emails/base.txt" %}
 
 {% block content %}
 Dear {{ recipient.username }},
