@@ -31,7 +31,6 @@ from flamejam.utils import *
 import flamejam.filters
 import flamejam.views
 import flamejam.models
-import flamejam.login
 
 @app.context_processor
 def inject():
