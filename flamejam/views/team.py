@@ -38,7 +38,7 @@ def team_settings(jam_slug):
     invite_username = None
 
     if settings_form.validate_on_submit():
-        settings_form.populate(team)
+        settings_form.populate_obj(team)
         team.livestreams.strip()
         db.session.commit()
         flash("The team settings were saved.", "success")
