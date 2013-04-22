@@ -4,7 +4,7 @@ import re
 from hashlib import sha512
 
 def average(list):
-    return sum(list) / float(len(list))
+    return sum(list) / float(len(list)) if len(list) else 0
 
 def average_non_zero(list):
     list = [x for x in list if x != 0]
