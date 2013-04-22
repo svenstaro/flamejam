@@ -138,6 +138,9 @@
         {% if s == jam.last_notification_sent + 1 and status.code >= s %}
             <a href="{{ url_for('admin_jam_notification', id = jam.id, n = s) }}">Send now</a>
         {% endif %}
+        {% if s < jam.last_notification_sent + 1 and status.code >= s %}
+            <a href="{{ url_for('admin_jam_notification', id = jam.id, n = s) }}">Resend</a>
+        {% endif %}
     </td>
 
 {% endmacro %}
