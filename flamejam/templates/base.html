@@ -75,17 +75,19 @@
 
                 <div class="left">
                     {% block menu %}
-                        {% if current_jam.getStatus().code <= 1 %}
-                            Next jam is
-                            <b>{{ current_jam.getLink() }}</b>
-                            {{ current_jam.start_time | humantime }}
-                        {% elif current_jam.getStatus().code == 2 %}
-                            Currently running jam is
-                            <b>{{ current_jam.getLink() }}</b>
-                            ending {{ current_jam.end_time | humantime }}
-                        {% else %}
-                            <b>{{ current_jam.getLink() }}</b>
-                            has finished
+                        {% if current_jam %}
+                            {% if current_jam.getStatus().code <= 1 %}
+                                Next jam is
+                                <b>{{ current_jam.getLink() }}</b>
+                                {{ current_jam.start_time | humantime }}
+                            {% elif current_jam.getStatus().code == 2 %}
+                                Currently running jam is
+                                <b>{{ current_jam.getLink() }}</b>
+                                ending {{ current_jam.end_time | humantime }}
+                            {% else %}
+                                <b>{{ current_jam.getLink() }}</b>
+                                has finished
+                            {% endif %}
                         {% endif %}
                     {% endblock %}
                 </div>
