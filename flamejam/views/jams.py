@@ -28,6 +28,10 @@ def jam_register(jam_slug):
         flash("You cannot register for a jam after it has finished.", "error")
         return redirect(jam.url())
 
+    if jam.getStatus().code < JamStatusCode.REGISTRATION:
+        flash("You cannot register before the registration started.", "error")
+        return redirect(jam.url())
+
     if user.getRegistration(jam):
         flash("You are already registered for this jam.", "warning")
         return redirect(jam.url())
