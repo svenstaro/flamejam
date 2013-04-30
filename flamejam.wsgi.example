@@ -1,5 +1,0 @@
-import sys, os
-sys.path.append(os.path.dirname(__file__))
-activate_this = '/var/flask-sites/flamejam/env/bin/activate_this.py'
-execfile(activate_this, dict(__file__=activate_this))
-from flamejam import app as application

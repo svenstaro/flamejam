@@ -3,6 +3,9 @@
 # It should be run from a virtualenv.
 #
 
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from flamejam import db
 from flamejam.models import User, Jam, Game, Rating, Comment, GameScreenshot
 from datetime import datetime, timedelta
