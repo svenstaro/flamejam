@@ -21,10 +21,11 @@ install:
 	cp -r alembic flamejam scripts $(DESTDIR)/srv/flamejam
 	cp alembic.ini flamejam.wsgi runserver.py Makefile $(DESTDIR)/srv/flamejam/
 	
-	install -Dm600 doc/flamejam.cfg.default $(DESTDIR)/etc/flamejam/flamejam.cfg.default
+	mkdir -p $(DESTDIR)/etc/flamejam
 	
-	mkdir -p $(DESTDIR)/usr/share/doc/
-	cp -r doc $(DESTDIR)/usr/share/doc/flamejam
+	mkdir -p $(DESTDIR)/usr/share/doc/flamejam
+	cp -r doc/* $(DESTDIR)/usr/share/doc/flamejam/
+	chmod 600 $(DESTDIR)/usr/share/doc/flamejam/flamejam.cfg.default
 	cp LICENSE README.md $(DESTDIR)/usr/share/doc/flamejam/
 	
 	cd $(DESTDIR)/srv/flamejam && make setup

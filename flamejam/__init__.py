@@ -1,3 +1,4 @@
+import os, sys
 from flask import Flask
 from datetime import *
 from flask.ext.mail import Mail
@@ -9,13 +10,12 @@ from flask_errormail import mail_on_500
 
 app = Flask(__name__)
 
-# First load default config
-app.config.from_pyfile('../doc/flamejam.cfg.default', silent=True)
-app.config.from_pyfile('/usr/share/doc/flamejam/flamejam.cfg.default', silent=True)
-app.config.from_pyfile('/etc/flamejam/flamejam.cfg.default', silent=True)
-# Then load user config on top of that
-app.config.from_pyfile('../flamejam.cfg', silent=True)
-app.config.from_pyfile('/etc/flamejam/flamejam.cfg', silent=True)
+if os.environ.get('CONFIG_TYPE') == "production":
+    app.config.from_pyfile('/usr/share/doc/flamejam/flamejam.cfg.default')
+    app.config.from_pyfile('/etc/flamejam/flamejam.cfg', silent=True)
+else:
+    app.config.from_pyfile('../doc/flamejam.cfg.default')
+    app.config.from_pyfile('../flamejam.cfg', silent=True)
 
 mail = Mail(app)
 db = SQLAlchemy(app)
