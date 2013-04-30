@@ -25,7 +25,6 @@ install:
 	
 	mkdir -p $(DESTDIR)/usr/share/doc/flamejam
 	cp -r doc/* $(DESTDIR)/usr/share/doc/flamejam/
-	chmod 600 $(DESTDIR)/usr/share/doc/flamejam/flamejam.cfg.default
 	cp LICENSE README.md $(DESTDIR)/usr/share/doc/flamejam/
 	
 	cd $(DESTDIR)/srv/flamejam && make setup
