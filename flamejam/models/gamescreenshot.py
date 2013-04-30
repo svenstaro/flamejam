@@ -4,7 +4,7 @@ from flamejam import app, db
 
 class GameScreenshot(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    url = db.Column(db.String(256))
+    url = db.Column(db.String(255))
     caption = db.Column(db.Text)
     index = db.Column(db.Integer) # 0..n-1
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"))

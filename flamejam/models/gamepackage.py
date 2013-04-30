@@ -23,7 +23,7 @@ PACKAGE_TYPES = {
 
 class GamePackage(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    url = db.Column(db.String(256))
+    url = db.Column(db.String(255))
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"))
     type = db.Column(db.Enum(
         "web",      # Flash, html5, js...
