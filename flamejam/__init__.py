@@ -11,6 +11,7 @@ app = Flask(__name__)
 
 # First load default config
 app.config.from_pyfile('../doc/flamejam.cfg.default')
+app.config.from_pyfile('/etc/flamejam/flamejam.cfg.default', silent=True)
 # Then load user config on top of that
 app.config.from_pyfile('../flamejam.cfg', silent=True)
 app.config.from_pyfile('/etc/flamejam/flamejam.cfg', silent=True)
