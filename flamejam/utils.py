@@ -1,7 +1,8 @@
 from flamejam import app
+import random
+import scrypt
 import requests
 import re
-from hashlib import sha512
 
 def average(list):
     return sum(list) / float(len(list)) if len(list) else 0
@@ -47,8 +48,18 @@ def findLocation(loc):
     except:
         return None, None, None
 
-def hashPassword(pw):
-    return sha512((pw + app.config['SECRET_KEY']).encode('utf-8')).hexdigest()
+def randstr(length):
+    return ''.join(chr(random.randint(0,255)) for i in range(length))
+
+def hash_password(password, maxtime=0.5, datalength=256):
+    return scrypt.encrypt(randstr(datalength), str(password) + app.config['SECRET_KEY'], maxtime=maxtime)
+
+def verify_password(hashed_password, guessed_password, maxtime=0.5):
+    try:
+        scrypt.decrypt(hashed_password, str(guessed_password) + app.config['SECRET_KEY'], maxtime)
+        return True
+    except scrypt.error:
+        return False
 
 def get_current_jam():
     from flamejam.models import Jam, JamStatusCode

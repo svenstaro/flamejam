@@ -6,8 +6,7 @@ from flask.ext.wtf import Required, Length, EqualTo, Optional, NumberRange, Emai
         ValidationError, URL
 from flask.ext.wtf.html5 import IntegerField, EmailField
 import re
-from hashlib import sha512
-from flamejam import app, models
+from flamejam import app, models, utils
 
 ############## VALIDATORS ####################
 
@@ -58,7 +57,7 @@ class LoginValidator(object):
         u = models.User.query.filter_by(username = field.data).first()
         if not u:
             raise ValidationError(self.message_username)
-        elif u.password != sha512((form[self.pw_field].data+app.config['SECRET_KEY']).encode('utf-8')).hexdigest():
+        elif not utils.verify_password(u.password, form[self.pw_field].data):
             raise ValidationError(self.message_password)
 
 class UsernameValidator(object):

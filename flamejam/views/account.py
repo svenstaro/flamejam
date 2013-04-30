@@ -1,6 +1,6 @@
 from flamejam import app, db, mail
 from flamejam.models import User
-from flamejam.utils import hashPassword
+from flamejam.utils import hash_password, verify_password
 from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm, ContactUserForm
 from flask import render_template, redirect, flash, url_for, current_app, session, request, abort
 from smtplib import SMTPRecipientsRefused
@@ -14,7 +14,7 @@ def login():
 
     if login_form.validate_on_submit():
         username = login_form.username.data
-        password = hashPassword(login_form.password.data)
+        password = login_form.password.data
         remember_me = login_form.remember_me.data
         user = User.query.filter_by(username=username).first()
         if login_user(user, remember_me):
@@ -109,7 +109,7 @@ def reset_verify(username, token):
         # null the reset token
         user.token = None
         # set the new password
-        user.password = hashPassword(form.password.data)
+        user.password = hash_password(form.password.data)
         db.session.commit()
         flash("Your password was updated and you can login with it now.", "success")
         return redirect(url_for('login'))
@@ -236,10 +236,10 @@ def settings():
             user.location_flag = "unknown"
 
         if form.old_password.data and form.new_password.data and form.new_password2.data:
-            if user.password != hashPassword(form.old_password.data):
+            if not verify_password(user.password, form.old_password.data):
                 flash("Your password is incorrect. The password was not changed.", "error")
             else:
-                user.password = hashPassword(form.new_password.data)
+                user.password = hash_password(form.new_password.data)
                 flash("Your password was changed", "success")
 
         if user.email != form.email.data and form.email.data:

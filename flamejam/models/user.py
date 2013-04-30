@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from flamejam import app, db, login_manager
-from flamejam.utils import hashPassword
+from flamejam.utils import hash_password, verify_password
 from flamejam.models import Registration, Team, Game
 from flask import url_for, Markup
 from datetime import datetime
 from hashlib import md5
+import scrypt
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(128))
+    password = db.Column(db.LargeBinary())
     token = db.Column(db.Integer, nullable=True, default=None)
     email = db.Column(db.String(191), unique=True)
     new_email = db.Column(db.String(191), unique=True)
@@ -49,7 +50,7 @@ class User(db.Model):
 
     def __init__(self, username, password, email, is_admin = False, is_verified = False, receive_emails = True):
         self.username = username
-        self.password = hashPassword(password)
+        self.password = hash_password(password)
         self.email = email
         self.new_email = email
         self.is_admin = is_admin
@@ -73,15 +74,17 @@ class User(db.Model):
         return True
 
     def getVerificationHash(self):
-        # combine a few properties, hash md5
-        # take first 8 chars for simplicity
+        # combine a few properties, hash it
+        # take first 16 chars for simplicity
         # make it email specific
-        return md5(self.username + self.new_email + self.password + app.config['SECRET_KEY']).hexdigest()[:8]
+        hash = scrypt.hash(self.username + self.new_email + self.password, app.config['SECRET_KEY'])
+        return hash.encode('hex')[:16]
 
     def getResetToken(self):
-        # combine a few properties, hash md5
-        # take first 8 chars for simplicity
-        return md5(str(self.token) + app.config['SECRET_KEY']).hexdigest()[:8]
+        # combine a few properties, hash it
+        # take first 16 chars for simplicity
+        hash = scrypt.hash(str(self.token), app.config['SECRET_KEY'])
+        return hash.encode('hex')[:16]
 
     def ratedGame(self, game):
         return self.ratings.filter_by(game = game).first() != None
