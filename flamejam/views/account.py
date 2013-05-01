@@ -1,4 +1,6 @@
+import sys
 from random import randint
+
 from flamejam import app, db, mail
 from flamejam.models import User
 from flamejam.utils import hash_password, verify_password
