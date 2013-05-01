@@ -23,6 +23,8 @@ username = sys.argv[1]
 password = sys.argv[2]
 email = sys.argv[3]
 
+print "Creating user '%s' with password '%s' and email '%s'" % (username, password, email)
+
 admin = User(username, password, email, is_admin = True, is_verified = True)
 db.session.add(admin)
 
