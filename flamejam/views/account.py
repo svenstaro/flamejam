@@ -99,7 +99,7 @@ def reset_request():
 
 @app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
 def reset_verify(username, token):
-    user = user.query.filter_by(username=username).first_or_404()
+    user = User.query.filter_by(username=username).first_or_404()
     if user.token == None:
         flash("%s's account has not requested a password reset." % user.username.capitalize(), "error")
         return redirect(url_for('index'))
