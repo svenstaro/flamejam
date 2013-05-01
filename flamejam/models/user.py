@@ -77,7 +77,7 @@ class User(db.Model):
         # combine a few properties, hash it
         # take first 16 chars for simplicity
         # make it email specific
-        hash = scrypt.hash(self.username + self.new_email + self.password, app.config['SECRET_KEY'])
+        hash = scrypt.hash(self.username + self.new_email + str(self.password), app.config['SECRET_KEY'])
         return hash.encode('hex')[:16]
 
     def getResetToken(self):
