@@ -58,7 +58,7 @@ def hash_password(password, maxtime=5, datalength=256):
 
 def verify_password(hashed_password, guessed_password, maxtime=300):
     try:
-        scrypt.decrypt(str(hashed_password), guessed_password, maxtime)
+        scrypt.decrypt(str(hashed_password), str(guessed_password), maxtime)
         return True
     except scrypt.error as e:
         print "scrypt error: %s" % e    # Not fatal but a necessary measure if server is under heavy load
