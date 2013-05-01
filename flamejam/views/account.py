@@ -77,7 +77,7 @@ def on_identity_loaded(sender, identity):
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset_request():
-    if current_user:
+    if current_user.is_authenticated():
         flash("You are already logged in.", "info")
         return redirect(url_for("index"))
     error = None
@@ -92,7 +92,7 @@ def reset_request():
         mail.send_message(subject=app.config["LONG_NAME"] + ": Reset your password", recipients=[user.email], body=body)
 
         flash("Your password has been reset, check your email.", "success")
-    return render_template('reset_request.html', form=form, error=error)
+    return render_template('account/reset_request.html', form=form, error=error)
 
 @app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
 def reset_verify(username, token):
@@ -113,7 +113,7 @@ def reset_verify(username, token):
         db.session.commit()
         flash("Your password was updated and you can login with it now.", "success")
         return redirect(url_for('login'))
-    return render_template('reset_newpassword.html', user = user, form = form, error = error)
+    return render_template('account/reset_newpassword.html', user = user, form = form, error = error)
 
 
 @app.route('/verify/', methods=["POST", "GET"])
