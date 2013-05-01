@@ -53,7 +53,7 @@ def randstr(length):
 
 def hash_password(password, maxtime=5, datalength=256):
     salt = randstr(datalength)
-    hashed_password = scrypt.encrypt(salt, password, maxtime=maxtime)
+    hashed_password = scrypt.encrypt(salt, str(password), maxtime=maxtime)
     return bytearray(hashed_password)
 
 def verify_password(hashed_password, guessed_password, maxtime=300):
