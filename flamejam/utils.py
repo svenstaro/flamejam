@@ -51,14 +51,17 @@ def findLocation(loc):
 def randstr(length):
     return ''.join(chr(random.randint(0,255)) for i in range(length))
 
-def hash_password(password, maxtime=0.5, datalength=256):
-    return scrypt.encrypt(randstr(datalength), str(password) + app.config['SECRET_KEY'], maxtime=maxtime)
+def hash_password(password, maxtime=5, datalength=256):
+    salt = randstr(datalength)
+    hashed_password = scrypt.encrypt(salt, password, maxtime=maxtime)
+    return bytearray(hashed_password)
 
-def verify_password(hashed_password, guessed_password, maxtime=0.5):
+def verify_password(hashed_password, guessed_password, maxtime=300):
     try:
-        scrypt.decrypt(hashed_password, str(guessed_password) + app.config['SECRET_KEY'], maxtime)
+        scrypt.decrypt(str(hashed_password), guessed_password, maxtime)
         return True
-    except scrypt.error:
+    except scrypt.error as e:
+        print "scrypt error: %s" % e    # Not fatal but a necessary measure if server is under heavy load
         return False
 
 def get_current_jam():
