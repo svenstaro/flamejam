@@ -30,7 +30,7 @@ You will need
  - flask-principal
  - mysql-python
 
-as well as their respective dependencies. All of these are available on PYPI and as such
+as well as their respective dependencies. All of these are available on PyPI and as such
 I recommend using a virtualenv and pip to install all of those. Always get the newest version
 of any of these. If flamejam should be incompatible with the latest version of one of these
 packages, it is to be considered a bug and should be fixed.
