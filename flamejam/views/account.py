@@ -271,7 +271,7 @@ def settings():
 @app.errorhandler(PermissionDenied)
 def error(error):
     code = error.code if hasattr(error, "code") else 403
-    return render_template("error.html", error = error, code = code), code or 403
+    return render_template("error.html", error = error, code = code)
 
 @app.errorhandler(SMTPRecipientsRefused)
 def invalid_email(exception):
