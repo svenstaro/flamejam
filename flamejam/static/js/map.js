@@ -1,4 +1,5 @@
 var geocoder, map, options, clusterer;
+var SIZE = 16;
 
 var people = [{
         url: '/static/gfx/map/cluster-2.png',
@@ -25,9 +26,9 @@ var people = [{
 
 function addLocation(info) {
     var image = new google.maps.MarkerImage(info[2],
-        new google.maps.Size(24, 24),
+        new google.maps.Size(SIZE, SIZE),
         new google.maps.Point(0,0),
-        new google.maps.Point(12, 12));
+        new google.maps.Point(SIZE / 2, SIZE / 2));
 
     var s = info[1].split(",");
     var pos = new google.maps.LatLng(s[0], s[1]);

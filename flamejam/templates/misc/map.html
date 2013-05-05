@@ -19,7 +19,7 @@
     <script type="text/javascript">
         var locations = [
             {% for user in users if user.location_coords %}
-            ["{{ user.username }}", "{{ user.location_coords }}", "{{ user.getAvatar(24) }}"],
+            ["{{ user.username }}", "{{ user.location_coords }}", "{{ user.getAvatar(16) | safe }}"],
             {% endfor %}
         ];
     </script>
