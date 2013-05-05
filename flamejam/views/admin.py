@@ -104,3 +104,16 @@ def admin_announcement():
         flash("Your announcement has been sent to the users.")
 
     return render_template("admin/announcement.html", form = form)
+
+@app.route("/admin/users/delete/<username>")
+@admin_permission.require()
+def admin_user_delete(username):
+    u = User.query.filter_by(username = username).first()
+    if not u: return "User not found"
+
+    for r in u.registrations:
+        u.leaveJam(r.jam)
+    db.session.delete(u)
+    db.session.commit()
+
+    return "User " + username + " deleted"
