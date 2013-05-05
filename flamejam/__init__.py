@@ -6,7 +6,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.markdown import Markdown
 from flask.ext.principal import Principal, Permission, RoleNeed
 from flask.ext.login import LoginManager, current_user
-from flask_errormail import mail_on_500
 
 app = Flask(__name__)
 
@@ -24,8 +23,6 @@ markdown_object = Markdown(app, safe_mode="escape")
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-
-mail_on_500(app, app.config['ADMINS'])
 
 principals = Principal(app)
 admin_permission = Permission(RoleNeed('admin'))

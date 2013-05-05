@@ -1,6 +1,44 @@
-from flamejam import app, db
+import traceback
+
+from flask.ext.mail import Message
+
+from flamejam import app, db, mail
 from flamejam.models import Jam, User, Team, Game, JamStatusCode
 from flask import render_template, request, url_for, redirect
+
+@app.errorhandler(404)
+@app.errorhandler(403)
+@app.errorhandler(PermissionDenied)
+def error(error):
+    code = error.code if hasattr(error, "code") else 403
+    return render_template("error.html", error = error, code = code), code
+
+@app.errorhandler(500)
+def application_error(error)
+    msg = Message("[%s] Exception Detected: %s" % (app.config['SHORT_NAME'], error.message),
+                    recipients=app.config['ADMINS'])
+    msg_contents = [
+        'Traceback:',
+        '='*80,
+        traceback.format_exc(),
+    ]
+    msg_contents.append('\n')
+    msg_contents.append('Request Information:')
+    msg_contents.append('='*80)
+    environ = request.environ
+    environkeys = sorted(environ.keys())
+    for key in environkeys:
+        msg_contents.append('%s: %s' % (key, environ.get(key)))
+
+    msg.body = '\n'.join(msg_contents) + '\n'
+
+    mail.send(msg)
+    return error(error)
+
+@app.errorhandler(SMTPRecipientsRefused)
+def invalid_email(exception):
+    flash("Invalid email address.", "error")
+    return redirect(url_for('login'))
 
 @app.route("/map")
 @app.route("/map/<mode>")

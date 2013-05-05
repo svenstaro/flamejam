@@ -269,16 +269,3 @@ def settings():
             return redirect(url_for("settings"))
 
     return render_template('account/settings.html', form = form)
-
-#@app.errorhandler(500)
-@app.errorhandler(404)
-@app.errorhandler(403)
-@app.errorhandler(PermissionDenied)
-def error(error):
-    code = error.code if hasattr(error, "code") else 403
-    return render_template("error.html", error = error, code = code)
-
-@app.errorhandler(SMTPRecipientsRefused)
-def invalid_email(exception):
-    flash("Invalid email address.", "error")
-    return redirect(url_for('login'))
