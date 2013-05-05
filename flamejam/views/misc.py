@@ -35,7 +35,7 @@ def application_error(error):
     msg.body = '\n'.join(msg_contents) + '\n'
 
     mail.send(msg)
-    return error(error)
+    return render_template("error.html", error = error, code = 500), 500
 
 @app.errorhandler(SMTPRecipientsRefused)
 def invalid_email(exception):
