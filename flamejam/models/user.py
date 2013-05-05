@@ -12,7 +12,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.LargeBinary())
-    token = db.Column(db.Integer, nullable=True, default=None)
+    token = db.Column(db.BigInteger, nullable=True, default=None)
     email = db.Column(db.String(191), unique=True)
     new_email = db.Column(db.String(191), unique=True)
     is_admin = db.Column(db.Boolean, default=False)
