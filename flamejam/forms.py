@@ -205,7 +205,6 @@ class SettingsForm(Form):
 
     email = EmailField("Email", validators=[
         Optional(),
-        Not(EmailExists(), message = "That email address is already in use."),
         Email(message = "The email address you entered is invalid.")])
 
     pm_mode = SelectField("Allow PM", choices = [

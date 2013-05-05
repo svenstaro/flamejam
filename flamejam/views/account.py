@@ -249,6 +249,11 @@ def settings():
             user.new_email = form.email.data
             user.is_verified = False
 
+            same_email = User.query.filter_by(email = user.new_email).all()
+            if not(len(same_email) == 0 or (len(same_email) == 1 and same_email[0] == user)):
+                flash("This email address is already in use by another account.", "error")
+                return redirect(url_for("settings"))
+
             body = render_template("emails/account/verification.txt", recipient=user, email_changed = True)
             mail.send_message(subject=app.config["LONG_NAME"] + ": eMail verification", recipients=[user.new_email], body=body)
 
