@@ -67,16 +67,6 @@
             </tr>
         </table>
 
-        {% if jam.description %}
-        <h2>Description</h2>
-        {{ jam.description | markdown }}
-        {% endif %}
-
-        {% if jam.restrictions %}
-        <h2>Restrictions</h2>
-        {{ jam.restrictions | markdown }}
-        {% endif %}
-
         {% if jam.getStatus().code == 5 %}
         <h2>Winners</h2>
         {% if jam.games.count() > 1  %}
