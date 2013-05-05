@@ -1,6 +1,7 @@
 import traceback
 
 from flask.ext.mail import Message
+from flask.ext.principal import PermissionDenied
 
 from flamejam import app, db, mail
 from flamejam.models import Jam, User, Team, Game, JamStatusCode
