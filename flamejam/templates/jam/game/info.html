@@ -148,13 +148,19 @@
         {% for comment in game.comments %}
             <li>
                 <div class="icon">
+                    {% if comment.user %}
                     <a href="{{ comment.user.url() }}">
                         <img src="{{ comment.user.getAvatar(32) }}" width="32" height="32"/>
                     </a>
+                    {% endif %}
                 </div>
 
                 <div class="meta">
-                    <a class="author" href="{{ comment.user.url() }}">{{ comment.user.username }}</a>
+                    {% if comment.user %}
+                        <a class="author" href="{{ comment.user.url() }}">{{ comment.user.username }}</a>
+                    {% else %}
+                        <span class="author deleted user">[deleted]</span>
+                    {% endif %}
                     (<span class="posted" title="{{ comment.posted | formattime }}">{{ comment.posted | humantime }}</span>)
                 </div>
                 <div class="text markdown">
