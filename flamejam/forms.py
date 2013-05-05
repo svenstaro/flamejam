@@ -203,7 +203,10 @@ class SettingsForm(Form):
     new_password = PasswordField("New Password", validators=[Optional(), Length(min=8, message = "Please enter a password of at least 8 characters.")])
     new_password2 = PasswordField("New Password, again", validators=[EqualTo("new_password", "Passwords do not match.")])
 
-    email = EmailField("Email", validators=[Optional(), Email(message = "The email address you entered is invalid.")])
+    email = EmailField("Email", validators=[
+        Optional(),
+        Not(EmailExists(), message = "That email address is already in use."),
+        Email(message = "The email address you entered is invalid.")])
 
     pm_mode = SelectField("Allow PM", choices = [
         ("email", "show my address"),
