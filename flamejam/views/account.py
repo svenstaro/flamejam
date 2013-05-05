@@ -6,7 +6,6 @@ from flamejam.models import User
 from flamejam.utils import hash_password, verify_password, findLocation
 from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm, ContactUserForm
 from flask import render_template, redirect, flash, url_for, current_app, session, request, abort
-from smtplib import SMTPRecipientsRefused
 from flask.ext.login import login_required, login_user, logout_user, current_user
 from flask.ext.principal import AnonymousIdentity, Identity, UserNeed, identity_changed, identity_loaded, Permission, RoleNeed, PermissionDenied
 
