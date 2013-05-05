@@ -14,7 +14,7 @@ def error(error):
     return render_template("error.html", error = error, code = code), code
 
 @app.errorhandler(500)
-def application_error(error)
+def application_error(error):
     msg = Message("[%s] Exception Detected: %s" % (app.config['SHORT_NAME'], error.message),
                     recipients=app.config['ADMINS'])
     msg_contents = [
