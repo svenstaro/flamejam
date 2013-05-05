@@ -250,7 +250,7 @@ def settings():
             user.is_verified = False
 
             body = render_template("emails/account/verification.txt", recipient=user, email_changed = True)
-            mail.send_message(subject=app.config["LONG_NAME"] + ": eMail verification", recipients=[user.email], body=body)
+            mail.send_message(subject=app.config["LONG_NAME"] + ": eMail verification", recipients=[user.new_email], body=body)
 
             logout = True
             flash("Your email address has changed. Please check your inbox for the verification.", "info")
