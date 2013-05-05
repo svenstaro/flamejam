@@ -3,6 +3,7 @@ from flamejam.utils import get_slug
 from flamejam.models import User, Jam
 from flamejam.forms import JamDetailsForm, AdminWriteAnnouncement
 from flask import render_template, redirect, url_for, request, flash
+from flask.ext.mail import Message
 from datetime import datetime
 
 @app.route("/admin")
@@ -97,10 +98,17 @@ def admin_jam(id = 0):
 def admin_announcement():
     form = AdminWriteAnnouncement()
 
+    mail.suppress = True
     if form.validate_on_submit():
-        for user in User.filter_by(notify_useletter = True).all():
-            body = render_template("emails/newsletter.txt", recipient=new_user, message=form.message.data)
-            mail.send_message(subject=app.config["LONG_NAME"] + " Newsletter: " + form.subject.data, recipients=[user.email], body=body)
+        with mail.connect() as conn:
+            for user in User.filter_by(notify_useletter = True).all():
+                body = render_template("emails/newsletter.txt", recipient=new_user, message=form.message.data)
+                subject = app.config["LONG_NAME"] + " Newsletter: " + form.subject.data
+                recipients = [user.email]
+                message = Message(subject=subject, body=body, recipients=recipients)
+                conn.send(message)
         flash("Your announcement has been sent to the users.")
+    mail.suppress = False
+    print "done sending"
 
     return render_template("admin/announcement.html", form = form)
