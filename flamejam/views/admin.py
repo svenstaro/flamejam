@@ -101,7 +101,7 @@ def admin_announcement():
     mail.suppress = True
     if form.validate_on_submit():
         with mail.connect() as conn:
-            for user in User.filter_by(notify_useletter = True).all():
+            for user in User.query.filter_by(notify_useletter = True).all():
                 body = render_template("emails/newsletter.txt", recipient=new_user, message=form.message.data)
                 subject = app.config["LONG_NAME"] + " Newsletter: " + form.subject.data
                 recipients = [user.email]
