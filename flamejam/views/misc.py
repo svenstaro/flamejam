@@ -38,7 +38,7 @@ def application_error(e):
     msg.body = '\n'.join(msg_contents) + '\n'
 
     mail.send(msg)
-    return error(e)
+    return error(InternalServerError())
 
 @app.errorhandler(SMTPRecipientsRefused)
 def invalid_email(exception):

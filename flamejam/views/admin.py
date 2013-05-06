@@ -98,17 +98,16 @@ def admin_jam(id = 0):
 def admin_announcement():
     form = AdminWriteAnnouncement()
 
-    mail.suppress = True
     if form.validate_on_submit():
         with mail.connect() as conn:
             for user in User.query.filter_by(notify_newsletter = True).all():
                 body = render_template("emails/newsletter.txt", recipient=user, message=form.message.data)
                 subject = app.config["LONG_NAME"] + " Newsletter: " + form.subject.data
-                recipients = [user.email]
+                #recipients = [user.email]
+                recipients = ['sh@lutzhaase.com']
                 message = Message(subject=subject, body=body, recipients=recipients)
                 conn.send(message)
         flash("Your announcement has been sent to the users.")
-    mail.suppress = False
     print "done sending"
 
     return render_template("admin/announcement.html", form = form)
