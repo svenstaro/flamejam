@@ -5,6 +5,7 @@ from flamejam.forms import JamDetailsForm, AdminWriteAnnouncement
 from flask import render_template, redirect, url_for, request, flash
 from flask.ext.mail import Message
 from datetime import datetime
+from smtplib import SMTPRecipientsRefused
 
 @app.route("/admin")
 def admin_index():
@@ -106,7 +107,10 @@ def admin_announcement():
                 sender = app.config['MAIL_DEFAULT_SENDER']
                 recipients = [user.email]
                 message = Message(subject=subject, sender=sender, body=body, recipients=recipients)
-                conn.send(message)
+                try:
+                    conn.send(message)
+                except SMTPRecipientsRefused:
+                    pass
         flash("Your announcement has been sent to the users.")
 
     return render_template("admin/announcement.html", form = form)

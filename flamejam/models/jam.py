@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from flask import url_for, Markup, render_template
 from flask.ext.mail import Message
 from random import shuffle
+from smtplib import SMTPRecipientsRefused
 
 class Jam(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -161,7 +162,10 @@ class Jam(db.Model):
                     sender = app.config['MAIL_DEFAULT_SENDER']
                     recipients = [user.email]
                     message = Message(subject=subject, sender=sender, body=body, recipients=recipients)
-                    conn.send(message)
+                    try:
+                        conn.send(message)
+                    except SMTPRecipientsRefused:
+                        pass
 
         self.last_notification_sent = n
         db.session.commit()
