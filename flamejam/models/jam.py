@@ -6,6 +6,7 @@ from flamejam.filters import formattime, humandelta
 from flamejam.models import Game
 from datetime import datetime, timedelta
 from flask import url_for, Markup, render_template
+from flask.ext.mail import Message
 from random import shuffle
 
 class Jam(db.Model):
@@ -152,10 +153,15 @@ class Jam(db.Model):
             from flamejam.models import User
             users = User.query.all()
 
-        for user in users:
-            if getattr(user, "notify_" + notify):
-                body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
-                mail.send_message(subject=app.config["LONG_NAME"] + ": " + subject, recipients=[user.email], body=body)
+        with mail.connect() as conn:
+            for user in users:
+                if getattr(user, "notify_" + notify):
+                    body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
+                    subject = app.config["LONG_NAME"] + ": " + subject
+                    sender = app.config['MAIL_DEFAULT_SENDER']
+                    recipients = [user.email]
+                    message = Message(subject=subject, sender=sender, body=body, recipients=recipients)
+                    conn.send(message)
 
         self.last_notification_sent = n
         db.session.commit()
