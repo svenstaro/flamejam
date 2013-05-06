@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}[{{ code }}] {{ error.name }}{% endblock %}
+{% block title %}{{ error.code }} {{ error.name }}{% endblock %}
 
 {# Add font for error displaying #}
 {% block head %}
@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<h1>{{ error.name }} <small>Error {{ code }}</small></h1>
+<h1>{{ error.name }} <small>Error {{ error.code }}</small></h1>
 <p>{{ error.description | safe }}</p>
 <p><a href="javascript:history.back();" class="btn btn-small">&laquo; back</a></p>
 
