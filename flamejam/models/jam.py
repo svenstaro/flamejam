@@ -154,6 +154,11 @@ class Jam(db.Model):
             from flamejam.models import User
             users = User.query.all()
 
+        # Set this first because we might send for longer than a minute at which point the
+        # next tick will come around.
+        self.last_notification_sent = n
+        db.session.commit()
+
         with mail.connect() as conn:
             for user in users:
                 if getattr(user, "notify_" + notify):
@@ -166,9 +171,6 @@ class Jam(db.Model):
                         conn.send(message)
                     except SMTPRecipientsRefused:
                         pass
-
-        self.last_notification_sent = n
-        db.session.commit()
         return True
 
 
