@@ -103,8 +103,7 @@ def admin_announcement():
             for user in User.query.filter_by(notify_newsletter = True).all():
                 body = render_template("emails/newsletter.txt", recipient=user, message=form.message.data)
                 subject = app.config["LONG_NAME"] + " Newsletter: " + form.subject.data
-                #recipients = [user.email]
-                recipients = ['sh@lutzhaase.com']
+                recipients = [user.email]
                 message = Message(subject=subject, body=body, recipients=recipients)
                 conn.send(message)
         flash("Your announcement has been sent to the users.")
