@@ -39,44 +39,10 @@ function countdown() {
 
         var seconds = ds;
 
-        var times = new Array(
-            days,
-            hours,
-            minutes,
-            seconds
-            );
-
-        times[0] = leadingZero(times[0], 2);
-        times[1] = leadingZero(times[1], 2);
-        times[2] = leadingZero(times[2], 2);
-        times[3] = leadingZero(times[3], 2);
-
-        for (var i = 0; i <= 9; i += 1) {
-            $(this).find(".digit").removeClass("n" + i);
-        }
-
-        $(this).find(".d0").addClass("n" + times[0][0]);
-        $(this).find(".d1").addClass("n" + times[0][1]);
-        $(this).find(".h0").addClass("n" + times[1][0]);
-        $(this).find(".h1").addClass("n" + times[1][1]);
-        $(this).find(".m0").addClass("n" + times[2][0]);
-        $(this).find(".m1").addClass("n" + times[2][1]);
-        $(this).find(".s0").addClass("n" + times[3][0]);
-        $(this).find(".s1").addClass("n" + times[3][1]);
-
-        if(times[1] < 1) {
-            // less than 1 hour
-            $(this).find(".time-digits, .time").addClass("red");
-        } else {
-            $(this).find(".time-digits, .time").removeClass("red");
-        }
-
-        var chars = times.join(":");
-        var html = "";
-        for(var i = 0; i < chars.length; ++i) {
-            html += '<span class="char' + (chars[i] == ":" ? " colon" : "") + '">' + chars[i] + '</span>';
-        }
-        $(this).find(".time").html(html);
+        $(this).find(".time-d").text(days);
+        $(this).find(".time-h").text(leadingZero(hours, 2));
+        $(this).find(".time-m").text(leadingZero(minutes, 2));
+        $(this).find(".time-s").text(leadingZero(seconds, 2));
     });
 
     setTimeout(countdown, 1000);
