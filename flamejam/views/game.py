@@ -4,7 +4,7 @@ from flamejam.models import Jam, Game, User, Comment, GamePackage, \
     GameScreenshot, JamStatusCode, Rating
 from flamejam.forms import WriteComment, GameEditForm, GameAddScreenshotForm, \
     GameAddPackageForm, GameAddTeamMemberForm, GameCreateForm, RateGameForm
-from flask import render_template, url_for, redirect, flash, request
+from flask import render_template, url_for, redirect, flash, request, abort
 from flask.ext.login import login_required, current_user
 
 @app.route("/jams/<jam_slug>/create-game/", methods = ("GET", "POST"))
