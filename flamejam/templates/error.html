@@ -4,14 +4,15 @@
 
 {# Add font for error displaying #}
 {% block head %}
-{# <link href='http://fonts.googleapis.com/css?family=Loved+by+the+King&subset=latin&v2' rel='stylesheet' type='text/css'> #}
+    <link href='http://fonts.googleapis.com/css?family=Loved+by+the+King&subset=latin&v2' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=VT323&subset=latin&v2' rel='stylesheet' type='text/css'>
 {% endblock %}
 
 {% block content %}
 
-<div class="error-page error-{{ code }}" style="text-align: center; color: #222;">
-    <div style="font-size: 200pt;">{{ code }}</div>
-    <div style="font-size: 40pt; font-weight: bold;">{{ "NOPE!!!" if code == 403 else error.name }}</div>
-</div>
+<h1>{{ error.name }} <small>Error {{ code }}</small></h1>
+<p>{{ error.description | safe }}</p>
+<p><a href="javascript:history.back();" class="btn btn-small">&laquo; back</a></p>
+
+
 {% endblock %}
