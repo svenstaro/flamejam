@@ -3,7 +3,7 @@
     <head>
         <title>{{ jam.title }} - Countdown</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/countdown.css') }}" />
-        <link href='http://fonts.googleapis.com/css?family=McLaren' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
         <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"> </script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/countdown.js') }}"> </script>
     </head>
@@ -23,22 +23,30 @@
             <div class="countdown" time="{{ time  }}">
                 <div class="text">{{ jam.title }} {{ text }}</div>
 
-            {#
-                <div class="time-digits">
-                    <div class="digit d1"></div>
-                    <div class="colon"></div>
-                    <div class="digit h0"></div>
-                    <div class="digit h1"></div>
-                    <div class="colon"></div>
-                    <div class="digit m0"></div>
-                    <div class="digit m1"></div>
-                    <div class="colon"></div>
-                    <div class="digit s0"></div>
-                    <div class="digit s1"></div>
+                <div class="time">
+                    <table>
+                        <tr class="digits">
+                            <td class="time-d"></td>
+                            <td class="time-colon">:</td>
+                            <td class="time-h"></td>
+                            <td class="time-colon">:</td>
+                            <td class="time-m"></td>
+                            <td class="time-colon">:</td>
+                            <td class="time-s"></td>
+                        </tr>
+                        <tr class="explanations">
+                            <td>days</td>
+                            <td></td>
+                            <td>hours</td>
+                            <td></td>
+                            <td>minutes</td>
+                            <td></td>
+                            <td>seconds</td>
+                        </tr>
+                    </table>
                 </div>
-            #}
 
-                <div class="time"></div>
+                <div class="meta"></div>
 
                 <div class="link"><a href="{{jam.url()}}">&laquo; back to the jam</a></div>
             </div>
