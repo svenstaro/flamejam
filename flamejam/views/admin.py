@@ -1,4 +1,4 @@
-from flamejam import app, db, admin_permission
+from flamejam import app, db, admin_permission, mail
 from flamejam.utils import get_slug
 from flamejam.models import User, Jam
 from flamejam.forms import JamDetailsForm, AdminWriteAnnouncement
