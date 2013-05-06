@@ -6,7 +6,7 @@ from smtplib import SMTPRecipientsRefused
 
 from flamejam import app, db, mail
 from flamejam.models import Jam, User, Team, Game, JamStatusCode
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect, flash
 from werkzeug.exceptions import *
 
 @app.errorhandler(404)
