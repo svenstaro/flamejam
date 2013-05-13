@@ -37,14 +37,16 @@
     {% elif mode == "jam" %}participants of jam {{ extra.title }}
     {% endif %}
 
-    {% if users | length > 1 and users | length != x or True %}
+    {% if users | length > 1 and users | length != x %}
     <small>{{ x }} out of {{ users | length }} ha{% if x == 1 %}s{% else %}ve{% endif %} a location set</small>
     {% endif %}
 
-    {% if mode == "user" %}<a class="btn btn-primary" href="{{ extra.url() }}">View Profile</a>
-    {% elif mode == "jam" %}<a class="btn btn-primary" href="{{ extra.url() }}">Jam Info</a>
-    {% elif mode == "team" %}<a class="btn btn-primary" href="{{ extra.url() }}">Team Page</a>
-    {% endif %}
+    <div class="pull-right">
+        {% if mode == "user" %}<a class="btn btn-primary" href="{{ extra.url() }}">View Profile</a>
+        {% elif mode == "jam" %}<a class="btn btn-primary" href="{{ extra.url() }}">Jam Info</a>
+        {% elif mode == "team" %}<a class="btn btn-primary" href="{{ extra.url() }}">Team Page</a>
+        {% endif %}
+    </div>
 </h1>
 
 <div id="map_canvas"></div>

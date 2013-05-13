@@ -38,8 +38,8 @@
             <tr>
                 <th>Location</th>
                 <td>
-                    {{ user.getLocation() }}
                     <a href="{{ url_for('map', mode = 'user', id = user.id) }}" class="pull-right">Show map</a>
+                    {{ user.getLocation() }}&nbsp;
                 </td>
             </tr>
             {% endif %}
