@@ -6,7 +6,9 @@ from flamejam.filters import formattime, humandelta
 from flamejam.models import Game
 from datetime import datetime, timedelta
 from flask import url_for, Markup, render_template
+from flask.ext.mail import Message
 from random import shuffle
+from smtplib import SMTPRecipientsRefused
 
 class Jam(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -152,13 +154,23 @@ class Jam(db.Model):
             from flamejam.models import User
             users = User.query.all()
 
-        for user in users:
-            if getattr(user, "notify_" + notify):
-                body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
-                mail.send_message(subject=app.config["LONG_NAME"] + ": " + subject, recipients=[user.email], body=body)
-
+        # Set this first because we might send for longer than a minute at which point the
+        # next tick will come around.
         self.last_notification_sent = n
         db.session.commit()
+
+        with mail.connect() as conn:
+            for user in users:
+                if getattr(user, "notify_" + notify):
+                    body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
+                    subject = app.config["LONG_NAME"] + ": " + subject
+                    sender = app.config['MAIL_DEFAULT_SENDER']
+                    recipients = [user.email]
+                    message = Message(subject=subject, sender=sender, body=body, recipients=recipients)
+                    try:
+                        conn.send(message)
+                    except SMTPRecipientsRefused:
+                        pass
         return True
 
 
