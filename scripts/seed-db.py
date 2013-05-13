@@ -28,6 +28,11 @@ db.session.add(per)
 db.session.add(pablo)
 db.session.add(paddy)
 
+paul.setLocation("Hohenbalk")
+per.setLocation("Thesdorfer Weg 20, Pinneberg")
+pablo.setLocation("Hamburg")
+paddy.setLocation("San Francisco")
+
 # Make jams
 rgj1 = Jam("BaconGameJam 01", datetime.utcnow() - timedelta(days=30))
 rgj2 = Jam("BaconGameJam 2", datetime.utcnow() - timedelta(days=2))

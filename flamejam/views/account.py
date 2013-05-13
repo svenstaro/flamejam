@@ -3,7 +3,7 @@ from random import randint
 
 from flamejam import app, db, mail
 from flamejam.models import User
-from flamejam.utils import hash_password, verify_password, findLocation
+from flamejam.utils import hash_password, verify_password
 from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm, ContactUserForm
 from flask import render_template, redirect, flash, url_for, current_app, session, request, abort
 from flask.ext.login import login_required, login_user, logout_user, current_user
@@ -222,20 +222,12 @@ def settings():
         user.notify_newsletter = form.notify_newsletter.data
 
         if user.location != form.location.data and form.location.data:
-            new_loc, new_coords, new_flag = findLocation(form.location.data)
-            if new_loc:
-                user.location = form.location.data
-                user.location_display = new_loc
-                user.location_coords = new_coords
-                user.location_flag = new_flag
-                flash("Location was set to: " + new_loc, "success")
+            if user.setLocation(form.location.data):
+                flash("Location was set to: " + user.location_display, "success")
             else:
                 flash("Could not find the location you entered.", "error")
         if not form.location.data:
-            user.location = ""
-            user.location_display = ""
-            user.location_coords = ""
-            user.location_flag = "unknown"
+            user.setLocation("")
 
         if form.old_password.data and form.new_password.data and form.new_password2.data:
             if not verify_password(user.password, form.old_password.data):

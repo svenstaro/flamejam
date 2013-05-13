@@ -1,28 +1,24 @@
-var geocoder, map, options, clusterer;
+var geocoder, map, options, clusterer, spiderer, info;
 var SIZE = 16;
 
-var people = [{
-        url: '/static/gfx/map/cluster-2.png',
-        height: 32,
-        width: 32,
-        anchor: [6, 11],
-        textColor: '#000',
-        textSize: 16
-      }, {
-        url: '/static/gfx/map/cluster-3.png',
-        height: 32,
-        width: 32,
-        anchor: [6, 6],
-        textColor: '#000',
-        textSize: 16
-      }, {
-        url: '/static/gfx/map/cluster-4.png',
-        height: 32,
-        width: 32,
-        anchor: [6, 11],
-        textColor: '#000',
-        textSize: 12
-      }];
+var LIGHTNESS = -70;
+var STYLE = [
+    {elementType:"labels",stylers: [{visibility:"off"}]},
+    {featureType:"water",stylers:[{visibility:"simplified"},{saturation:-100},{lightness:LIGHTNESS}]},
+    {featureType:"poi",stylers: [{visibility:"off"}]},
+    {featureType:"landscape.natural",stylers:[{visibility:"simplified"},{saturation:-100},{lightness:LIGHTNESS*0.9}]},
+    {featureType:"administrative",stylers:[{visibility:"on"},{saturation:-100},{lightness:LIGHTNESS*0.7}]},
+    {featureType:"road",stylers:[{visibility:"off"}]},
+    {featureType:"transit",stylers:[{visibility:"off"}]},
+    {featureType:"landscape.man_made",stylers:[{saturation:-100},{lightness:LIGHTNESS*0.9}]},
+    {featureType:"administrative.locality",stylers:[{visibility:"off"}]}
+];
+
+function applyStyle() {
+    var styledMap = new google.maps.StyledMapType(STYLE, {name: "Styled Map"});
+    map.mapTypes.set('map_style', styledMap);
+    map.setMapTypeId('map_style');
+}
 
 function addLocation(info) {
     var image = new google.maps.MarkerImage(info[2],
@@ -37,10 +33,19 @@ function addLocation(info) {
         position: pos,
         map: map,
         title: info[0],
-        icon: image
+        // icon: image,
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 5,
+            fillColor: '#FA0',
+            fillOpacity: 0.5,
+            strokeColor: '#FA0',
+            strokeWeight: 1,
+        },
     });
+    marker.username = info[0];
 
-    clusterer.addMarker(marker);
+    spiderer.addMarker(marker);
 }
 
 $(document).ready(function() {
@@ -59,10 +64,39 @@ $(document).ready(function() {
     };
 
     map = new google.maps.Map(document.getElementById("map_canvas"), options);
+    applyStyle();
 
-    clusterer = new MarkerClusterer(map, [], {
-        styles: people
+    spiderer = new OverlappingMarkerSpiderfier(map);
+    spiderer.legColors.usual["map_style"] = "#F90";
+    spiderer.legColors.highlighted["map_style"] = "#FFF";
+
+    info = new google.maps.InfoWindow();
+    spiderer.addListener("click", function(marker, event) {
+
+        $.ajax({
+            type: "GET",
+            url: "/ajax/map-user/" + marker.username + "/",
+            dataType: "text",
+            cache: false,
+            success: function(data) {
+                info.setContent(data);
+                info.open(map, marker);
+            },
+            error: function(data, m) {
+                info.setContent("Error: " + m);
+                info.open(map, marker);
+            }
         });
+
+    });
+
+    map.addListener("click", function() {
+        info.close();
+    });
+
+    spiderer.addListener("spiderfy", function(markers) {
+        info.close();
+    });
 
     for(var i = 0; i < locations.length; ++i) {
         addLocation(locations[i]);

@@ -1,0 +1,17 @@
+<div class="map-user">
+{% if user %}
+    <img class="image" src="{{ user.getAvatar(64) }}" width="64" height="64">
+    <div class="info" >
+        <p>
+            <b>{{ user.username }}</b>
+            {% if user.real_name %}<i>({{ user.real_name }})</i>{% endif %}
+        </p>
+
+        <p style="white-space: nowrap;">{{ user.getLocation() }}</p>
+
+        <p style="padding-top: 2px !important;"><a href="{{ user.url() }}" class="btn btn-mini btn-primary">Profile</a></p>
+    </div>
+{% else %}
+    <i>invalid user</i>
+{% endif %}
+</div>

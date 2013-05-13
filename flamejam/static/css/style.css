@@ -729,3 +729,21 @@ span.icon-16-humor      { background-image: url("../gfx/icons/fun.png"); }
 .step-slider-step.on {
     background-position: left top;
 }
+
+.map-user img {
+    float: left;
+}
+
+.map-user .info {
+    vertical-align: top;
+    min-height: 64px;
+    margin-left: 74px;
+    padding-right: 20px;
+    overflow: hidden;
+}
+
+.map-user .info p {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: inherit !important;
+}

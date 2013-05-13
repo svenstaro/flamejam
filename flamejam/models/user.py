@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flamejam import app, db, login_manager
-from flamejam.utils import hash_password, verify_password
+from flamejam.utils import hash_password, verify_password, findLocation
 from flamejam.models import Registration, Team, Game
 from flask import url_for, Markup
 from datetime import datetime
@@ -114,6 +114,23 @@ class User(db.Model):
 
     def getAvatar(self, size = 32):
         return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
+
+    def setLocation(self, location):
+        if not location:
+            self.location = ""
+            self.location_display = ""
+            self.location_coords = ""
+            self.location_flag = "unknown"
+            return True
+
+        new_loc, new_coords, new_flag = findLocation(location)
+        if not new_loc:
+            return False
+        self.location = location
+        self.location_display = new_loc
+        self.location_coords = new_coords
+        self.location_flag = new_flag
+        return True
 
     def getLocation(self):
         return Markup('<span class="flag %s"></span> %s' % (self.location_flag, self.location_display or "n/a"))
