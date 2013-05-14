@@ -2,6 +2,7 @@ from flamejam import app, db
 from flamejam.utils import get_slug
 from flamejam.models import Jam, Game, User, Comment, GamePackage, \
     GameScreenshot, JamStatusCode, Rating
+from flamejam.models.rating import RATING_CATEGORIES
 from flamejam.forms import WriteComment, GameEditForm, GameAddScreenshotForm, \
     GameAddPackageForm, GameAddTeamMemberForm, GameCreateForm, RateGameForm
 from flask import render_template, url_for, redirect, flash, request, abort
@@ -45,14 +46,21 @@ def edit_game(jam_slug, game_slug):
     screenshot_form = GameAddScreenshotForm()
 
     if form.validate_on_submit():
-        print "OMG"
         slug = get_slug(form.title.data)
-        print slug
         if not jam.games.filter_by(slug = slug).first() in (game, None):
             flash("A game with a similar title already exists. Please choose another title.", category = "error")
         else:
             form.populate_obj(game)
-            print form.help.data
+
+            game.title = form.title.data
+            game.description = form.description.data
+            game.technology = form.technology.data
+            game.help = form.help.data
+
+            if game.jam.getStatus().code < 4:
+                for c in RATING_CATEGORIES:
+                    setattr(game, "score_" + c + "_enabled", form.get(c).data)
+
             game.slug = get_slug(game.title)
             db.session.commit()
             flash("Your settings have been applied.", category = "success")

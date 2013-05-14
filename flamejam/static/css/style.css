@@ -476,6 +476,12 @@ form.block .field > label {
     margin-top: 7px;
 }
 
+form.block .field > label.normal {
+    width: auto;
+    text-align: left;
+    margin: 0;
+}
+
 form.compact .field {
     margin-bottom: 0px !important;
 }

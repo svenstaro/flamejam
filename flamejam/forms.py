@@ -7,6 +7,7 @@ from flask.ext.wtf import Required, Length, EqualTo, Optional, NumberRange, Emai
 from flask.ext.wtf.html5 import IntegerField, EmailField
 import re
 from flamejam import app, models, utils
+from flamejam.models.rating import RATING_CATEGORIES
 
 ############## VALIDATORS ####################
 
@@ -125,6 +126,13 @@ class GameEditForm(Form):
     description = TextAreaField("Description", validators=[Required()])
     technology = TextAreaField("Technlogoy used")
     help = TextAreaField("Help / Controls")
+
+    def get(self, name):
+        return getattr(self, "score_" + name + "_enabled")
+
+# Adds fields "dynamically" (which score categories are enabled?)
+for c in RATING_CATEGORIES:
+    setattr(GameEditForm, "score_" + c + "_enabled", BooleanField(c.title()))
 
 class GameAddScreenshotForm(Form):
     url = TextField("URL", validators = [Required(), URL()])
