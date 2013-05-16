@@ -67,7 +67,23 @@
             </tr>
         </table>
 
-        {% if jam.getStatus().code == 5 %}
+        {% if jam.getStatus().code <= 3 %}
+        {% set teams = jam.livestreamTeams %}
+        {% if teams %}
+            <h2>Livestreams</h2>
+            <ul>
+            {% for team in teams %}
+                {% for line in team.livestreams.splitlines() %}
+                    <li><a href="{{ line }}">{{ team.game.name if team.game and team.game.name else team.name }}
+                        {% if team.livestreams.splitlines() | length > 1 %}
+                            ({{ loop.index }})
+                        {% endif %}
+                    </a></li>
+                {% endfor %}
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% elif jam.getStatus().code == 5 %}
         <h2>Winners</h2>
         {% if jam.games.count() > 1  %}
             <ol>

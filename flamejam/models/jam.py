@@ -173,6 +173,14 @@ class Jam(db.Model):
                         pass
         return True
 
+    @property
+    def livestreamTeams(self):
+        t = []
+        for team in self.teams:
+            if team.livestreams:
+                t.append(team)
+        return t
+
 
 class JamStatusCode(object):
     ANNOUNCED    = 0

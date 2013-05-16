@@ -87,10 +87,6 @@ ul {
     list-style: square;
 }
 
-/* h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
-    text-decoration: underline;
-}*/
-
 #header {
     height: 50px;
     line-height: 50px;
