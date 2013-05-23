@@ -212,8 +212,8 @@ def current_jam_info():
                    duration=jam.duration,
                    team_limit=jam.team_limit)
 
-@app.route('/bacon_info')
-def bacon_info():
+@app.route('/site_info')
+def site_info():
     stats = {}
     stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0];
     stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0];
