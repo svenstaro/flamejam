@@ -6,7 +6,8 @@ from smtplib import SMTPRecipientsRefused
 
 from flamejam import app, db, mail
 from flamejam.models import Jam, User, Team, Game, JamStatusCode
-from flask import render_template, request, url_for, redirect, flash
+from flamejam.utils import get_current_jam
+from flask import render_template, request, url_for, redirect, flash, jsonify
 from werkzeug.exceptions import *
 
 @app.errorhandler(404)
@@ -200,6 +201,15 @@ def links():
 @app.route('/subreddit')
 def subreddit():
     return redirect("http://www.reddit.com/r/bacongamejam")
+
+@app.route('/current_jam_info')
+def current_jam_info():
+    jam = get_current_jam()
+    return jsonify(slug=jam.slug,
+                   title=jam.title,
+                   announced=str(jam.announced),
+                   start_time=str(jam.start_time),
+                   team_limit=jam.team_limit)
 
 @app.route('/tick')
 def tick():
