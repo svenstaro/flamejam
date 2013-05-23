@@ -209,7 +209,20 @@ def current_jam_info():
                    title=jam.title,
                    announced=str(jam.announced),
                    start_time=str(jam.start_time),
+                   duration=jam.duration,
                    team_limit=jam.team_limit)
+
+@app.route('/bacon_info')
+def bacon_info():
+    stats = {}
+    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0];
+    stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0];
+    stats["total_games"] = db.session.query(db.func.count(Game.id)).first()[0];
+    return jsonify(total_jams=stats["total_jams"],
+                   total_users=stats["total_users"],
+                   total_games=stats["total_games"],
+                   subreddit=url_for('subreddit', _external=True),
+                   rules=url_for('rules', _external=True))
 
 @app.route('/tick')
 def tick():
