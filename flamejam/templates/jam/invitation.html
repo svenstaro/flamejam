@@ -63,9 +63,9 @@
     <p style="margin-left: 20px; font-weight: bold; font-size: 1.2em;">
         <a href="{{ invitation.url() }}">{{ invitation.url() }}</a>
     </p>
-    {% endif %}
     <p>
         <a href="{{ invitation.url(action='revoke') }}" class="btn btn-danger btn-normal">Revoke this invitation</a>
     </p>
+{% endif %}
 </div>
 {% endblock %}
