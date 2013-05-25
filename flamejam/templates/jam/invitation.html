@@ -25,12 +25,6 @@
             including all games, invitations and other team-related
             data.
         </p>
-        {% else %}
-        <p>
-            By accepting the invitation you will automatically be registered
-            for the jam <a href="{{ jam.url() }}">{{ jam.name }}</a>.
-        </p>
-        {% endif %}
         <p>
             You will have to join a team before the packaging phase of the
             game jam ends. After packaging, team joining is disabled.
@@ -39,6 +33,16 @@
             <a href="{{ invitation.url(action = 'decline') }}" class="btn btn-danger">Decline</a>
             <a href="{{ invitation.url(action = 'accept') }}" class="btn btn-success">Accept</a>
         </p>
+        {% else %}
+        <p class="alert alert-error">
+            You are not yet registered for <a href="{{ jam.url() }}">{{ jam.title }}</a>.
+            This is required to join a team. Please register first and return to
+            this page.
+        </p>
+        <p>
+            <a href="{{ url_for('jam_register', jam_slug = jam.slug) }}" target="_blank" class="btn btn-primary">Register for the Jam</a>
+        </p>
+        {% endif %}
     </div>
     <div class="span3">
     </div>

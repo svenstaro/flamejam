@@ -172,7 +172,8 @@ class User(db.Model):
         return Registration.query.filter_by(user_id = self.id, jam_id = jam.id).first()
 
     def getTeam(self, jam):
-        return self.getRegistration(jam).team
+        r = self.getRegistration(jam)
+        return r.team if r and r.team else None
 
     def inTeam(self, team):
         return self in team.members
