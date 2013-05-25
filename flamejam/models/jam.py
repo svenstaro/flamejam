@@ -159,11 +159,12 @@ class Jam(db.Model):
         self.last_notification_sent = n
         db.session.commit()
 
+        subject = app.config["LONG_NAME"] + ": " + subject
+
         with mail.connect() as conn:
             for user in users:
                 if getattr(user, "notify_" + notify):
                     body = render_template("emails/jam/" + template + ".txt", recipient=user, jam=self, **kwargs)
-                    subject = app.config["LONG_NAME"] + ": " + subject
                     sender = app.config['MAIL_DEFAULT_SENDER']
                     recipients = [user.email]
                     message = Message(subject=subject, sender=sender, body=body, recipients=recipients)
