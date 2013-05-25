@@ -78,29 +78,30 @@ def team_settings(jam_slug):
 @login_required
 def invitation(id, action = ""):
     invitation = Invitation.query.filter_by(id = id).first_or_404()
+    team = invitation.team
 
-    if invitation.team.jam.getStatus().code >= JamStatusCode.RATING:
+    if team.jam.getStatus().code >= JamStatusCode.RATING:
         alert("The jam rating has started, so changes to the team are locked.", "error")
-        return redirect(invitation.team.url())
+        return redirect(team.url())
 
     if action == "accept":
         if current_user != invitation.user: abort(403)
         invitation.accept()
         flash("You have accepted the invitation.", "success")
-        return redirect(invitation.team.url())
+        return redirect(team.url())
     elif action == "decline":
         if current_user != invitation.user: abort(403)
         invitation.decline()
         flash("You have declined the invitation.", "success")
-        return redirect(invitation.team.url())
+        return redirect(team.url())
     elif action == "revoke":
-        if current_user not in invitation.team.members: abort(403)
+        if current_user not in team.members: abort(403)
         db.session.delete(invitation)
         db.session.commit()
         flash("You have revoked the invitation for %s." % invitation.user.username, "success")
-        return redirect(url_for("team_settings", jam_slug = invitation.team.jam.slug))
+        return redirect(url_for("team_settings", jam_slug = team.jam.slug))
     else:
-        if current_user != invitation.user and current_user not in invitation.team.members:
+        if current_user != invitation.user and current_user not in team.members:
             abort(403)
         return render_template("jam/invitation.html", invitation=invitation)
 
