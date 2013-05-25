@@ -6,7 +6,8 @@ from smtplib import SMTPRecipientsRefused
 
 from flamejam import app, db, mail
 from flamejam.models import Jam, User, Team, Game, JamStatusCode
-from flask import render_template, request, url_for, redirect, flash
+from flamejam.utils import get_current_jam
+from flask import render_template, request, url_for, redirect, flash, jsonify
 from werkzeug.exceptions import *
 
 @app.errorhandler(404)
@@ -200,6 +201,28 @@ def links():
 @app.route('/subreddit')
 def subreddit():
     return redirect("http://www.reddit.com/r/bacongamejam")
+
+@app.route('/current_jam_info')
+def current_jam_info():
+    jam = get_current_jam()
+    return jsonify(slug=jam.slug,
+                   title=jam.title,
+                   announced=str(jam.announced),
+                   start_time=str(jam.start_time),
+                   duration=jam.duration,
+                   team_limit=jam.team_limit)
+
+@app.route('/site_info')
+def site_info():
+    stats = {}
+    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0];
+    stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0];
+    stats["total_games"] = db.session.query(db.func.count(Game.id)).first()[0];
+    return jsonify(total_jams=stats["total_jams"],
+                   total_users=stats["total_users"],
+                   total_games=stats["total_games"],
+                   subreddit=url_for('subreddit', _external=True),
+                   rules=url_for('rules', _external=True))
 
 @app.route('/tick')
 def tick():
