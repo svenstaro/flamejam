@@ -14,7 +14,7 @@
 body {
     color: #555;
     background: #FFF;
-    font-family: "DejaVu Sans", Verdana, Arial, sans-serif;
+    font-family: "DejaVu Sans", Arial, sans-serif;
     margin: 0;
     padding: 0;
     min-width: 700px;
@@ -114,7 +114,6 @@ ul {
 #main-title {
     font-size: 13pt;
     font-weight: bold;
-    font-family: "DejaVu Sans Condensed", "DejaVu Sans", Verdana, Arial, sans-serif;
 }
 
 #main-title a {
@@ -377,12 +376,6 @@ table.details {
     border-width: 2px 0;
 }
 
-.user.deleted {
-    color: #A33 !important;
-    font-size: 0.9em !important;
-    font-weight: bold;
-}
-
 ul.screenshots {
     list-style: none;
     margin: 0;
@@ -625,7 +618,10 @@ table.full {
     background: #F6F6F6;
 }
 
-.sorters th { cursor: pointer; }
+.sorters th {
+    cursor: pointer;
+    white-space: nowrap;
+}
 
 .sorters th:after {
     content: " ";
@@ -748,4 +744,51 @@ span.icon-16-humor      { background-image: url("../gfx/icons/fun.png"); }
     margin: 0 !important;
     padding: 0 !important;
     line-height: inherit !important;
+}
+
+.ability-extra {
+    font-size: 0.9em;
+    color: #999;
+}
+
+/*.user.admin .username:after {
+    content: " A";
+    color: red;
+    font-weight: bold;
+}*/
+
+.user,
+.location {
+    white-space: nowrap;
+}
+
+.user .name,
+.location .city {
+    display: inline-block;
+    white-space: normal;
+    vertical-align: top;
+}
+
+.user .real {
+    color: #AAA;
+    text-decoration: none;
+}
+
+a.user:hover {
+    text-decoration: none;
+}
+
+.user.deleted {
+    color: #A33 !important;
+    font-size: 0.9em !important;
+    font-weight: bold;
+}
+
+
+.table, td, tr, th, thead, tfoot, tbody {
+    border-radius: 0 !important;
+}
+
+.table thead tr > * {
+    background: #EEE;
 }

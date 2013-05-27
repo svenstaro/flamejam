@@ -20,9 +20,10 @@
         <p class="alert alert-info">Nobody has registered yet.</p>
     {% endif %}
 {% else %}
-    <table class="tabular full">
+    <table class="table table-hover table-bordered full">
+    <thead>
         <tr class="sorters">
-            <th style="width: 10px;"></th>
+            <th style="width: 2em;"></th>
             <th>Username</th>
             <th>Abilities</th>
             <th>Location</th>
@@ -31,17 +32,19 @@
             <th>Jam #</th>
             <th></th>
         </tr>
+    </thead>
+    <tbody>
     {% for r in jam.registrations %}
         <tr>
             <td>{{ loop.index }}</td>
 
             <td data-value="{{ r.user.username }}">{{ r.user.getLink() }}</td>
 
-            <td>{{ r.user.abilityString("<br />") | safe or "n/a" }}</td>
+            <td>{{ r.user.abilityString() | safe or "n/a" }}</td>
 
             <td>{{ r.user.getLocation() }}</td>
 
-            <td data-value="{{ r.registered }}">
+            <td data-value="{{ r.registered }}" style="white-space: nowrap;">
                 {{ r.registered | humantime }}
             </td>
 
@@ -59,6 +62,7 @@
             <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
         </tr>
     {% endfor %}
+    </tbody>
     </table>
 {% endif %}
 

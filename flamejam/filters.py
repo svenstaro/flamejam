@@ -18,19 +18,18 @@ def _s(n, s):
         return ""
     return str(n) + " " + s + ("s" if n > 1 else "")
 
-def _delta(delta):
-    short = True
+def _delta(delta, short = True):
     threshold = 2
     if delta.years > 0:
-        return _s(delta.years, "year") + ("" if short and delta.years > threshold else " " + _s(delta.months, "month"))
+        return _s(delta.years, "year") + ("" if short and delta.years > threshold else (" " + _s(delta.months, "month")))
     if delta.months > 0:
-        return _s(delta.months, "month") + ("" if short and delta.months > threshold else " " + _s(delta.days, "day"))
+        return _s(delta.months, "month") + ("" if short and delta.months > threshold else (" " + _s(delta.days, "day")))
     if delta.days > 0:
-        return _s(delta.days, "day") + ("" if short and delta.days > threshold else " " + _s(delta.hours, "hour"))
+        return _s(delta.days, "day") + ("" if short and delta.days > threshold else (" " + _s(delta.hours, "hour")))
     if delta.hours > 0:
-        return _s(delta.hours, "hour") + ("" if short and delta.hours > threshold else " " + _s(delta.minutes, "minute"))
+        return _s(delta.hours, "hour") + ("" if short and delta.hours > threshold else (" " + _s(delta.minutes, "minute")))
     if delta.minutes > 0:
-        return _s(delta.minutes, "minute") + ("" if short and delta.minutes > threshold else " " + _s(delta.seconds, "second"))
+        return _s(delta.minutes, "minute") + ("" if short and delta.minutes > threshold else (" " + _s(delta.seconds, "second")))
     return _s(delta.seconds, "second")
 
 def timedelta(starttime, endtime):
@@ -43,24 +42,23 @@ def _absdelta(d):
 
 # format a timedelta in human-readable format (e.g. "in 20 minutes" or "3 weeks ago")
 @app.template_filter()
-def humandelta(s, other = None):
+def humandelta(s, other = None, short = True):
     if other:
         # we got 2 datetimes
         return _delta(_absdelta(timedelta(other, s))).strip()
 
-
     if s.seconds < 0 or s.minutes < 0 or s.hours < 0 or s.days < 0 or s.months < 0 or s.years < 0:
-        return "%s ago" % _delta(-s).strip()
+        return "%s ago" % _delta(-s, short).strip()
     elif s.seconds > 0 or s.minutes > 0 or s.hours > 0 or s.days > 0 or s.months > 0 or s.years > 0:
-        return "in %s" % _delta(s).strip()
+        return "in %s" % _delta(s, short).strip()
     else:
         return s
 
 @app.template_filter()
-def humantime(s):
+def humantime(s, short = True):
     diff = timedelta(s, datetime.utcnow())
-    if diff.years < 1:
-        return Markup('<span title="' + formattime(s) + '" class="time-title">' + humandelta(diff) + '</span>')
+    if diff.months < 1:
+        return Markup('<span title="' + formattime(s) + '" class="time-title">' + humandelta(diff, short = short) + '</span>')
     else:
         return formattime(s)
 

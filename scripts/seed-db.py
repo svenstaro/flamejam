@@ -1,3 +1,4 @@
+# coding: utf-8
 #
 # This is a short script to kill all tables and fill them with new test data.
 # It should be run from a virtualenv.
@@ -17,7 +18,7 @@ db.create_all()
 # Make users
 peter = User("peter", "lol", "roflomg-peter@mailinator.com")
 paul = User("opatut", "lol", "opatutlol@aol.com", is_admin = True, is_verified = True)
-per = User("per", "lol", "roflomg-per@mailinator.com", is_verified = True, receive_emails = False)
+per = User("per", "lol", "roflomg-per@mailinator.com", is_verified = True)
 pablo = User("pablo", "lol", "roflomg-pablo@mailinator.com")
 paddy = User("paddy", "lol", "roflomg-paddy@mailinator.com")
 
@@ -29,6 +30,10 @@ db.session.add(pablo)
 db.session.add(paddy)
 
 paul.setLocation("Hohenbalk")
+paul.ability_programmer = True
+paul.ability_gamedesigner = True
+paul.ability_3dartist = True
+paul.abilities_extra = u"C++, Löve/Lua, Python, Java, SVG, HTML5, JS, Blender"
 per.setLocation("Thesdorfer Weg 20, Pinneberg")
 pablo.setLocation("Hamburg")
 paddy.setLocation("San Francisco")

@@ -48,7 +48,7 @@ class User(db.Model):
     notify_team_invitation = db.Column(db.Boolean, default = True)
     notify_newsletter = db.Column(db.Boolean, default = True)
 
-    def __init__(self, username, password, email, is_admin = False, is_verified = False, receive_emails = True):
+    def __init__(self, username, password, email, is_admin = False, is_verified = False):
         self.username = username
         self.password = hash_password(password)
         self.email = email
@@ -56,7 +56,6 @@ class User(db.Model):
         self.is_admin = is_admin
         self.is_verified = is_verified
         self.registered = datetime.utcnow()
-        self.receive_emails = receive_emails
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -133,17 +132,24 @@ class User(db.Model):
         return True
 
     def getLocation(self):
-        return Markup('<span class="flag %s"></span> %s' % (self.location_flag, self.location_display or "n/a"))
+        return Markup('<span class="location"><span class="flag %s"></span> <span class="city">%s</span></span>' % (self.location_flag, self.location_display or "n/a"))
 
-    def getLink(self, class_ = ""):
+    def getLink(self, class_ = "", real = True):
         if self.is_deleted:
             return Markup('<span class="user deleted">[DELETED]</span>')
 
         s = 16
         if self.is_admin:
             class_ += " admin"
-        return Markup('<a class="user {4}" href="{0}"><img width="{2}" height="{2}" src="{3}" class="icon"/> {1}</a>'.format(
-            self.url(), self.username, s, self.getAvatar(s), class_))
+
+        link = ''
+        link += '<a class="user {0}" href="{1}">'.format(class_, self.url())
+        link += '<img width="{0}" height="{0}" src="{1}" class="icon"/> '.format(s, self.getAvatar(s))
+        link += '<span class="name"><span class="username">{0}</span>'.format(self.username)
+        link += ' <span class="real">({0})</span>'.format(self.real_name) if self.real_name and real else ''
+        link += '</span></a>'
+
+        return Markup(link)
 
     @property
     def abilities(self):
@@ -162,10 +168,10 @@ class User(db.Model):
             a.append("Sound Design")
         return a
 
-    def abilityString(self, sep = ", "):
+    def abilityString(self):
         a = ", ".join(self.abilities)
         if self.abilities_extra:
-            a += sep + self.abilities_extra
+            a += '<div class="ability-extra">' + self.abilities_extra + '</div>'
         return a
 
     def getRegistration(self, jam):

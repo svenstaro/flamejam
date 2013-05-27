@@ -10,9 +10,10 @@
 {% if jam.games.all() | length == 0 %}
     <p>There are no games yet.</p>
 {% else %}
-    <table class="tabular full">
+    <table class="table table-hover table-bordered full">
+    <thead>
         <tr class="sorters">
-            <th></th>
+            <th style="width: 2em;"></th>
             <th>Game Title</th>
             <th>Team</th>
             <th>Members</th>
@@ -21,6 +22,8 @@
             <th>Rating (you)</th>
             <th></th>
         </tr>
+    </thead>
+    <tbody>
         {% set games = jam.gamesByScore if showRatings else jam.gamesByTotalRatings %}
         {% for game in games %}
         <tr>
@@ -29,7 +32,9 @@
             <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
             <td data-value="{{ game.team.members | length }}">
                 {% for m in game.team.members %}
-                <a href="{{ m.url() }}">{{ m.username }}</a>{{ "," if not loop.last else "" }}
+                {{ m.getLink(real=False) }}
+                {#<a href="{{ m.url() }}">{{ m.username }}</a>#}
+                {{ "," if not loop.last else "" }}
                 {% endfor %}
             </td>
             <td>{{ game.screenshots.count() }}</td>
@@ -69,6 +74,7 @@
             <td></td>
         </tr>
         {% endfor %}
+    </tbody>
     </table>
     </ul>
 {% endif %}

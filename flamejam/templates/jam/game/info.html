@@ -90,7 +90,8 @@
                 <p class="alert alert-info">The voting for this jam is not over, so other people's ratings are hidden.</p>
             {% endif %}
 
-            <table class="ratings tabular">
+            <table class="ratings table table-bordered table-hover">
+            <thead>
                 <tr>
                     <th>User</th>
                     {% for c in categories %}
@@ -98,7 +99,8 @@
                     {% endfor %}
                     <th>Notes</th>
                 </tr>
-
+            </thead>
+            <tbody>
                 {% if status == 5 %}
                     <tr class="average">
                         <td>Average</td>
@@ -135,6 +137,7 @@
                             to vote on games.</td></tr>
                     {% endif %}
                 {% endif %}
+            </tbody>
             </table>
         {% else %}
         <p>Rating has not yet started.</p>

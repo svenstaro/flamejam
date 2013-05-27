@@ -48,7 +48,7 @@
             </td></tr>
             {% endif %}
             {% if status.code == 3 or status.code == 4 %}
-            <tr><th>Rating deadline</th><td>{{ jam.rating_end | humantime }}</td></tr>
+            <tr><th>Rating deadline</th><td>{{ jam.rating_end | humantime(short = False) }}</td></tr>
             {% endif %}
 
             <tr>
