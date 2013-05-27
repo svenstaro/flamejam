@@ -34,7 +34,7 @@
                 {% for m in game.team.members %}
                 {{ m.getLink(real=False) }}
                 {#<a href="{{ m.url() }}">{{ m.username }}</a>#}
-                {{ "," if not loop.last else "" }}
+                {#{{ "," if not loop.last else "" }}#}
                 {% endfor %}
             </td>
             <td>{{ game.screenshots.count() }}</td>

@@ -20,11 +20,7 @@ class Team(db.Model):
     def __init__(self, user, jam):
         self.jam = jam
         self.userJoin(user)
-
-        number = 1
-        while Team.query.filter_by(jam_id = jam.id, name = "Team " + str(number)).first():
-            number += 1
-        self.name = "Team " + str(number)
+        self.name = user.username + "'s team"
 
     @property
     def members(self):
