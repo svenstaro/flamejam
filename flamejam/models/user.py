@@ -217,6 +217,14 @@ class User(db.Model):
     def numberOfGames(self):
         return len(self.games)
 
+    @property
+    def openInvitations(self):
+        invitations = []
+        for invitation in self.invitations:
+            if invitation.canAccept():
+                invitations.append(invitation)
+        return invitations
+
 # we need this so Flask-Login can load a user into a session
 @login_manager.user_loader
 def load_user(user_id):

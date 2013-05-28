@@ -21,6 +21,8 @@ def login():
         user = User.query.filter_by(username=username).first()
         if login_user(user, remember_me):
             flash("You were logged in.", "success")
+            if user.invitations.count():
+                flash('You have %s team invitations - click <a href="%s">here</a> to view them.' % (user.invitations.count(), url_for("invitations")), "info")
             return redirect(request.args.get("next") or url_for('index'))
 
             # Tell Flask-Principal the identity changed

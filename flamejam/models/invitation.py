@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flamejam import app, db
+from flamejam.models.jam import JamStatusCode
 from flask import url_for
 
 class Invitation(db.Model):
@@ -14,6 +15,9 @@ class Invitation(db.Model):
 
     def url(self, **values):
         return url_for("invitation", id = self.id, _external = True, **values)
+
+    def canAccept(self):
+        return self.team.jam.getStatus().code <= JamStatusCode.PACKAGING
 
     def accept(self):
         self.team.userJoin(self.user)

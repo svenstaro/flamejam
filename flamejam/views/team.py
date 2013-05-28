@@ -73,6 +73,11 @@ def team_settings(jam_slug):
 
     return render_template('jam/team/edit.html', team = team, invite_form = invite_form, settings_form = settings_form)
 
+@app.route('/invitations/')
+@login_required
+def invitations():
+    return render_template("account/invitations.html", user = current_user)
+
 @app.route('/invitations/<int:id>', methods = ["POST", "GET"])
 @app.route('/invitations/<int:id>/<action>', methods = ["POST", "GET"])
 @login_required
@@ -81,7 +86,7 @@ def invitation(id, action = ""):
     team = invitation.team
 
     if team.jam.getStatus().code >= JamStatusCode.RATING:
-        alert("The jam rating has started, so changes to the team are locked.", "error")
+        flash("The jam rating has started, so changes to the team are locked.", "error")
         return redirect(team.url())
 
     if action == "accept":
