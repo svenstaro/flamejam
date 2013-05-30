@@ -1,4 +1,5 @@
-# coding: utf-8
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 #
 # This is a short script to kill all tables and fill them with new test data.
 # It should be run from a virtualenv.
@@ -20,7 +21,8 @@ peter = User("peter", "lol", "roflomg-peter@mailinator.com")
 paul = User("opatut", "lol", "opatutlol@aol.com", is_admin = True, is_verified = True)
 per = User("per", "lol", "roflomg-per@mailinator.com", is_verified = True)
 pablo = User("pablo", "lol", "roflomg-pablo@mailinator.com")
-paddy = User("paddy", "lol", "roflomg-paddy@mailinator.com")
+paddy = User("paddy", u"löl", "roflomg-paddy@mailinator.com")
+paddy.real_name = u"löl"
 
 # Add users
 db.session.add(peter)

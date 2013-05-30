@@ -146,7 +146,7 @@ class User(db.Model):
         link += '<a class="user {0}" href="{1}">'.format(class_, self.url())
         link += '<img width="{0}" height="{0}" src="{1}" class="icon"/> '.format(s, self.getAvatar(s))
         link += '<span class="name"><span class="username">{0}</span>'.format(self.username)
-        link += ' <span class="real">({0})</span>'.format(self.real_name) if self.real_name and real else ''
+        link += u' <span class="real">({0})</span>'.format(self.real_name) if self.real_name and real else ''
         link += '</span></a>'
 
         return Markup(link)

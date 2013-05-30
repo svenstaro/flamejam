@@ -53,12 +53,12 @@ def randstr(length):
 
 def hash_password(password, maxtime=5, datalength=256):
     salt = randstr(datalength)
-    hashed_password = scrypt.encrypt(salt, str(password), maxtime=maxtime)
+    hashed_password = scrypt.encrypt(salt, password.encode('utf-8'), maxtime=maxtime)
     return bytearray(hashed_password)
 
 def verify_password(hashed_password, guessed_password, maxtime=300):
     try:
-        scrypt.decrypt(str(hashed_password), str(guessed_password), maxtime)
+        scrypt.decrypt(hashed_password, guessed_password.encode('utf-8'), maxtime)
         return True
     except scrypt.error as e:
         print "scrypt error: %s" % e    # Not fatal but a necessary measure if server is under heavy load
