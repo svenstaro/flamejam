@@ -51,7 +51,7 @@ def findLocation(loc):
 def randstr(length):
     return ''.join(chr(random.randint(0,255)) for i in range(length))
 
-def hash_password(password, maxtime=5, datalength=256):
+def hash_password(password, maxtime=0.5, datalength=256):
     salt = randstr(datalength)
     hashed_password = scrypt.encrypt(salt, password.encode('utf-8'), maxtime=maxtime)
     return bytearray(hashed_password)
