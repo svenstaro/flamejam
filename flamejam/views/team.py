@@ -101,9 +101,9 @@ def invitation(id, action = ""):
         return redirect(team.url())
     elif action == "revoke":
         if current_user not in team.members: abort(403)
+        flash("You have revoked the invitation for %s." % invitation.user.username, "success")
         db.session.delete(invitation)
         db.session.commit()
-        flash("You have revoked the invitation for %s." % invitation.user.username, "success")
         return redirect(url_for("team_settings", jam_slug = team.jam.slug))
     else:
         if current_user != invitation.user and current_user not in team.members:
