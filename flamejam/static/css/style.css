@@ -792,3 +792,20 @@ a.user:hover {
 .table thead tr > * {
     background: #EEE;
 }
+
+.team-users {
+    list-style: none;
+}
+.team-users {
+    list-style: none;
+    margin: 0;
+    background: #F8F8F8;
+}
+
+.team-users li:nth-child(2n) {
+    background: #EEE;
+}
+
+.team-users li .avatar {
+    float: left;
+}

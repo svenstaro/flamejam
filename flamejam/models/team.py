@@ -9,7 +9,7 @@ class Team(db.Model):
     jam_id = db.Column(db.Integer, db.ForeignKey("jam.id"))
     name = db.Column(db.String(80))
 
-    wip = db.Column(db.String(128))
+    description = db.Column(db.Text)
     livestreams = db.Column(db.Text) # list of livestreams, one URL per file
     irc = db.Column(db.String(128))
 

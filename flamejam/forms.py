@@ -240,7 +240,7 @@ class LeaveTeamForm(Form):
 
 class TeamSettingsForm(Form):
     name = TextField("Team Name", validators=[Required()])
-    wip = TextField("Working on")
+    description = TextAreaField("Description")
     livestreams = TextAreaField("Livestreams")
     irc = TextField("IRC Channel")
 

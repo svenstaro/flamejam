@@ -19,13 +19,6 @@
         </div>
 
         <div class="field">
-            {{ settings_form.wip.label }}
-            {{ settings_form.wip() }}
-            <div class="form-info">Technology / Game Mechanism</div>
-            <div class="form-info">e.g. "XNA sidescrolling platform shooter"</div>
-        </div>
-
-        <div class="field">
             {{ settings_form.livestreams.label }}
             {{ settings_form.livestreams(rows = 5, cols = 39) }}
             <div class="form-info">Enter one URL per row</div>
@@ -37,6 +30,16 @@
             {{ settings_form.irc() }}
             <div class="form-info">e.g. "irc.freenode.net#baconteam"</div>
         </div>
+
+        <h2>{{ settings_form.description.label }}</h2>
+        <div class="form-info">
+            <p>
+                Tell others (and potential team members) what you plan to do/are doing.
+                Include technologies, ideas, and general organisation information. You can
+                also publish contact information for questions. <b>Parsed with Markdown</b>.
+            </p>
+        </div>
+        {{ settings_form.description(class="comment", rows="10") }}
 
         <p style="text-align: center">
             <input type="reset" value="Reset" class="btn" />
@@ -61,6 +64,7 @@
                 </span>
             </li>
         {% endfor %}
+        </ul>
 
         <hr />
 

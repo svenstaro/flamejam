@@ -134,7 +134,7 @@ class User(db.Model):
     def getLocation(self):
         return Markup('<span class="location"><span class="flag %s"></span> <span class="city">%s</span></span>' % (self.location_flag, self.location_display or "n/a"))
 
-    def getLink(self, class_ = "", real = True):
+    def getLink(self, class_ = "", real = True, avatar = True):
         if self.is_deleted:
             return Markup('<span class="user deleted">[DELETED]</span>')
 
@@ -144,7 +144,8 @@ class User(db.Model):
 
         link = ''
         link += '<a class="user {0}" href="{1}">'.format(class_, self.url())
-        link += '<img width="{0}" height="{0}" src="{1}" class="icon"/> '.format(s, self.getAvatar(s))
+        if avatar:
+            link += '<img width="{0}" height="{0}" src="{1}" class="icon"/> '.format(s, self.getAvatar(s))
         link += '<span class="name"><span class="username">{0}</span>'.format(self.username)
         link += u' <span class="real">({0})</span>'.format(self.real_name) if self.real_name and real else ''
         link += '</span></a>'

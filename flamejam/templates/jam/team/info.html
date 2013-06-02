@@ -37,16 +37,10 @@
                 {{ team.members[0].getLink() }}
             </td></tr>
 
-            {% if team.wip and jam.getStatus().code == 2 %}
-            <tr><th>Working on</th><td>
-                {{ team.wip }}
-            </td></tr>
-            {% endif %}
-
             {% if team.livestreams %}
             <tr><th>Livestream</th><td>
                 {% for line in team.livestreams.splitlines() %}
-                <a href="{{ line }}">LiveStream {{ loop.index }}</a><br />
+                <a href="{{ line }}">{{ line if line|length < 32 else (line[:32] + "...") }}</a><br />
                 {% endfor %}
             </td></tr>
             {% endif %}
@@ -57,32 +51,35 @@
             </td></tr>
             {% endif %}
         </table>
-
     </div>
     <div class="span4">
+        <h2>Description</h2>
+        {{ (team.description or "*no description available*") | markdown }}
+    </div>
+    <div class="span4">
+        {% if team.game %}
+            <h2>This team's Game</h2>
+            <p style="text-align: center; font-size: 1.3em;"><a href="{{ team.game.url() }}">
+                {{ team.game.title }}
+            </a></p>
+        {% endif %}
+
         <h2>Users in this team</h2>
-        <ul class="users">
+        <table class="details">
             {% for member in team.members %}
-            <li>
-                {{ member.getLink() }}
-                {% set as = member.abilities|join(", ") %}
-                {{ ("(" + as + ")") if as else "" }}
-            </li>
+            <tr>
+                <td><img width="40" height="40" src="{{ member.getAvatar(40) }}" /></td>
+                <td>
+                    {{ member.getLink(real = True, avatar = False) }}
+                    {% set as = member.abilityString()|safe %}
+                    <div class="abilities">{{ as if as else "n/a"|safe }}
+                </td>
+            </tr>
             {% endfor %}
-        </ul>
+        </table>
 
         {% if current_user.is_authenticated() and current_user in team.members %}
             <p><b>Note:</b> You can invite users from the <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}">team settings</a> page.</p>
-        {% endif %}
-    </div>
-    <div class="span4">
-        <h2>This team's Game</h2>
-        {% if team.game %}
-            <a href="{{ team.game.url() }}">
-                {{ team.game.title }}
-            </a>
-        {% else %}
-            <p><i>This team has not yet created a game.</i></p>
         {% endif %}
     </div>
 </div>
