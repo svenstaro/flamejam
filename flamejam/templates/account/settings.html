@@ -35,6 +35,15 @@
             {{ form.website() }}
         </div>
 
+        <div class="field">
+            {{ form.avatar.label }}
+            {{ form.avatar(placeholder = "gravatar for " + current_user.email) }}
+            <div class="form-info">
+                If none supplied, <a href="http://gravatar.com/" target="_blank">gravatar</a>
+                will be used (providing an optional generic avatar if not available).
+            </div>
+        </div>
+
         <h2>{{ form.about.label }}</h2>
         {{ form.about(class="comment", rows="10") }}
         <div class="form-info">

@@ -216,6 +216,7 @@ def settings():
         user.about = form.about.data
         user.website = form.website.data
         user.pm_mode = form.pm_mode.data
+        user.avatar = form.avatar.data
         user.notify_new_jam = form.notify_new_jam.data
         user.notify_jam_start = form.notify_jam_start.data
         user.notify_jam_finish = form.notify_jam_finish.data
