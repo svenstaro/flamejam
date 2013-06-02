@@ -39,10 +39,14 @@ function countdown() {
 
         var seconds = ds;
 
-        $(this).find(".time-d").text(days);
-        $(this).find(".time-h").text(leadingZero(hours, 2));
-        $(this).find(".time-m").text(leadingZero(minutes, 2));
-        $(this).find(".time-s").text(leadingZero(seconds, 2));
+        if($(this).hasClass("countdown")) {
+            $(this).find(".time-d").text(days);
+            $(this).find(".time-h").text(leadingZero(hours, 2));
+            $(this).find(".time-m").text(leadingZero(minutes, 2));
+            $(this).find(".time-s").text(leadingZero(seconds, 2));
+        } else {
+            $(this).text(days + ":" + leadingZero(hours, 2) + ":" + leadingZero(minutes, 2) + ":" + leadingZero(seconds, 2));
+        }
     });
 
     setTimeout(countdown, 1000);
