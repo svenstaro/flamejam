@@ -1,7 +1,7 @@
 from flamejam import app, db
 from flamejam.models import Jam, Team, Invitation, JamStatusCode, User
 from flamejam.forms import TeamSettingsForm, InviteForm, LeaveTeamForm
-from flask import render_template, url_for, redirect, flash, request
+from flask import render_template, url_for, redirect, flash, request, abort
 from flask.ext.login import login_required, current_user
 
 @app.route('/jams/<jam_slug>/team/<int:team_id>/')
