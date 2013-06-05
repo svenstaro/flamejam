@@ -5,7 +5,7 @@ from flamejam import app, db, mail
 from flamejam.models import User
 from flamejam.utils import hash_password, verify_password
 from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPassword, SettingsForm, ContactUserForm
-from flask import render_template, redirect, flash, url_for, current_app, session, request, abort
+from flask import render_template, redirect, flash, url_for, current_app, session, request, abort, Markup
 from flask.ext.login import login_required, login_user, logout_user, current_user
 from flask.ext.principal import AnonymousIdentity, Identity, UserNeed, identity_changed, identity_loaded, Permission, RoleNeed, PermissionDenied
 
@@ -22,7 +22,7 @@ def login():
         if login_user(user, remember_me):
             flash("You were logged in.", "success")
             if user.invitations.count():
-                flash('You have %s team invitations - click <a href="%s">here</a> to view them.' % (user.invitations.count(), url_for("invitations")), "info")
+                flash(Markup('You have %s team invitations - click <a href="%s">here</a> to view them.' % (user.invitations.count(), url_for("invitations"))), "info")
             return redirect(request.args.get("next") or url_for('index'))
 
             # Tell Flask-Principal the identity changed
