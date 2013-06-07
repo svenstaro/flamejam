@@ -123,6 +123,8 @@ def admin_user_delete(username):
 
     for r in u.registrations:
         u.leaveJam(r.jam)
+    for i in u.invitations:
+        db.session.delete(i)
     db.session.delete(u)
     db.session.commit()
 
