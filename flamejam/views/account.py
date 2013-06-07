@@ -194,6 +194,7 @@ def contact_user(username):
         body = render_template("emails/account/message.txt", recipient=user, sender=current_user, message=message)
         mail.send_message(subject=app.config["LONG_NAME"] + ": New message from " + current_user.username,
             recipients=[user.email], reply_to=current_user.email, body=body)
+        flash("Message successfully sent", "success")
 
     return render_template("account/contact.html", user = user, form = form)
 
