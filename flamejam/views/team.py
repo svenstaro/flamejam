@@ -63,11 +63,7 @@ def team_settings(jam_slug):
             flash("User %s is already invited." % user.username, "warning")
         else:
             i = team.inviteUser(user, current_user)
-
-            if i:
-                flash("Invited user %s." % invite_username, "success")
-            else:
-                return redirect(url_for("invitation", id=i.id))
+            flash("Invited user %s." % invite_username, "success")
 
         return redirect(url_for("team_settings", jam_slug = team.jam.slug))
 
