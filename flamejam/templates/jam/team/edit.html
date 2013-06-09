@@ -99,7 +99,7 @@
         <h2>Game settings</h2>
         <p>
             {% if team.game %}
-                Please go to the <a href="{{ url_for('edit_game', jam_slug = jam.slug, game_slug = team.game.slug) }}">
+                Please go to the <a href="{{ url_for('edit_game', jam_slug = jam.slug, game_id = team.game.id) }}">
                 game settings</a> page.
             {% else %}
                 You have to <a href="{{ url_for('create_game', jam_slug = jam.slug) }}">

@@ -28,15 +28,15 @@ def create_game(jam_slug):
         game = Game(r.team, form.title.data)
         db.session.add(game)
         db.session.commit()
-        return redirect(url_for("edit_game", jam_slug = jam_slug, game_slug = game.slug))
+        return redirect(url_for("edit_game", jam_slug = jam_slug, game_id = game.id))
 
     return render_template("jam/game/create.html", jam = jam, enabled = enabled, form = form)
 
-@app.route("/jams/<jam_slug>/<game_slug>/edit/", methods = ("GET", "POST"))
+@app.route("/jams/<jam_slug>/<game_id>/edit/", methods = ("GET", "POST"))
 @login_required
-def edit_game(jam_slug, game_slug):
+def edit_game(jam_slug, game_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    game = jam.games.filter_by(slug = game_slug).first_or_404()
+    game = jam.games.filter_by(id = game_id).first_or_404()
 
     if not game or not current_user in game.team.members:
         abort(403)
@@ -47,24 +47,24 @@ def edit_game(jam_slug, game_slug):
 
     if form.validate_on_submit():
         slug = get_slug(form.title.data)
-        if not jam.games.filter_by(slug = slug).first() in (game, None):
-            flash("A game with a similar title already exists. Please choose another title.", category = "error")
-        else:
-            form.populate_obj(game)
+        # if not jam.games.filter_by(slug = slug).first() in (game, None):
+            # flash("A game with a similar title already exists. Please choose another title.", category = "error")
+        # else:
+        form.populate_obj(game)
 
-            game.title = form.title.data
-            game.description = form.description.data
-            game.technology = form.technology.data
-            game.help = form.help.data
+        game.title = form.title.data
+        game.description = form.description.data
+        game.technology = form.technology.data
+        game.help = form.help.data
 
-            if game.jam.getStatus().code < 4:
-                for c in RATING_CATEGORIES:
-                    setattr(game, "score_" + c + "_enabled", form.get(c).data)
+        if game.jam.getStatus().code < 4:
+            for c in RATING_CATEGORIES:
+                setattr(game, "score_" + c + "_enabled", form.get(c).data)
 
-            game.slug = get_slug(game.title)
-            db.session.commit()
-            flash("Your settings have been applied.", category = "success")
-            return redirect(game.url())
+        game.slug = get_slug(game.title)
+        db.session.commit()
+        flash("Your settings have been applied.", category = "success")
+        return redirect(game.url())
 
     if package_form.validate_on_submit():
         s = GamePackage(game, package_form.url.data, package_form.type.data)
@@ -96,7 +96,7 @@ def game_package_edit(id, action):
     if action == "delete":
         db.session.delete(p)
     db.session.commit()
-    return redirect(url_for("edit_game", jam_slug = p.game.jam.slug, game_slug = p.game.slug))
+    return redirect(url_for("edit_game", jam_slug = p.game.jam.slug, game_id = p.game.id))
 
 @app.route('/edit/screenshot/<id>/<action>/')
 @login_required
@@ -119,13 +119,13 @@ def game_screenshot_edit(id, action):
             x.index = i
             i += 1
     db.session.commit()
-    return redirect(url_for("edit_game", jam_slug = s.game.jam.slug, game_slug = s.game.slug))
+    return redirect(url_for("edit_game", jam_slug = s.game.jam.slug, game_id = s.game.id))
 
-@app.route('/jams/<jam_slug>/<game_slug>/', methods = ("POST", "GET"))
-def show_game(jam_slug, game_slug):
+@app.route('/jams/<jam_slug>/<game_id>/', methods = ("POST", "GET"))
+def show_game(jam_slug, game_id):
     comment_form = WriteComment()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    game = Game.query.filter_by(slug = game_slug).filter_by(jam = jam).first_or_404()
+    game = Game.query.filter_by(id = game_id).filter_by(jam = jam).first_or_404()
 
     if current_user.is_authenticated() and comment_form.validate_on_submit():
         comment = Comment(comment_form.text.data, game, current_user)
@@ -143,11 +143,11 @@ def show_game(jam_slug, game_slug):
 
     return render_template('jam/game/info.html', game = game, form = comment_form)
 
-@app.route("/jams/<jam_slug>/<game_slug>/rate/", methods = ("GET", "POST"))
+@app.route("/jams/<jam_slug>/<game_id>/rate/", methods = ("GET", "POST"))
 @login_required
-def rate_game(jam_slug, game_slug):
+def rate_game(jam_slug, game_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    game = jam.games.filter_by(slug = game_slug).first_or_404()
+    game = jam.games.filter_by(id = game_id).first_or_404()
 
     form = RateGameForm()
     if jam.getStatus().code != JamStatusCode.RATING:

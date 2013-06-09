@@ -12,17 +12,18 @@
         {% set r = current_user.getRegistration(jam) if current_user.is_authenticated() else None %}
         <div class="pull-right">
             {% if r %}
-            <a class="btn" href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister</a>
-            <a class="btn" href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}">
-                {% if r.show_in_finder %}
-                    Hide me in the team finder
-                {% else %}
-                    Show me in the team finder
-                {% endif %}
-            </a>
-
+                <span style="font-size: 8pt; vertical-align: middle; margin-right: 10px;">
+                    {% if r.team and r.team.members|length > 1 %}
+                        You already have a team, not marked as "Looking for a team"
+                    {% else %}
+                        You are {% if not r.show_in_finder %}<b>not</b>{% endif %} marked as "Looking for a team"
+                        &ndash;
+                        <a href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}" class="link">Toggle</a>
+                    {% endif %}
+                </span>
+                <a class="btn btn-danger" href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister</a>
             {% else %}
-            <a class="btn btn-primary" href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register</a>
+            <a class="btn btn-success" href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register</a>
             {% endif %}
         </div>
     {% endif %}

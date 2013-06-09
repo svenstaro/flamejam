@@ -48,7 +48,7 @@ class Game(db.Model):
         db.session.delete(self)
 
     def url(self, **values):
-        return url_for("show_game", jam_slug = self.jam.slug, game_slug = self.slug, **values)
+        return url_for("show_game", jam_slug = self.jam.slug, game_id = self.id, **values)
 
     @property
     def screenshotsOrdered(self):

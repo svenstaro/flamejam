@@ -67,7 +67,7 @@
                     {% endif %}
 
                     {% if jam.getStatus().code == 4 and current_user not in game.team.members %}
-                        <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_slug = game.slug) }}">{{ "(edit)" if r else "rate now" }}</a>
+                        <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}">{{ "(edit)" if r else "rate now" }}</a>
                     {% endif %}
                 {% endif %}
             </td>
