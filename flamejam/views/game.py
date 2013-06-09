@@ -1,4 +1,4 @@
-from flamejam import app, db
+from flamejam import app, db, mail
 from flamejam.utils import get_slug
 from flamejam.models import Jam, Game, User, Comment, GamePackage, \
     GameScreenshot, JamStatusCode, Rating
