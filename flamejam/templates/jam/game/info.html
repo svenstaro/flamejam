@@ -49,9 +49,11 @@
     <div class="span4">
         <h2>Download</h2>
         {% if game.packages.count() %}
-            {% for package in game.packages %}
-                {{ package.getLink() }}
-            {% endfor %}
+            <ul>
+                {% for package in game.packages %}
+                    <li>{{ package.getLink() }}</li>
+                {% endfor %}
+            </ul>
         {% else %}
             <p>There are no packages available yet.</p>
             {% if current_user.is_authenticated() and current_user in game.team.members %}
