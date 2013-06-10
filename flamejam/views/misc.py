@@ -109,7 +109,6 @@ def contact():
 def rules():
     return render_template('misc/rules.html')
 
-@cache.cached(timeout=60)
 @app.route('/stats')
 @app.route('/statistics')
 def statistics():
