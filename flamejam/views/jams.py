@@ -1,4 +1,4 @@
-from flamejam import app, db
+from flamejam import app, db, cache
 from flamejam.models import Jam, JamStatusCode
 from flamejam.forms import RegisterJamForm, UnregisterJamForm, TeamFinderFilter
 from flask import render_template, url_for, redirect, flash
@@ -67,11 +67,13 @@ def jam_unregister(jam_slug):
     return render_template('jam/unregister.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/games/')
+@cache.cached(timeout=30)
 def jam_games(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('jam/games.html', jam = jam)
 
 @app.route('/jams/<jam_slug>/participants/')
+@cache.cached(timeout=30)
 def jam_participants(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('jam/participants.html', jam = jam)
