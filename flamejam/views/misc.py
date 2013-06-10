@@ -4,7 +4,7 @@ from flask.ext.mail import Message
 from flask.ext.principal import PermissionDenied
 from smtplib import SMTPRecipientsRefused
 
-from flamejam import app, db, mail
+from flamejam import app, db, mail, cache
 from flamejam.models import Jam, User, Team, Game, JamStatusCode
 from flamejam.utils import get_current_jam
 from flask import render_template, request, url_for, redirect, flash, jsonify
@@ -109,6 +109,7 @@ def contact():
 def rules():
     return render_template('misc/rules.html')
 
+@cache.cached(timeout=60)
 @app.route('/stats')
 @app.route('/statistics')
 def statistics():

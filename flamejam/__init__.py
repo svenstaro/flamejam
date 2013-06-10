@@ -6,6 +6,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.markdown import Markdown
 from flask.ext.principal import Principal, Permission, RoleNeed
 from flask.ext.login import LoginManager, current_user
+from flask.ext.cache import Cache
 
 app = Flask(__name__)
 
@@ -26,6 +27,8 @@ login_manager.login_view = "login"
 
 principals = Principal(app)
 admin_permission = Permission(RoleNeed('admin'))
+
+cache = Cache(app)
 
 from flamejam.utils import *
 import flamejam.filters
