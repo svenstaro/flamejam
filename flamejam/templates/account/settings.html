@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<form action="{{ url_for('settings') }}" method="post" class="block">
+<form action="{{ url_for('settings') }}" method="post" class="block" autocomplete="off">
 {{ form.hidden_tag() }}
 {{ form_errors(form) }}
 

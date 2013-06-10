@@ -206,7 +206,7 @@ class SettingsForm(Form):
     real_name = TextField("Real Name")
     about = TextAreaField("About me")
     website = TextField("Website / Blog")
-    avatar = TextField("Avatar URL")
+    avatar = TextField("Avatar URL", validators=[Optional(), URL()])
 
     old_password = PasswordField("Old Password", validators=[Optional()])
     new_password = PasswordField("New Password", validators=[Optional(), Length(min=8, message = "Please enter a password of at least 8 characters.")])
