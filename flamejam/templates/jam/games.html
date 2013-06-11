@@ -26,7 +26,14 @@
     <tbody>
         {% set games = jam.gamesByScore if showRatings else jam.gamesByTotalRatings %}
         {% for game in games %}
-        <tr>
+            {% if jam.getStatus().code > 3 %}
+                {% set rating = current_user.ratings.filter_by(game = game).first() if current_user.is_authenticated() else None %}
+            {% endif %}
+            {% if rating %}
+                <tr class="success">
+            {% else %}
+                <tr>
+            {% endif %}
             <td>{{ loop.index }}</td>
             <td><a href="{{ game.url() }}">{{ game.title }}</a></td>
             <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
@@ -59,15 +66,14 @@
                     {% endif %}
                     &ndash;
 
-                    {% set r = current_user.ratings.filter_by(game = game).first() if current_user.is_authenticated() else None %}
-                    {% if r %}
-                        {{ r.score }}
+                    {% if rating %}
+                        {{ rating.score }}
                     {% else %}
                         n/a
                     {% endif %}
 
                     {% if jam.getStatus().code == 4 and current_user not in game.team.members %}
-                        <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}">{{ "(edit)" if r else "rate now" }}</a>
+                        <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}">{{ "(edit)" if rating else "rate now" }}</a>
                     {% endif %}
                 {% endif %}
             </td>
