@@ -50,7 +50,7 @@ def edit_game(jam_slug, game_id):
         # if not jam.games.filter_by(slug = slug).first() in (game, None):
             # flash("A game with a similar title already exists. Please choose another title.", category = "error")
         # else:
-        form.populate_obj(game)
+        #form.populate_obj(game) this breaks dynamic stuff below
 
         game.title = form.title.data
         game.description = form.description.data

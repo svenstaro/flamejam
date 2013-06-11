@@ -20,7 +20,7 @@ db.create_all()
 peter = User("peter", "lol", "roflomg-peter@mailinator.com")
 paul = User("opatut", "lol", "opatutlol@aol.com", is_admin = True, is_verified = True)
 per = User("per", "lol", "roflomg-per@mailinator.com", is_verified = True)
-pablo = User("pablo", "lol", "roflomg-pablo@mailinator.com")
+pablo = User("pablo", "lol", "roflomg-pablo@mailinator.com", is_verified = True)
 paddy = User("paddy", u"löl", "roflomg-paddy@mailinator.com")
 paddy.real_name = u"löl"
 
@@ -86,6 +86,9 @@ best_game.description = "Simply the best game"
 space_game = Game(aTeam, "CloneStars - The war wars")
 space_game.description = "A space shooter game."
 
+lolgame = Game(pablo.getTeam(loljam), "Lolol")
+lolgame.description = "Lol."
+
 clone = Game(peter.getTeam(rgj3), "Shooterz")
 clone.description = "I got this idea while taking a dump."
 
@@ -94,6 +97,7 @@ test_game = Game(per.getTeam(rgj3), "RIP VIP")
 # Add games
 db.session.add(best_game)
 db.session.add(space_game)
+db.session.add(lolgame)
 db.session.add(clone)
 db.session.add(test_game)
 
