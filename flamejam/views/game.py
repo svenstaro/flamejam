@@ -56,10 +56,16 @@ def edit_game(jam_slug, game_id):
         game.description = form.description.data
         game.technology = form.technology.data
         game.help = form.help.data
+        
+        
 
         if game.jam.getStatus().code < 4:
             for c in RATING_CATEGORIES:
                 setattr(game, "score_" + c + "_enabled", form.get(c).data)
+        else: #Possible fix. I am not sure, as my total Python experience is around 3.5 hours of programming. -Rahazan
+            for r in RATING_CATEGORIES:
+                setattr(game, "score_" + r + "_enabled", getattr(game, "score_" + r + "_enabled"));        
+                #Simply set the existing value..
 
         game.slug = get_slug(game.title)
         db.session.commit()
