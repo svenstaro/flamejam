@@ -14,7 +14,7 @@
         {% if "packaged" in filters %}
             <a href="." class="btn btn-primary active">Only show games with packages</a>
         {% else %}
-            <a href="packaged" class="btn">Only show games with packages</a>
+            <a href="?filter=packaged" class="btn">Only show games with packages</a>
         {% endif %}
         <a href="" class="btn btn-link filter-specific-package-types-button">Filter specific package types »</a>
 
@@ -25,9 +25,10 @@
             ">
         {% for package_type in package_types %}
             {% if package_type in filters %}
-                <a href="{{ (filters.difference([package_type]) or '.') | join('+') }}" class="btn btn-primary active">{{ typeStringShort(package_type) }}</a>
+                {% set f = filters.difference([package_type]) | join('+') %}
+                <a href="{{ '?filter=' + f if f else '.' }}" class="btn btn-primary active">{{ typeStringShort(package_type) }}</a>
             {% else %}
-            <a href="{{ filters.union([package_type]).difference(['packaged']) | join('+') }}" class="btn">{{ typeStringShort(package_type) }}</a>
+            <a href="?filter={{ filters.union([package_type]).difference(['packaged']) | join('+') }}" class="btn">{{ typeStringShort(package_type) }}</a>
             {% endif %}
         {% endfor %}
         </div>
