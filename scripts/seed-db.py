@@ -138,5 +138,12 @@ db.session.add(comment3)
 db.session.add(comment4)
 db.session.add(comment5)
 
+# Flood db
+if "--flood" in sys.argv:
+    for u in range(1000):
+        user = User("user"+str(u), "lol", "lol"+str(u)+"@example.com", is_verified = True)
+        user.joinJam(rgj3)
+        db.session.add(user)
+
 # Commmit it all
 db.session.commit()
