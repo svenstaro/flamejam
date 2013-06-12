@@ -28,7 +28,7 @@
                 {% set f = filters.difference([package_type]) | join('+') %}
                 <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter=f) if f else url_for('jam_games', jam_slug=jam.slug)).replace('%2B', '+') }}" class="btn btn-primary active">{{ typeStringShort(package_type) }}</a>
             {% else %}
-            <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter='+'.join(filters.union([package_type]).difference(['packaged'])))).replace('%3B', '+') }}" class="btn">{{ typeStringShort(package_type) }}</a>
+            <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter='+'.join(filters.union([package_type]).difference(['packaged'])))).replace('%2B', '+') }}" class="btn">{{ typeStringShort(package_type) }}</a>
             {% endif %}
         {% endfor %}
         </div>
