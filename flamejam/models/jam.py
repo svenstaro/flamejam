@@ -3,7 +3,7 @@
 from flamejam import app, db, mail
 from flamejam.utils import get_slug
 from flamejam.filters import formattime, humandelta
-from flamejam.models import Game
+from flamejam.models import Game, GamePackage
 from datetime import datetime, timedelta
 from flask import url_for, Markup, render_template
 from flask.ext.mail import Message
@@ -89,21 +89,32 @@ class Jam(db.Model):
     def url(self, **values):
         return url_for('jam_info', jam_slug = self.slug, **values)
 
-    @property
-    def gamesByScore(self):
-        e = list(self.games.all())
+    def gamesFilteredByPackageTypes(self, filters):
+        if filters == set():
+            games = self.games.all()
+        elif 'packaged' in filters:
+            games = self.games.join(GamePackage).all()
+        else:
+            games = self.games.join(GamePackage).filter(GamePackage.type.in_(filters))
+        return games
+
+    def gamesByScore(self, filters=set()):
+        e = list(self.gamesFilteredByPackageTypes(filters))
         e.sort(key = Game.score.fget, reverse = True)
         return e
 
-    @property
-    def gamesByTotalRatings(self):
-        e = list(self.games.all())
+    def gamesByTotalRatings(self, filters=set()):
+        e = list(self.gamesFilteredByPackageTypes(filters))
         e.sort(key = Game.numberRatings.fget)
         return e
 
     @property
     def showTheme(self):
         return self.getStatus().code >= JamStatusCode.RUNNING and self.theme
+
+    @property
+    def showRatings(self):
+        return self.getStatus().code == JamStatusCode.FINISHED
 
     def getLink(self):
         s = '<a class="jam" href="%s">%s</a>' % (self.url(), self.title)

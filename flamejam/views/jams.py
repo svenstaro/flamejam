@@ -1,7 +1,7 @@
 from flamejam import app, db
-from flamejam.models import Jam, JamStatusCode
+from flamejam.models import Jam, JamStatusCode, GamePackage
 from flamejam.forms import RegisterJamForm, UnregisterJamForm, TeamFinderFilter
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, request
 from flask.ext.login import login_required, current_user
 
 @app.route('/jams/')
@@ -69,7 +69,9 @@ def jam_unregister(jam_slug):
 @app.route('/jams/<jam_slug>/games/')
 def jam_games(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('jam/games.html', jam = jam)
+    filters = set(request.args['filter'].split(' ')) if 'filter' in request.args else set()
+    games = jam.gamesByScore(filters) if jam.showRatings else jam.gamesByTotalRatings(filters)
+    return render_template('jam/games.html', jam = jam, games = games, filters = filters, package_types = GamePackage.packageTypes(), typeStringShort = GamePackage.typeStringShort)
 
 @app.route('/jams/<jam_slug>/participants/')
 def jam_participants(jam_slug):
