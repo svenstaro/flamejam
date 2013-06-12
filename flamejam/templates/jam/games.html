@@ -1,5 +1,4 @@
 {% extends "jam/base.html" %}
-{% set showRatings = jam.getStatus().code > 4 %}
 
 {% block title %}Games of {{ jam.title }}{% endblock %}
 
@@ -10,6 +9,39 @@
 {% if jam.games.all() | length == 0 %}
     <p>There are no games yet.</p>
 {% else %}
+
+    <div class="filtering-options btn-toolbar">
+        {% if "packaged" in filters %}
+        <a href="{{ url_for('jam_games', jam_slug=jam.slug) }}" class="btn btn-primary active">Only show games with packages</a>
+        {% else %}
+        <a href="{{ url_for('jam_games', jam_slug=jam.slug, filter='packaged') }}" class="btn">Only show games with packages</a>
+        {% endif %}
+        <a href class="btn btn-link filter-specific-package-types-button">Filter specific package types »</a>
+
+        <div class="filter-specific-package-types btn-toolbar
+            {% if not filters or "packaged" in filters %}
+                hide
+            {% endif %}
+            ">
+        {% for package_type in package_types %}
+            {% if package_type in filters %}
+                {% set f = filters.difference([package_type]) | join('+') %}
+                <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter=f) if f else url_for('jam_games', jam_slug=jam.slug)).replace('%2B', '+') }}" class="btn btn-primary active">{{ typeStringShort(package_type) }}</a>
+            {% else %}
+            <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter='+'.join(filters.union([package_type]).difference(['packaged'])))).replace('%2B', '+') }}" class="btn">{{ typeStringShort(package_type) }}</a>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        $(function(){
+            $('.filter-specific-package-types-button').click(function(e){
+                e.preventDefault(), $('.filter-specific-package-types').toggle();
+            });
+        });
+    </script>
+    
     <table class="table table-hover table-bordered full">
     <thead>
         <tr class="sorters">
@@ -24,7 +56,6 @@
         </tr>
     </thead>
     <tbody>
-        {% set games = jam.gamesByScore if showRatings else jam.gamesByTotalRatings %}
         {% for game in games %}
             {% if jam.getStatus().code > 3 %}
                 {% set rating = current_user.ratings.filter_by(game = game).first() if current_user.is_authenticated() else None %}

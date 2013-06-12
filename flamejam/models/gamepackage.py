@@ -69,6 +69,10 @@ class GamePackage(db.Model):
         return "Unknown"
 
     @staticmethod
+    def packageTypes():
+        return PACKAGE_TYPES
+
+    @staticmethod
     def compare(left, right):
         x = right.getTotalScore() - left.getTotalScore()
         if x > 0:
