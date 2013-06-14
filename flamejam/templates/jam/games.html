@@ -6,7 +6,7 @@
 
 <h1>Games</h1>
 
-{% if jam.games.all() | length == 0 %}
+{% if not jam.games %}
     <p>There are no games yet.</p>
 {% else %}
 
@@ -68,16 +68,14 @@
             <td>{{ loop.index }}</td>
             <td><a href="{{ game.url() }}">{{ game.title }}</a></td>
             <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
-            <td data-value="{{ game.team.members | length }}">
+            <td data-value="{{ game.team.registrations | length }}">
                 {% for m in game.team.members %}
-                {{ m.getLink(real=False) }}
-                {#<a href="{{ m.url() }}">{{ m.username }}</a>#}
-                {#{{ "," if not loop.last else "" }}#}
+                    {{ m.getLink(real=False) }}
                 {% endfor %}
             </td>
-            <td>{{ game.screenshots.count() }}</td>
+            <td>{{ game.screenshots | length }}</td>
             <td>
-                {% if game.packages.count() %}
+                {% if game.packages %}
                     {% for p in game.packages %}
                         {{ p.getLinkShort() }}
                         {{ "|" if not loop.last else "" }}

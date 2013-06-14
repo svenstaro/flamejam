@@ -3,6 +3,7 @@ from flamejam.models import Jam, JamStatusCode, GamePackage
 from flamejam.forms import RegisterJamForm, UnregisterJamForm, TeamFinderFilter
 from flask import render_template, url_for, redirect, flash, request
 from flask.ext.login import login_required, current_user
+import datetime
 
 @app.route('/jams/')
 def jams():
@@ -71,12 +72,18 @@ def jam_games(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     filters = set(request.args['filter'].split(' ')) if 'filter' in request.args else set()
     games = jam.gamesByScore(filters) if jam.showRatings else jam.gamesByTotalRatings(filters)
-    return render_template('jam/games.html', jam = jam, games = games, filters = filters, package_types = GamePackage.packageTypes(), typeStringShort = GamePackage.typeStringShort)
+    time = datetime.datetime.now()
+    ret = render_template('jam/games.html', jam = jam, games = games, filters = filters, package_types = GamePackage.packageTypes(), typeStringShort = GamePackage.typeStringShort)
+    print "this thing took ", datetime.datetime.now() - time, ' seconds'
+    return ret
 
 @app.route('/jams/<jam_slug>/participants/')
 def jam_participants(jam_slug):
+    time = datetime.datetime.now()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    return render_template('jam/participants.html', jam = jam)
+    ret = render_template('jam/participants.html', jam = jam)
+    print "this thing took ", datetime.datetime.now() - time, ' seconds'
+    return ret
 
 @app.route('/jams/<jam_slug>/team_finder/toggle/')
 def jam_toggle_show_in_finder(jam_slug):
