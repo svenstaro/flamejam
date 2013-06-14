@@ -48,9 +48,8 @@
                     {% if current_user.is_anonymous() %}
                         <a href="{{ url_for('login') }}" class="btn btn-small">Login / Signup</a>
                     {% else %}
-                        {% set inv = current_user.invitation | length %}
-                        {% if inv %}
-                            <a href="{{ url_for('invitations') }}" class="btn btn-small">{{ inv }} <i class="icon-envelope"></i></a>
+                        {% if current_user.invitiation %}
+                            <a href="{{ url_for('invitations') }}" class="btn btn-small">{{ current_user.invitation | length }} <i class="icon-envelope"></i></a>
                         {% endif %}
                         <a href="{{ url_for('profile') }}" class="btn btn-small" id="account">
                             <img class="avatar" src="{{ current_user.getAvatar(16) }}" width="16" height="16" />

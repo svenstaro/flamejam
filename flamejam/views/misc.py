@@ -140,7 +140,7 @@ def statistics():
             most_users_per_jam = users
             most_users_jam = jam
 
-        games = len(jam.games.all())
+        games = len(jam.games)
         if games > most_games_per_jam:
             most_games_per_jam = games
             most_games_jam = jam
@@ -254,8 +254,8 @@ def tick():
     # Remove invitations after game rating has started
     for jam in Jam.query.all():
         if jam.getStatus().code >= JamStatusCode.RATING:
-            for team in jam.teams.all():
-                for i in team.invitations.all():
+            for team in jam.teams:
+                for i in team.invitations:
                     msg += "deleted invitation " + str(i.id) + " on jam " + jam.slug + " - jam rating has started\n"
                     db.session.delete(i)
 

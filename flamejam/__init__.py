@@ -41,10 +41,3 @@ def inject():
         current_datetime = datetime.utcnow(),
         current_jam = get_current_jam(),
         RATING_CATEGORIES = flamejam.models.rating.RATING_CATEGORIES)
-
-
-"""
-import logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-"""
