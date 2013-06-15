@@ -37,8 +37,8 @@ def timedelta(starttime, endtime):
 
 def _absdelta(d):
     if d.seconds < 0 or d.minutes < 0 or d.hours < 0 or d.days < 0 or d.months < 0 or d.years < 0:
-        return str(-d)
-    return str(d)
+        return -d
+    return d
 
 # format a timedelta in human-readable format (e.g. "in 20 minutes" or "3 weeks ago")
 @app.template_filter()
