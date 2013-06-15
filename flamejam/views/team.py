@@ -26,7 +26,7 @@ def jam_current_team(jam_slug):
 def team_settings(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     if jam.getStatus().code >= JamStatusCode.RATING:
-        alert("The jam rating has started, so changes to the team are locked.", "error")
+        flash("The jam rating has started, so changes to the team are locked.", "error")
         return redirect(jam.url())
 
     r = current_user.getRegistration(jam)
@@ -112,7 +112,7 @@ def leave_team(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
     if jam.getStatus().code >= JamStatusCode.RATING:
-        alert("The jam rating has started, so changes to the team are locked.", "error")
+        flash("The jam rating has started, so changes to the team are locked.", "error")
         return redirect(jam.url())
 
     user = current_user

@@ -48,7 +48,7 @@ class GamePackage(db.Model):
         self.game = game
 
     def getLink(self):
-        return Markup('<a href="%s">%s</a>' % (self.url, GamePackage.typeString(self.type)))
+        return Markup('<a href="%s" target="_blank">%s</a>' % (self.url, GamePackage.typeString(self.type)))
 
     def getLinkShort(self):
         return Markup('<a href="%s">%s</a>' % (self.url, GamePackage.typeStringShort(self.type)))
@@ -67,6 +67,10 @@ class GamePackage(db.Model):
         if type in PACKAGE_TYPES:
             return PACKAGE_TYPES[type][1]
         return "Unknown"
+
+    @staticmethod
+    def packageTypes():
+        return PACKAGE_TYPES
 
     @staticmethod
     def compare(left, right):

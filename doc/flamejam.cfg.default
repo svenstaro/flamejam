@@ -10,6 +10,16 @@ SECRET_KEY = "SUPERSECRET"
 # See http://pythonhosted.org/Flask-SQLAlchemy/
 SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/flamejam.db'
 SQLALCHEMY_ECHO = False
+#SQLALCHEMY_POOL_SIZE = 25
+
+# Caching settings
+#CACHE_TYPE = "memcached"
+CACHE_NO_NULL_WARNING = True
+CACHE_DEFAULT_TIMEOUT = 60
+#CACHE_KEY_PREFIX =
+#CACHE_MEMCACHED_SERVERS
+#CACHE_ARGS
+#CACHE_OPTIONS
 
 # Flask-Mail settings
 # See http://packages.python.org/Flask-Mail/

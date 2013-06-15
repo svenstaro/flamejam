@@ -4,7 +4,7 @@ from flask.ext.mail import Message
 from flask.ext.principal import PermissionDenied
 from smtplib import SMTPRecipientsRefused
 
-from flamejam import app, db, mail
+from flamejam import app, db, mail, cache
 from flamejam.models import Jam, User, Team, Game, JamStatusCode
 from flamejam.utils import get_current_jam
 from flask import render_template, request, url_for, redirect, flash, jsonify
