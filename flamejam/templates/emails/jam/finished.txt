@@ -8,7 +8,7 @@ games!
 
 {% for game in games %}{{ loop.index }}: {{ game.title }}
    by {{ game.team.name }}
-   with an average score of {{ game.score }}
+   with an average score of {{ "%.02f" % game.score }}
 {% endfor %}
 
 To view (and play) all the games, visit the jam page:

@@ -41,7 +41,7 @@
             });
         });
     </script>
-    
+
     <table class="table table-hover table-bordered full">
     <thead>
         <tr class="sorters">
@@ -90,17 +90,14 @@
                 {% if jam.getStatus().code <= 3 %}
                     n/a <!-- before rating -->
                 {% else  %}
-                    {% if showRatings %}
+                    {% if jam.getStatus().code >= 5 %}
                         {{ "%.02f" % game.score }}
                     {% else %}
                         n/a
                     {% endif %}
-                    &ndash;
 
                     {% if rating %}
-                        {{ rating.score }}
-                    {% else %}
-                        n/a
+                        ({{ rating.score }})
                     {% endif %}
 
                     {% if jam.getStatus().code == 4 and current_user not in game.team.members %}

@@ -92,7 +92,7 @@
                     <li>
                         <a href="{{ game.team.url() }}">{{ game.team.name }}</a> with
                         <b><a href="{{ game.url() }}">{{ game.title }}</a></b>
-                        ({{ "%.1f" | format(game.getTotalScore()) }})
+                        ({{ "%.1f" | format(game.score) }})
                     </li>
                 {% endfor %}
             </ol>
