@@ -60,7 +60,8 @@ class Game(db.Model):
     def score(self):
         if self.has_cheated:
             return -10
-        return average([r.score for r in self.ratings]) or 0
+
+        return average([r.score for r in self.ratings if not r.user.is_deleted]) or 0
 
     def feedbackAverage(self, category):
         if category in (None, "overall"):

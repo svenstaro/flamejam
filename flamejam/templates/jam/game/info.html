@@ -113,7 +113,7 @@
                     </tr>
 
                     {% for rating in game.ratings %}
-                        <tr>
+                    <tr class="{{ 'deleted' if rating.user.is_deleted else ''}}">
                             <td>{{ rating.user.getLink() }}</td>
                             {% for c in categories %}
                                 <td class="score">{{ rating.get(c) }}</td>
