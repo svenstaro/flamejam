@@ -806,3 +806,7 @@ a.user:hover {
 .cheated {
     background: #999;
 }
+
+tr.deleted .score{
+    text-decoration: line-through;
+}
