@@ -102,7 +102,8 @@ class User(db.Model):
         for r in self.registrations:
             if r.team:
                 for game in r.team.games:
-                    g.append(game)
+                    if not game.is_deleted:
+                        g.append(game)
 
         import operator
         g.sort(key = operator.attrgetter("created"))

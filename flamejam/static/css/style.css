@@ -802,3 +802,7 @@ a.user:hover {
 .team-users li .avatar {
     float: left;
 }
+
+.cheated {
+    background: #999;
+}

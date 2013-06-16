@@ -31,7 +31,7 @@ class Team(db.Model):
 
     @property
     def game(self):
-        return self.games[0] if self.games.count() else None
+        return self.games[0] if self.games.filter_by(is_deleted=False).count() else None
 
     @property
     def isSingleTeam(self):

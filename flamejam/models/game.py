@@ -15,6 +15,8 @@ class Game(db.Model):
     description = db.Column(db.Text)
     technology = db.Column(db.Text)
     help = db.Column(db.Text)
+    is_deleted = db.Column(db.Boolean, default = False)
+    has_cheated = db.Column(db.Boolean, default = False)
 
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
@@ -56,6 +58,8 @@ class Game(db.Model):
 
     @property
     def score(self):
+        if self.has_cheated:
+            return -10
         return average([r.score for r in self.ratings]) or 0
 
     def feedbackAverage(self, category):

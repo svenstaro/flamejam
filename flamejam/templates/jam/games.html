@@ -62,6 +62,8 @@
             {% endif %}
             {% if rating %}
                 <tr class="success">
+            {% elif game.has_cheated %}
+                <tr class="cheated">
             {% else %}
                 <tr>
             {% endif %}
