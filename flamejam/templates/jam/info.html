@@ -88,11 +88,11 @@
         <h2>Winners</h2>
         {% if jam.games.count() > 1  %}
             <ol>
-                {% for game in jam.getTopGames()[:3] %}
+                {% for game in jam.gamesByScore()[:3] %}
                     <li>
                         <a href="{{ game.team.url() }}">{{ game.team.name }}</a> with
                         <b><a href="{{ game.url() }}">{{ game.title }}</a></b>
-                        ({{ "%.1f" | format(game.getTotalScore()) }})
+                        ({{ "%.1f" | format(game.score) }})
                     </li>
                 {% endfor %}
             </ol>

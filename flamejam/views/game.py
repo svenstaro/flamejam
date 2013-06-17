@@ -36,7 +36,7 @@ def create_game(jam_slug):
 @login_required
 def edit_game(jam_slug, game_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    game = jam.games.filter_by(id = game_id).first_or_404()
+    game = jam.games.filter_by(is_deleted = False, id = game_id).first_or_404()
 
     if not game or not current_user in game.team.members:
         abort(403)
@@ -125,7 +125,7 @@ def game_screenshot_edit(id, action):
 def show_game(jam_slug, game_id):
     comment_form = WriteComment()
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    game = Game.query.filter_by(id = game_id).filter_by(jam = jam).first_or_404()
+    game = Game.query.filter_by(is_deleted = False, id = game_id).filter_by(jam = jam).first_or_404()
 
     if current_user.is_authenticated() and comment_form.validate_on_submit():
         comment = Comment(comment_form.text.data, game, current_user)
@@ -148,7 +148,7 @@ def show_game(jam_slug, game_id):
 @login_required
 def rate_game(jam_slug, game_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    game = jam.games.filter_by(id = game_id).first_or_404()
+    game = jam.games.filter_by(is_deleted = False, id = game_id).first_or_404()
 
     form = RateGameForm()
     if jam.getStatus().code != JamStatusCode.RATING:

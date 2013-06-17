@@ -52,13 +52,13 @@ def humandelta(s, other = None, short = True):
     elif s.seconds > 0 or s.minutes > 0 or s.hours > 0 or s.days > 0 or s.months > 0 or s.years > 0:
         return "in %s" % _delta(s, short).strip()
     else:
-        return s
+        return str(s)
 
 @app.template_filter()
 def humantime(s, short = True):
     diff = timedelta(s, datetime.utcnow())
     if diff.months < 1:
-        return Markup('<span title="' + formattime(s) + '" class="time-title">' + humandelta(diff, short = short) + '</span>')
+        return Markup('<span title="' + str(formattime(s)) + '" class="time-title">' + str(humandelta(diff, short = short)) + '</span>')
     else:
         return formattime(s)
 

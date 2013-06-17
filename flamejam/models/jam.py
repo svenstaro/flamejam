@@ -93,8 +93,7 @@ class Jam(db.Model):
 
     def gamesFilteredByPackageTypes(self, filters):
         if filters == set():
-            #games = self.games
-            games = db.session.query(Game).join(flamejam.models.Team).all()
+            games = db.session.query(Game).filter_by(is_deleted=False).all()
         elif 'packaged' in filters:
             games = db.session.query(Game).join(GamePackage).all()
         else:
@@ -160,7 +159,7 @@ class Jam(db.Model):
             template = "finished"
             notify = "jam_finish"
             subject = "Rating for " + self.title + " finished - Winners"
-            kwargs = { "games": self.gamesByScore[:3] }
+            kwargs = { "games": self.gamesByScore()[:3] }
 
         if n >= JamStatusCode.RUNNING and n != JamStatusCode.RATING:
             users = [r.user for r in self.registrations]

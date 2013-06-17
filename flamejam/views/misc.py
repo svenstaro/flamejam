@@ -82,9 +82,9 @@ def search():
     jams = Jam.query.filter(db.or_(
         Jam.title.like(like))).all()
 
-    games = Game.query.filter(db.or_(
-        Game.description.like(like),
-        Game.title.like(like))).all()
+    games = Game.query.filter_by(is_deleted = False).filter(
+        db.or_(Game.description.like(like),
+               Game.title.like(like))).all()
 
     users = User.query.filter_by(is_deleted = False).filter(
         User.username.like(like)).all()
@@ -115,8 +115,8 @@ def statistics():
     # collect all the data
     stats = {}
 
-    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0];
-    stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0];
+    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0]
+    stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0]
 
     all_jam_users = 0
     most_users_per_jam = 0
@@ -129,25 +129,27 @@ def statistics():
     for jam in Jam.query.all():
         users = 0
         for game in jam.games:
-            teamsize = len(game.team.members) # for the author
-            users += teamsize
+            if not game.is_deleted:
+                teamsize = len(game.team.members) # for the author
+                users += teamsize
 
-            if teamsize > biggest_team_size:
-                biggest_team_size = teamsize
-                biggest_team_game = game
+                if teamsize > biggest_team_size:
+                    biggest_team_size = teamsize
+                    biggest_team_game = game
 
         if users > most_users_per_jam:
             most_users_per_jam = users
             most_users_jam = jam
 
-        games = len(jam.games)
+        games = db.session.query(Game).filter_by(is_deleted = False).count()
+
         if games > most_games_per_jam:
             most_games_per_jam = games
             most_games_jam = jam
 
         all_jam_users += users
 
-    all_games = Game.query.all()
+    all_games = Game.query.filter_by(is_deleted = False).all()
     finished_games = []
     for game in all_games:
         if game.jam.getStatus() == JamStatusCode.FINISHED:
@@ -166,7 +168,7 @@ def statistics():
     stats["most_users_per_jam"] = most_users_per_jam
     stats["most_users_jam"] = most_users_jam
 
-    stats["total_games"] = db.session.query(db.func.count(Game.id)).first()[0];
+    stats["total_games"] = db.session.query(db.func.count(not Game.is_deleted)).first()[0]
     if stats["total_jams"]: # against division by zero
         stats["average_games"] = stats["total_games"] * 1.0 / stats["total_jams"]
     else:
@@ -217,9 +219,9 @@ def current_jam_info():
 @app.route('/site_info')
 def site_info():
     stats = {}
-    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0];
-    stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0];
-    stats["total_games"] = db.session.query(db.func.count(Game.id)).first()[0];
+    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0]
+    stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0]
+    stats["total_games"] = db.session.query(db.func.count(not Game.is_deleted)).first()[0]
     return jsonify(total_jams=stats["total_jams"],
                    total_users=stats["total_users"],
                    total_games=stats["total_games"],

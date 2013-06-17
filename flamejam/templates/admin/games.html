@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h1>List of games</h1>
+
+{#<td colspan="8">
+    <b style="margin-right: 10px;">Quick filter</b> <input type="text" placeholder="Start typing..." id="filter" data-filter=".game-row" />
+</td>
+Do we need this? Probably not, but it makes opatut happy. #}
+
+{% for jam in jams %}
+    <b>{{ jam.title }}</b>
+    {% if jam.games.count() > 0 %}
+        <table>
+            <tr>
+                <th>Toggle Flags</th>
+                <th>Title</th>
+                <th>Created</th>
+                <th>Team</th>
+                <th>Flags</th>
+                <th></th>
+            </tr>
+            {% for game in jam.games %}
+                <tr class="game-row">
+                    <td>
+                        <a href="{{ url_for('admin_game_flag', id=game.id, flag='cheated') }}">[cheated]</a>
+                        <a href="{{ url_for('admin_game_flag', id=game.id, flag='deleted') }}">[deleted]</a>
+                    </td>
+                    <td>
+                        <b>{{ game.title }}</b>
+                    </td>
+                    <td>{{ game.created | humantime }}</td>
+                    <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
+                    <td>
+                        {% if game.is_deleted %}
+                            <b style="font-size: 0.8em; color: gray;">DELETED</b>
+                        {% endif %}
+                        {% if game.has_cheated %}
+                            <b style="font-size: 0.8em; color: gray;">CHEATED</b>
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ game.url() }}">Game page</a></td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <p>No games</p>
+        {% endif %}
+    </table>
+{% else %}
+    <p>No jams</p>
+{% endfor %}
+
+{% endblock %}

@@ -3,10 +3,10 @@ default: run
 setup:
 	virtualenv2 -p python2 env && . env/bin/activate && \
 		pip install -i http://c.pypi.python.org/simple/ --upgrade \
-			flask flask-mail flask-sqlalchemy flask-wtf \
+			flask==0.9 werkzeug==0.8.3 flask-mail flask-sqlalchemy flask-wtf \
 			flask-login flask-markdown python-dateutil \
 			scrypt requests alembic flask-principal mysql-python \
-			flask-cache
+			flask-cache python-memcached
 
 run:
 	. env/bin/activate && python2 runserver.py

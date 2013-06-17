@@ -1,6 +1,6 @@
 from flamejam import app, db, admin_permission, mail
 from flamejam.utils import get_slug
-from flamejam.models import User, Jam
+from flamejam.models import User, Jam, Game
 from flamejam.forms import JamDetailsForm, AdminWriteAnnouncement
 from flask import render_template, redirect, url_for, request, flash
 from flask.ext.mail import Message
@@ -93,6 +93,25 @@ def admin_jam(id = 0):
             return redirect(url_for("admin_jam", id = jam.id))
 
     return render_template("admin/jam.html", id = id, mode = mode, jam = jam, form = form)
+
+@app.route("/admin/games")
+@admin_permission.require()
+def admin_games():
+    return render_template("admin/games.html", jams = Jam.query.all())
+
+@app.route("/admin/games/<int:id>/<flag>")
+@admin_permission.require()
+def admin_game_flag(id, flag):
+    game = Game.query.filter_by(id=id).first_or_404()
+    if flag == "deleted":
+        flash("Toggled deleted flag")
+        game.is_deleted = not game.is_deleted
+        db.session.commit()
+    if flag == "cheated":
+        flash("Toggled cheated flag")
+        game.has_cheated = not game.has_cheated
+        db.session.commit()
+    return redirect(url_for('admin_games'))
 
 @app.route("/admin/announcement", methods = ["GET", "POST"])
 @admin_permission.require()
