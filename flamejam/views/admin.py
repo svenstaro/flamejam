@@ -1,7 +1,7 @@
 from flamejam import app, db, admin_permission, mail
 from flamejam.utils import get_slug
 from flamejam.models import User, Jam, Game
-from flamejam.forms import JamDetailsForm, AdminWriteAnnouncement
+from flamejam.forms import JamDetailsForm, AdminWriteAnnouncement, AdminUserForm
 from flask import render_template, redirect, url_for, request, flash
 from flask.ext.mail import Message
 from datetime import datetime
@@ -22,7 +22,6 @@ def admin_users():
 def admin_users_form():
     users = []
     for field in request.form:
-        print field
         if field[:5] == "user-" and request.form[field] == "on":
             i = field[5:]
             users.append(User.query.filter_by(id = i).first_or_404())
@@ -32,6 +31,10 @@ def admin_users_form():
             user.is_deleted = not user.is_deleted
         if request.form["submit"] == "Toggle Admin":
             user.is_admin = not user.is_admin
+        if request.form["submit"] == "Toggle Verified":
+            user.is_verified = not user.is_verified
+            if user.is_verified and user.new_email:
+                user.email = user.new_email
 
     db.session.commit()
 
@@ -39,12 +42,46 @@ def admin_users_form():
 
     return redirect(url_for("admin_users"))
 
-@app.route("/admin/users/<username>")
-@app.route("/admin/user/<username>")
+@app.route("/admin/games/form", methods = ["POST"])
+@admin_permission.require()
+def admin_games_form():
+    games = []
+    for field in request.form:
+        if field[:5] == "game-" and request.form[field] == "on":
+            i = field[5:]
+            games.append(Game.query.filter_by(id = i).first_or_404())
+
+    for game in games:
+        if request.form["submit"] == "Toggle Deleted":
+            game.is_deleted = not game.is_deleted
+        if request.form["submit"] == "Toggle Cheated":
+            game.has_cheated = not game.has_cheated
+
+    db.session.commit()
+
+    flash(str(len(games)) + " games were changed", "success")
+
+    return redirect(url_for("admin_games"))
+
+@app.route("/admin/user/<username>", methods = ["POST", "GET"])
 @admin_permission.require()
 def admin_user(username):
     user = User.query.filter_by(username = username).first_or_404()
-    return render_template("admin/user.html", user = user)
+    form = AdminUserForm(obj=user)
+
+    if form.validate_on_submit():
+        other = User.query.filter_by(username = form.username.data).first()
+        if other and other.id != user.id:
+            flash("A user with that username already exists. Please choose another.", "error")
+        else:
+            user.username = form.username.data
+            user.avatar = form.avatar.data
+            user.email = form.email.data
+            db.session.commit()
+            flash("User changed successfully.", "success")
+            return redirect(url_for("admin_user", username = user.username))
+
+    return render_template("admin/user.html", user = user, form = form)
 
 @app.route("/admin/jams")
 @admin_permission.require()

@@ -251,3 +251,12 @@ class InviteForm(Form):
 class AdminWriteAnnouncement(Form):
     subject = TextField("Subject", validators=[Required()])
     message = TextAreaField("Content", validators=[Required()])
+
+class AdminUserForm(Form):
+    username = TextField("Username", validators=[
+        Not(MatchesRegex("[^0-9a-zA-Z\-_]"), message = "Your username contains invalid characters. Only use alphanumeric characters, dashes and underscores."),
+        Length(min=3, max=80, message="You have to enter a username of 3 to 80 characters length.")])
+    avatar = TextField("Avatar URL", validators=[Optional(), URL()])
+    email = EmailField("Email", validators=[
+        Optional(),
+        Email(message = "The email address you entered is invalid.")])

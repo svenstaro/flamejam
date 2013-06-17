@@ -1,53 +1,61 @@
 {% extends "admin/base.html" %}
 
+{% block title %}
+    List of games
+{% endblock %}
+
 {% block content %}
-<h1>List of games</h1>
+<p>
+    <input type="text" placeholder="Quick filter" id="filter" data-filter=".game-row" />
+</p>
 
-{#<td colspan="8">
-    <b style="margin-right: 10px;">Quick filter</b> <input type="text" placeholder="Start typing..." id="filter" data-filter=".game-row" />
-</td>
-Do we need this? Probably not, but it makes opatut happy. #}
+<form action="{{ url_for('admin_games_form') }}" method="post">
 
-{% for jam in jams %}
-    <b>{{ jam.title }}</b>
-    {% if jam.games.count() > 0 %}
-        <table>
-            <tr>
-                <th>Toggle Flags</th>
-                <th>Title</th>
-                <th>Created</th>
-                <th>Team</th>
-                <th>Flags</th>
-                <th></th>
+<table id="checkbox-toggle-table">
+    <tr>
+        <th></th>
+        <th>Jam</th>
+        <th>Game Title</th>
+        <th>Created</th>
+        <th>Team</th>
+        <th>Flags</th>
+        <th></th>
+    </tr>
+    {% for jam in jams %}
+        {% for game in jam.games %}
+            <tr class="checkbox-toggle game-row">
+                <td>
+                    <input type="checkbox" name="game-{{ game.id }}" style="vertical-align: top;"/>
+                </td>
+                <td>
+                    <a href="{{ url_for('admin_jam', id = jam.id) }}">{{ jam.title }}</a>
+                </td>
+                <td>
+                    {{ game.title }}
+                </td>
+                <td>{{ game.created | humantime }}</td>
+                <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
+                <td>
+                    {% if game.is_deleted %}
+                        <span class="flags">DELETED<span>
+                    {% endif %}
+                    {% if game.has_cheated %}
+                        <span class="flags red">CHEATED<span>
+                    {% endif %}
+                </td>
+                <td><a href="{{ game.url() }}"><i class="icon-eye-open"></i></a></td>
             </tr>
-            {% for game in jam.games %}
-                <tr class="game-row">
-                    <td>
-                        <a href="{{ url_for('admin_game_flag', id=game.id, flag='cheated') }}">[cheated]</a>
-                        <a href="{{ url_for('admin_game_flag', id=game.id, flag='deleted') }}">[deleted]</a>
-                    </td>
-                    <td>
-                        <b>{{ game.title }}</b>
-                    </td>
-                    <td>{{ game.created | humantime }}</td>
-                    <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
-                    <td>
-                        {% if game.is_deleted %}
-                            <b style="font-size: 0.8em; color: gray;">DELETED</b>
-                        {% endif %}
-                        {% if game.has_cheated %}
-                            <b style="font-size: 0.8em; color: gray;">CHEATED</b>
-                        {% endif %}
-                    </td>
-                    <td><a href="{{ game.url() }}">Game page</a></td>
-                </tr>
-            {% endfor %}
-        {% else %}
-            <p>No games</p>
-        {% endif %}
-    </table>
-{% else %}
-    <p>No jams</p>
-{% endfor %}
+        {% endfor %}
+    {% endfor %}
+    <tr>
+        <th colspan="7" class="actions">
+            <input type="submit" name="submit" value="Toggle Deleted" class="btn btn-small"/>
+            <input type="submit" name="submit" value="Toggle Cheated" class="btn btn-small"/>
+            <span style="margin-left:10px;" id="table-count">0</span> games selected
+        </th>
+    </tr>
+</table>
+
+</form>
 
 {% endblock %}

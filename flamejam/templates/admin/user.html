@@ -1,23 +1,48 @@
 {% extends "admin/base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block title %}
+    User &ndash; {{ user.username }}
+{% endblock %}
 
 {% block content %}
-<h1>User: {{ user.username }}</h1>
 
-<h2>Merge Accounts</h2>
+<div class="row-fluid">
+    <div class="span2">
+        <h2>Current Avatar</h2>
+        <img src="{{ user.getAvatar(128) }}" width="128" height="128" />
+    </div>
+    <div class="span10">
+        <h2>Account settings</h2>
 
-<form>
-<p>
-    Merge this account ({{ user.username }}) into
-    <input type="text" />
-</p>
-<p>
-    The settings on this account will be lost, the games, registrations,
-    comments and other content associated with this account will be transfered
-    to the other account.
-</p>
-<p>
-    <input type="submit" value="Merge" />
-</p>
-</form>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form_errors(form) }}
+
+            <div class="field">
+                {{ form.username.label }}
+                {{ form.username(class="span6") }}
+                <span class="form-info">Editing this may break everything.</span>
+            </div>
+
+            <div class="field">
+                {{ form.avatar.label }}
+                {{ form.avatar(class="span6") }}
+                <span class="form-info">Empty for gravatar.</span>
+            </div>
+
+            <div class="field">
+                {{ form.email.label }}
+                {{ form.email(class="span6") }}
+                <span class="form-info">Does not require re-verification.</span>
+            </div>
+
+            <div class="field">
+                <label>&nbsp;</label>
+                <input type="submit" value="Save" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+</div>
 
 {% endblock %}
