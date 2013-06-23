@@ -9,8 +9,6 @@ from flask import url_for, Markup, render_template
 from flask.ext.mail import Message
 from random import shuffle
 from smtplib import SMTPRecipientsRefused
-from sqlalchemy.orm import joinedload, subqueryload
-import flamejam
 
 class Jam(db.Model):
     id = db.Column(db.Integer, primary_key=True)
