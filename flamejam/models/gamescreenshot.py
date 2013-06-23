@@ -13,7 +13,7 @@ class GameScreenshot(db.Model):
         self.game = game
         self.url = url
         self.caption = caption
-        self.index = self.game.screenshots.count() - 1
+        self.index = len(self.game.screenshots) - 1
 
     def __repr__(self):
         return "<GameScreenshot %r>" % self.id
