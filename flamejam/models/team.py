@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flamejam import app, db, mail
-from flamejam.models import Invitation
+from flamejam.models import Invitation, Game
 from flask import url_for, render_template
 
 class Team(db.Model):
@@ -13,9 +13,9 @@ class Team(db.Model):
     livestreams = db.Column(db.Text) # list of livestreams, one URL per file
     irc = db.Column(db.String(128))
 
-    registrations = db.relationship("Registration", backref = "team", lazy = "dynamic")
-    invitations = db.relationship("Invitation", backref = "team", lazy = "dynamic")
-    games = db.relationship("Game", backref = "team", lazy = "dynamic")
+    registrations = db.relationship("Registration", backref = "team", lazy = "subquery")
+    invitations = db.relationship("Invitation", backref = "team", lazy = "subquery")
+    games = db.relationship("Game", backref = "team", lazy = "subquery")
 
     def __init__(self, user, jam):
         self.jam = jam
@@ -24,18 +24,15 @@ class Team(db.Model):
 
     @property
     def members(self):
-        m = []
-        for r in self.registrations:
-            m.append(r.user)
-        return m
+        return [r.user for r in self.registrations]
 
     @property
     def game(self):
-        return self.games[0] if self.games.filter_by(is_deleted=False).count() else None
+        return self.games[0] if self.games else None
 
     @property
     def isSingleTeam(self):
-        return self.registrations.count() == 1
+        return len(self.registrations) == 1
 
     def url(self, **values):
         return url_for("jam_team", jam_slug = self.jam.slug, team_id = self.id, **values)
@@ -77,7 +74,7 @@ class Team(db.Model):
 
     @property
     def numberMembersAndInvitations(self):
-        return len(self.members) + self.invitations.count()
+        return len(self.members) + len(self.invitations)
 
     def canInvite(self, user):
         return user in self.members and (self.jam.team_limit == 0 or self.jam.team_limit > self.numberMembersAndInvitations)
