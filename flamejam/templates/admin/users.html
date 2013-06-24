@@ -1,10 +1,12 @@
 {% extends "admin/base.html" %}
 
-{% block content %}
-<h1>List of users</h1>
+{% block title %}
+    List of Users
+{% endblock %}
 
+{% block content %}
 <p>
-    Quick filter: <input type="text" placeholder="Start typing..." id="filter" data-filter=".user-row" />
+    <input type="text" placeholder="Quick filter" id="filter" data-filter=".user-row" />
 </p>
 
 <form action="{{ url_for('admin_users_form') }}" method="post">
@@ -23,11 +25,10 @@
 {% for user in users %}
     <tr class="checkbox-toggle user-row">
         <td>
-            <img src="{{ user.getAvatar(16) }}" style="vertical-align: middle; width: 16px; height: 16px; background: #CCC; margin-left: -9px; margin-right: 10px; border: 1px solid #FFF; box-shadow: 0 0 0 1px #AAA;"/>
-            <input type="checkbox" name="user-{{ user.id }}" style="vertical-align: middle;"/>
+            <input type="checkbox" name="user-{{ user.id }}" style="vertical-align: top;"/>
         </td>
         <td>
-            {{ user.username }}
+            <a href="{{ url_for('admin_user', username = user.username) }}">{{ user.username }}</a>
         </td>
         <td>{{ user.real_name or "n/a" }}</td>
         <td><a href="mailto:{{ user.email}}">{{ user.email }}</a></td>
@@ -35,21 +36,33 @@
         <td>{{ user.getLocation() }}</td>
         <td>
             {% if user.is_admin %}
-                <b style="font-size: 0.8em; color: red;">ADMIN</b>
+                <span class="flags red">ADMIN</span>
             {% endif %}
 
             {% if user.is_deleted %}
-                <b style="font-size: 0.8em; color: gray;">DELETED</b>
+                <span class="flags">DELETED</span>
+            {% endif %}
+
+            {% if not user.is_verified %}
+                <span class="flags orange">UNVERIFIED</span>
+            {% endif %}
+
+            {% if user.avatar %}
+                <span class="flags green">CUSTOM AVATAR</span>
             {% endif %}
         </td>
-        <td><a href="{{ user.url() }}">Show Profile</a></td>
+        <td>
+            <a href="{{ user.url() }}"><i class="icon-eye-open"></i></a>
+            <a href="{{ url_for('admin_user', username = user.username) }}"><i class="icon-edit"></i></a>
+        </td>
     </tr>
 {% endfor %}
 <tr>
-    <th colspan="8">
-        <input type="submit" name="submit" value="Toggle Deleted" />
-        <input type="submit" name="submit" value="Toggle Admin" />
-        <span id="table-count">0</span> users selected
+    <th colspan="8" class="actions">
+        <input type="submit" name="submit" value="Toggle Deleted" class="btn btn-small"/>
+        <input type="submit" name="submit" value="Toggle Admin" class="btn btn-small"/>
+        <input type="submit" name="submit" value="Toggle Verified" class="btn btn-small"/>
+        <span style="margin-left:10px;" id="table-count">0</span> users selected
     </th>
 </tr>
 </table>

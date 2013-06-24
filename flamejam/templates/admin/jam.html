@@ -1,183 +1,179 @@
 {% extends "admin/base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
+{% block title %}
+    {% if mode == "create" %}
+        Announce a New Jam
+    {% else %}
+        Jam &ndash; {{ jam.title }}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
 
-{% if mode == "create" %}
-<h1>Announce a new jam</h1>
+<div class="row-fluid">
+    <div class="span8">
+        <h2>Jam details</h2>
 
-{% else %}
-<h1>Jam details: {{ jam.title }}</h1>
+        {% if mode == "edit" %}
+            <p class="warning">
+                Editing some values may screw up data associated with the jam. Please
+                think before editing these values, especially after jam start.
+            </p>
+        {% endif %}
 
-<h2>Edit details</h2>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form_errors(form) }}
 
-<p class="warning">
-    Editing some values may screw up data associated with the jam. Please
-    think before editing these values, especially after jam start.
-</p>
-
-{% endif %}
-
-<form method="POST">
-
-    {{ form.hidden_tag() }}
-    {{ form_errors(form) }}
-
-    <div class="row-fluid">
-        <div class="span3">
             <div class="field">
                 {{ form.title.label }}
-                {{ form.title() }}
+                {{ form.title(class="span8") }}
             </div>
 
             <div class="field">
                 {{ form.theme.label }}
                 {{ form.theme() }}
-                <div class="form-info">Will not be shown before thes start date.</div>
-            </div>
-
-            <div class="field">
-                {{ form.team_limit.label }}
-                {{ form.team_limit(class="half") }}
+                <span class="form-info">Will not be shown before the start date.</span>
             </div>
 
             <div class="field">
                 {{ form.start_time.label }}
                 {{ form.start_time() }}
-                <div class="form-info"><code>YYYY-MM-DD HH:MM</code></div>
+                <span class="form-info">YYYY-MM-DD HH:MM</span>
             </div>
-        </div>
-        <div class="span3">
+
+            <div class="field">
+                {{ form.team_limit.label }}
+                {{ form.team_limit(class="span1") }}
+                <span class="form-info">0 = no limit</span>
+            </div>
+
             <div class="field">
                 {{ form.registration_duration.label }}
-                {{ form.registration_duration(class="half") }}
+                {{ form.registration_duration(class="span1") }}
                 <span class="form-info">hours</span>
                 <span class="form-info days">= ? days</span>
             </div>
 
             <div class="field">
                 {{ form.duration.label }}
-                {{ form.duration(class="half") }}
+                {{ form.duration(class="span1") }}
                 <span class="form-info">hours</span>
                 <span class="form-info days">= ? days</span>
             </div>
 
             <div class="field">
                 {{ form.packaging_duration.label }}
-                {{ form.packaging_duration(class="half") }}
+                {{ form.packaging_duration(class="span1") }}
                 <span class="form-info">hours</span>
                 <span class="form-info days">= ? days</span>
             </div>
 
             <div class="field">
                 {{ form.rating_duration.label }}
-                {{ form.rating_duration(class="half") }}
+                {{ form.rating_duration(class="span1") }}
                 <span class="form-info">hours</span>
                 <span class="form-info days">= ? days</span>
             </div>
-            {% if mode == "edit" %}
-            <p class="info">
-                NOTICE: When you make changes about the times / durations, you may need to send
-                the notifications manually below.
-            </p>
-            {% endif %}
-        </div>
-        <div class="span6">
+
             <div class="field">
                 {{ form.description.label }}
-                {{ form.description(rows = 5) }}
+                {{ form.description(rows = 5, class="span8") }}
             </div>
 
             <div class="field">
                 {{ form.restrictions.label }}
-                {{ form.restrictions(rows = 5) }}
+                {{ form.restrictions(rows = 5, class="span8") }}
             </div>
 
-            <div style="text-align: right;">
-                <input type="submit" value="Save settings" class="btn btn-large">
+            <div class="field">
+                <label>&nbsp;</label>
+                <input type="submit" value="Save settings" class="btn btn-primary">
             </div>
-        </div>
+        </form>
     </div>
-</form>
+    <div class="span4">
+        {% if mode == "edit" %}
+        <h2>Jam Notifications</h2>
 
-{% if mode == "edit" %}
-<h2>Jam Notifications</h2>
+        <p>
+            Notifications should be sent automatically when the status changes.
+            If not, please use the following table to check wich notifications
+            should be sent and (re)send them manually.
+        </p>
 
-<p>
-    Notifications should be sent automatically when the status changes.
-    If not, please use the following table to check wich notifications
-    should be sent and (re)send them manually.
-</p>
+        {% set status = jam.getStatus() %}
 
-{% set status = jam.getStatus() %}
+        {% macro activeStatus(s) %}
+             {% if status.code > s %}
+             <td><b style="font-size: 0.8em; color: gray;">DONE</b></td>
+             {% elif status.code == s %}
+             <td><b style="font-size: 0.8em; color: green;">ACTIVE</b></td>
+             {% else %}
+             <td><b style="font-size: 0.8em; color: gray;">WAITING</b></td>
+             {% endif %}
+        {% endmacro %}
 
-{% macro activeStatus(s) %}
-     {% if status.code > s %}
-     <td><b style="font-size: 0.8em; color: gray;">DONE</b></td>
-     {% elif status.code == s %}
-     <td><b style="font-size: 0.8em; color: green;">ACTIVE</b></td>
-     {% else %}
-     <td><b style="font-size: 0.8em; color: gray;">WAITING</b></td>
-     {% endif %}
-{% endmacro %}
+        {% set status = jam.getStatus() %}
+        {% macro sentStatus(s) %}
+             {% if jam.last_notification_sent >= s %}
+             <td><b style="font-size: 0.8em; color: green;">SENT</b></td>
+             {% else %}
+             <td><b style="font-size: 0.8em; color: {% if status.code >= s %}red{% else %}gray{% endif %};">NOT SENT</b></td>
+             {% endif %}
+        {% endmacro %}
 
-{% set status = jam.getStatus() %}
-{% macro sentStatus(s) %}
-     {% if jam.last_notification_sent >= s %}
-     <td><b style="font-size: 0.8em; color: green;">SENT</b></td>
-     {% else %}
-     <td><b style="font-size: 0.8em; color: {% if status.code >= s %}red{% else %}gray{% endif %};">NOT SENT</b></td>
-     {% endif %}
-{% endmacro %}
+        {% macro notificationStatus(s) %}
+            {{ activeStatus(s) }}
+            {{ sentStatus(s) }}
 
-{% macro notificationStatus(s) %}
-    {{ activeStatus(s) }}
-    {{ sentStatus(s) }}
+            <td>
+                {% if s == jam.last_notification_sent + 1 and status.code >= s %}
+                    <a href="{{ url_for('admin_jam_notification', id = jam.id, n = s) }}">Send now</a>
+                {% endif %}
+                {% if s < jam.last_notification_sent + 1 and status.code >= s %}
+                    <a href="{{ url_for('admin_jam_notification', id = jam.id, n = s) }}">Resend</a>
+                {% endif %}
+            </td>
 
-    <td>
-        {% if s == jam.last_notification_sent + 1 and status.code >= s %}
-            <a href="{{ url_for('admin_jam_notification', id = jam.id, n = s) }}">Send now</a>
+        {% endmacro %}
+
+        <table>
+            <tr><th>Notification type</th><th>Active phase</th><th>Status</th><th></th></tr>
+            <tr>
+                <td>Announcement</td>
+                {{ notificationStatus(0) }}
+            </tr>
+
+            <tr>
+                <td>Registrations open</td>
+                {{ notificationStatus(1) }}
+            </tr>
+
+            <tr>
+                <td>Jam start</td>
+                {{ notificationStatus(2) }}
+            </tr>
+
+            <tr>
+                <td>Packaging start</td>
+                {{ notificationStatus(3) }}
+            </tr>
+
+            <tr>
+                <td>Rating start</td>
+                {{ notificationStatus(4) }}
+            </tr>
+
+            <tr>
+                <td>Finished</td>
+                {{ notificationStatus(5) }}
+            </tr>
+        </table>
+
         {% endif %}
-        {% if s < jam.last_notification_sent + 1 and status.code >= s %}
-            <a href="{{ url_for('admin_jam_notification', id = jam.id, n = s) }}">Resend</a>
-        {% endif %}
-    </td>
-
-{% endmacro %}
-
-<table>
-    <tr><th>Notification type</th><th>Active phase</th><th>Status</th><th></th></tr>
-    <tr>
-        <td>Announcement</td>
-        {{ notificationStatus(0) }}
-    </tr>
-
-    <tr>
-        <td>Registrations open</td>
-        {{ notificationStatus(1) }}
-    </tr>
-
-    <tr>
-        <td>Jam start</td>
-        {{ notificationStatus(2) }}
-    </tr>
-
-    <tr>
-        <td>Packaging start</td>
-        {{ notificationStatus(3) }}
-    </tr>
-
-    <tr>
-        <td>Rating start</td>
-        {{ notificationStatus(4) }}
-    </tr>
-
-    <tr>
-        <td>Finished</td>
-        {{ notificationStatus(5) }}
-    </tr>
-</table>
-
-{% endif %}
+    </div>
+</div>
 
 {% endblock %}

@@ -1,30 +1,34 @@
 {% extends "admin/base.html" %}
 
+{% block title %}
+    List of jams
+{% endblock %}
+
 {% block content %}
-<h1>List of jams</h1>
+<p>
+    <input type="text" placeholder="Quick filter" id="filter" data-filter=".jam-row" />
+    <a href="{{ url_for('admin_jam') }}" style="vertical-align: top;" class="btn btn-small">Create a jam</a>
+</p>
 
 <table>
     <tr>
-        <td colspan="8">
-            <b style="margin-right: 10px;">Quick filter</b> <input type="text" placeholder="Start typing..." id="filter" data-filter=".jam-row" />
-
-            <a href="{{ url_for('admin_jam') }}" style="float: right; margin-top: 2px;" class="btn">Create a jam</a>
-        </td>
-    </tr>
-    <tr>
-        <th>Title / Theme</th>
+        <th>Title</th>
+        <th>Theme</th>
         <th>Status</th>
         <th>Announced</th>
         <th>Start Time</th>
         <th>Duration</th>
         <th>Flags</th>
         <th></th>
-        <th></th>
     </tr>
 {% for jam in jams %}
     <tr class="jam-row">
         <td>
-            <b>{{ jam.title }}</b><br />
+            <a href="{{ url_for('admin_jam', id = jam.id) }}">
+                {{ jam.title }}
+            </a>
+        </td>
+        <td>
             {{ jam.theme or "n/a" }}
         </td>
         <td>
@@ -39,16 +43,16 @@
         </td>
         <td>
             {% if jam.restrictions %}
-            <b style="font-size: 0.8em; color: orange;">RESTRICTIONS</b><br />
+                <span class="flags orange">RESTRICTIONS<span>
             {% endif %}
 
             {% if jam.team_limit != 1 %}
-            <b style="font-size: 0.8em; color: green;">TEAMS</b><br />
+                <span class="flags green">TEAMS<span>
             {% endif %}
         </td>
-        <td><a href="{{ jam.url() }}">Jam page</a></td>
         <td>
-            <a href="{{ url_for('admin_jam', id = jam.id) }}">More »</a>
+            <a href="{{ jam.url() }}"><i class="icon-eye-open"></i></a>
+            <a href="{{ url_for('admin_jam', id = jam.id) }}"><i class="icon-edit"></i></a>
         </td>
     </tr>
 {% endfor %}

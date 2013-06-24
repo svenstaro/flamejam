@@ -1,26 +1,28 @@
 {% extends "admin/base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
+{% block title %}
+    Write an Announcement
+{% endblock %}
+
 {% block content %}
-<div class="row-fluid">
-    <div class="span6">
-        <h1>Write announcement</h1>
         <form action="{{ url_for('admin_announcement') }}" method="post">
             {{ form.hidden_tag() }}
             {{ form_errors(form) }}
+
             <div class="field">
                 {{ form.subject.label }}
-                {{ form.subject(id="announcement-subject", class="announcement-input") }}
+                {{ form.subject(id="announcement-subject", class="announcement-input span8") }}
             </div>
+
             <div class="field">
                 {{ form.message.label }}
-                {{ form.message(rows = 10, id="announcement-message", class="announcement-input") }}
+                {{ form.message(rows = 10, id="announcement-message", class="announcement-input span8") }}
             </div>
-            <div style="text-align: right;">
-                <input type="submit" class="btn btn-large" value="Send Announcement Now" />
+
+            <div class="field">
+                <label>&nbsp;</label>
+                <input type="submit" class="btn btn-primary" value="Send now" />
             </div>
         </form>
-    </div>
-</div>
-
 {% endblock %}
