@@ -141,7 +141,7 @@ def statistics():
             most_users_per_jam = users
             most_users_jam = jam
 
-        games = db.session.query(Game).filter_by(is_deleted = False).count()
+        games = Game.query.filter_by(is_deleted = False).count()
 
         if games > most_games_per_jam:
             most_games_per_jam = games

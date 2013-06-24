@@ -3,7 +3,6 @@ from flamejam.models import Jam, JamStatusCode, GamePackage
 from flamejam.forms import RegisterJamForm, UnregisterJamForm, TeamFinderFilter
 from flask import render_template, url_for, redirect, flash, request
 from flask.ext.login import login_required, current_user
-import datetime
 
 @app.route('/jams/')
 def jams():

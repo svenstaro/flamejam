@@ -7,7 +7,6 @@ from flask import url_for, Markup
 from datetime import datetime
 from hashlib import md5
 import scrypt
-from sqlalchemy.orm import backref
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -23,7 +22,7 @@ class User(db.Model):
     ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
     comments = db.relationship('Comment', backref='user', lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
-    registrations = db.relationship("Registration", backref = backref("user", lazy="joined"), lazy = "subquery")
+    registrations = db.relationship("Registration", backref = db.backref("user", lazy="joined"), lazy = "subquery")
 
     ability_programmer = db.Column(db.Boolean)
     ability_gamedesigner = db.Column(db.Boolean)
