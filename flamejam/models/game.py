@@ -20,10 +20,10 @@ class Game(db.Model):
 
     jam_id = db.Column(db.Integer, db.ForeignKey('jam.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
-    ratings = db.relationship('Rating', backref = 'game', lazy = "dynamic")
-    comments = db.relationship('Comment', backref='game', lazy = "dynamic")
-    packages = db.relationship('GamePackage', backref='game', lazy = "dynamic")
-    screenshots = db.relationship('GameScreenshot', backref='game', lazy = "dynamic")
+    ratings = db.relationship('Rating', backref = 'game', lazy = "subquery")
+    comments = db.relationship('Comment', backref='game', lazy = "subquery")
+    packages = db.relationship('GamePackage', backref='game', lazy = "subquery")
+    screenshots = db.relationship('GameScreenshot', backref='game', lazy = "subquery")
 
     # score_CATEGORY_enabled = db.Column(db.Boolean, default = True)
 
@@ -76,7 +76,7 @@ class Game(db.Model):
 
     @property
     def numberRatings(self):
-        return self.ratings.count()
+        return len(self.ratings)
 
     @property
     def ratingCategories(self):

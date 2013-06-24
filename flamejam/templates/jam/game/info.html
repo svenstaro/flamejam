@@ -10,7 +10,6 @@
     {{ game.title }}
 
     <div class="pull-right">
-        {% set rating = game.ratings.filter_by(user_id = current_user.get_id()).first() %}
 
         {% if current_user.is_authenticated() and current_user.inTeam(game.team) %}
             <a href="{{ url_for('edit_game', jam_slug = game.jam.slug, game_id = game.id) }}" class="btn btn-primary btn-normal pull-right">Edit game</a>
@@ -48,7 +47,7 @@
     </div>
     <div class="span4">
         <h2>Download</h2>
-        {% if game.packages.count() %}
+        {% if game.packages %}
             <ul>
                 {% for package in game.packages %}
                     <li>{{ package.getLink() }}</li>
@@ -67,7 +66,7 @@
 
 <div class="row-fluid">
     <div class="span8">
-        {% if game.screenshots.count() %}
+        {% if game.screenshots %}
         <h2>Screenshots <small>Click a screenshot to zoom</small></h2>
         <ul class="screenshots">
         {% for screenshot in game.screenshotsOrdered %}
@@ -147,7 +146,7 @@
     </div>
     <div class="span4">
         <h2>Comments</h2>
-        {% if game.comments.all() %}
+        {% if game.comments %}
         <p>
         <ul class="comments">
         {% for comment in game.comments %}

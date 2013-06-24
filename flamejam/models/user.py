@@ -22,7 +22,7 @@ class User(db.Model):
     ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
     comments = db.relationship('Comment', backref='user', lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
-    registrations = db.relationship("Registration", backref = "user", lazy = "dynamic")
+    registrations = db.relationship("Registration", backref = db.backref("user", lazy="joined"), lazy = "subquery")
 
     ability_programmer = db.Column(db.Boolean)
     ability_gamedesigner = db.Column(db.Boolean)

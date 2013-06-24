@@ -7,13 +7,13 @@
 <h1>Participants
 
     {% if jam.getStatus().code >= 1 %}
-        <small>{{ jam.registrations.all() | length }} people are registered</small>
+        <small>{{ jam.registrations | length }} people are registered</small>
 
         <a class="btn btn-primary pull-right" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Participant Map</a>
     {% endif %}
 </h1>
 
-{% if jam.registrations.all() | length == 0 %}
+{% if jam.registrations | length == 0 %}
     {% if jam.getStatus().code <= 0 %}
         <p class="alert alert-info">Registrations are still closed, no naturally, nobody has registered yet.</p>
     {% else %}
@@ -29,7 +29,6 @@
             <th>Location</th>
             <th>Registered</th>
             <th>Team status</th>
-            <th>Jam #</th>
             <th></th>
         </tr>
     </thead>
@@ -56,8 +55,6 @@
                     <a href="{{ r.team.url() }}">{{ r.team.name }}</a>
                 {% endif %}
             </td>
-
-            <td>{{ r.user.registrations.filter("registration.registered <= '" + jam.start_time | string +  "'").count() + 1 }}</td>
 
             <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
         </tr>

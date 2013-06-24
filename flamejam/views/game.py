@@ -141,7 +141,8 @@ def show_game(jam_slug, game_id):
         flash("Your comment has been posted.", "success")
         return redirect(game.url())
 
-    return render_template('jam/game/info.html', game = game, form = comment_form)
+    rating = Rating.query.filter_by(game_id = game.id, user_id = current_user.get_id()).first()
+    return render_template('jam/game/info.html', game = game, form = comment_form, rating = rating)
 
 @app.route("/jams/<jam_slug>/<game_id>/rate/", methods = ("GET", "POST"))
 @login_required

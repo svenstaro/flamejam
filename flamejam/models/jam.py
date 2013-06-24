@@ -18,9 +18,9 @@ class Jam(db.Model):
     announced = db.Column(db.DateTime) # Date on which the jam was announced
     start_time = db.Column(db.DateTime) # The jam starts at this moment
     team_limit = db.Column(db.Integer) # 0 = no limit
-    games = db.relationship('Game', backref="jam", lazy = "dynamic")
-    registrations = db.relationship("Registration", backref = "jam", lazy = "dynamic")
-    teams = db.relationship("Team", backref = "jam", lazy = "dynamic")
+    games = db.relationship('Game', backref="jam", lazy = "subquery")
+    registrations = db.relationship("Registration", backref = "jam", lazy = "subquery")
+    teams = db.relationship("Team", backref = "jam", lazy = "subquery")
 
     description = db.Column(db.Text)
     restrictions = db.Column(db.Text)
@@ -91,20 +91,20 @@ class Jam(db.Model):
 
     def gamesFilteredByPackageTypes(self, filters):
         if filters == set():
-            games = self.games.filter_by(is_deleted=False).all()
+            games = Game.query.filter_by(is_deleted=False).all()
         elif 'packaged' in filters:
-            games = self.games.join(GamePackage).all()
+            games = Game.query.join(GamePackage).all()
         else:
-            games = self.games.join(GamePackage).filter(GamePackage.type.in_(filters))
+            games = Game.query.join(GamePackage).filter(GamePackage.type.in_(filters)).all()
         return games
 
     def gamesByScore(self, filters=set()):
-        e = list(self.gamesFilteredByPackageTypes(filters))
+        e = self.gamesFilteredByPackageTypes(filters)
         e.sort(key = Game.score.fget, reverse = True)
         return e
 
     def gamesByTotalRatings(self, filters=set()):
-        e = list(self.gamesFilteredByPackageTypes(filters))
+        e = self.gamesFilteredByPackageTypes(filters)
         e.sort(key = Game.numberRatings.fget)
         return e
 
