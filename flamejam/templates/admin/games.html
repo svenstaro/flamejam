@@ -10,7 +10,7 @@ Do we need this? Probably not, but it makes opatut happy. #}
 
 {% for jam in jams %}
     <b>{{ jam.title }}</b>
-    {% if jam.games.count() > 0 %}
+    {% if jam.games %}
         <table>
             <tr>
                 <th>Toggle Flags</th>

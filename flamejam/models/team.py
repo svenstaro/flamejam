@@ -28,7 +28,7 @@ class Team(db.Model):
 
     @property
     def game(self):
-        return self.games[0] if Game.query.filter_by(is_deleted=False).count() else None
+        return self.games[0] if self.games else None
 
     @property
     def isSingleTeam(self):
@@ -74,7 +74,7 @@ class Team(db.Model):
 
     @property
     def numberMembersAndInvitations(self):
-        return len(self.members) + self.invitations.count()
+        return len(self.members) + len(self.invitations)
 
     def canInvite(self, user):
         return user in self.members and (self.jam.team_limit == 0 or self.jam.team_limit > self.numberMembersAndInvitations)

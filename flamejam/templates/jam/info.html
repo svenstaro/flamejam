@@ -86,7 +86,7 @@
         {% endif %}
         {% elif jam.getStatus().code == 5 %}
         <h2>Winners</h2>
-        {% if jam.games.count() > 1  %}
+        {% if jam.games %}
             <ol>
                 {% for game in jam.gamesByScore()[:3] %}
                     <li>
