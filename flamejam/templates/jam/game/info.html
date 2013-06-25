@@ -82,7 +82,6 @@
         {% set status = game.jam.getStatus().code %}
         <h2>Feedback</h2>
         {% if status >= 4 %}
-            {% set rating = game.ratings.filter_by(user_id = current_user.get_id()).first() %}
             {% set categories = game.ratingCategories + ["overall"] %}
             {% set cols = (categories | length) + 2 %}
 
