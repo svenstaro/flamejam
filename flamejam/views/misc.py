@@ -213,8 +213,8 @@ def current_jam_info():
                    start_time=str(jam.start_time),
                    duration=jam.duration,
                    team_limit=jam.team_limit,
-                   participants_count=jam.registrations.count(),
-                   teams_count=jam.teams.count())
+                   participants_count=len(jam.registrations),
+                   teams_count=len(jam.teams))
 
 @app.route('/site_info')
 def site_info():
