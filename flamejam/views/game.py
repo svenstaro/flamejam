@@ -148,7 +148,7 @@ def show_game(jam_slug, game_id):
 @login_required
 def rate_game(jam_slug, game_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    game = jam.games.filter_by(is_deleted = False, id = game_id).first_or_404()
+    game = Game.query.filter_by(jam_id=jam.id, is_deleted=False, id=game_id).first_or_404()
 
     form = RateGameForm()
     if jam.getStatus().code != JamStatusCode.RATING:
@@ -159,7 +159,12 @@ def rate_game(jam_slug, game_id):
         flash("You cannot rate on your own game. Go rate on one of these!", "warning")
         return redirect(url_for("jam_games", jam_slug = jam.slug))
 
-    rating = game.ratings.filter_by(user = current_user).first()
+    # Allow only users who registered for this jam to vote.
+    if not current_user in jam.participants:
+        flash("You cannot rate on this game. Only participants are eligible for vote.", "error")
+        return redirect(url_for("jam_games", jam_slug = jam.slug))
+
+    rating = Rating.query.filter_by(game_id=game.id, user_id=current_user.id).first()
     if rating:
         flash("You are editing your previous rating of this game.", "info")
 

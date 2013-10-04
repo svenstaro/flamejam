@@ -3,7 +3,7 @@
 from flamejam import app, db
 from flamejam.utils import get_slug, average, average_non_zero
 from flamejam.models.gamescreenshot import GameScreenshot
-from flamejam.models.rating import RATING_CATEGORIES
+from flamejam.models.rating import Rating, RATING_CATEGORIES
 from flask import url_for
 from datetime import datetime
 
@@ -81,6 +81,9 @@ class Game(db.Model):
     @property
     def ratingCategories(self):
         return [c for c in RATING_CATEGORIES if getattr(self, "score_" + c + "_enabled")]
+
+    def getRatingByUser(self, user):
+        return Rating.query.filter_by(user_id=user.id).first()
 
 # Adds fields "dynamically" (which score categories are enabled?)
 for c in RATING_CATEGORIES:

@@ -8,7 +8,7 @@
     Rating &ndash; {{ game.title }}
 
     <div class="pull-right">
-        {% set rating = game.ratings.filter_by(user = current_user).first() %}
+        {% set rating = game.getRatingByUser(current_user) %}
 
         <a href="{{ url_for('jam_games', jam_slug = jam.slug) }}" class="btn">Game list</a>
         <a href="{{ game.url() }}" class="btn btn-primary">Game Page</a>

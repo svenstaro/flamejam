@@ -100,7 +100,7 @@
                         ({{ rating.score }})
                     {% endif %}
 
-                    {% if jam.getStatus().code == 4 and current_user not in game.team.members %}
+                    {% if jam.getStatus().code == 4 and current_user not in game.team.members and current_user in jam.participants %}
                         <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}">{{ "(edit)" if rating else "rate now" }}</a>
                     {% endif %}
                 {% endif %}
