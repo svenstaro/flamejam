@@ -230,11 +230,11 @@ class SettingsForm(Form):
 
     notify_newsletter = BooleanField("send me newsletters")
 
-class RegisterJamForm(Form):
+class ParticipateForm(Form):
     show_in_finder = BooleanField("Show me in the team finder")
 
-class UnregisterJamForm(Form):
-    confirm = BooleanField("I understand that, please unregister me", validators = [Required()])
+class CancelParticipationForm(Form):
+    confirm = BooleanField("I understand that, please cancel my participation", validators = [Required()])
 
 class LeaveTeamForm(Form):
     confirm = BooleanField("I understand that, and want to leave the team", validators = [Required()])

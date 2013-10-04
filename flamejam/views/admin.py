@@ -177,7 +177,7 @@ def admin_user_delete(username):
     u = User.query.filter_by(username = username).first()
     if not u: return "User not found"
 
-    for r in u.registrations:
+    for r in u.participations:
         u.leaveJam(r.jam)
     for i in u.invitations:
         db.session.delete(i)

@@ -3,9 +3,9 @@
 
 {% block content %}
 
-<h1>Unregister from {{ jam.title }}</h1>
+<h1>Cancel participation in {{ jam.title }}</h1>
 
-<form method="post" action="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">
+<form method="post" action="{{ url_for('jam_cancel_participation', jam_slug = jam.slug) }}">
 {{ form.hidden_tag() }}
 {{ form_errors(form) }}
 
@@ -34,7 +34,7 @@
             </label>
         </p>
         <p>
-            <input type="submit" class="btn btn-primary" value="I understand, unregister now" />
+            <input type="submit" class="btn btn-primary" value="I understand, cancel my participation" />
         </p>
     </div>
     <div class="span3">

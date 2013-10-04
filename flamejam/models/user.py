@@ -2,7 +2,7 @@
 
 from flamejam import app, db, login_manager
 from flamejam.utils import hash_password, verify_password, findLocation
-from flamejam.models import Registration, Team, Game
+from flamejam.models import Participation, Team, Game
 from flask import url_for, Markup
 from datetime import datetime
 from hashlib import md5
@@ -22,7 +22,7 @@ class User(db.Model):
     ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
     comments = db.relationship('Comment', backref='user', lazy = "dynamic")
     invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
-    registrations = db.relationship("Registration", backref = db.backref("user", lazy="joined"), lazy = "subquery")
+    participations = db.relationship("Participation", backref = db.backref("user", lazy="joined"), lazy = "subquery")
 
     ability_programmer = db.Column(db.Boolean)
     ability_gamedesigner = db.Column(db.Boolean)
@@ -99,9 +99,9 @@ class User(db.Model):
     @property
     def games(self):
         g = []
-        for r in self.registrations:
-            if r.team:
-                for game in r.team.games:
+        for p in self.participations:
+            if p.team:
+                for game in p.team.games:
                     if not game.is_deleted:
                         g.append(game)
 
@@ -179,12 +179,12 @@ class User(db.Model):
             a += '<div class="ability-extra">' + self.abilities_extra + '</div>'
         return a
 
-    def getRegistration(self, jam):
-        return Registration.query.filter_by(user_id = self.id, jam_id = jam.id).first()
+    def getParticipation(self, jam):
+        return Participation.query.filter_by(user_id = self.id, jam_id = jam.id).first()
 
     def getTeam(self, jam):
-        r = self.getRegistration(jam)
-        return r.team if r and r.team else None
+        p = self.getParticipation(jam)
+        return p.team if p and p.team else None
 
     def inTeam(self, team):
         return self in team.members
@@ -196,8 +196,8 @@ class User(db.Model):
         return self.inTeam(game.team)
 
     def joinJam(self, jam, generateTeam = True):
-        r = Registration(self, jam)
-        db.session.add(r)
+        p = Participation(self, jam)
+        db.session.add(p)
         db.session.commit() # need to commit so the team does not register us automatically
 
         if generateTeam:
@@ -216,8 +216,8 @@ class User(db.Model):
             self.getTeam(jam).userLeave(self) #  will destroy the team if then empty
 
         # delete registration
-        if self.getRegistration(jam):
-            db.session.delete(self.getRegistration(jam))
+        if self.getParticipation(jam):
+            db.session.delete(self.getParticipation(jam))
 
     def numberOfGames(self):
         return len(self.games)

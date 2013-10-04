@@ -3,9 +3,9 @@
 
 {% block content %}
 
-<h1>Register for {{ jam.title }}</h1>
+<h1>Participate in {{ jam.title }}</h1>
 
-<form method="post" action="{{ url_for('jam_register', jam_slug = jam.slug) }}">
+<form method="post" action="{{ url_for('jam_participate', jam_slug = jam.slug) }}">
 {{ form.hidden_tag() }}
 {{ form_errors(form) }}
 
@@ -13,7 +13,7 @@
     <div class="span3">
     </div>
     <div class="span6">
-        <h2>Confirm registration</h2>
+        <h2>Confirm participation</h2>
         <p>
             By registering you tell us you plan to participate. Please
             only register if you are free to join on the jam date, and
@@ -31,7 +31,7 @@
             it is deleted.
         </p>
         <p>
-            Your registration is non-binding. You can <b style="color: red;">unregister</b>
+            Your participation is non-binding. You can <b style="color: red;">cancel</b> it
             again prior to the jam, but your team will be deleted, if no other users
             are left in the team.
         </p>
@@ -43,7 +43,7 @@
             </label>
         </p>
         <p>
-            <input type="submit" class="btn btn-primary" value="I understand, register now" />
+            <input type="submit" class="btn btn-primary" value="I understand, participate" />
         </p>
     </div>
     <div class="span3">
