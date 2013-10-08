@@ -84,7 +84,7 @@ $(document).ready(function() {
         var desc = !asc;
 
         var row = $(this).parent();
-        var table = row.parent();
+        var table = row.closest("table");
 
         table.find("th, td").removeClass("asc").removeClass("desc");
         $(this).addClass(desc ? "desc" : "asc");
