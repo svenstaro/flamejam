@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form, TextField, TextAreaField, PasswordField,\
-        DateTimeField, SubmitField, SelectField, HiddenField, BooleanField, RecaptchaField
-from flask.ext.wtf import Required, Length, EqualTo, Optional, NumberRange, Email,\
-        ValidationError, URL
-from flask.ext.wtf.html5 import IntegerField, EmailField
+from wtforms.fields import *
+from wtforms.validators import *
+from wtforms.validators import ValidationError
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from flask.ext.wtf import Form, RecaptchaField
+from flask.ext.wtf.file import FileField, FileAllowed, FileRequired
+from flask.ext.wtf.html5 import IntegerField, EmailField, IntegerRangeField, IntegerField
 import re
 from flamejam import app, models, utils
 from flamejam.models.rating import RATING_CATEGORIES
