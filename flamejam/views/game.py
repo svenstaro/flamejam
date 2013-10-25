@@ -13,9 +13,9 @@ from flask.ext.login import login_required, current_user
 def create_game(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
-    r = current_user.getRegistration(jam)
+    r = current_user.getParticipation(jam)
     if not r or not r.team:
-        flash("You cannot create a game without being registered for the jam.", category = "error")
+        flash("You cannot create a game without participating in the jam.", category = "error")
         return redirect(jam.url())
     if r.team.game:
         flash("You already have a game.")
@@ -159,7 +159,7 @@ def rate_game(jam_slug, game_id):
         flash("You cannot rate on your own game. Go rate on one of these!", "warning")
         return redirect(url_for("jam_games", jam_slug = jam.slug))
 
-    # Allow only users who registered for this jam to vote.
+    # Allow only users who participate in this jam to vote.
     if not current_user in jam.participants:
         flash("You cannot rate on this game. Only participants are eligible for vote.", "error")
         return redirect(url_for("jam_games", jam_slug = jam.slug))

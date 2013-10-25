@@ -3,7 +3,7 @@
 from flamejam import app, db
 from datetime import datetime
 
-class Registration(db.Model):
+class Participation(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     team_id = db.Column(db.Integer, db.ForeignKey("team.id"))
     jam_id = db.Column(db.Integer, db.ForeignKey("jam.id"))

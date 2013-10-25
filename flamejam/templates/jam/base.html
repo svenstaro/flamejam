@@ -27,17 +27,17 @@
     {% endif %}
 {% endmacro %}
 
-{% set r = current_user.getRegistration(jam) if current_user.is_authenticated() else None %}
+{% set p = current_user.getParticipation(jam) if current_user.is_authenticated() else None %}
 
 <ul class="menu">
     {{ jamMenu("jam_info", "Overview") }}
     {{ jamMenu("jam_games", "Games") }}
     {{ jamMenu("jam_participants", "Participants") }}
-    {% if r %}
-    {{ jamMenu(r.team.url(), "Your Team", True, r.team == team) }}
-    {% set hasGame = r.team and r.team.game %}
+    {% if p %}
+    {{ jamMenu(p.team.url(), "Your Team", True, p.team == team) }}
+    {% set hasGame = p.team and p.team.game %}
     {% if hasGame or jam.getStatus().code < 5 %}
-    {{ jamMenu(r.team.game.url() if hasGame else url_for("create_game", jam_slug = jam.slug), "Your Game" if hasGame else "Create Game", True, r.team.game == game or request.endpoint == "create_game") }}
+    {{ jamMenu(p.team.game.url() if hasGame else url_for("create_game", jam_slug = jam.slug), "Your Game" if hasGame else "Create Game", True, p.team.game == game or request.endpoint == "create_game") }}
     {% endif %}
     {% endif %}
 </ul>

@@ -35,12 +35,12 @@
         </p>
         {% else %}
         <p class="alert alert-error">
-            You are not yet registered for <a href="{{ jam.url() }}">{{ jam.title }}</a>.
+            You are not yet registered for participation in <a href="{{ jam.url() }}">{{ jam.title }}</a>.
             This is required to join a team. Please register first and return to
             this page.
         </p>
         <p>
-            <a href="{{ url_for('jam_register', jam_slug = jam.slug) }}" target="_blank" class="btn btn-primary">Register for the Jam</a>
+            <a href="{{ url_for('jam_participate', jam_slug = jam.slug) }}" target="_blank" class="btn btn-primary">Participate in the jam</a>
         </p>
         {% endif %}
     </div>

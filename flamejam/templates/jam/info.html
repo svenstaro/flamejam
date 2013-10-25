@@ -9,7 +9,7 @@
     <small>{{ ("Theme: \"" + jam.theme + "\"") if jam.showTheme else "Theme not announced" }}</small>
 
     {% if jam.getStatus().code >= 1 %}
-        {% set r = current_user.getRegistration(jam) if current_user.is_authenticated() else None %}
+        {% set r = current_user.getParticipation(jam) if current_user.is_authenticated() else None %}
         <div class="pull-right">
             {% if r %}
                 <span style="font-size: 8pt; vertical-align: middle; margin-right: 10px;">
@@ -21,9 +21,9 @@
                         <a href="{{ url_for('jam_toggle_show_in_finder', jam_slug = jam.slug) }}" class="link">Toggle</a>
                     {% endif %}
                 </span>
-                <a class="btn btn-danger" href="{{ url_for('jam_unregister', jam_slug = jam.slug) }}">Unregister</a>
+                <a class="btn btn-danger" href="{{ url_for('jam_cancel_participation', jam_slug = jam.slug) }}">Cancel participation</a>
             {% else %}
-            <a class="btn btn-success" href="{{ url_for('jam_register', jam_slug = jam.slug) }}">Register</a>
+            <a class="btn btn-success" href="{{ url_for('jam_participate', jam_slug = jam.slug) }}">Participate</a>
             {% endif %}
         </div>
     {% endif %}
@@ -54,7 +54,7 @@
 
             <tr>
                 <th>Participants</th>
-                <td>{{ jam.registrations | length }} users
+                <td>{{ jam.participations | length }} users
                     <a class="pull-right" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Show map</a>
                 </td>
             </tr>

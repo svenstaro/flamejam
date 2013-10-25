@@ -1,6 +1,6 @@
 from flamejam import app, db
 from flamejam.models import Jam, JamStatusCode, GamePackage
-from flamejam.forms import RegisterJamForm, UnregisterJamForm, TeamFinderFilter
+from flamejam.forms import ParticipateForm, CancelParticipationForm, TeamFinderFilter
 from flask import render_template, url_for, redirect, flash, request
 from flask.ext.login import login_required, current_user
 
@@ -18,45 +18,45 @@ def countdown(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     return render_template('misc/countdown.html', jam = jam)
 
-@app.route('/jams/<jam_slug>/register/', methods = ["POST", "GET"])
+@app.route('/jams/<jam_slug>/participate/', methods = ["POST", "GET"])
 @login_required
-def jam_register(jam_slug):
+def jam_participate(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     user = current_user
 
     if jam.getStatus().code > JamStatusCode.RUNNING:
-        flash("You cannot register for a jam after it has finished.", "error")
+        flash("You cannot register for participation in a jam after it has finished.", "error")
         return redirect(jam.url())
 
     if jam.getStatus().code < JamStatusCode.REGISTRATION:
-        flash("You cannot register before the registration started.", "error")
+        flash("You cannot register for participation before the registration started.", "error")
         return redirect(jam.url())
 
-    if user.getRegistration(jam):
-        flash("You are already registered for this jam.", "warning")
+    if user.getParticipation(jam):
+        flash("You already participate in this jam.", "warning")
         return redirect(jam.url())
 
-    form = RegisterJamForm()
+    form = ParticipateForm()
 
     if form.validate_on_submit():
         user.joinJam(jam)
-        user.getRegistration(jam).show_in_finder = form.show_in_finder.data
+        user.getParticipation(jam).show_in_finder = form.show_in_finder.data
         db.session.commit()
         flash("You are now registered for this jam.", "success")
         return redirect(jam.url())
 
-    return render_template('jam/register.html', jam = jam, form = form)
+    return render_template('jam/participate.html', jam = jam, form = form)
 
-@app.route('/jams/<jam_slug>/unregister/', methods = ["POST", "GET"])
+@app.route('/jams/<jam_slug>/cancel-participation/', methods = ["POST", "GET"])
 @login_required
-def jam_unregister(jam_slug):
+def jam_cancel_participation(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
     if jam.getStatus().code > JamStatusCode.RUNNING:
         flash("You cannot unregister from a jam after it has finished.", "error")
         return redirect(jam.url())
 
-    form = UnregisterJamForm()
+    form = CancelParticipationForm()
 
     if form.validate_on_submit():
         current_user.leaveJam(jam)
@@ -64,7 +64,7 @@ def jam_unregister(jam_slug):
         flash("You are now unregistered from this jam.", "success")
         return redirect(jam.url())
 
-    return render_template('jam/unregister.html', jam = jam, form = form)
+    return render_template('jam/cancel_participation.html', jam = jam, form = form)
 
 @app.route('/jams/<jam_slug>/games/')
 def jam_games(jam_slug):
@@ -81,7 +81,7 @@ def jam_participants(jam_slug):
 @app.route('/jams/<jam_slug>/team_finder/toggle/')
 def jam_toggle_show_in_finder(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    r = current_user.getRegistration(jam)
+    r = current_user.getParticipation(jam)
     if not r: abort(404)
     r.show_in_finder = not r.show_in_finder
     db.session.commit()
@@ -93,7 +93,7 @@ def jam_team_finder(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     form = TeamFinderFilter()
     l = []
-    for r in jam.registrations:
+    for r in jam.participations:
         u = r.user
         if (not form.show_teamed.data) and r.team and (not r.team.isSingleTeam):
             continue # don't show teamed people
