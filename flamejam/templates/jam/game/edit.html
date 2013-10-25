@@ -65,7 +65,7 @@
     </div>
     <div class="span4">
         <h2>Packages</h2>
-        {% if not game.packages.count() %}
+        {% if not game.packages|count %}
             <p><i>There are no packages yet.</i></p>
         {% else %}
             <ul>
