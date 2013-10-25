@@ -36,7 +36,7 @@ def create_game(jam_slug):
 @login_required
 def edit_game(jam_slug, game_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
-    game = jam.games.filter_by(is_deleted = False, id = game_id).first_or_404()
+    game = Game.query.filter_by(is_deleted = False, id = game_id).first_or_404()
 
     if not game or not current_user in game.team.members:
         abort(403)
