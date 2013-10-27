@@ -21,7 +21,7 @@
                         <td>{{ "%.2f" % stats["average_users"] }} users per jam</td></tr>
 
                     <tr><th>Most users per jam</th>
-                        <td>{{ stats["most_users"] }} users
+                        <td>{{ stats["most_users_jam"] }} users
                         {% if stats['most_users_jam'] %}
                         in <a href="{{ stats['most_users_jam'].url() }}">{{ stats["most_users_jam"].title }}</a>
                         {% endif %}
