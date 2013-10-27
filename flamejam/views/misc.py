@@ -115,8 +115,8 @@ def statistics():
     # collect all the data
     stats = {}
 
-    stats["total_jams"] = db.session.query(db.func.count(Jam.id)).first()[0]
-    stats["total_users"] = db.session.query(db.func.count(User.id)).first()[0]
+    stats["total_jams"] = Jam.query.count()
+    stats["total_users"] = User.quert.count()
 
     all_jam_users = 0
     most_users_per_jam = 0
