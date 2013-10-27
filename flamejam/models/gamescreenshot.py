@@ -19,7 +19,7 @@ class GameScreenshot(db.Model):
         return "<GameScreenshot %r>" % self.id
 
     def move(self, x):
-        all = self.game.screenshotsOrdered.all()
+        all = self.game.screenshotsOrdered
 
         old = self.index
         new = self.index + x
