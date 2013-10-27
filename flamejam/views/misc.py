@@ -116,7 +116,7 @@ def statistics():
     stats = {}
 
     stats["total_jams"] = Jam.query.count()
-    stats["total_users"] = User.quert.count()
+    stats["total_users"] = User.query.count()
 
     all_jam_users = 0
     most_users_per_jam = 0
