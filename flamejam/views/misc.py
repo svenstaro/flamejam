@@ -168,7 +168,7 @@ def statistics():
     stats["most_users_per_jam"] = most_users_per_jam
     stats["most_users_jam"] = most_users_jam
 
-    stats["total_games"] = db.session.query(db.func.count(not Game.is_deleted)).first()[0]
+    stats["total_games"] = Game.query.filter_by(is_deleted=False).count()
     if stats["total_jams"]: # against division by zero
         stats["average_games"] = stats["total_games"] * 1.0 / stats["total_jams"]
     else:
