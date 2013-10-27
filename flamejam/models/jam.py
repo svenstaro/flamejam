@@ -88,7 +88,7 @@ class Jam(db.Model):
 
     def gamesFilteredByPackageTypes(self, filters):
         if filters == set():
-            games = self.games.filter_by(is_deleted=False).all()
+            games = [game for game in self.games if game.is_deleted == False]
         elif 'packaged' in filters:
             games = self.games.join(GamePackage).all()
         else:
