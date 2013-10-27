@@ -87,14 +87,14 @@ class Jam(db.Model):
         return url_for('jam_info', jam_slug = self.slug, **values)
 
     def gamesFilteredByPackageTypes(self, filters):
-        games = None
+        games = Game.query.filter_by(is_deleted=False).filter_by(jam_id=self.id)
         if filters == set():
-            games = Game.query.filter_by(is_deleted=False).filter_by(id=self.id).all()
+            games = games
         elif 'packaged' in filters:
-            games = Game.query.join(GamePackage).filter_by(is_deleted=False).filter_by(id=self.id).all()
+            games = games.join(GamePackage)
         else:
-            games = Game.query.join(GamePackage).filter_by(is_deleted=False).filter_by(id=self.id).filter(GamePackage.type.in_(filters)).all()
-        return games
+            games = games.filter(GamePackage.type.in_(filters)).join(GamePackage)
+        return games.all()
 
     def gamesByScore(self, filters=set()):
         e = self.gamesFilteredByPackageTypes(filters)
