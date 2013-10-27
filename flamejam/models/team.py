@@ -13,7 +13,7 @@ class Team(db.Model):
     livestreams = db.Column(db.Text) # list of livestreams, one URL per file
     irc = db.Column(db.String(128))
 
-    registrations = db.relationship("Registration", backref = "team", lazy = "subquery")
+    participations = db.relationship("Participation", backref = "team", lazy = "subquery")
     invitations = db.relationship("Invitation", backref = "team", lazy = "subquery")
     games = db.relationship("Game", backref = "team", lazy = "subquery")
 
@@ -24,7 +24,7 @@ class Team(db.Model):
 
     @property
     def members(self):
-        return [r.user for r in self.registrations]
+        return [r.user for r in self.participations]
 
     @property
     def game(self):
@@ -32,18 +32,18 @@ class Team(db.Model):
 
     @property
     def isSingleTeam(self):
-        return len(self.registrations) == 1
+        return len(self.participations) == 1
 
     def url(self, **values):
         return url_for("jam_team", jam_slug = self.jam.slug, team_id = self.id, **values)
 
     def userJoin(self, user):
-        r = user.getRegistration(self.jam)
+        r = user.getParticipation(self.jam)
         if not r:
             # register user, but do not create automatic team, we don't need
             # that anyway
             user.joinJam(self.jam, False)
-        elif r in self.registrations:
+        elif r in self.participations:
             return # user is already in this team
         elif r.team and r.team != self:
             r.team.userLeave(user)
@@ -52,7 +52,7 @@ class Team(db.Model):
         db.session.commit()
 
     def userLeave(self, user):
-        r = user.getRegistration(self.jam)
+        r = user.getParticipation(self.jam)
 
         if r.team != self:
             return # not in this team, nevermind ;)

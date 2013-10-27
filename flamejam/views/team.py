@@ -15,7 +15,7 @@ def jam_team(jam_slug, team_id):
 def jam_current_team(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     user = current_user
-    r = user.getRegistration(jam)
+    r = user.getParticipation(jam)
     if r:
         return redirect(r.team.url())
     else:
@@ -29,7 +29,7 @@ def team_settings(jam_slug):
         flash("The jam rating has started, so changes to the team are locked.", "error")
         return redirect(jam.url())
 
-    r = current_user.getRegistration(jam)
+    r = current_user.getParticipation(jam)
     if not r or not r.team: abort(404)
     team = r.team
 
@@ -116,7 +116,7 @@ def leave_team(jam_slug):
         return redirect(jam.url())
 
     user = current_user
-    r = user.getRegistration(jam)
+    r = user.getParticipation(jam)
 
     if not r or not r.team:
         flash("You are in no team.", "info")
@@ -133,7 +133,7 @@ def leave_team(jam_slug):
         team.userLeave(user)
         user.generateTeam(jam)
         db.session.commit()
-        flash("You are now unregistered from this jam.", "success")
+        flash("You left the team.", "success")
         return redirect(jam.url())
 
     return render_template("jam/team/leave.html", jam = jam, form = form, team = team)

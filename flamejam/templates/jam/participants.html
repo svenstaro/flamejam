@@ -7,17 +7,17 @@
 <h1>Participants
 
     {% if jam.getStatus().code >= 1 %}
-        <small>{{ jam.registrations | length }} people are registered</small>
+        <small>{{ jam.participations | length }} people are registered</small>
 
         <a class="btn btn-primary pull-right" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Participant Map</a>
     {% endif %}
 </h1>
 
-{% if jam.registrations | length == 0 %}
+{% if jam.participations | length == 0 %}
     {% if jam.getStatus().code <= 0 %}
-        <p class="alert alert-info">Registrations are still closed, no naturally, nobody has registered yet.</p>
+        <p class="alert alert-info">Registrations are still closed, so naturally, nobody is participating yet.</p>
     {% else %}
-        <p class="alert alert-info">Nobody has registered yet.</p>
+        <p class="alert alert-info">Nobody is participating yet.</p>
     {% endif %}
 {% else %}
     <table class="table table-hover table-bordered full">
@@ -33,30 +33,30 @@
         </tr>
     </thead>
     <tbody>
-    {% for r in jam.registrations %}
+    {% for p in jam.participations %}
         <tr>
             <td>{{ loop.index }}</td>
 
-            <td data-value="{{ r.user.username }}">{{ r.user.getLink() }}</td>
+            <td data-value="{{ p.user.username }}">{{ p.user.getLink() }}</td>
 
-            <td>{{ r.user.abilityString() | safe or "n/a" }}</td>
+            <td>{{ p.user.abilityString() | safe or "n/a" }}</td>
 
-            <td>{{ r.user.getLocation() }}</td>
+            <td>{{ p.user.getLocation() }}</td>
 
-            <td data-value="{{ r.registered }}" style="white-space: nowrap;">
-                {{ r.registered | humantime }}
+            <td data-value="{{ p.registered }}" style="white-space: nowrap;">
+                {{ p.registered | humantime }}
             </td>
 
-            {% set looking = r.show_in_finder and r.team.isSingleTeam %}
-            <td data-value="{{ '' if looking else r.team.name }}">
+            {% set looking = p.show_in_finder and p.team.isSingleTeam %}
+            <td data-value="{{ '' if looking else p.team.name }}">
                 {% if looking %}
                     Looking for team
                 {% else %}
-                    <a href="{{ r.team.url() }}">{{ r.team.name }}</a>
+                    <a href="{{ p.team.url() }}">{{ p.team.name }}</a>
                 {% endif %}
             </td>
 
-            <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ r.user.username }}">Invite</a></td>
+            <td><a href="{{ url_for('team_settings', jam_slug = jam.slug) }}?invite={{ p.user.username }}">Invite</a></td>
         </tr>
     {% endfor %}
     </tbody>

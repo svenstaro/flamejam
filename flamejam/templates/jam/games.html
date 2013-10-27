@@ -70,7 +70,7 @@
             <td>{{ loop.index }}</td>
             <td><a href="{{ game.url() }}">{{ game.title }}</a></td>
             <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
-            <td data-value="{{ game.team.registrations | length }}">
+            <td data-value="{{ game.team.participations | length }}">
                 {% for m in game.team.members %}
                     {{ m.getLink(real=False) }}
                 {% endfor %}

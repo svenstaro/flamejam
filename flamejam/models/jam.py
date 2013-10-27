@@ -19,7 +19,7 @@ class Jam(db.Model):
     start_time = db.Column(db.DateTime) # The jam starts at this moment
     team_limit = db.Column(db.Integer) # 0 = no limit
     games = db.relationship('Game', backref="jam", lazy = "subquery")
-    registrations = db.relationship("Registration", backref = "jam", lazy = "subquery")
+    participations = db.relationship("Participation", backref = "jam", lazy = "subquery")
     teams = db.relationship("Team", backref = "jam", lazy = "subquery")
 
     description = db.Column(db.Text)
@@ -47,10 +47,7 @@ class Jam(db.Model):
 
     @property
     def participants(self):
-        p = []
-        for r in self.registrations:
-            p.append(r.user)
-        return p
+        return [r.user for r in self.participations]
 
     @property
     def end_time(self):
@@ -160,7 +157,7 @@ class Jam(db.Model):
             kwargs = { "games": self.gamesByScore()[:3] }
 
         if n >= JamStatusCode.RUNNING and n != JamStatusCode.RATING:
-            users = [r.user for r in self.registrations]
+            users = [r.user for r in self.participations]
         else:
             from flamejam.models import User
             users = User.query.all()
@@ -187,12 +184,7 @@ class Jam(db.Model):
 
     @property
     def livestreamTeams(self):
-        t = []
-        for team in self.teams:
-            if team.livestreams:
-                t.append(team)
-        return t
-
+        return [t for t in self.teams if t.livestream]
 
 class JamStatusCode(object):
     ANNOUNCED    = 0
