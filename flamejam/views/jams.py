@@ -24,8 +24,8 @@ def jam_participate(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     user = current_user
 
-    if jam.getStatus().code > JamStatusCode.RUNNING:
-        flash("You cannot register for participation in a jam after it has finished.", "error")
+    if jam.getStatus().code > JamStatusCode.PACKAGING:
+        flash("You cannot register for participation in a jam after it has finished or is in rating phase.", "error")
         return redirect(jam.url())
 
     if jam.getStatus().code < JamStatusCode.REGISTRATION:
@@ -52,8 +52,8 @@ def jam_participate(jam_slug):
 def jam_cancel_participation(jam_slug):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
 
-    if jam.getStatus().code > JamStatusCode.RUNNING:
-        flash("You cannot unregister from a jam after it has finished.", "error")
+    if jam.getStatus().code > JamStatusCode.PACKAGING:
+        flash("You cannot unregister from a jam after it has finished or is in rating phase.", "error")
         return redirect(jam.url())
 
     form = CancelParticipationForm()

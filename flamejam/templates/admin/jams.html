@@ -32,7 +32,7 @@
             {{ jam.theme or "n/a" }}
         </td>
         <td>
-            <b style="font-size: 0.8em; color: gray;">{{ ["ANNOUNCED", "REGISTRATIONS", "RUNNING", "PACKAGING", "RATING", "FINISHED"][jam.getStatus().code] }}</b>
+            <b style="font-size: 0.8em; color: gray;">{{ ["ANNOUNCED", "REGISTRATION", "RUNNING", "PACKAGING", "RATING", "FINISHED"][jam.getStatus().code] }}</b>
         </td>
         <td>{{ jam.announced | humantime }}</td>
         <td>{{ jam.start_time | formattime }}</td>
