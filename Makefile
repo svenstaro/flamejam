@@ -6,7 +6,7 @@ setup:
 			flask flask-mail flask-sqlalchemy flask-wtf \
 			flask-login flask-markdown python-dateutil \
 			scrypt requests alembic flask-principal mysql-python \
-			flask-cache python-memcached pycopg2
+			flask-cache python-memcached psycopg2
 
 run:
 	. env/bin/activate && python2 runserver.py
