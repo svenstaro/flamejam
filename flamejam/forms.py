@@ -47,7 +47,7 @@ class UsernameExists(object):
 
 class EmailExists(object):
     def __call__(self, form, field):
-        e = models.User.query.filter_by(email = field.data).first()
+        e = models.User.query.filter(func.lower(models.User.email) == func.lower(field.data)).first()
         if not e:
             raise ValidationError("That email does not exist")
 
