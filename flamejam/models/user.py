@@ -116,7 +116,7 @@ class User(db.Model):
     def getAvatar(self, size = 32):
         if self.avatar:
             return self.avatar.replace("%s", str(size))
-        return "http://www.gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
+        return "//gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
 
     def setLocation(self, location):
         if not location:
