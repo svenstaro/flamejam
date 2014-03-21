@@ -41,7 +41,7 @@ class MatchesRegex(object):
 
 class UsernameExists(object):
     def __call__(self, form, field):
-        u = models.User.query.filter_by(username = field.data).first()
+        u = models.User.query.filter(func.lower(models.User.username) == func.lower(field.data)).first()
         if not u:
             raise ValidationError("The username does not exist.")
 
@@ -69,7 +69,7 @@ class UsernameValidator(object):
         self.message_username = message_username
 
     def __call__(self, form, field):
-        u = models.User.query.filter_by(username = field.data).first()
+        u = models.User.query.filter(func.lower(models.User.username) == func.lower(field.data)).first()
         if not u:
             raise ValidationError(self.message_username)
 
