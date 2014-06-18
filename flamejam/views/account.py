@@ -8,6 +8,7 @@ from flamejam.forms import UserLogin, UserRegistration, ResetPassword, NewPasswo
 from flask import render_template, redirect, flash, url_for, current_app, session, request, abort, Markup
 from flask.ext.login import login_required, login_user, logout_user, current_user
 from flask.ext.principal import AnonymousIdentity, Identity, UserNeed, identity_changed, identity_loaded, Permission, RoleNeed, PermissionDenied
+from sqlalchemy import func
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -18,7 +19,7 @@ def login():
         username = login_form.username.data
         password = login_form.password.data
         remember_me = login_form.remember_me.data
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter(func.lower(User.username) == func.lower(username)).first()
         if login_user(user, remember_me):
             flash("You were logged in.", "success")
             if user.invitations.count():

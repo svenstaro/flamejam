@@ -10,6 +10,7 @@ from flask.ext.wtf.html5 import IntegerField, EmailField, IntegerRangeField, Int
 import re
 from flamejam import app, models, utils
 from flamejam.models.rating import RATING_CATEGORIES
+from sqlalchemy import func
 
 ############## VALIDATORS ####################
 
@@ -40,13 +41,13 @@ class MatchesRegex(object):
 
 class UsernameExists(object):
     def __call__(self, form, field):
-        u = models.User.query.filter_by(username = field.data).first()
+        u = models.User.query.filter(func.lower(models.User.username) == func.lower(field.data)).first()
         if not u:
             raise ValidationError("The username does not exist.")
 
 class EmailExists(object):
     def __call__(self, form, field):
-        e = models.User.query.filter_by(email = field.data).first()
+        e = models.User.query.filter(func.lower(models.User.email) == func.lower(field.data)).first()
         if not e:
             raise ValidationError("That email does not exist")
 
@@ -57,7 +58,7 @@ class LoginValidator(object):
         self.message_password = message_password
 
     def __call__(self, form, field):
-        u = models.User.query.filter_by(username = field.data).first()
+        u = models.User.query.filter(func.lower(models.User.username) == func.lower(field.data)).first()
         if not u:
             raise ValidationError(self.message_username)
         elif not utils.verify_password(u.password, form[self.pw_field].data):
@@ -68,7 +69,7 @@ class UsernameValidator(object):
         self.message_username = message_username
 
     def __call__(self, form, field):
-        u = models.User.query.filter_by(username = field.data).first()
+        u = models.User.query.filter(func.lower(models.User.username) == func.lower(field.data)).first()
         if not u:
             raise ValidationError(self.message_username)
 
