@@ -16,4 +16,4 @@ def deploy():
     with cd(code_dir):
         run("git pull")
         sudo("make install")
-        sudo("touch %s/flamejam.wsgi" % deploy_dir)
+        sudo("touch /etc/uwsgi/vassals/bacongamejam.org.ini")
