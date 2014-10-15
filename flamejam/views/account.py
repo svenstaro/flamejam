@@ -89,7 +89,7 @@ def reset_request():
     form = ResetPassword()
     if form.validate_on_submit():
         # thanks to the UsernameValidator we cam assume the username exists
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter(func.lower(User.username) == func.lower(form.username.data)).first()
         user.token = randint(0, sys.maxint)
         db.session.commit()
 
