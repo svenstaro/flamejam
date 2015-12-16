@@ -2,11 +2,7 @@ default: run
 
 setup:
 	virtualenv2 -p python2 env && . env/bin/activate && \
-		pip install --upgrade \
-			flask flask-mail flask-sqlalchemy flask-wtf \
-			flask-login flask-markdown python-dateutil \
-			scrypt requests alembic flask-principal mysql-python \
-			flask-cache python-memcached psycopg2
+		pip install -r requirements.txt
 
 run:
 	. env/bin/activate && python2 runserver.py
