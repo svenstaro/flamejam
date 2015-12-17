@@ -58,7 +58,7 @@
     <tbody>
         {% for game in games %}
             {% if jam.getStatus().code > 3 %}
-                {% set rating = current_user.ratings.filter_by(game = game).first() if current_user.is_authenticated() else None %}
+                {% set rating = current_user.ratings.filter_by(game = game).first() if current_user.is_authenticated else None %}
             {% endif %}
             {% if rating %}
                 <tr class="success">

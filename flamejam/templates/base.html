@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="btn-group">
-                    {% if current_user.is_anonymous() %}
+                    {% if current_user.is_anonymous %}
                         <a href="{{ url_for('login') }}" class="btn btn-small">Login / Signup</a>
                     {% else %}
                         {% if current_user.invitiation %}

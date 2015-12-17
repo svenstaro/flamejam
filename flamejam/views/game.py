@@ -127,7 +127,7 @@ def show_game(jam_slug, game_id):
     jam = Jam.query.filter_by(slug = jam_slug).first_or_404()
     game = Game.query.filter_by(is_deleted = False, id = game_id).filter_by(jam = jam).first_or_404()
 
-    if current_user.is_authenticated() and comment_form.validate_on_submit():
+    if current_user.is_authenticated and comment_form.validate_on_submit():
         comment = Comment(comment_form.text.data, game, current_user)
         db.session.add(comment)
         db.session.commit()

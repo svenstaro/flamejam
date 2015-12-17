@@ -27,7 +27,7 @@
     {% endif %}
 {% endmacro %}
 
-{% set p = current_user.getParticipation(jam) if current_user.is_authenticated() else None %}
+{% set p = current_user.getParticipation(jam) if current_user.is_authenticated else None %}
 
 <ul class="menu">
     {{ jamMenu("jam_info", "Overview") }}

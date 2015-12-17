@@ -11,9 +11,9 @@
 
     <div class="pull-right">
 
-        {% if current_user.is_authenticated() and current_user.inTeam(game.team) %}
+        {% if current_user.is_authenticated and current_user.inTeam(game.team) %}
             <a href="{{ url_for('edit_game', jam_slug = game.jam.slug, game_id = game.id) }}" class="btn btn-primary btn-normal pull-right">Edit game</a>
-        {% elif current_user.is_authenticated() and jam.getStatus().code == 4 and not rating and current_user in jam.participants %}
+        {% elif current_user.is_authenticated and jam.getStatus().code == 4 and not rating and current_user in jam.participants %}
             <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}" class="btn btn-primary">Rate Game</a>
         {% endif %}
     </div>
@@ -55,7 +55,7 @@
             </ul>
         {% else %}
             <p>There are no packages available yet.</p>
-            {% if current_user.is_authenticated() and current_user in game.team.members %}
+            {% if current_user.is_authenticated and current_user in game.team.members %}
                 <a href="{{ url_for('edit_game', jam_slug = game.jam.slug, game_id = game.id) }}" class="btn btn-mini">Upload a package</a>
             {% endif %}
         {% endif %}
@@ -129,7 +129,7 @@
                             <td>{{ rating.text or "&mdash;" | safe }}</td>
                         </tr>
                         <tr><td colspan="{{ cols }}" style="text-align: center;"><a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}" class="btn btn-small">Edit my Rating</a></td></tr>
-                    {% elif current_user.is_authenticated() %}
+                    {% elif current_user.is_authenticated %}
                         <tr><td colspan="{{ cols }}" style="text-align: center;"><a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}" class="btn btn-small">Rate Game</a></td></tr>
                     {% else %}
                         <tr><td colspan="{{ cols }}" style="text-align: center;">Please
@@ -177,7 +177,7 @@
         <p>No comments yet.</p>
         {% endif %}
 
-        {% if current_user.is_authenticated() %}
+        {% if current_user.is_authenticated %}
             <form method="POST">
                     {{ form_errors(form) }}
                     {{ form.hidden_tag() }}

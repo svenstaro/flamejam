@@ -82,7 +82,7 @@ def on_identity_loaded(sender, identity):
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset_request():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         flash("You are already logged in.", "info")
         return redirect(url_for("index"))
     error = None

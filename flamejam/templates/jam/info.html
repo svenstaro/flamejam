@@ -9,7 +9,7 @@
     <small>{{ ("Theme: \"" + jam.theme + "\"") if jam.showTheme else "Theme not announced" }}</small>
 
     {% if jam.getStatus().code >= 1 %}
-        {% set r = current_user.getParticipation(jam) if current_user.is_authenticated() else None %}
+        {% set r = current_user.getParticipation(jam) if current_user.is_authenticated else None %}
         <div class="pull-right">
             {% if r %}
                 <span style="font-size: 8pt; vertical-align: middle; margin-right: 10px;">

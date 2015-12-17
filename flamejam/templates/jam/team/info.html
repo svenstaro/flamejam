@@ -9,7 +9,7 @@
     <small style="margin-right: 20px;">for {{ jam.title }}</small>
 
     <div class="pull-right">
-    {% if current_user.is_authenticated() and current_user.inTeam(team) %}
+    {% if current_user.is_authenticated and current_user.inTeam(team) %}
         {% if team.canInvite(current_user) %}
             <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" class="btn btn-normal">Invite a member</a>
         {% elif team.jam.team_limit > 1 %}
@@ -76,7 +76,7 @@
             {% endfor %}
         </table>
 
-        {% if current_user.is_authenticated() and current_user in team.members %}
+        {% if current_user.is_authenticated and current_user in team.members %}
             <p><b>Note:</b> You can invite users from the <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}">team settings</a> page.</p>
         {% endif %}
     </div>
