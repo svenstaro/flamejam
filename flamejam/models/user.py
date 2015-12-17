@@ -57,21 +57,15 @@ class User(db.Model):
         self.is_admin = is_admin
         self.is_verified = is_verified
         self.registered = datetime.utcnow()
+        self.is_active = self.is_verified
+        self.is_anonymous = False
+        self.is_authenticated = True
 
     def __repr__(self):
         return '<User %r>' % self.username
 
     def get_id(self):
         return self.id
-
-    def is_active(self):
-        return self.is_verified
-
-    def is_anonymous(self):
-        return False
-
-    def is_authenticated(self):
-        return True
 
     def getVerificationHash(self):
         # combine a few properties, hash it
