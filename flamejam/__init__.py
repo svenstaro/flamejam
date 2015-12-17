@@ -10,11 +10,10 @@ from flask.ext.cache import Cache
 
 app = Flask(__name__)
 
+app.config.from_pyfile('../doc/flamejam.cfg.default')
 if os.environ.get('CONFIG_TYPE') == "production":
-    app.config.from_pyfile('/usr/share/doc/flamejam/flamejam.cfg.default')
     app.config.from_pyfile('/etc/flamejam/flamejam.cfg', silent=True)
 else:
-    app.config.from_pyfile('../doc/flamejam.cfg.default')
     app.config.from_pyfile('../flamejam.cfg', silent=True)
 
 mail = Mail(app)
