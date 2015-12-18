@@ -18,9 +18,9 @@ db.create_all()
 
 # Make users
 peter = User("peter", "lol", "roflomg-peter@mailinator.com")
-paul = User("opatut", "lol", "opatutlol@aol.com", is_admin = True, is_verified = True)
-per = User("per", "lol", "roflomg-per@mailinator.com", is_verified = True)
-pablo = User("pablo", "lol", "roflomg-pablo@mailinator.com", is_verified = True)
+paul = User("opatut", "lol", "opatutlol@aol.com", is_admin=True, is_verified=True)
+per = User("per", "lol", "roflomg-per@mailinator.com", is_verified=True)
+pablo = User("pablo", "lol", "roflomg-pablo@mailinator.com", is_verified=True)
 paddy = User("paddy", u"löl", "roflomg-paddy@mailinator.com")
 paddy.real_name = u"löl"
 

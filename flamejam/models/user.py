@@ -8,6 +8,7 @@ from datetime import datetime
 from hashlib import md5
 import scrypt
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
@@ -17,12 +18,12 @@ class User(db.Model):
     new_email = db.Column(db.String(191), unique=True)
     is_admin = db.Column(db.Boolean, default=False)
     is_verified = db.Column(db.Boolean)
-    is_deleted = db.Column(db.Boolean, default = False)
+    is_deleted = db.Column(db.Boolean, default=False)
     registered = db.Column(db.DateTime)
-    ratings = db.relationship('Rating', backref='user', lazy = "dynamic")
-    comments = db.relationship('Comment', backref='user', lazy = "dynamic")
-    invitations = db.relationship("Invitation", backref = "user", lazy = "dynamic")
-    participations = db.relationship("Participation", backref = db.backref("user", lazy="joined"), lazy = "subquery")
+    ratings = db.relationship('Rating', backref='user', lazy="dynamic")
+    comments = db.relationship('Comment', backref='user', lazy="dynamic")
+    invitations = db.relationship("Invitation", backref="user", lazy="dynamic")
+    participations = db.relationship("Participation", backref=db.backref("user", lazy="joined"), lazy="subquery")
 
     ability_programmer = db.Column(db.Boolean)
     ability_gamedesigner = db.Column(db.Boolean)
@@ -34,22 +35,22 @@ class User(db.Model):
     location = db.Column(db.String(128))
     location_coords = db.Column(db.String(128))
     location_display = db.Column(db.String(128))
-    location_flag = db.Column(db.String(16), default = "unknown")
+    location_flag = db.Column(db.String(16), default="unknown")
     real_name = db.Column(db.String(128))
     about = db.Column(db.Text)
     website = db.Column(db.String(128))
     avatar = db.Column(db.String(128))
 
-    pm_mode = db.Column(db.Enum("email", "form", "disabled"), default = "form")
+    pm_mode = db.Column(db.Enum("email", "form", "disabled"), default="form")
 
-    notify_new_jam = db.Column(db.Boolean, default = True)
-    notify_jam_start = db.Column(db.Boolean, default = True)
-    notify_jam_finish = db.Column(db.Boolean, default = True)
-    notify_game_comment = db.Column(db.Boolean, default = True)
-    notify_team_invitation = db.Column(db.Boolean, default = True)
-    notify_newsletter = db.Column(db.Boolean, default = True)
+    notify_new_jam = db.Column(db.Boolean, default=True)
+    notify_jam_start = db.Column(db.Boolean, default=True)
+    notify_jam_finish = db.Column(db.Boolean, default=True)
+    notify_game_comment = db.Column(db.Boolean, default=True)
+    notify_team_invitation = db.Column(db.Boolean, default=True)
+    notify_newsletter = db.Column(db.Boolean, default=True)
 
-    def __init__(self, username, password, email, is_admin = False, is_verified = False):
+    def __init__(self, username, password, email, is_admin=False, is_verified=False):
         self.username = username
         self.password = hash_password(password)
         self.email = email
@@ -57,9 +58,18 @@ class User(db.Model):
         self.is_admin = is_admin
         self.is_verified = is_verified
         self.registered = datetime.utcnow()
-        self.is_active = self.is_verified
-        self.is_anonymous = False
-        self.is_authenticated = True
+
+    @property
+    def is_active(self):
+        return self.is_verified
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    @property
+    def is_authenticated(self):
+        return True
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -81,7 +91,7 @@ class User(db.Model):
         return hash.encode('hex')[:16]
 
     def ratedGame(self, game):
-        return self.ratings.filter_by(game = game).first() != None
+        return self.ratings.filter_by(game=game).first() != None
 
     def getRatingCount(self, jam):
         i = 0
@@ -100,14 +110,14 @@ class User(db.Model):
                         g.append(game)
 
         import operator
-        g.sort(key = operator.attrgetter("created"))
+        g.sort(key=operator.attrgetter("created"))
 
         return g
 
     def url(self, **values):
-        return url_for('show_user', username = self.username, **values)
+        return url_for('show_user', username=self.username, **values)
 
-    def getAvatar(self, size = 32):
+    def getAvatar(self, size=32):
         if self.avatar:
             return self.avatar.replace("%s", str(size))
         return "//gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
