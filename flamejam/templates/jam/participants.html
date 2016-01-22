@@ -52,7 +52,7 @@
                 {% if looking %}
                     Looking for team
                 {% else %}
-                    <a href="{{ p.team.url() }}">{{ p.team.name }}</a>
+                    <a href="{{ p.team.url() if p.team else '' }}">{{ p.team.name }}</a>
                 {% endif %}
             </td>
 

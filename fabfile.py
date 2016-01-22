@@ -2,7 +2,7 @@ from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.console import confirm
 
-env.hosts = ['apoc']
+env.hosts = ['oracle']
 env.use_ssh_config = True
 
 def deploy():
