@@ -8,7 +8,7 @@
     Rating &ndash; {{ game.title }}
 
     <div class="pull-right">
-        {% set rating = game.getRatingByUser(current_user) %}
+        {% set rating = game.get_rating_by_user(current_user) %}
 
         <a href="{{ url_for('jam_games', jam_slug = jam.slug) }}" class="btn">Game list</a>
         <a href="{{ game.url() }}" class="btn btn-primary">Game Page</a>
@@ -31,7 +31,7 @@
         <h2>Additional feedback</h2>
         {{ form.hidden_tag() }}
             <table class="details rating full">
-                {% for category in game.ratingCategories %}
+                {% for category in game.rating_categories %}
                 <tr class="{{ category }}">
                     <th width="130">{{ form.get(category).label }}</th>
                     <th><span title="{{ category }}" class="icon-16 icon-16-{{ category }}"></span></th>

@@ -1,15 +1,17 @@
-from flamejam import app
 import random
 import scrypt
 import requests
 import re
 
+
 def average(list):
     return sum(list) / float(len(list)) if len(list) else 0
+
 
 def average_non_zero(list):
     list = [x for x in list if x != 0]
     return average(list)
+
 
 def get_slug(s):
     s = s.lower()
@@ -18,9 +20,12 @@ def get_slug(s):
     s = re.sub("-+", "-", s)
     return s
 
-def findLocation(loc):
+
+def find_location(loc):
     try:
-        r = requests.get("http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false&language=en" % loc)
+        r = requests.get(
+            f"http://maps.googleapis.com/maps/api/geocode/json?address={loc}"
+            "&sensor=false&language=en")
         c = r.json()["results"][0]
         a = c["address_components"]
 
@@ -31,8 +36,10 @@ def findLocation(loc):
         coords = "%s,%s" % (c["geometry"]["location"]["lat"], c["geometry"]["location"]["lng"])
 
         for comp in a:
-            if comp["types"][0] == "locality": city = comp["long_name"]
-            elif comp["types"][0] == "administrative_area_level_1": region = comp["long_name"]
+            if comp["types"][0] == "locality":
+                city = comp["long_name"]
+            elif comp["types"][0] == "administrative_area_level_1":
+                region = comp["long_name"]
             elif comp["types"][0] == "country":
                 state = comp["long_name"]
                 flag = comp["short_name"].lower()
@@ -45,33 +52,39 @@ def findLocation(loc):
         if city:
             first += ", " + city
         return first, coords, flag
-    except:
+    except Exception:
         return None, None, None
 
+
 def randstr(length):
-    return ''.join(chr(random.randint(0,255)) for i in range(length))
+    return ''.join(chr(random.randint(0, 255)) for i in range(length))
+
 
 def hash_password(password, maxtime=0.5, datalength=256):
     salt = randstr(datalength)
     hashed_password = scrypt.encrypt(salt, password.encode('utf-8'), maxtime=maxtime)
     return bytearray(hashed_password)
 
+
 def verify_password(hashed_password, guessed_password, maxtime=300):
     try:
         scrypt.decrypt(hashed_password, guessed_password.encode('utf-8'), maxtime)
         return True
     except scrypt.error as e:
-        print "scrypt error: %s" % e    # Not fatal but a necessary measure if server is under heavy load
+        # Not fatal but a necessary measure if server is under heavy
+        # load
+        print(f"scrypt error: {e}")
         return False
+
 
 def get_current_jam():
     from flamejam.models import Jam, JamStatusCode
     next = None
     previous = None
     for jam in Jam.query.all():
-        if jam.getStatus().code == JamStatusCode.RUNNING:
+        if jam.get_status().code == JamStatusCode.RUNNING:
             return jam
-        elif jam.getStatus().code <= JamStatusCode.RUNNING:
+        elif jam.get_status().code <= JamStatusCode.RUNNING:
             if not next or next.start_time > jam.start_time:
                 next = jam
         else:

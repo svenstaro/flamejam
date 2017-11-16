@@ -103,9 +103,9 @@
             should be sent and (re)send them manually.
         </p>
 
-        {% set status = jam.getStatus() %}
+        {% set status = jam.get_status() %}
 
-        {% macro activeStatus(s) %}
+        {% macro active_status(s) %}
              {% if status.code > s %}
              <td><b style="font-size: 0.8em; color: gray;">DONE</b></td>
              {% elif status.code == s %}
@@ -115,8 +115,8 @@
              {% endif %}
         {% endmacro %}
 
-        {% set status = jam.getStatus() %}
-        {% macro sentStatus(s) %}
+        {% set status = jam.get_status() %}
+        {% macro sent_status(s) %}
              {% if jam.last_notification_sent >= s %}
              <td><b style="font-size: 0.8em; color: green;">SENT</b></td>
              {% else %}
@@ -124,9 +124,9 @@
              {% endif %}
         {% endmacro %}
 
-        {% macro notificationStatus(s) %}
-            {{ activeStatus(s) }}
-            {{ sentStatus(s) }}
+        {% macro notification_status(s) %}
+            {{ active_status(s) }}
+            {{ sent_status(s) }}
 
             <td>
                 {% if s == jam.last_notification_sent + 1 and status.code >= s %}
@@ -143,32 +143,32 @@
             <tr><th>Notification type</th><th>Active phase</th><th>Status</th><th></th></tr>
             <tr>
                 <td>Announcement</td>
-                {{ notificationStatus(0) }}
+                {{ notification_status(0) }}
             </tr>
 
             <tr>
                 <td>Registrations open</td>
-                {{ notificationStatus(1) }}
+                {{ notification_status(1) }}
             </tr>
 
             <tr>
                 <td>Jam start</td>
-                {{ notificationStatus(2) }}
+                {{ notification_status(2) }}
             </tr>
 
             <tr>
                 <td>Packaging start</td>
-                {{ notificationStatus(3) }}
+                {{ notification_status(3) }}
             </tr>
 
             <tr>
                 <td>Rating start</td>
-                {{ notificationStatus(4) }}
+                {{ notification_status(4) }}
             </tr>
 
             <tr>
                 <td>Finished</td>
-                {{ notificationStatus(5) }}
+                {{ notification_status(5) }}
             </tr>
         </table>
 

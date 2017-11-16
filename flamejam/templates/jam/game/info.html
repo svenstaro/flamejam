@@ -11,9 +11,9 @@
 
     <div class="pull-right">
 
-        {% if current_user.is_authenticated and current_user.inTeam(game.team) %}
+        {% if current_user.is_authenticated and current_user.in_team(game.team) %}
             <a href="{{ url_for('edit_game', jam_slug = game.jam.slug, game_id = game.id) }}" class="btn btn-primary btn-normal pull-right">Edit game</a>
-        {% elif current_user.is_authenticated and jam.getStatus().code == 4 and not rating and current_user in jam.participants %}
+        {% elif current_user.is_authenticated and jam.get_status().code == 4 and not rating and current_user in jam.participants %}
             <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}" class="btn btn-primary">Rate Game</a>
         {% endif %}
     </div>
@@ -27,7 +27,7 @@
                 {{ game.team.name }} <a href="{{ game.team.url() }}">show »</a>
                 </td></tr>
 
-            <tr><th>Jam</th><td>{{ game.jam.getLink() }}</td></tr>
+            <tr><th>Jam</th><td>{{ game.jam.get_link() }}</td></tr>
 
             <tr><th>Submitted</th><td>{{ game.created | humantime }}</td></tr>
         </table>
@@ -50,7 +50,7 @@
         {% if game.packages %}
             <ul>
                 {% for package in game.packages %}
-                    <li>{{ package.getLink() }}</li>
+                    <li>{{ package.get_link() }}</li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -69,7 +69,7 @@
         {% if game.screenshots %}
         <h2>Screenshots <small>Click a screenshot to zoom</small></h2>
         <ul class="screenshots">
-        {% for screenshot in game.screenshotsOrdered %}
+        {% for screenshot in game.screenshots_ordered %}
             <li>
                 <a href="{{ screenshot.url }}" target="_blank" title="{{ screenshot.caption }}" class="screenshot">
                 <div class="image"><img src="{{ screenshot.url }}" alt="{{ screenshot.caption }}" /></div>
@@ -79,10 +79,10 @@
         </ul>
         {% endif %}
 
-        {% set status = game.jam.getStatus().code %}
+        {% set status = game.jam.get_status().code %}
         <h2>Feedback</h2>
         {% if status >= 4 %}
-            {% set categories = game.ratingCategories + ["overall"] %}
+            {% set categories = game.rating_categories + ["overall"] %}
             {% set cols = (categories | length) + 2 %}
 
 
@@ -105,14 +105,14 @@
                     <tr class="average">
                         <td>Average</td>
                         {% for c in categories %}
-                            <td class="score">{{ "%.2f" % game.feedbackAverage(c) }}</td>
+                            <td class="score">{{ "%.2f" % game.feedback_average(c) }}</td>
                         {% endfor %}
                         <td></td>
                     </tr>
 
                     {% for rating in game.ratings %}
                     <tr class="{{ 'deleted' if rating.user.is_deleted else ''}}">
-                            <td>{{ rating.user.getLink() }}</td>
+                            <td>{{ rating.user.get_link() }}</td>
                             {% for c in categories %}
                                 <td class="score">{{ rating.get(c) }}</td>
                             {% endfor %}
@@ -122,7 +122,7 @@
                 {% else %}
                     {% if rating %}
                         <tr>
-                            <td>{{ rating.user.getLink() }}</td>
+                            <td>{{ rating.user.get_link() }}</td>
                             {% for c in categories %}
                                 <td class="score">{{ rating.get(c) }}</td>
                             {% endfor %}
@@ -153,7 +153,7 @@
                 <div class="icon">
                     {% if comment.user %}
                     <a href="{{ comment.user.url() }}">
-                        <img src="{{ comment.user.getAvatar(32) }}" width="32" height="32"/>
+                        <img src="{{ comment.user.get_avatar(32) }}" width="32" height="32"/>
                     </a>
                     {% endif %}
                 </div>

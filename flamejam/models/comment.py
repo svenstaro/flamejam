@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
-from flamejam import app, db
+from flamejam import db
 from datetime import datetime
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,5 +16,4 @@ class Comment(db.Model):
         self.posted = datetime.utcnow()
 
     def __repr__(self):
-        return '<Comment %r>' % self.id
-
+        return f'<Comment {self.id}>'

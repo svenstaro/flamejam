@@ -9,6 +9,4 @@ scrypt
 requests
 alembic
 flask-principal
-flask-cache
-python-memcached
 psycopg2

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% set status = jam.getStatus() %}
+{% set status = jam.get_status() %}
 {% block center %}
     {% set s = ["Announced", "Registrations", "In Progress", "Packaging", "Rating", "Finished"][status.code] %}
     <div class="center-status" title="{{ status }}">
@@ -19,7 +19,7 @@
 {% block menu %}
 <b>{{ jam.title }}</b>
 
-{% macro jamMenu(endpoint, label, is_url = False, force_current = False) %}
+{% macro jam_menu(endpoint, label, is_url = False, force_current = False) %}
     {% if is_url %}
         <li{% if endpoint == request.url or force_current %} class="current"{% endif %}><a href="{{ endpoint }}">{{ label }}</a></li>
     {% else %}
@@ -27,17 +27,17 @@
     {% endif %}
 {% endmacro %}
 
-{% set p = current_user.getParticipation(jam) if current_user.is_authenticated else None %}
+{% set p = current_user.get_participation(jam) if current_user.is_authenticated else None %}
 
 <ul class="menu">
-    {{ jamMenu("jam_info", "Overview") }}
-    {{ jamMenu("jam_games", "Games") }}
-    {{ jamMenu("jam_participants", "Participants") }}
+    {{ jam_menu("jam_info", "Overview") }}
+    {{ jam_menu("jam_games", "Games") }}
+    {{ jam_menu("jam_participants", "Participants") }}
     {% if p %}
-    {{ jamMenu(p.team.url(), "Your Team", True, p.team == team) }}
-    {% set hasGame = p.team and p.team.game %}
-    {% if hasGame or jam.getStatus().code < 5 %}
-    {{ jamMenu(p.team.game.url() if hasGame else url_for("create_game", jam_slug = jam.slug), "Your Game" if hasGame else "Create Game", True, p.team.game == game or request.endpoint == "create_game") }}
+    {{ jam_menu(p.team.url(), "Your Team", True, p.team == team) }}
+    {% set has_game = p.team and p.team.game %}
+    {% if has_game or jam.get_status().code < 5 %}
+    {{ jam_menu(p.team.game.url() if has_game else url_for("create_game", jam_slug = jam.slug), "Your Game" if has_game else "Create Game", True, p.team.game == game or request.endpoint == "create_game") }}
     {% endif %}
     {% endif %}
 </ul>

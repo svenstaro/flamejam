@@ -52,10 +52,10 @@
         <h2>Team members</h2>
         <ul>
         {% for member in team.members %}
-            <li>{{ member.getLink() }}</li>
+            <li>{{ member.get_link() }}</li>
         {% endfor %}
         {% for invitation in team.invitations %}
-            <li>{{ invitation.user.getLink() }}
+            <li>{{ invitation.user.get_link() }}
                 <span style="font-size: 0.8em;">
                     (Invitation:
                     <a href="{{ url_for('invitation', id = invitation.id) }}" style="color: green;">Show</a> /
@@ -88,7 +88,7 @@
             <p>
                 The user will receive an email with a link to the invitation.
                 {% if team.jam.team_limit != 0 %}
-                <b>You can invite {{ team.jam.team_limit - team.numberMembersAndInvitations}}
+                <b>You can invite {{ team.jam.team_limit - team.number_members_and_invitations}}
                 more users</b> (Team Limit {{ team.jam.team_limit }}).{% endif %}
             </p>
         {% endif %}

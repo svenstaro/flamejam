@@ -5,7 +5,7 @@
 {% block content %}
 
 <h1>
-    <img class="icon big" style="margin-right: 10px;" width="48" height="48" src="{{ user.getAvatar(48) }}" />
+    <img class="icon big" style="margin-right: 10px;" width="48" height="48" src="{{ user.get_avatar(48) }}" />
     {{ user.username }}
     {% if user.real_name %}<small>{{ user.real_name }}</small>{% endif %}
 
@@ -39,7 +39,7 @@
                 <th>Location</th>
                 <td>
                     <a href="{{ url_for('map', mode = 'user', id = user.id) }}" class="pull-right">Show map</a>
-                    {{ user.getLocation() }}&nbsp;
+                    {{ user.get_location() }}&nbsp;
                 </td>
             </tr>
             {% endif %}
@@ -97,7 +97,7 @@
             <ul>
                 {% for game in user.games %}
                     <li>
-                        <b>{{ game.jam.getLink() }}</b><br />
+                        <b>{{ game.jam.get_link() }}</b><br />
                         <a href="{{ game.url() }}"><span>{{ game.title }}</span></a>
                     </li>
                 {% endfor %}

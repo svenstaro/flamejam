@@ -6,7 +6,7 @@
 
 <h1>Team Invitations</h1>
 
-{% set invitations = current_user.openInvitations %}
+{% set invitations = current_user.open_invitations %}
 
 {% if invitations | length == 0 %}
     <p>
@@ -32,7 +32,7 @@
             <td><a href="{{ invitation.team.url() }}">{{ invitation.team.name }}</a></td>
             <td data-value="{{ invitation.team.members | length }}">
                 {% for m in invitation.team.members %}
-                {{ m.getLink(real=False) }}
+                {{ m.get_link(real=False) }}
                 {% endfor %}
             </td>
             <td>

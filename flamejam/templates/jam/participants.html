@@ -6,7 +6,7 @@
 
 <h1>Participants
 
-    {% if jam.getStatus().code >= 1 %}
+    {% if jam.get_status().code >= 1 %}
         <small>{{ jam.participations | length }} people are registered</small>
 
         <a class="btn btn-primary pull-right" href="{{ url_for('map', mode = 'jam', id = jam.id) }}">Participant Map</a>
@@ -14,7 +14,7 @@
 </h1>
 
 {% if jam.participations | length == 0 %}
-    {% if jam.getStatus().code <= 0 %}
+    {% if jam.get_status().code <= 0 %}
         <p class="alert alert-info">Registrations are still closed, so naturally, nobody is participating yet.</p>
     {% else %}
         <p class="alert alert-info">Nobody is participating yet.</p>
@@ -37,11 +37,11 @@
         <tr>
             <td>{{ loop.index }}</td>
 
-            <td data-value="{{ p.user.username }}">{{ p.user.getLink() }}</td>
+            <td data-value="{{ p.user.username }}">{{ p.user.get_link() }}</td>
 
-            <td>{{ p.user.abilityString() | safe or "n/a" }}</td>
+            <td>{{ p.user.ability_string() | safe or "n/a" }}</td>
 
-            <td>{{ p.user.getLocation() }}</td>
+            <td>{{ p.user.get_location() }}</td>
 
             <td data-value="{{ p.registered }}" style="white-space: nowrap;">
                 {{ p.registered | humantime }}

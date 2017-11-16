@@ -22,7 +22,7 @@
             {{ form.location.label }}
             {{ form.location() }}
             <div class="form-info">Please enter your address (street, city, country). The country and city will be shown on your profile, the entered address will be used to display your location on the map, but it is not displayed literally.</div>
-            <div class="form-info">Current city: {{ current_user.getLocation() }}</div>
+            <div class="form-info">Current city: {{ current_user.get_location() }}</div>
         </div>
 
         <div class="field">

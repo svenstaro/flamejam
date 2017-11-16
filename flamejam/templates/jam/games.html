@@ -26,9 +26,9 @@
         {% for package_type in package_types %}
             {% if package_type in filters %}
                 {% set f = filters.difference([package_type]) | join('+') %}
-                <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter=f) if f else url_for('jam_games', jam_slug=jam.slug)).replace('%2B', '+') }}" class="btn btn-primary active">{{ typeStringShort(package_type) }}</a>
+                <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter=f) if f else url_for('jam_games', jam_slug=jam.slug)).replace('%2B', '+') }}" class="btn btn-primary active">{{ type_string_short(package_type) }}</a>
             {% else %}
-            <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter='+'.join(filters.union([package_type]).difference(['packaged'])))).replace('%2B', '+') }}" class="btn">{{ typeStringShort(package_type) }}</a>
+            <a href="{{ (url_for('jam_games', jam_slug=jam.slug, filter='+'.join(filters.union([package_type]).difference(['packaged'])))).replace('%2B', '+') }}" class="btn">{{ type_string_short(package_type) }}</a>
             {% endif %}
         {% endfor %}
         </div>
@@ -57,7 +57,7 @@
     </thead>
     <tbody>
         {% for game in games %}
-            {% if jam.getStatus().code > 3 %}
+            {% if jam.get_status().code > 3 %}
                 {% set rating = current_user.ratings.filter_by(game = game).first() if current_user.is_authenticated else None %}
             {% endif %}
             {% if rating %}
@@ -72,14 +72,14 @@
             <td><a href="{{ game.team.url() }}">{{ game.team.name }}</a></td>
             <td data-value="{{ game.team.participations | length }}">
                 {% for m in game.team.members %}
-                    {{ m.getLink(real=False) }}
+                    {{ m.get_link(real=False) }}
                 {% endfor %}
             </td>
             <td>{{ game.screenshots | length }}</td>
             <td>
                 {% if game.packages %}
                     {% for p in game.packages %}
-                        {{ p.getLinkShort() }}
+                        {{ p.get_link_short() }}
                         {{ "|" if not loop.last else "" }}
                     {% endfor %}
                 {% else %}
@@ -87,10 +87,10 @@
                 {% endif %}
             </td>
             <td>
-                {% if jam.getStatus().code <= 3 %}
+                {% if jam.get_status().code <= 3 %}
                     n/a <!-- before rating -->
                 {% else  %}
-                    {% if jam.getStatus().code >= 5 %}
+                    {% if jam.get_status().code >= 5 %}
                         {{ "%.02f" % game.score }}
                     {% else %}
                         n/a
@@ -100,7 +100,7 @@
                         ({{ rating.score }})
                     {% endif %}
 
-                    {% if jam.getStatus().code == 4 and current_user not in game.team.members and current_user in jam.participants %}
+                    {% if jam.get_status().code == 4 and current_user not in game.team.members and current_user in jam.participants %}
                         <a href="{{ url_for('rate_game', jam_slug = jam.slug, game_id = game.id) }}">{{ "(edit)" if rating else "rate now" }}</a>
                     {% endif %}
                 {% endif %}

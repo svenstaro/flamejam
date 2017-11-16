@@ -36,7 +36,7 @@
 
         <div class="field">
             <label>Rating categories</label>
-            {% if game.jam.getStatus().code < 4 %}
+            {% if game.jam.get_status().code < 4 %}
                 {% for category in RATING_CATEGORIES if category != "overall" %}
                     <label class="checkbox normal inline">
                         {{ form.get(category)() }}
@@ -50,7 +50,7 @@
                     <i>This selection will be locked when the rating starts.</i>
                 </div>
             {% else %}
-                <span style="vertical-align: -7px;"><b>{{ ", ".join(game.ratingCategories).title() }}</b></span>
+                <span style="vertical-align: -7px;"><b>{{ ", ".join(game.rating_categories).title() }}</b></span>
                 <div class="form-info">
                     This selection has been locked since the rating started.
                 </div>
@@ -70,7 +70,7 @@
         {% else %}
             <ul>
             {% for package in game.packages %}
-                <li>{{ package.getLink() }} <a href="{{ url_for('game_package_edit', id = package.id, action = 'delete') }}" class="btn btn-mini">&times;</a></li>
+                <li>{{ package.get_link() }} <a href="{{ url_for('game_package_edit', id = package.id, action = 'delete') }}" class="btn btn-mini">&times;</a></li>
             {% endfor %}
             </ul>
         {% endif %}
@@ -92,7 +92,7 @@
             <p><i>There are no screenshots yet.</i></p>
         {% else %}
             <table class="screenshots-mini tabular small full">
-            {% for screenshot in game.screenshotsOrdered %}
+            {% for screenshot in game.screenshots_ordered %}
                 <tr>
                     <td width="48"><img src="{{ screenshot.url }}"/></td>
                     <td>

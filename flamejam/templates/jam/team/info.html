@@ -10,7 +10,7 @@
 
     <div class="pull-right">
     {% if current_user.is_authenticated and current_user.inTeam(team) %}
-        {% if team.canInvite(current_user) %}
+        {% if team.can_invite(current_user) %}
             <a href="{{ url_for('team_settings', jam_slug = team.jam.slug) }}" class="btn btn-normal">Invite a member</a>
         {% elif team.jam.team_limit > 1 %}
             <small>Team is full</small>
@@ -32,7 +32,7 @@
             </td></tr>
 
             <tr><th>Founded by</th><td>
-                {{ team.members[0].getLink() }}
+                {{ team.members[0].get_link() }}
             </td></tr>
 
             {% if team.livestreams %}
@@ -66,10 +66,10 @@
         <table class="details">
             {% for member in team.members %}
             <tr>
-                <td><img width="40" height="40" src="{{ member.getAvatar(40) }}" /></td>
+                <td><img width="40" height="40" src="{{ member.get_avatar(40) }}" /></td>
                 <td>
-                    {{ member.getLink(real = True, avatar = False) }}
-                    {% set as = member.abilityString()|safe %}
+                    {{ member.get_link(real = True, avatar = False) }}
+                    {% set as = member.ability_string()|safe %}
                     <div class="abilities">{{ as if as else "n/a"|safe }}
                 </td>
             </tr>

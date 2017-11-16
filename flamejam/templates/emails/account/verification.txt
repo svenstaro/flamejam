@@ -8,7 +8,7 @@ signup for the user {{ recipient.username }}.
 
 To verify your email address, please visit the following verification link:
 
-{{ url_for('verify', username=recipient.username, verification=recipient.getVerificationHash(), _external=True) }}
+{{ url_for('verify', username=recipient.username, verification=recipient.get_verification_hash(), _external=True) }}
 
 If you received this email by error or did not {% if email_changed %}change your settings{% else %}register on bacongamejam.org{% endif %}, please ignore this email.
 {% endblock %}

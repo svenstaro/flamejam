@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
+from flamejam import db
 
-from flamejam import app, db
 
 class GameScreenshot(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(255))
     caption = db.Column(db.Text)
-    index = db.Column(db.Integer) # 0..n-1
+    index = db.Column(db.Integer)  # 0..n-1
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"))
 
     def __init__(self, url, caption, game):
@@ -16,10 +15,10 @@ class GameScreenshot(db.Model):
         self.index = len(self.game.screenshots) - 1
 
     def __repr__(self):
-        return "<GameScreenshot %r>" % self.id
+        return f"<GameScreenshot {self.id}>"
 
     def move(self, x):
-        all = self.game.screenshotsOrdered
+        all = self.game.screenshots_ordered
 
         old = self.index
         new = self.index + x

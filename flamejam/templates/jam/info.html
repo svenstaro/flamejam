@@ -6,10 +6,10 @@
 <h1>
     {{ jam.title }}
 
-    <small>{{ ("Theme: \"" + jam.theme + "\"") if jam.showTheme else "Theme not announced" }}</small>
+    <small>{{ ("Theme: \"" + jam.theme + "\"") if jam.show_theme else "Theme not announced" }}</small>
 
-    {% if jam.getStatus().code >= 1 %}
-        {% set r = current_user.getParticipation(jam) if current_user.is_authenticated else None %}
+    {% if jam.get_status().code >= 1 %}
+        {% set r = current_user.get_participation(jam) if current_user.is_authenticated else None %}
         <div class="pull-right">
             {% if r %}
                 <span style="font-size: 8pt; vertical-align: middle; margin-right: 10px;">
@@ -68,8 +68,8 @@
             </tr>
         </table>
 
-        {% if jam.getStatus().code <= 3 %}
-        {% set teams = jam.livestreamTeams %}
+        {% if jam.get_status().code <= 3 %}
+        {% set teams = jam.livestream_teams %}
         {% if teams %}
             <h2>Livestreams</h2>
             <ul>
@@ -84,11 +84,11 @@
             {% endfor %}
             </ul>
         {% endif %}
-        {% elif jam.getStatus().code == 5 %}
+        {% elif jam.get_status().code == 5 %}
         <h2>Winners</h2>
         {% if jam.games %}
             <ol>
-                {% for game in jam.gamesByScore()[:3] %}
+                {% for game in jam.games_by_score()[:3] %}
                     <li>
                         <a href="{{ game.team.url() }}">{{ game.team.name }}</a> with
                         <b><a href="{{ game.url() }}">{{ game.title }}</a></b>

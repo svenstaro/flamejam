@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-
 from flamejam import app, db, login_manager
-from flamejam.utils import hash_password, verify_password, findLocation
-from flamejam.models import Participation, Team, Game
+from flamejam.utils import hash_password, find_location
+from flamejam.models.participation import Participation
+from flamejam.models.team import Team
 from flask import url_for, Markup
 from datetime import datetime
 from hashlib import md5
@@ -23,7 +22,8 @@ class User(db.Model):
     ratings = db.relationship('Rating', backref='user', lazy="dynamic")
     comments = db.relationship('Comment', backref='user', lazy="dynamic")
     invitations = db.relationship("Invitation", backref="user", lazy="dynamic")
-    participations = db.relationship("Participation", backref=db.backref("user", lazy="joined"), lazy="subquery")
+    participations = db.relationship("Participation", backref=db.backref("user", lazy="joined"),
+                                     lazy="subquery")
 
     ability_programmer = db.Column(db.Boolean)
     ability_gamedesigner = db.Column(db.Boolean)
@@ -72,28 +72,28 @@ class User(db.Model):
         return True
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return f"<User {self.username}>"
 
     def get_id(self):
         return self.id
 
-    def getVerificationHash(self):
+    def get_verification_hash(self):
         # combine a few properties, hash it
         # take first 16 chars for simplicity
         # make it email specific
         hash = scrypt.hash(str(self.username) + str(self.new_email), app.config['SECRET_KEY'])
         return hash.encode('hex')[:16]
 
-    def getResetToken(self):
+    def get_reset_token(self):
         # combine a few properties, hash it
         # take first 16 chars for simplicity
         hash = scrypt.hash(str(self.token), app.config['SECRET_KEY'])
         return hash.encode('hex')[:16]
 
-    def ratedGame(self, game):
-        return self.ratings.filter_by(game=game).first() != None
+    def rated_game(self, game):
+        return self.ratings.filter_by(game=game).first() is not None
 
-    def getRatingCount(self, jam):
+    def get_rating_count(self, jam):
         i = 0
         for r in self.ratings:
             if r.game.jam == jam:
@@ -117,12 +117,13 @@ class User(db.Model):
     def url(self, **values):
         return url_for('show_user', username=self.username, **values)
 
-    def getAvatar(self, size=32):
+    def get_avatar(self, size=32):
         if self.avatar:
             return self.avatar.replace("%s", str(size))
-        return "//gravatar.com/avatar/{0}?s={1}&d=identicon".format(md5(self.email.lower()).hexdigest(), size)
+        return "//gravatar.com/avatar/{0}?s={1}&d=identicon".format(
+            md5(self.email.lower()).hexdigest(), size)
 
-    def setLocation(self, location):
+    def set_location(self, location):
         if not location:
             self.location = ""
             self.location_display = ""
@@ -130,7 +131,7 @@ class User(db.Model):
             self.location_flag = "unknown"
             return True
 
-        new_loc, new_coords, new_flag = findLocation(location)
+        new_loc, new_coords, new_flag = find_location(location)
         if not new_loc:
             return False
         self.location = location
@@ -139,10 +140,13 @@ class User(db.Model):
         self.location_flag = new_flag
         return True
 
-    def getLocation(self):
-        return Markup('<span class="location"><span class="flag %s"></span> <span class="city">%s</span></span>' % (self.location_flag, self.location_display or "n/a"))
+    def get_location(self):
+        display = self.location_display or "n/a"
+        markup = f'<span class="location"><span class="flag {self.location_flag}"></span>'
+        markup += f'<span class="city">{display}</span></span>'
+        return Markup(markup)
 
-    def getLink(self, class_ = "", real = True, avatar = True):
+    def get_link(self, class_="", real=True, avatar=True):
         if self.is_deleted:
             return Markup('<span class="user deleted">[DELETED]</span>')
 
@@ -151,11 +155,14 @@ class User(db.Model):
             class_ += " admin"
 
         link = ''
-        link += '<a class="user {0}" href="{1}">'.format(class_, self.url())
+        link += f'<a class="user {class_}" href="{self.url()}">'
         if avatar:
-            link += '<img width="{0}" height="{0}" src="{1}" class="icon"/> '.format(s, self.getAvatar(s))
-        link += '<span class="name"><span class="username">{0}</span>'.format(self.username)
-        link += u' <span class="real">({0})</span>'.format(self.real_name) if self.real_name and real else ''
+            link += f'<img width="{s}" height="{s}" src="{self.get_avatar(s)}" class="icon"/> '
+        link += f'<span class="name"><span class="username">{self.username}</span>'
+        if self.real_name and real:
+            link += f' <span class="real">({self.real_name})</span>'
+        else:
+            link += ''
         link += '</span></a>'
 
         return Markup(link)
@@ -177,62 +184,63 @@ class User(db.Model):
             a.append("Sound Design")
         return a
 
-    def abilityString(self):
+    def ability_string(self):
         a = ", ".join(self.abilities)
         if self.abilities_extra:
-            a += '<div class="ability-extra">' + self.abilities_extra + '</div>'
+            a += f'<div class="ability-extra">{self.abilities_extra}</div>'
         return a
 
-    def getParticipation(self, jam):
-        return Participation.query.filter_by(user_id = self.id, jam_id = jam.id).first()
+    def get_participation(self, jam):
+        return Participation.query.filter_by(user_id=self.id, jam_id=jam.id).first()
 
-    def getTeam(self, jam):
-        p = self.getParticipation(jam)
+    def get_team(self, jam):
+        p = self.get_participation(jam)
         return p.team if p and p.team else None
 
-    def inTeam(self, team):
+    def in_team(self, team):
         return self in team.members
 
-    def canRate(self, game):
-        return not self.inTeam(game.team)
+    def can_rate(self, game):
+        return not self.in_team(game.team)
 
-    def canEdit(self, game):
-        return self.inTeam(game.team)
+    def can_edit(self, game):
+        return self.in_team(game.team)
 
-    def joinJam(self, jam, generateTeam = True):
+    def join_jam(self, jam, generate_team=True):
         p = Participation(self, jam)
         db.session.add(p)
-        db.session.commit() # need to commit so the team does not register us automatically
+        db.session.commit()  # need to commit so the team does not register us automatically
 
-        if generateTeam:
-            self.generateTeam(jam)
+        if generate_team:
+            self.generate_team(jam)
         else:
             db.session.commit()
 
-    def generateTeam(self, jam):
+    def generate_team(self, jam):
         t = Team(self, jam)
         db.session.add(t)
         db.session.commit()
 
-    def leaveJam(self, jam):
+    def leave_jam(self, jam):
         # leave team
-        if self.getTeam(jam):
-            self.getTeam(jam).userLeave(self) #  will destroy the team if then empty
+        if self.get_team(jam):
+            self.get_team(jam).user_leave(self)  # will destroy the team if then empty
 
         # delete registration
-        if self.getParticipation(jam):
-            db.session.delete(self.getParticipation(jam))
+        if self.get_participation(jam):
+            db.session.delete(self.get_participation(jam))
 
-    def numberOfGames(self):
+    def number_of_games(self):
         return len(self.games)
 
     @property
-    def openInvitations(self):
+    def open_invitations(self):
         invitations = []
         for invitation in self.invitations:
-            if invitation.canAccept():
+            if invitation.can_accept():
                 invitations.append(invitation)
         return invitations
+
 
 # we need this so Flask-Login can load a user into a session
 @login_manager.user_loader

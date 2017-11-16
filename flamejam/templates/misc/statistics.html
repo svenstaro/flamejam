@@ -79,7 +79,7 @@
                         {% else %}
                         {% for n in [0,1,2] if stats['user_most_games'][n] %}
                         <div style="margin-bottom: 5px;">
-                            {{ stats["user_most_games"][n].getLink() }}
+                            {{ stats["user_most_games"][n].get_link() }}
                             with {{ stats["user_most_games"][n].games | length }} games
                         </div>
                         {% endfor %}

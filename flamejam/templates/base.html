@@ -52,7 +52,7 @@
                             <a href="{{ url_for('invitations') }}" class="btn btn-small">{{ current_user.invitation | length }} <i class="icon-envelope"></i></a>
                         {% endif %}
                         <a href="{{ url_for('profile') }}" class="btn btn-small" id="account">
-                            <img class="avatar" src="{{ current_user.getAvatar(16) }}" width="16" height="16" />
+                            <img class="avatar" src="{{ current_user.get_avatar(16) }}" width="16" height="16" />
                             {{ current_user.username }}
                         </a>
                         <a class="btn btn-small" href="{{ url_for('logout') }}"><i class="icon-off"></i></a><
@@ -79,16 +79,16 @@
                 <div class="left">
                     {% block menu %}
                         {% if current_jam %}
-                            {% if current_jam.getStatus().code <= 1 %}
+                            {% if current_jam.get_status().code <= 1 %}
                                 Next jam is
-                                <b>{{ current_jam.getLink() }}</b>
+                                <b>{{ current_jam.get_link() }}</b>
                                 {{ current_jam.start_time | humantime }}
-                            {% elif current_jam.getStatus().code == 2 %}
+                            {% elif current_jam.get_status().code == 2 %}
                                 Currently running jam is
-                                <b>{{ current_jam.getLink() }}</b>
+                                <b>{{ current_jam.get_link() }}</b>
                                 ending {{ current_jam.end_time | humantime }}
                             {% else %}
-                                <b>{{ current_jam.getLink() }}</b>
+                                <b>{{ current_jam.get_link() }}</b>
                                 has finished
                             {% endif %}
                         {% endif %}

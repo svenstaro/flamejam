@@ -18,7 +18,7 @@
         <ul>
             {% for jam in jams %}
             <li>
-                {{ jam.getLink() }}
+                {{ jam.get_link() }}
             </li>
             {% endfor %}
         </ul>
@@ -49,7 +49,7 @@
         {% if users %}
         <ul class="users">
             {% for user in users %}
-            <li>{{ user.getLink() }}</li>
+            <li>{{ user.get_link() }}</li>
             {% endfor %}
         </ul>
         {% else %}

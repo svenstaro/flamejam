@@ -1,5 +1,4 @@
 #!/usr/bin/env python2
-# -*- coding: utf-8 -*-
 #
 # This is a short script to kill all tables and fill them with new test data.
 # It should be run from a virtualenv.
@@ -76,23 +75,23 @@ paul.joinJam(loljam)
 paddy.joinJam(loljam)
 pablo.joinJam(loljam)
 
-aTeam = paul.getTeam(rgj3)
+aTeam = paul.get_team(rgj3)
 aTeam.userJoin(pablo)
 
 # Make games
-best_game = Game(paddy.getTeam(rgj3), "Bessy the Best Game")
+best_game = Game(paddy.get_team(rgj3), "Bessy the Best Game")
 best_game.description = "Simply the best game"
 
 space_game = Game(aTeam, "CloneStars - The war wars")
 space_game.description = "A space shooter game."
 
-lolgame = Game(pablo.getTeam(loljam), "Lolol")
+lolgame = Game(pablo.get_team(loljam), "Lolol")
 lolgame.description = "Lol."
 
-clone = Game(peter.getTeam(rgj3), "Shooterz")
+clone = Game(peter.get_team(rgj3), "Shooterz")
 clone.description = "I got this idea while taking a dump."
 
-test_game = Game(per.getTeam(rgj3), "RIP VIP")
+test_game = Game(per.get_team(rgj3), "RIP VIP")
 
 # Add games
 db.session.add(best_game)

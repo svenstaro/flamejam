@@ -16,7 +16,7 @@
             You were invited to the team <a href="{{ invitation.team.url() }}">{{ invitation.team.name }}</a>. You can either
             accept or decline this invitation.
         </p>
-        {% set current_team =  current_user.getTeam(invitation.team.jam) %}
+        {% set current_team =  current_user.get_team(invitation.team.jam) %}
 
         {% if current_team %}
         <p>
@@ -50,7 +50,7 @@
 {% else %}
 <div class="well" style="max-width: 400px;">
     <p>
-        This is the invitation for {{ invitation.user.getLink() }} to your team
+        This is the invitation for {{ invitation.user.get_link() }} to your team
         <a href="{{ invitation.team.url() }}">{{ invitation.team.name }}</a>.
     </p>
     <p>
