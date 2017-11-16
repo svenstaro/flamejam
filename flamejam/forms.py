@@ -26,6 +26,7 @@ from flask_wtf import Form, RecaptchaField
 from flamejam.models.user import User
 from flamejam.models.rating import RATING_CATEGORIES
 from flamejam.models.gamepackage import GamePackage
+from flamejam.utils import verify_password
 from sqlalchemy import func
 
 
@@ -84,7 +85,7 @@ class LoginValidator(object):
             func.lower(User.username) == func.lower(field.data)).first()
         if not u:
             raise ValidationError(self.message_username)
-        elif not utils.verify_password(u.password, form[self.pw_field].data):
+        elif not verify_password(u.password, form[self.pw_field].data):
             raise ValidationError(self.message_password)
 
 

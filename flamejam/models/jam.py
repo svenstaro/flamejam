@@ -156,7 +156,7 @@ class Jam(db.Model):
             template = "finished"
             notify = "jam_finish"
             subject = f"Rating for {self.title} finished - Winners"
-            kwargs = {"games": self.gamesByScore()[:3]}
+            kwargs = {"games": self.games_by_score()[:3]}
 
         if n >= JamStatusCode.RUNNING and n != JamStatusCode.RATING:
             users = [r.user for r in self.participations]

@@ -18,7 +18,7 @@ class Team(db.Model):
 
     def __init__(self, user, jam):
         self.jam = jam
-        self.userJoin(user)
+        self.user_join(user)
         self.name = user.username + "'s team"
 
     @property

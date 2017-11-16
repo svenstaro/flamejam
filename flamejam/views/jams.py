@@ -67,7 +67,7 @@ def jam_cancel_participation(jam_slug):
     form = CancelParticipationForm()
 
     if form.validate_on_submit():
-        current_user.leaveJam(jam)
+        current_user.leave_jam(jam)
         db.session.commit()
         flash("You are now unregistered from this jam.", "success")
         return redirect(jam.url())
@@ -79,9 +79,9 @@ def jam_cancel_participation(jam_slug):
 def jam_games(jam_slug):
     jam = Jam.query.filter_by(slug=jam_slug).first_or_404()
     filters = set(request.args['filter'].split(' ')) if 'filter' in request.args else set()
-    games = jam.games_by_score(filters) if jam.showRatings else jam.gamesByTotalRatings(filters)
+    games = jam.games_by_score(filters) if jam.show_ratings else jam.games_by_total_ratings(filters)
     return render_template('jam/games.html', jam=jam, games=games, filters=filters,
-                           package_types=GamePackage.packageTypes(),
+                           package_types=GamePackage.package_types(),
                            type_string_short=GamePackage.type_string_short)
 
 

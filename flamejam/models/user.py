@@ -114,14 +114,14 @@ class User(db.Model):
 
         return g
 
-    def url(self, **values):
-        return url_for('show_user', username=self.username, **values)
+    def url(self, **kwargs):
+        return url_for('show_user', username=self.username, **kwargs)
 
     def get_avatar(self, size=32):
         if self.avatar:
             return self.avatar.replace("%s", str(size))
         return "//gravatar.com/avatar/{0}?s={1}&d=identicon".format(
-            md5(self.email.lower()).hexdigest(), size)
+            md5(self.email.lower().encode('ASCII')).hexdigest(), size)
 
     def set_location(self, location):
         if not location:

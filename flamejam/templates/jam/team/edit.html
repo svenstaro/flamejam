@@ -68,7 +68,7 @@
 
         <hr />
 
-        {% if not team.canInvite(current_user) %}
+        {% if not team.can_invite(current_user) %}
             <div class="alert alert-error">
                 {% if team.jam.team_limit == 1 %}
                     This is no team jam. You cannot invite other users.

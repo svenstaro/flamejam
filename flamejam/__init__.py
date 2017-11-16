@@ -46,6 +46,8 @@ import flamejam.models.participation
 import flamejam.models.rating
 import flamejam.models.team
 import flamejam.models.user
+from flamejam.cli import register_cli
+register_cli(app)
 
 
 @app.context_processor

@@ -78,7 +78,7 @@ def verify_password(hashed_password, guessed_password, maxtime=300):
 
 
 def get_current_jam():
-    from flamejam.models import Jam, JamStatusCode
+    from flamejam.models.jam import Jam, JamStatusCode
     next = None
     previous = None
     for jam in Jam.query.all():

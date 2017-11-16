@@ -194,7 +194,7 @@ def admin_user_delete(username):
         return "User not found"
 
     for r in u.participations:
-        u.leaveJam(r.jam)
+        u.leave_jam(r.jam)
     for i in u.invitations:
         db.session.delete(i)
     db.session.delete(u)

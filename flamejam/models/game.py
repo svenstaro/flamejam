@@ -50,7 +50,7 @@ class Game(db.Model):
 
     @property
     def screenshots_ordered(self):
-        return sorted(self.screenshots, lambda s1, s2: int(s1.index - s2.index))
+        return sorted(self.screenshots, key=lambda s: s.index)
 
     @property
     def score(self):
