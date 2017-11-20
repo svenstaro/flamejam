@@ -39,8 +39,8 @@ def register_cli(app):
         paul = User("opatut", "lol", "opatutlol@aol.com", is_admin=True, is_verified=True)
         per = User("per", "lol", "roflomg-per@mailinator.com", is_verified=True)
         pablo = User("pablo", "lol", "roflomg-pablo@mailinator.com", is_verified=True)
-        paddy = User("paddy", u"löl", "roflomg-paddy@mailinator.com")
-        paddy.real_name = u"löl"
+        paddy = User("paddy", "löl", "roflomg-paddy@mailinator.com")
+        paddy.real_name = "löl"
 
         # Add users
         db.session.add(peter)
@@ -53,7 +53,7 @@ def register_cli(app):
         paul.ability_programmer = True
         paul.ability_gamedesigner = True
         paul.ability_3dartist = True
-        paul.abilities_extra = u"C++, Löve/Lua, Python, Java, SVG, HTML5, JS, Blender"
+        paul.abilities_extra = "C++, Löve/Lua, Python, Java, SVG, HTML5, JS, Blender"
         per.set_location("Thesdorfer Weg 20, Pinneberg")
         pablo.set_location("Hamburg")
         paddy.set_location("San Francisco")
