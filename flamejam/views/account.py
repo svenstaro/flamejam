@@ -199,7 +199,7 @@ def verify(username, verification):
         return redirect(url_for('index'))
 
     # verification success
-    if verification == user.getVerificationHash():
+    if verification == user.get_verification_hash():
         user.is_verified = True
         user.email = user.new_email
         db.session.commit()
