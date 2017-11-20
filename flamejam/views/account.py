@@ -69,7 +69,7 @@ def login():
 
         body = render_template("emails/account/verification.txt",
                                recipient=new_user, email_changed=False)
-        mail.send_message(subject="Welcome to {app.config['LONG_NAME']}, {username}",
+        mail.send_message(subject=f"Welcome to {app.config['LONG_NAME']}, {username}",
                           recipients=[new_user.email], body=body)
 
         db.session.add(new_user)
@@ -171,7 +171,7 @@ def verify_send():
         return redirect(url_for('index'))
 
     body = render_template("emails/account/verification.txt", recipient=user)
-    mail.send_message(subject="Welcome to {app.config['LONG_NAME']}, {username}",
+    mail.send_message(subject=f"Welcome to {app.config['LONG_NAME']}, {username}",
                       recipients=[user.new_email], body=body)
 
     flash("Verification has been resent, check your email", "success")
