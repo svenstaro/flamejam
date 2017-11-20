@@ -10,32 +10,6 @@ However, it is generic and as such it is usable for any other game jam event.
 This application is designed to make sure that participants vote on other
 entries fairly and evenly.
 
-Dependencies
-------------
-You will need
-
- - Python 2.7
- - virtualenv
- - pip
- - flask
- - flask-mail
- - flask-sqlalchemy
- - flask-wtf
- - flask-login
- - flask-markdown
- - python-dateutil
- - scrypt
- - requests
- - alembic
- - flask-principal
- - mysql/mysql\_config
- - mysql-python
-
-as well as their respective dependencies. All of these except mysql/mysql\_config are available
-on PyPI and as such I recommend using a virtualenv and pip to install all of those. Always get
-the newest version of any of these. If flamejam should be incompatible with the latest version of
-one of these packages, it is to be considered a bug and should be fixed.
-
 Installation
 ------------
 You are currently expected to run some kind of POSIX system such as Linux. This software has
@@ -70,10 +44,6 @@ Development
 -----------
 For development and testing, firstly set up a virtualenv containing all dependencies. For your
 convenience, a Makefile target has been provided. Run `make setup` to have it set up for you.
-
-You also need a mysql installation with mysql-config available. On Ubuntu the package is called
-`libmysqlclient-dev`. Run `make init-db <username> <password> <email>` and `make seed-db` to
-setup a development database.
 
 When this is done, run `python runserver.py` inside the virtualenv to fire up the
 debug server and navigate to http://localhost:5000. Alternatively you can use `make run`.

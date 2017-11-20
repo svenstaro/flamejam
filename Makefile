@@ -2,7 +2,7 @@ default: run
 
 .PHONY: run
 run: venv
-	FLASK_APP=app.py venv/bin/flask run
+	FLASK_APP=app.py FLASK_DEBUG=1 venv/bin/flask run
 
 .PHONY: venv
 venv:
