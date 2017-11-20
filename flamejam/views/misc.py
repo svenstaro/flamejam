@@ -28,7 +28,7 @@ def error_permission(e):
 
 @app.errorhandler(500)
 def application_error(e):
-    msg = Message(f"[{app.config['SHORT_NAME']}] Exception Detected: {e.message}",
+    msg = Message(f"[{app.config['SHORT_NAME']}] Exception Detected: {str(e)}",
                   recipients=app.config['ADMINS'])
     msg_contents = [
         'Traceback:',

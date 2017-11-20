@@ -68,7 +68,8 @@ def hash_password(password, maxtime=0.5, datalength=256):
 
 def verify_password(hashed_password, guessed_password, maxtime=300):
     try:
-        scrypt.decrypt(hashed_password, guessed_password.encode('utf-8'), maxtime)
+        scrypt.decrypt(hashed_password, guessed_password.encode('utf-8'),
+                       maxtime, encoding='iso-8859-1')
         return True
     except scrypt.error as e:
         # Not fatal but a necessary measure if server is under heavy

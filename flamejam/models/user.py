@@ -82,13 +82,13 @@ class User(db.Model):
         # take first 16 chars for simplicity
         # make it email specific
         hash = scrypt.hash(str(self.username) + str(self.new_email), app.config['SECRET_KEY'])
-        return hash.encode('hex')[:16]
+        return hash.hex()[:16]
 
     def get_reset_token(self):
         # combine a few properties, hash it
         # take first 16 chars for simplicity
         hash = scrypt.hash(str(self.token), app.config['SECRET_KEY'])
-        return hash.encode('hex')[:16]
+        return hash.hex()[:16]
 
     def rated_game(self, game):
         return self.ratings.filter_by(game=game).first() is not None
