@@ -4,6 +4,10 @@ default: run
 run: venv
 	FLASK_APP=app.py FLASK_DEBUG=1 venv/bin/flask run
 
+.PHONY: uwsgi_run
+uwsgi_run: venv
+	venv/bin/uwsgi deploy/uwsgi.ini
+
 .PHONY: venv
 venv:
 	python3 -m venv venv
