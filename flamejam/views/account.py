@@ -124,7 +124,7 @@ def reset_request():
         # thanks to the UsernameValidator we cam assume the username exists
         user = User.query.filter(
             func.lower(User.username) == func.lower(form.username.data)).first()
-        user.token = randint(0, sys.maxint)
+        user.token = randint(0, sys.maxsize)
         db.session.commit()
 
         body = render_template("emails/account/reset_password.txt", recipient=user)
