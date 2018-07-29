@@ -51,11 +51,10 @@ def login():
                 markup = f'You have {user.invitations.count()} team invitations'
                 markup += f'- click <a href="{url_for("invitations")}">here</a> to view them.'
                 flash(Markup(markup), "info")
-            return redirect(request.args.get("next") or url_for('index'))
-
             # Tell Flask-Principal the identity changed
             identity_changed.send(current_app._get_current_object(),
                                   identity=Identity(user.id))
+            return redirect(request.args.get("next") or url_for('index'))
         else:
             flash("Login failed, user not validated", "error")
             return redirect(url_for("verify_status", username=username))
