@@ -70,3 +70,47 @@ following exceptions:
 These exceptions are subject to their own copyrights and licenses. This project only makes use of them.
 
 For the full license text, please see the included LICENSE file.
+
+
+Run with docker
+---------------
+Flamejam comes with a prepared Dockerfile in order to run it as a container on your system.
+Running flamejam with docker saves you installing all the required dependencies and encapsulates it inside a contained system.
+
+To build the image you need to run as a container you call
+
+    docker build --tag flamejam-image .
+    
+where `flamejam-image` can be freely chosen to name the image. You need to remember it in order to select it for the container.
+Building the container concludes with
+
+    Successfully built 6370906318a8
+    Successfully tagged flamejam-image:latest
+
+By running `docker images` you can see the built image.
+
+    REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+    flamejam-image      latest              6370906318a8        24 seconds ago      156MB
+    alpine              3.6                 43773d1dba76        9 months ago        4.03MB
+
+Now you can start the container
+
+    docker run --name flamejam flamejam-image
+    
+and it is up and running. Executing `docker ps` confirms your running container.
+
+    CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+    16e378d4c10f        flamejam-image      "uwsgi deploy/uwsgi.…"   32 seconds ago      Up 31 seconds       8080/tcp            flamejam
+    
+In order to continue with setting up flamejam you can login to the system by typing
+
+    docker exec -it flamejam sh
+
+Run with docker-compose
+-----------------------
+If you don't like the manual docker running or don't care about configuration options, you can install and use `docker-compose` instead.
+
+    docker-compose up --build
+    
+This uses the provided `docker-compose.yml` configuration. Afterwards you can reach the server in the same way as described above.
+Enter http://localhost:8080 to access the frontpage of the application

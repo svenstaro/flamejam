@@ -1,0 +1,17 @@
+version: '3.2'
+services:
+    flamejam:
+      container_name: flamejam
+      build: .
+      ports:
+       - "8080:8080"
+       - "5000:5000"
+      networks:
+        - uwsgi_net
+networks:
+  uwsgi_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.110.0/24
