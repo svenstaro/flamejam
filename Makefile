@@ -8,6 +8,12 @@ run: venv
 uwsgi_run: venv
 	venv/bin/uwsgi deploy/uwsgi.ini
 
+.PHONY: setup
+setup: venv
+	python3 -m venv venv
+	venv/bin/flask init-db $(USERNAME) $(PASSWORD) $(EMAIL)
+	venv/bin/flask seed-db
+
 .PHONY: venv
 venv:
 	python3 -m venv venv

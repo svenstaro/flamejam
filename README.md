@@ -33,11 +33,18 @@ not been tested on Windows and it would be quite a wonder indeed if it worked th
 4.  Configure your webserver. If you use Apache with mod\_wsgi, you may use the provided example
     virtualhost `/usr/share/doc/flamejam/apache-vhost.conf`.
 5.  Initialize the database using either test data or an admin account. For this, you can use
-    either of the provided scripts in `/srv/flamejam/scripts/init-db.py` or
-    `/srv/flamejam/scripts/seed-db.py`. If you use `init-db.py` on a production system, call it
-    inside the virtualenv as follows:
+    the provided Makefile option `setup`:
 
-        $ CONFIG_TYPE=production python scripts/init-db.py <username> <password> <email>
+        $ make USERNAME=<username> PASSWORD=<password> EMAIL=<email> setup
+        
+    This will create an initial database setup with an admin user.
+    As an alternative you can also call the commands yourself
+    
+        $ python3 -m venv venv
+        $ venv/bin/flask init-db <username> <password> <email>
+        $ venv/bin/flask seed-db
+        
+    `seed-db` supports an additional command line option `--flood` to setup 1000 dummy users
 
 
 Development

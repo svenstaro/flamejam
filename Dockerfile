@@ -9,8 +9,7 @@ WORKDIR /app
 COPY requirements.txt dev-requirements.txt /app/
 RUN apk add --no-cache build-base make python3-dev git libffi-dev postgresql-dev linux-headers \
 	libressl-dev && \
-    pip3 install pip -r requirements.txt -r dev-requirements.txt && \
-    apk del build-base linux-headers
+    pip3 install pip -r requirements.txt -r dev-requirements.txt
 
 # Clean the repo just in case the repo that built this Docker container wasn't
 # tidy.
