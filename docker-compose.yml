@@ -8,6 +8,8 @@ services:
        - "5000:5000"
       networks:
         - uwsgi_net
+      volumes:
+        - ./tmp:/tmp
 networks:
   uwsgi_net:
     driver: bridge

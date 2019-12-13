@@ -1,0 +1,6 @@
+# folder is used from within the docker container
+# - to get outside access to sqlite database
+# - to prevent losing system data when rebuilding the container
+
+*
+!.gitignore

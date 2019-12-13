@@ -11,6 +11,8 @@ RUN apk add --no-cache build-base make python3-dev git libffi-dev postgresql-dev
 	libressl-dev && \
     pip3 install pip -r requirements.txt -r dev-requirements.txt
 
+VOLUME ["/tmp"]
+
 # Clean the repo just in case the repo that built this Docker container wasn't
 # tidy.
 COPY . /app
