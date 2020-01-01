@@ -161,7 +161,7 @@ class Jam(db.Model):
         if n >= JamStatusCode.RUNNING and n != JamStatusCode.RATING:
             users = [r.user for r in self.participations]
         else:
-            from flamejam.models import User
+            from flamejam.models.user import User
             users = User.query.all()
 
         # Set this first because we might send for longer than a minute at which point the

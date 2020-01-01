@@ -1,19 +1,13 @@
-default: run
+default: run_dev
 
-.PHONY: run
-run: venv
-	FLASK_APP=app.py FLASK_DEBUG=1 venv/bin/flask run
+.PHONY: install
+install:
+	poetry install
 
-.PHONY: uwsgi_run
-uwsgi_run: venv
-	venv/bin/uwsgi deploy/uwsgi.ini
+.PHONY: run_dev
+run_dev: install
+	poetry run uwsgi uwsgi_dev.ini
 
-.PHONY: venv
-venv:
-	python3 -m venv venv
-	venv/bin/pip install --upgrade pip
-	venv/bin/pip install -r requirements.txt -r dev-requirements.txt --upgrade
-
-.PHONY: clean
-clean:
-	rm -rf venv
+.PHONY: run_prod
+run_prod: install
+	poetry run uwsgi uwsgi_prod.ini
