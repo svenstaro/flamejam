@@ -1,7 +1,7 @@
 flamejam - a game jam application using Flask
 =============================================
 
-[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/svenstaro/flamejam)](https://cloud.docker.com/repository/docker/svenstaro/flamejam/)
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/svenstaro/flamejam)](https://hub.docker.com/r/svenstaro/flamejam)
 [![license](http://img.shields.io/badge/license-zlib-blue.svg)](https://github.com/svenstaro/flamejam/blob/master/LICENSE)
 [![Stars](https://img.shields.io/github/stars/svenstaro/flamejam.svg)](https://github.com/svenstaro/flamejam/stargazers)
 
