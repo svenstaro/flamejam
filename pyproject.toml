@@ -7,7 +7,7 @@ license = "zlib"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-flask = "^1.1"
+flask = "^2.3"
 flask-mail = "^0.9.1"
 flask-sqlalchemy = "^2.4"
 flask-wtf = "^0.14.2"
